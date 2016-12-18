@@ -1,0 +1,21 @@
+﻿<Application x:Class="Monitorian.App"
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:local="clr-namespace:Monitorian">
+	<Application.Resources>
+
+		<SolidColorBrush x:Key="App.Background" Color="#CC171717"/>
+		<SolidColorBrush x:Key="App.Foreground" Color="White"/>
+		<SolidColorBrush x:Key="App.Link" Color="LightGray"/>
+
+		<Color x:Key="AccessButton.Normal.BackgroundColor">#33FFFFFF</Color>
+		<Color x:Key="AccessButton.Normal.BorderColor">Transparent</Color>
+		<Color x:Key="AccessButton.MouseOver.BorderColor">#FF868686</Color>
+		<Color x:Key="AccessButton.Pressed.BackgroundColor">#FF868686</Color>
+
+		<SolidColorBrush x:Key="Menu.Item.Normal.Backgound" Color="Transparent"/>
+		<SolidColorBrush x:Key="Menu.Item.MouseOver.Background" Color="#FF555555"/>
+		<SolidColorBrush x:Key="Menu.Separator" Color="#FF808080"/>
+
+	</Application.Resources>
+</Application>

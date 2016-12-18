@@ -1,0 +1,180 @@
+﻿<Window x:Class="Monitorian.Views.MenuWindow"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+		xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+		xmlns:models="clr-namespace:Monitorian.Models"
+		xmlns:properties="clr-namespace:Monitorian.Properties"
+		Width="160"
+		ResizeMode="NoResize" SizeToContent="WidthAndHeight"
+		ShowInTaskbar="False" Topmost="True"
+		Background="{StaticResource App.Background}" AllowsTransparency="True" WindowStyle="None">
+	<Window.Resources>
+		<!-- Menu separator -->
+		<Style x:Key="MenuSeparatorStyle" TargetType="{x:Type Separator}">
+			<Setter Property="Margin" Value="8,4"/>
+			<Setter Property="Background" Value="{StaticResource Menu.Separator}"/>
+		</Style>
+
+		<!-- Menu item -->
+		<Style x:Key="MenuItemStyle" TargetType="{x:Type ContentControl}">
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="{x:Type ContentControl}">
+						<Grid x:Name="itemBody"
+							  Background="{StaticResource Menu.Item.Normal.Backgound}">
+							<ContentPresenter x:Name="contentPresenter"
+											  Margin="{TemplateBinding Padding}"
+											  Content="{TemplateBinding Content}"
+											  ContentTemplate="{TemplateBinding ContentTemplate}"/>
+						</Grid>
+						<ControlTemplate.Triggers>
+							<Trigger Property="IsMouseOver" Value="true">
+								<Setter Property="Background" TargetName="itemBody" Value="{StaticResource Menu.Item.MouseOver.Background}"/>
+							</Trigger>
+						</ControlTemplate.Triggers>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
+
+		<!-- CheckBox -->
+		<Style x:Key="CheckBoxItemStyle" TargetType="{x:Type CheckBox}">
+			<Setter Property="VerticalContentAlignment" Value="Center"/>
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="{x:Type CheckBox}">
+						<Grid>
+							<Grid Background="Transparent"
+								  Margin="{TemplateBinding Padding}"
+								  SnapsToDevicePixels="True"
+								  UseLayoutRounding="True">
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="Auto"/>
+									<ColumnDefinition Width="*"/>
+								</Grid.ColumnDefinitions>
+								<Grid Grid.Column="0"
+									  Width="{Binding RelativeSource={RelativeSource Self}, Path=ActualHeight}">
+									<Polyline x:Name="checkMark"
+											  Margin="3"
+											  Points="0,5 4,9 12,0" Stretch="Uniform"
+											  Stroke="{TemplateBinding Foreground}" StrokeThickness="1"											  
+											  Opacity="0"/>
+								</Grid>
+								<ContentPresenter Grid.Column="1"
+												  Margin="3"
+												  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+												  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+												  Focusable="False"/>
+							</Grid>
+						</Grid>
+						<ControlTemplate.Triggers>
+							<Trigger Property="IsChecked" Value="true">
+								<Setter Property="Opacity" TargetName="checkMark" Value="1"/>
+							</Trigger>
+							<Trigger Property="IsChecked" Value="{x:Null}">
+								<Setter Property="Opacity" TargetName="checkMark" Value="0"/>
+							</Trigger>
+						</ControlTemplate.Triggers>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
+
+		<!-- Close Button -->
+		<Style x:Key="CloseButtonItemStyle" TargetType="{x:Type Button}">
+			<Setter Property="HorizontalContentAlignment" Value="Left"/>
+			<Setter Property="VerticalContentAlignment" Value="Center"/>
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="{x:Type Button}">
+						<Grid>
+							<Grid Background="Transparent"
+								  Margin="{TemplateBinding Padding}"
+								  SnapsToDevicePixels="True"
+								  UseLayoutRounding="True">
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="Auto"/>
+									<ColumnDefinition Width="*"/>
+								</Grid.ColumnDefinitions>
+								<Grid Grid.Column="0"
+									  Width="{Binding RelativeSource={RelativeSource Self}, Path=ActualHeight}">
+									<Path Margin="3"
+										  Stretch="Uniform"
+										  Stroke="{TemplateBinding Foreground}" StrokeThickness="1">
+										<Path.Data>
+											<GeometryGroup>
+												<LineGeometry StartPoint="0,0" EndPoint="1,1"/>
+												<LineGeometry StartPoint="0,1" EndPoint="1,0"/>
+											</GeometryGroup>
+										</Path.Data>
+									</Path>
+								</Grid>
+								<ContentPresenter Grid.Column="1"
+												  Margin="3"
+												  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+												  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+												  Focusable="False"/>
+							</Grid>
+							<VisualStateManager.VisualStateGroups>
+								<VisualStateGroup x:Name="CommonStates">
+									<VisualState x:Name="Normal"/>
+									<VisualState x:Name="MouseOver"/>
+									<VisualState x:Name="Pressed"/>
+									<VisualState x:Name="Disabled"/>
+								</VisualStateGroup>
+							</VisualStateManager.VisualStateGroups>
+						</Grid>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
+	</Window.Resources>
+
+	<StackPanel Margin="0,0,0,4">
+		<TextBlock Width="140" Margin="0,4"
+				   Padding="8,4"
+				   Foreground="{StaticResource App.Foreground}">
+			<Run Text="{Binding Source={x:Static models:ProductInfo.Title}, Mode=OneTime}"/>
+			<Run Text="{Binding Source={x:Static models:ProductInfo.Version}, Mode=OneTime, StringFormat={} {0}}"/>
+			<LineBreak/>
+			<Run Foreground="{StaticResource App.Link}"
+				 TextDecorations="Underline" Cursor="Hand"
+				 Text="{x:Static properties:Resources.ProjectSite}">
+				<i:Interaction.Triggers>
+					<i:EventTrigger EventName="MouseDown">
+						<ei:LaunchUriOrFileAction Path="{x:Static properties:Resources.ProjectSiteUrl}"/>
+					</i:EventTrigger>
+				</i:Interaction.Triggers>
+			</Run>
+		</TextBlock>
+
+		<Separator Style="{StaticResource MenuSeparatorStyle}"/>
+
+		<ContentControl Style="{StaticResource MenuItemStyle}">
+			<CheckBox Padding="8,4"
+					  Style="{StaticResource CheckBoxItemStyle}"
+					  Foreground="{StaticResource App.Foreground}"
+					  FontSize="14"
+					  Content="{x:Static properties:Resources.Start}"
+					  IsChecked="{Binding IsRegistered}"/>
+		</ContentControl>
+
+		<Separator Style="{StaticResource MenuSeparatorStyle}"/>
+
+		<ContentControl Style="{StaticResource MenuItemStyle}">
+			<Button Padding="8,4"
+					Style="{StaticResource CloseButtonItemStyle}"
+					Foreground="{StaticResource App.Foreground}"
+					FontSize="14"
+					Content="{x:Static properties:Resources.Close}">
+				<i:Interaction.Triggers>
+					<i:EventTrigger EventName="Click">
+						<ei:CallMethodAction TargetObject="{Binding}"
+											 MethodName="CloseApp"/>
+					</i:EventTrigger>
+				</i:Interaction.Triggers>
+			</Button>
+		</ContentControl>
+	</StackPanel>
+</Window>

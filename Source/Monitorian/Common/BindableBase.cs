@@ -8,8 +8,10 @@ using System.Threading.Tasks;
 
 namespace Monitorian.Common
 {
+	[Serializable]
 	public abstract class BindableBase : INotifyPropertyChanged
 	{
+		[field: NonSerialized]
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		protected virtual bool SetPropertyValue<T>(ref T storage, T value, [CallerMemberName] string propertyName = null)

@@ -20,6 +20,8 @@ namespace Monitorian
 	{
 		private readonly Application _current = Application.Current;
 
+		public Settings Settings { get; }
+
 		private readonly SettingsChangeWatcher _settingsWatcher;
 		private readonly PowerChangeWatcher _powerWatcher;
 		private readonly BrightnessChangeWatcher _brightnessWatcher;
@@ -30,6 +32,8 @@ namespace Monitorian
 
 		public MainController()
 		{
+			Settings = new Settings();
+
 			NotifyIconComponent = new NotifyIconComponent();
 			NotifyIconComponent.MouseLeftButtonClick += OnMouseLeftButtonClick;
 			NotifyIconComponent.MouseRightButtonClick += OnMouseRightButtonClick;
@@ -43,6 +47,8 @@ namespace Monitorian
 		{
 			if (agent == null)
 				throw new ArgumentNullException(nameof(agent));
+
+			Settings.Load();
 
 			var args = Environment.GetCommandLineArgs().Skip(1).ToArray();
 			LanguageService.Switch(args);
@@ -77,6 +83,8 @@ namespace Monitorian
 				monitor.Dispose();
 
 			NotifyIconComponent.Dispose();
+
+			Settings.Save();
 
 			_settingsWatcher.Stop();
 			_powerWatcher.Stop();

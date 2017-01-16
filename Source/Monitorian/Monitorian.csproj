@@ -80,9 +80,9 @@
     <Compile Include="Models\RegistryService.cs" />
     <Compile Include="Models\RemotingAgent.cs" />
     <Compile Include="Models\Settings.cs" />
-    <Compile Include="Models\Watcher\BrightnessChangeWatcher.cs" />
-    <Compile Include="Models\Watcher\PowerChangeWatcher.cs" />
-    <Compile Include="Models\Watcher\SettingsChangeWatcher.cs" />
+    <Compile Include="Models\Watcher\BrightnessWatcher.cs" />
+    <Compile Include="Models\Watcher\PowerWatcher.cs" />
+    <Compile Include="Models\Watcher\SettingsWatcher.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\MonitorViewModel.cs" />
     <Compile Include="ViewModels\MenuWindowViewModel.cs" />

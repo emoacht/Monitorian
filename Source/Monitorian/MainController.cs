@@ -29,9 +29,9 @@ namespace Monitorian
 
 		public NotifyIconComponent NotifyIconComponent { get; }
 
-		private readonly SettingsChangeWatcher _settingsWatcher;
-		private readonly PowerChangeWatcher _powerWatcher;
-		private readonly BrightnessChangeWatcher _brightnessWatcher;
+		private readonly SettingsWatcher _settingsWatcher;
+		private readonly PowerWatcher _powerWatcher;
+		private readonly BrightnessWatcher _brightnessWatcher;
 
 		public MainController()
 		{
@@ -44,9 +44,9 @@ namespace Monitorian
 			NotifyIconComponent.MouseLeftButtonClick += OnMouseLeftButtonClick;
 			NotifyIconComponent.MouseRightButtonClick += OnMouseRightButtonClick;
 
-			_settingsWatcher = new SettingsChangeWatcher();
-			_powerWatcher = new PowerChangeWatcher();
-			_brightnessWatcher = new BrightnessChangeWatcher();
+			_settingsWatcher = new SettingsWatcher();
+			_powerWatcher = new PowerWatcher();
+			_brightnessWatcher = new BrightnessWatcher();
 		}
 
 		internal async Task InitiateAsync(RemotingAgent agent)
@@ -73,9 +73,9 @@ namespace Monitorian
 
 			await ScanAsync();
 
-			_settingsWatcher.Start(async () => await ScanAsync());
-			_powerWatcher.Start(async () => await ScanAsync());
-			_brightnessWatcher.Start((instanceName, brightness) => Update(instanceName, brightness));
+			_settingsWatcher.Subscribe(() => ScanAsync());
+			_powerWatcher.Subscribe(() => ScanAsync());
+			_brightnessWatcher.Subscribe((instanceName, brightness) => Update(instanceName, brightness));
 		}
 
 		internal void End()
@@ -85,9 +85,9 @@ namespace Monitorian
 
 			Settings.Save();
 
-			_settingsWatcher.Stop();
-			_powerWatcher.Stop();
-			_brightnessWatcher.Stop();
+			_settingsWatcher.Dispose();
+			_powerWatcher.Dispose();
+			_brightnessWatcher.Dispose();
 		}
 
 		private async void OnMouseLeftButtonClick(object sender, EventArgs e)

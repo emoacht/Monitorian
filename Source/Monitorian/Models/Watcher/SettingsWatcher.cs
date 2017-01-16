@@ -8,41 +8,36 @@ using Microsoft.Win32;
 
 namespace Monitorian.Models.Watcher
 {
-	internal class SettingsChangeWatcher
+	internal class SettingsWatcher : IDisposable
 	{
 		private readonly DispatcherTimer _timer;
-		private Func<Task> _action;
+		private Func<Task> _onChanged;
 
 		private int _count = 0;
 		private const int _countMax = 3;
 
 		public TimeSpan Interval { get; set; } = TimeSpan.FromSeconds(3);
 
-		public SettingsChangeWatcher()
+		public SettingsWatcher()
 		{
 			_timer = new DispatcherTimer();
 			_timer.Tick += OnTick;
 		}
 
-		public void Start(Func<Task> action)
+		public void Subscribe(Func<Task> onChanged)
 		{
-			if (action == null)
-				throw new ArgumentNullException(nameof(action));
+			if (onChanged == null)
+				throw new ArgumentNullException(nameof(onChanged));
 
-			_action = action;
+			this._onChanged = onChanged;
 			SystemEvents.DisplaySettingsChanged += OnDisplaySettingsChanged;
-		}
-
-		public void Stop()
-		{
-			SystemEvents.DisplaySettingsChanged -= OnDisplaySettingsChanged;
 		}
 
 		private async void OnDisplaySettingsChanged(object sender, EventArgs e)
 		{
 			_timer.Stop();
 
-			await _action?.Invoke();
+			await _onChanged?.Invoke();
 
 			_count = 0;
 			_timer.Interval += Interval;
@@ -53,7 +48,7 @@ namespace Monitorian.Models.Watcher
 		{
 			_timer.Stop();
 
-			await _action?.Invoke();
+			await _onChanged?.Invoke();
 
 			_count++;
 			if (_count <= _countMax)
@@ -61,5 +56,32 @@ namespace Monitorian.Models.Watcher
 				_timer.Start();
 			}
 		}
+
+		#region IDisposable
+
+		private bool isDisposed = false;
+
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		protected virtual void Dispose(bool disposing)
+		{
+			if (isDisposed)
+				return;
+
+			if (disposing)
+			{
+				// Free any other managed objects here.
+				SystemEvents.DisplaySettingsChanged -= OnDisplaySettingsChanged;
+			}
+
+			// Free any unmanaged objects here.
+			isDisposed = true;
+		}
+
+		#endregion
 	}
 }

@@ -41,8 +41,8 @@ namespace Monitorian
 			BindingOperations.EnableCollectionSynchronization(Monitors, _monitorsLock);
 
 			NotifyIconComponent = new NotifyIconComponent();
-			NotifyIconComponent.MouseLeftButtonClick += OnMouseLeftButtonClick;
-			NotifyIconComponent.MouseRightButtonClick += OnMouseRightButtonClick;
+			NotifyIconComponent.MouseLeftButtonClick += OnMainWindowShowRequested;
+			NotifyIconComponent.MouseRightButtonClick += OnMenuWindowShowRequested;
 
 			_settingsWatcher = new SettingsWatcher();
 			_powerWatcher = new PowerWatcher();
@@ -69,7 +69,7 @@ namespace Monitorian
 			if (!args.Contains(RegistryService.Arguments))
 				_current.MainWindow.Show();
 
-			agent.ShowRequested += OnShowRequested;
+			agent.ShowRequested += OnMainWindowShowRequested;
 
 			await ScanAsync();
 
@@ -90,13 +90,13 @@ namespace Monitorian
 			_brightnessWatcher.Dispose();
 		}
 
-		private async void OnMouseLeftButtonClick(object sender, EventArgs e)
+		private async void OnMainWindowShowRequested(object sender, EventArgs e)
 		{
 			ShowMainWindow();
 			await UpdateAsync();
 		}
 
-		private void OnMouseRightButtonClick(object sender, Point e)
+		private void OnMenuWindowShowRequested(object sender, Point e)
 		{
 			ShowMenuWindow(e);
 		}
@@ -106,21 +106,16 @@ namespace Monitorian
 			NotifyIconComponent.AdjustIcon(e.NewDpi);
 		}
 
-		private async void OnShowRequested(object sender, EventArgs e)
-		{
-			_current.Dispatcher.Invoke(() => ShowMainWindow());
-			await UpdateAsync();
-		}
-
 		private async void ShowMainWindow()
 		{
-			if (!((MainWindow)_current.MainWindow).IsReady)
+			var window = (MainWindow)_current.MainWindow;
+			if (!window.IsReady)
 				return;
 
-			if (_current.MainWindow.Visibility != Visibility.Visible)
+			if (window.Visibility != Visibility.Visible)
 			{
-				_current.MainWindow.Show();
-				_current.MainWindow.Activate();
+				window.Show();
+				window.Activate();
 			}
 			await UpdateAsync();
 		}

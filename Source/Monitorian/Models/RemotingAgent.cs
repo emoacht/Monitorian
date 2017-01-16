@@ -90,7 +90,11 @@ namespace Monitorian.Models
 	{
 		public event EventHandler ShowRequested;
 
-		public void ShowRequest() => ShowRequested?.Invoke(this, null);
+		public void ShowRequest()
+		{
+			// This method will be called by an instance other than one which instantiated this object.
+			App.Current.Dispatcher.Invoke(() => ShowRequested?.Invoke(this, null));
+		}
 
 		public override object InitializeLifetimeService() => null;
 	}

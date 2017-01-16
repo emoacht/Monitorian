@@ -44,6 +44,9 @@ namespace Monitorian
 			if (agent == null)
 				throw new ArgumentNullException(nameof(agent));
 
+			var args = Environment.GetCommandLineArgs().Skip(1).ToArray();
+			LanguageService.Switch(args);
+
 			var dpi = VisualTreeHelperAddition.GetNotificationAreaDpi();
 			NotifyIconComponent.ShowIcon("pack://application:,,,/Resources/Brightness.ico", dpi, ProductInfo.Title);
 
@@ -51,7 +54,7 @@ namespace Monitorian
 			_current.MainWindow = window;
 			_current.MainWindow.DpiChanged += OnDpiChanged;
 
-			if (!Environment.GetCommandLineArgs().Skip(1).Contains(RegistryService.Arguments))
+			if (!args.Contains(RegistryService.Arguments))
 				_current.MainWindow.Show();
 
 			agent.ShowRequested += OnShowRequested;

@@ -74,6 +74,7 @@
     <Compile Include="MainController.cs" />
     <Compile Include="Models\ConsoleLogService.cs" />
     <Compile Include="Models\FolderService.cs" />
+    <Compile Include="Models\LanguageService.cs" />
     <Compile Include="Models\ProductInfo.cs" />
     <Compile Include="Models\RegistryService.cs" />
     <Compile Include="Models\RemotingAgent.cs" />

@@ -210,7 +210,7 @@ namespace Monitorian.Models.Monitor
 			}
 			finally
 			{
-				// Physical monitors should be destroyed at a later stage.
+				// The physical monitor handles should be destroyed at a later stage.
 			}
 		}
 
@@ -218,6 +218,12 @@ namespace Monitorian.Models.Monitor
 		{
 			if (physicalMonitorHandle == null)
 				throw new ArgumentNullException(nameof(physicalMonitorHandle));
+
+			if (physicalMonitorHandle.IsClosed)
+			{
+				Debug.WriteLine("Failed to get brightness. The physical monitor handle has been closed.");
+				return -1;
+			}
 
 			uint minimumBrightness;
 			uint currentBrightness;
@@ -242,9 +248,14 @@ namespace Monitorian.Models.Monitor
 		{
 			if (physicalMonitorHandle == null)
 				throw new ArgumentNullException(nameof(physicalMonitorHandle));
-
 			if ((brightness < 0) || (100 < brightness))
 				throw new ArgumentOutOfRangeException(nameof(brightness), $"{nameof(brightness)} must be in the range of 0 to 100.");
+
+			if (physicalMonitorHandle.IsClosed)
+			{
+				Debug.WriteLine("Failed to set brightness. The physical monitor handle has been closed.");
+				return false;
+			}
 
 			if (!SetMonitorBrightness(physicalMonitorHandle, (uint)brightness))
 			{

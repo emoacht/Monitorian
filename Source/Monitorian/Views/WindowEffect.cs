@@ -159,7 +159,8 @@ namespace Monitorian.Views
 			}
 			catch (Exception ex)
 			{
-				Debug.WriteLine($"Failed to set window composition attribute.\r\n{ex}");
+				Debug.WriteLine("Failed to set window composition attribute." + Environment.NewLine
+					+ ex);
 				return false;
 			}
 			finally

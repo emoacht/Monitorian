@@ -51,7 +51,8 @@ namespace Monitorian.Models
 				}
 				catch (RemotingException ex)
 				{
-					Debug.WriteLine($"Failed to start remoting.\r\n{ex}");
+					Debug.WriteLine("Failed to start remoting." + Environment.NewLine
+						+ ex);
 				}
 				return true;
 			}
@@ -72,7 +73,8 @@ namespace Monitorian.Models
 				}
 				catch (RemotingException ex)
 				{
-					Debug.WriteLine($"Failed to start remoting.\r\n{ex}");
+					Debug.WriteLine("Failed to start remoting." + Environment.NewLine
+						+ ex);
 				}
 				return false;
 			}

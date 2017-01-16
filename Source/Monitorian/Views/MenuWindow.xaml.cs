@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 using Monitorian.ViewModels;
+using Monitorian.Views.Movers;
 
 namespace Monitorian.Views
 {

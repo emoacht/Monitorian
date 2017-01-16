@@ -9,7 +9,7 @@ using System.Windows.Media;
 
 using Monitorian.Helper;
 
-namespace Monitorian.Views
+namespace Monitorian.Views.Movers
 {
 	internal abstract class WindowMover
 	{

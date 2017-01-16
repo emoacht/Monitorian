@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace Monitorian.Views
+namespace Monitorian.Views.Movers
 {
 	internal class MenuWindowMover : WindowMover
 	{

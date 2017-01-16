@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
 
-namespace Monitorian.Views
+namespace Monitorian.Views.Movers
 {
 	internal class MainWindowMover : WindowMover
 	{

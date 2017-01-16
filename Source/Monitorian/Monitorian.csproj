@@ -68,9 +68,11 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Helper\OsVersion.cs" />
+    <Compile Include="Helper\DpiScaleExtension.cs" />
+    <Compile Include="Helper\ArraySearch.cs" />
     <Compile Include="MainController.cs" />
     <Compile Include="Models\ConsoleService.cs" />
-    <Compile Include="Models\Monitor\PowerManagement.cs" />
+    <Compile Include="Models\ProductInfo.cs" />
     <Compile Include="Models\RegistryService.cs" />
     <Compile Include="Models\RemotingAgent.cs" />
     <Compile Include="Models\Watcher\BrightnessChangeWatcher.cs" />
@@ -80,20 +82,19 @@
     <Compile Include="ViewModels\MonitorViewModel.cs" />
     <Compile Include="ViewModels\MenuWindowViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
-    <Compile Include="Helper\DpiScaleExtension.cs" />
-    <Compile Include="Views\MainWindowMover.cs" />
-    <Compile Include="Views\MenuWindowMover.cs" />
+    <Compile Include="Views\Movers\WindowMover.cs" />
+    <Compile Include="Views\Movers\MainWindowMover.cs" />
+    <Compile Include="Views\Movers\MenuWindowMover.cs" />
+    <Compile Include="Views\Controls\QuickSlider.cs" />
     <Compile Include="Views\NotifyIconComponent.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Views\MenuWindow.xaml.cs">
       <DependentUpon>MenuWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Models\ProductInfo.cs" />
     <Compile Include="Views\TaskbarAlignment.cs" />
     <Compile Include="Views\VisualTreeHelperAddition.cs" />
-    <Compile Include="Views\WindowEffect.cs" />
-    <Compile Include="Views\WindowMover.cs" />
+    <Compile Include="Views\WindowEffect.cs" />    
     <Compile Include="Views\WindowPosition.cs" />
     <Page Include="Views\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -103,8 +104,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Helper\ArraySearch.cs" />
-    <Compile Include="Views\Controls\QuickSlider.cs" />
+    
     <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -121,6 +121,7 @@
     <Compile Include="Models\Monitor\IMonitor.cs" />
     <Compile Include="Models\Monitor\MonitorItem.cs" />
     <Compile Include="Models\Monitor\MonitorConfiguration.cs" />
+    <Compile Include="Models\Monitor\PowerManagement.cs" />
     <Compile Include="Models\Monitor\MonitorManager.cs" />
     <Compile Include="Models\Monitor\WmiMonitorItem.cs" />
     <Compile Include="Models\Monitor\MSMonitor.cs" />

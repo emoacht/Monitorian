@@ -31,10 +31,15 @@ namespace Monitorian.Models.Monitor
 			this.Handle = handle;
 		}
 
+		private readonly object _lock = new object();
+
 		public bool UpdateBrightness(int brightness = -1)
 		{
-			this.Brightness = MonitorConfiguration.GetBrightness(Handle);
-			return (0 <= this.Brightness);
+			lock (_lock)
+			{
+				this.Brightness = MonitorConfiguration.GetBrightness(Handle);
+				return (0 <= this.Brightness);
+			}
 		}
 
 		public bool SetBrightness(int brightness)
@@ -42,32 +47,39 @@ namespace Monitorian.Models.Monitor
 			if ((brightness < 0) || (100 < brightness))
 				throw new ArgumentOutOfRangeException(nameof(brightness));
 
-			if (MonitorConfiguration.SetBrightness(Handle, brightness))
+			lock (_lock)
 			{
-				this.Brightness = brightness;
-				return true;
+				if (MonitorConfiguration.SetBrightness(Handle, brightness))
+				{
+					this.Brightness = brightness;
+					return true;
+				}
+				return false;
 			}
-			return false;
 		}
 
 		#region IDisposable
 
-		private bool isDisposed = false;
+		private bool _isDisposed = false;
 
 		protected override void Dispose(bool disposing)
 		{
-			if (isDisposed)
-				return;
-
-			if (disposing)
+			lock (_lock)
 			{
-				// Free any other managed objects here.
-				Handle.Dispose();
-			}
+				if (_isDisposed)
+					return;
 
-			// Free any unmanaged objects here.
-			isDisposed = true;
-			base.Dispose(disposing);
+				if (disposing)
+				{
+					// Free any other managed objects here.
+					Handle.Dispose();
+				}
+
+				// Free any unmanaged objects here.
+				_isDisposed = true;
+
+				base.Dispose(disposing);
+			}
 		}
 
 		#endregion

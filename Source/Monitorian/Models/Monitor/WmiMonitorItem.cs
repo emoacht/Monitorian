@@ -35,24 +35,29 @@ namespace Monitorian.Models.Monitor
 			this._isRemovable = isRemovable;
 		}
 
+		private readonly object _lock = new object();
+
 		public bool UpdateBrightness(int brightness = -1)
 		{
-			if (_isRemovable)
+			lock (_lock)
 			{
-				if (0 <= brightness)
+				if (_isRemovable)
 				{
-					this.Brightness = brightness;
+					if (0 <= brightness)
+					{
+						this.Brightness = brightness;
+					}
+					else
+					{
+						this.Brightness = MSMonitor.GetBrightness(DeviceInstanceId);
+					}
 				}
 				else
 				{
-					this.Brightness = MSMonitor.GetBrightness(DeviceInstanceId);
+					this.Brightness = PowerManagement.GetActiveSchemeBrightness();
 				}
+				return (0 <= this.Brightness);
 			}
-			else
-			{
-				this.Brightness = PowerManagement.GetActiveSchemeBrightness();
-			}
-			return (0 <= this.Brightness);
 		}
 
 		public bool SetBrightness(int brightness)
@@ -60,25 +65,28 @@ namespace Monitorian.Models.Monitor
 			if ((brightness < 0) || (100 < brightness))
 				throw new ArgumentOutOfRangeException(nameof(brightness));
 
-			if (_isRemovable)
+			lock (_lock)
 			{
-				brightness = ArraySearch.GetNearest(_brightnessLevels, (byte)brightness);
+				if (_isRemovable)
+				{
+					brightness = ArraySearch.GetNearest(_brightnessLevels, (byte)brightness);
 
-				if (MSMonitor.SetBrightness(DeviceInstanceId, brightness))
-				{
-					this.Brightness = brightness;
-					return true;
+					if (MSMonitor.SetBrightness(DeviceInstanceId, brightness))
+					{
+						this.Brightness = brightness;
+						return true;
+					}
 				}
-			}
-			else
-			{
-				if (PowerManagement.SetActiveSchemeBrightness(brightness))
+				else
 				{
-					this.Brightness = brightness;
-					return true;
+					if (PowerManagement.SetActiveSchemeBrightness(brightness))
+					{
+						this.Brightness = brightness;
+						return true;
+					}
 				}
+				return false;
 			}
-			return false;
 		}
 	}
 }

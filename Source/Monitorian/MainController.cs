@@ -24,14 +24,14 @@ namespace Monitorian
 
 		public Settings Settings { get; }
 
-		private readonly SettingsChangeWatcher _settingsWatcher;
-		private readonly PowerChangeWatcher _powerWatcher;
-		private readonly BrightnessChangeWatcher _brightnessWatcher;
-
 		public ObservableCollection<MonitorViewModel> Monitors { get; }
 		private readonly object _monitorsLock = new object();
 
 		public NotifyIconComponent NotifyIconComponent { get; }
+
+		private readonly SettingsChangeWatcher _settingsWatcher;
+		private readonly PowerChangeWatcher _powerWatcher;
+		private readonly BrightnessChangeWatcher _brightnessWatcher;
 
 		public MainController()
 		{
@@ -49,7 +49,7 @@ namespace Monitorian
 			_brightnessWatcher = new BrightnessChangeWatcher();
 		}
 
-		public async Task Initiate(RemotingAgent agent)
+		internal async Task InitiateAsync(RemotingAgent agent)
 		{
 			if (agent == null)
 				throw new ArgumentNullException(nameof(agent));
@@ -78,16 +78,9 @@ namespace Monitorian
 			_brightnessWatcher.Start((instanceName, brightness) => Update(instanceName, brightness));
 		}
 
-		private void OnDpiChanged(object sender, DpiChangedEventArgs e)
+		internal void End()
 		{
-			NotifyIconComponent.AdjustIcon(e.NewDpi);
-		}
-
-		public void End()
-		{
-			foreach (var monitor in Monitors)
-				monitor.Dispose();
-
+			MonitorsDispose();
 			NotifyIconComponent.Dispose();
 
 			Settings.Save();
@@ -97,9 +90,10 @@ namespace Monitorian
 			_brightnessWatcher.Stop();
 		}
 
-		private void OnMouseLeftButtonClick(object sender, EventArgs e)
+		private async void OnMouseLeftButtonClick(object sender, EventArgs e)
 		{
 			ShowMainWindow();
+			await UpdateAsync();
 		}
 
 		private void OnMouseRightButtonClick(object sender, Point e)
@@ -107,9 +101,15 @@ namespace Monitorian
 			ShowMenuWindow(e);
 		}
 
-		private void OnShowRequested(object sender, EventArgs e)
+		private void OnDpiChanged(object sender, DpiChangedEventArgs e)
+		{
+			NotifyIconComponent.AdjustIcon(e.NewDpi);
+		}
+
+		private async void OnShowRequested(object sender, EventArgs e)
 		{
 			_current.Dispatcher.Invoke(() => ShowMainWindow());
+			await UpdateAsync();
 		}
 
 		private async void ShowMainWindow()
@@ -131,12 +131,14 @@ namespace Monitorian
 			window.Show();
 		}
 
+		#region Monitors
+
 		private readonly int _largestCount = 4;
 
 		private int _scanCount = 0;
 		private int _updateCount = 0;
 
-		public async Task ScanAsync()
+		private async Task ScanAsync()
 		{
 			if (Interlocked.Increment(ref _scanCount) > 1)
 				return;
@@ -197,7 +199,7 @@ namespace Monitorian
 			}
 		}
 
-		public async Task UpdateAsync()
+		private async Task UpdateAsync()
 		{
 			if (_scanCount > 0)
 				return;
@@ -217,7 +219,7 @@ namespace Monitorian
 			}
 		}
 
-		public void Update(string instanceName, int brightness)
+		private void Update(string instanceName, int brightness)
 		{
 			var monitor = Monitors.FirstOrDefault(x => instanceName.StartsWith(x.DeviceInstanceId, StringComparison.OrdinalIgnoreCase));
 			if (monitor != null)
@@ -225,5 +227,13 @@ namespace Monitorian
 				monitor.UpdateBrightness(brightness);
 			}
 		}
+
+		private void MonitorsDispose()
+		{
+			foreach (var monitor in Monitors)
+				monitor.Dispose();
+		}
+
+		#endregion
 	}
 }

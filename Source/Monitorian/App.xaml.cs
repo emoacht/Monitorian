@@ -22,7 +22,7 @@ namespace Monitorian
 
 			ConsoleLogService.Start();
 
-			if (Environment.GetCommandLineArgs().Skip(1).Contains(RegistryService.Arguments))
+			if (e.Args.Contains(RegistryService.Arguments))
 				await Task.Delay(TimeSpan.FromSeconds(10));
 
 			_agent = new RemotingAgent();
@@ -33,10 +33,10 @@ namespace Monitorian
 			}
 
 			_controller = new MainController();
-			await _controller.Initiate(_agent);
+			await _controller.InitiateAsync(_agent);
 
 			//this.MainWindow = new MainWindow();
-			//this.MainWindow.Show();			
+			//this.MainWindow.Show();
 		}
 
 		protected override void OnExit(ExitEventArgs e)

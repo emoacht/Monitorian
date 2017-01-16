@@ -90,7 +90,7 @@
       <DependentUpon>MenuWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Models\ProductInfo.cs" />
-    <Compile Include="Views\TaskbarAglignment.cs" />
+    <Compile Include="Views\TaskbarAlignment.cs" />
     <Compile Include="Views\VisualTreeHelperAddition.cs" />
     <Compile Include="Views\WindowEffect.cs" />
     <Compile Include="Views\WindowMover.cs" />

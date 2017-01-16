@@ -20,7 +20,7 @@ namespace Monitorian
 		{
 			base.OnStartup(e);
 
-			ConsoleService.StartAttachConsole();
+			ConsoleLogService.Start();
 
 			if (Environment.GetCommandLineArgs().Skip(1).Contains(RegistryService.Arguments))
 				await Task.Delay(TimeSpan.FromSeconds(10));
@@ -44,7 +44,7 @@ namespace Monitorian
 			_agent?.End();
 			_controller?.End();
 
-			ConsoleService.EndConsole();
+			ConsoleLogService.End();
 
 			base.OnExit(e);
 		}

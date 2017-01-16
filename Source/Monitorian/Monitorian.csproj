@@ -72,7 +72,8 @@
     <Compile Include="Helper\DpiScaleExtension.cs" />
     <Compile Include="Helper\ArraySearch.cs" />
     <Compile Include="MainController.cs" />
-    <Compile Include="Models\ConsoleService.cs" />
+    <Compile Include="Models\ConsoleLogService.cs" />
+    <Compile Include="Models\FolderService.cs" />
     <Compile Include="Models\ProductInfo.cs" />
     <Compile Include="Models\RegistryService.cs" />
     <Compile Include="Models\RemotingAgent.cs" />

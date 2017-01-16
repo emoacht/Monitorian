@@ -126,6 +126,9 @@
   <data name="ProjectSiteUrl" xml:space="preserve">
     <value>https://github.com/emoacht/Monitorian</value>
   </data>
+  <data name="RecordException" xml:space="preserve">
+    <value>An unexpected problem occurred. Save exception log to Desktop?</value>
+  </data>
   <data name="Start" xml:space="preserve">
     <value>Start on sign in</value>
   </data>

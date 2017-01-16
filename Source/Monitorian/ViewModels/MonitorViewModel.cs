@@ -8,7 +8,7 @@ using Monitorian.Models.Monitor;
 
 namespace Monitorian.ViewModels
 {
-	public class MonitorViewModel : ViewModelBase, IDisposable
+	public class MonitorViewModel : ViewModelBase
 	{
 		private readonly IMonitor _monitor;
 
@@ -72,27 +72,21 @@ namespace Monitorian.ViewModels
 
 		#region IDisposable
 
-		private bool isDisposed = false;
+		private bool _isDisposed = false;
 
-		public void Dispose()
+		protected override void Dispose(bool disposing)
 		{
-			Dispose(true);
-			GC.SuppressFinalize(this);
-		}
-
-		protected virtual void Dispose(bool disposing)
-		{
-			if (isDisposed)
+			if (_isDisposed)
 				return;
 
 			if (disposing)
 			{
-				// Free any other managed objects here.
 				_monitor.Dispose();
 			}
 
-			// Free any unmanaged objects here.
-			isDisposed = true;
+			_isDisposed = true;
+
+			base.Dispose(disposing);
 		}
 
 		#endregion

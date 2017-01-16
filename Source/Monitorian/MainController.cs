@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Threading;
 
@@ -26,13 +28,17 @@ namespace Monitorian
 		private readonly PowerChangeWatcher _powerWatcher;
 		private readonly BrightnessChangeWatcher _brightnessWatcher;
 
-		public ObservableCollection<MonitorViewModel> Monitors { get; } = new ObservableCollection<MonitorViewModel>();
-		
+		public ObservableCollection<MonitorViewModel> Monitors { get; }
+		private readonly object _monitorsLock = new object();
+
 		public NotifyIconComponent NotifyIconComponent { get; }
 
 		public MainController()
 		{
 			Settings = new Settings();
+
+			Monitors = new ObservableCollection<MonitorViewModel>();
+			BindingOperations.EnableCollectionSynchronization(Monitors, _monitorsLock);
 
 			NotifyIconComponent = new NotifyIconComponent();
 			NotifyIconComponent.MouseLeftButtonClick += OnMouseLeftButtonClick;
@@ -127,51 +133,88 @@ namespace Monitorian
 
 		private readonly int _largestCount = 4;
 
+		private int _scanCount = 0;
+		private int _updateCount = 0;
+
 		public async Task ScanAsync()
 		{
-			var scanTime = DateTime.Now;
+			if (Interlocked.Increment(ref _scanCount) > 1)
+				return;
 
-			var oldMonitors = Monitors.ToList();
-
-			foreach (var item in await Task.Run(() => MonitorManager.EnumerateMonitors()))
+			try
 			{
-				var oldMonitor = Monitors.FirstOrDefault(x =>
-					string.Equals(x.DeviceInstanceId, item.DeviceInstanceId, StringComparison.OrdinalIgnoreCase));
-				if (oldMonitor != null)
-				{
-					oldMonitors.Remove(oldMonitor);
-					item.Dispose();
-					continue;
-				}
+				var scanTime = DateTime.Now;
 
-				var newMonitor = new MonitorViewModel(item);
-				if (Monitors.Count < _largestCount)
+				await Task.Run(() =>
 				{
-					newMonitor.UpdateBrightness();
-					newMonitor.IsTarget = true;
-				}
-				Monitors.Add(newMonitor);
+					var oldMonitors = Monitors.ToList();
+
+					foreach (var item in MonitorManager.EnumerateMonitors())
+					{
+						var oldMonitor = oldMonitors.FirstOrDefault(x =>
+							string.Equals(x.DeviceInstanceId, item.DeviceInstanceId, StringComparison.OrdinalIgnoreCase));
+						if (oldMonitor != null)
+						{
+							oldMonitors.Remove(oldMonitor);
+							item.Dispose();
+							continue;
+						}
+
+						var newMonitor = new MonitorViewModel(item);
+						if (Monitors.Count < _largestCount)
+						{
+							newMonitor.UpdateBrightness();
+							newMonitor.IsTarget = true;
+						}
+						lock (_monitorsLock)
+						{
+							Monitors.Add(newMonitor);
+						}
+					}
+
+					foreach (var oldMonitor in oldMonitors)
+					{
+						oldMonitor.Dispose();
+						lock (_monitorsLock)
+						{
+							Monitors.Remove(oldMonitor);
+						}
+					}
+				}).ConfigureAwait(false);
+
+				await Task.WhenAll(Monitors
+					.Take(_largestCount)
+					.Where(x => x.UpdateTime < scanTime)
+					.Select(x => Task.Run(() =>
+					{
+						x.UpdateBrightness();
+						x.IsTarget = true;
+					})));
 			}
-
-			foreach (var oldMonitor in oldMonitors)
+			finally
 			{
-				oldMonitor.Dispose();
-				Monitors.Remove(oldMonitor);
+				Interlocked.Exchange(ref _scanCount, 0);
 			}
-
-			await Task.WhenAll(Monitors
-				.Take(_largestCount)
-				.Where(x => x.UpdateTime < scanTime)
-				.Select(x => Task.Run(() =>
-				{
-					x.UpdateBrightness();
-					x.IsTarget = true;
-				})));
 		}
 
 		public async Task UpdateAsync()
 		{
-			await Task.WhenAll(Monitors.Select(async x => await Task.Run(() => x.UpdateBrightness())));
+			if (_scanCount > 0)
+				return;
+
+			if (Interlocked.Increment(ref _updateCount) > 1)
+				return;
+
+			try
+			{
+				await Task.WhenAll(Monitors
+					.Where(x => x.IsTarget)
+					.Select(x => Task.Run(() => x.UpdateBrightness())));
+			}
+			finally
+			{
+				Interlocked.Exchange(ref _updateCount, 0);
+			}
 		}
 
 		public void Update(string instanceName, int brightness)

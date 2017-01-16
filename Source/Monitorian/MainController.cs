@@ -27,7 +27,7 @@ namespace Monitorian
 		private readonly BrightnessChangeWatcher _brightnessWatcher;
 
 		public ObservableCollection<MonitorViewModel> Monitors { get; } = new ObservableCollection<MonitorViewModel>();
-
+		
 		public NotifyIconComponent NotifyIconComponent { get; }
 
 		public MainController()
@@ -125,9 +125,13 @@ namespace Monitorian
 			window.Show();
 		}
 
+		private readonly int _largestCount = 4;
+
 		public async Task ScanAsync()
 		{
-			var updateTime = DateTime.Now;
+			var scanTime = DateTime.Now;
+
+			var oldMonitors = Monitors.ToList();
 
 			foreach (var item in await Task.Run(() => MonitorManager.EnumerateMonitors()))
 			{
@@ -135,26 +139,34 @@ namespace Monitorian
 					string.Equals(x.DeviceInstanceId, item.DeviceInstanceId, StringComparison.OrdinalIgnoreCase));
 				if (oldMonitor != null)
 				{
-					oldMonitor.UpdateBrightness();
+					oldMonitors.Remove(oldMonitor);
 					item.Dispose();
+					continue;
 				}
-				else
+
+				var newMonitor = new MonitorViewModel(item);
+				if (Monitors.Count < _largestCount)
 				{
-					var newMonitor = new MonitorViewModel(item);
 					newMonitor.UpdateBrightness();
-					Monitors.Add(newMonitor);
+					newMonitor.IsTarget = true;
 				}
+				Monitors.Add(newMonitor);
 			}
 
-			foreach (var pair in Monitors
-				.Select((x, index) => new { Index = index, Monitor = x })
-				.Where(x => x.Monitor.UpdateTime < updateTime)
-				.Reverse()
-				.ToArray())
+			foreach (var oldMonitor in oldMonitors)
 			{
-				pair.Monitor.Dispose();
-				Monitors.RemoveAt(pair.Index);
+				oldMonitor.Dispose();
+				Monitors.Remove(oldMonitor);
 			}
+
+			await Task.WhenAll(Monitors
+				.Take(_largestCount)
+				.Where(x => x.UpdateTime < scanTime)
+				.Select(x => Task.Run(() =>
+				{
+					x.UpdateBrightness();
+					x.IsTarget = true;
+				})));
 		}
 
 		public async Task UpdateAsync()

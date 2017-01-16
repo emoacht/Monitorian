@@ -35,8 +35,11 @@ namespace Monitorian.ViewModels
 				if (_monitorsView == null)
 				{
 					_monitorsView = new ListCollectionView(_controller.Monitors);
-					_monitorsView.SortDescriptions.Add(new SortDescription(nameof(IMonitor.DisplayIndex), ListSortDirection.Ascending));
-					_monitorsView.SortDescriptions.Add(new SortDescription(nameof(IMonitor.MonitorIndex), ListSortDirection.Ascending));
+					_monitorsView.SortDescriptions.Add(new SortDescription(nameof(MonitorViewModel.DisplayIndex), ListSortDirection.Ascending));
+					_monitorsView.SortDescriptions.Add(new SortDescription(nameof(MonitorViewModel.MonitorIndex), ListSortDirection.Ascending));
+					_monitorsView.Filter = x => ((MonitorViewModel)x).IsTarget;
+					_monitorsView.IsLiveFiltering = true;
+					_monitorsView.LiveFilteringProperties.Add(nameof(MonitorViewModel.IsTarget));
 
 					((INotifyCollectionChanged)_monitorsView).CollectionChanged += OnCollectionChanged;
 				}
@@ -47,7 +50,14 @@ namespace Monitorian.ViewModels
 
 		private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
-			RaisePropertyChanged(nameof(IsMonitorsEmpty));
+			switch (e.Action)
+			{
+				//case NotifyCollectionChangedAction.Reset:
+				case NotifyCollectionChangedAction.Add:
+				case NotifyCollectionChangedAction.Remove:
+					RaisePropertyChanged(nameof(IsMonitorsEmpty));
+					break;
+			}
 		}
 
 		public bool IsMonitorsEmpty => MonitorsView.IsEmpty;

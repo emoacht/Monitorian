@@ -70,6 +70,13 @@ namespace Monitorian.ViewModels
 			}
 		}
 
+		public bool IsTarget
+		{
+			get { return _isTarget; }
+			set { SetPropertyValue(ref _isTarget, value); }
+		}
+		private bool _isTarget = false;
+
 		#region IDisposable
 
 		private bool _isDisposed = false;

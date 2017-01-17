@@ -70,6 +70,15 @@ namespace Monitorian.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Enable moving together.
+        /// </summary>
+        public static string EnabledUnison {
+            get {
+                return ResourceManager.GetString("EnabledUnison", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Large buttons.
         /// </summary>
         public static string LargeElements {

@@ -39,7 +39,70 @@ namespace Monitorian.Views.Controls
 			}
 		}
 
+		#region Unison
+
+		private static event EventHandler<double> Moved; // Static event
+
+		protected override void OnValueChanged(double oldValue, double newValue)
+		{
+			base.OnValueChanged(oldValue, newValue);
+
+			if (IsUnison && _canDrag && (_isDragStarting || _thumb.IsDragging))
+			{
+				Moved?.Invoke(this, newValue - oldValue);
+			}
+		}
+
+		public bool IsUnison
+		{
+			get { return (bool)GetValue(IsUnisonProperty); }
+			set { SetValue(IsUnisonProperty, value); }
+		}
+		public static readonly DependencyProperty IsUnisonProperty =
+			DependencyProperty.Register(
+				"IsUnison",
+				typeof(bool),
+				typeof(QuickSlider),
+				new PropertyMetadata(
+					false,
+					(d, e) =>
+					{
+						var instance = (QuickSlider)d;
+
+						if ((bool)e.NewValue)
+						{
+							Moved += instance.OnMoved;
+						}
+						else
+						{
+							Moved -= instance.OnMoved;
+						}
+					}));
+
+		private void OnMoved(object sender, double e)
+		{
+			if (ReferenceEquals(this, sender))
+				return;
+
+			var brightness = this.Value + e;
+			if (brightness < this.Minimum)
+			{
+				brightness = this.Minimum;
+				IsUnison = false;
+			}
+			else if (this.Maximum < brightness)
+			{
+				brightness = this.Maximum;
+				IsUnison = false;
+			}
+			this.Value = brightness;
+		}
+
+		#endregion
+
 		#region Drag
+
+		private bool _isDragStarting;
 
 		private MethodInfo _updateValue;
 		private PropertyInfo _thumbIsDragging;
@@ -133,15 +196,24 @@ namespace Monitorian.Views.Controls
 			if (!_canDrag)
 				return false;
 
-			var originTrackPoint = getPosition(_track);
-			var newValue = _track.ValueFromPoint(originTrackPoint);
-			newValue = Math.Min(this.Maximum, Math.Max(this.Minimum, Math.Round(newValue)));
+			try
+			{
+				_isDragStarting = true;
 
-			if (newValue == this.Value)
-				return false;
+				var originTrackPoint = getPosition(_track);
+				var newValue = _track.ValueFromPoint(originTrackPoint);
+				newValue = Math.Min(this.Maximum, Math.Max(this.Minimum, Math.Round(newValue)));
 
-			// Set new value.
-			_updateValue.Invoke(this, new object[] { newValue });
+				if (newValue == this.Value)
+					return false;
+
+				// Set new value.
+				_updateValue.Invoke(this, new object[] { newValue });
+			}
+			finally
+			{
+				_isDragStarting = false;
+			}
 
 			// Reproduce Thumb.OnMouseLeftButtonDown method.
 			if (!_thumb.IsDragging)

@@ -191,6 +191,81 @@
 				</Setter.Value>
 			</Setter>
 		</Style>
+
+		<!-- Unison -->
+		<Color x:Key="Unison.Checked.BackgroundColor">#FFECECEC</Color>
+
+		<SolidColorBrush x:Key="Unison.Checked.Background" Color="{StaticResource Unison.Checked.BackgroundColor}"/>
+
+		<Style x:Key="UnisonButtonStyle" TargetType="{x:Type ToggleButton}">
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="{x:Type ToggleButton}">
+						<Grid>
+							<Grid x:Name="buttonBase">
+								<Grid.Background>
+									<SolidColorBrush Color="{StaticResource AccessButton.Normal.BackgroundColor}"/>
+								</Grid.Background>
+								<Border x:Name="buttonBorder"
+										BorderThickness="2">
+									<Border.BorderBrush>
+										<SolidColorBrush Color="{StaticResource AccessButton.Normal.BorderColor}"/>
+									</Border.BorderBrush>
+
+									<Grid Height="{Binding RelativeSource={RelativeSource Self}, Path=ActualWidth}"
+										  Margin="2" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+										  RenderOptions.EdgeMode="Aliased">
+										<Path x:Name="horizontalLine"
+											  Stretch="Uniform"
+											  Data="M 0,0 1,0"
+											  Stroke="{TemplateBinding Foreground}" StrokeThickness="1"/>
+										<Path x:Name="verticalLine"
+											  Stretch="Uniform"
+											  Data="M 0,0 0,1"
+											  Stroke="{TemplateBinding Foreground}" StrokeThickness="1"
+											  Opacity="1"/>
+									</Grid>
+								</Border>
+							</Grid>
+
+							<VisualStateManager.VisualStateGroups>
+								<VisualStateGroup x:Name="CommonStates">
+									<VisualState x:Name="Normal"/>
+									<VisualState x:Name="MouseOver">
+										<Storyboard>
+											<ColorAnimation Storyboard.TargetName="buttonBorder"
+															Storyboard.TargetProperty="(Border.BorderBrush).(SolidColorBrush.Color)"
+															Duration="0"
+															To="{StaticResource AccessButton.MouseOver.BorderColor}"/>
+										</Storyboard>
+									</VisualState>
+									<VisualState x:Name="Pressed">
+										<Storyboard>
+											<ColorAnimation Storyboard.TargetName="buttonBase"
+															Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)"
+															Duration="0"
+															To="{StaticResource AccessButton.Pressed.BackgroundColor}"/>
+										</Storyboard>
+									</VisualState>
+									<VisualState x:Name="Disabled"/>
+								</VisualStateGroup>
+								<VisualStateGroup x:Name="CheckStates">
+									<VisualState x:Name="Checked">
+										<Storyboard>
+											<DoubleAnimation Storyboard.TargetName="verticalLine"
+															 Storyboard.TargetProperty="(UIElement.Opacity)"
+															 Duration="0"
+															 To="0"/>
+										</Storyboard>
+									</VisualState>
+									<VisualState x:Name="Unchecked"/>
+								</VisualStateGroup>
+							</VisualStateManager.VisualStateGroups>
+						</Grid>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
 	</Window.Resources>
 
 	<Grid Width="360">
@@ -235,6 +310,7 @@
 							<Grid.ColumnDefinitions>
 								<ColumnDefinition Width="Auto"/>
 								<ColumnDefinition Width="*"/>
+								<ColumnDefinition Width="Auto"/>
 							</Grid.ColumnDefinitions>
 
 							<Button Grid.Column="0"
@@ -256,7 +332,23 @@
 												  Style="{StaticResource SliderHorizontal}"
 												  AutoToolTipPlacement="TopLeft"
 												  Minimum="0" Maximum="100"
-												  Value="{Binding BrightnessInteractive, Mode=TwoWay, Delay=50}"/>
+												  Value="{Binding BrightnessInteractive, Mode=TwoWay, Delay=50}"
+												  IsUnison="{Binding ElementName=UnisonButton, Path=IsChecked, Mode=TwoWay}"/>
+
+							<ToggleButton Grid.Column="2"
+										  x:Name="UnisonButton"
+										  Width="16" Height="{DynamicResource ButtonHeight}" Margin="0,2,2,2"
+										  Style="{StaticResource UnisonButtonStyle}"
+										  Foreground="{StaticResource App.Foreground}"
+										  VerticalContentAlignment="Bottom"
+										  IsChecked="{Binding RelativeSource={RelativeSource Self}, Path=Visibility, Mode=OneWay, Converter={StaticResource VisibilityToBooleanFilterConverterKey}, ConverterParameter=False}"
+										  Visibility="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Path=DataContext.Settings.IsEnabledUnison, Converter={StaticResource BooleanToVisibilityConverterKey}}"/>
+
+							<Border Grid.ColumnSpan="3"
+									BorderThickness="2"
+									BorderBrush="{StaticResource Unison.Checked.Background}"
+									IsHitTestVisible="False"
+									Visibility="{Binding ElementName=UnisonButton, Path=IsChecked, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverterKey}}"/>
 						</Grid>
 					</Grid>
 				</DataTemplate>

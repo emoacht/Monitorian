@@ -27,6 +27,14 @@ namespace Monitorian.Models
 		}
 		private bool _isLargeElements = true;
 
+		[DataMember]
+		public bool IsEnabledUnison
+		{
+			get { return _isEnabledUnison; }
+			set { SetPropertyValue(ref _isEnabledUnison, value); }
+		}
+		private bool _isEnabledUnison = false;
+
 		#region Load/Save
 
 		private const string SettingsFileName = "settings.xml";

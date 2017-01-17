@@ -1,8 +1,8 @@
 ﻿<Application x:Class="Monitorian.App"
 			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-			 xmlns:local="clr-namespace:Monitorian">
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 	<Application.Resources>
+		<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverterKey"/>
 
 		<SolidColorBrush x:Key="App.Background" Color="#CC171717"/>
 		<SolidColorBrush x:Key="App.Foreground" Color="White"/>

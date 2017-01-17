@@ -3,6 +3,7 @@
 		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 		xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
 		xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+		xmlns:sys="clr-namespace:System;assembly=mscorlib"
 		xmlns:models="clr-namespace:Monitorian.Models"
 		xmlns:controls="clr-namespace:Monitorian.Views.Controls"
 		Width="360" Height="200"
@@ -10,19 +11,21 @@
 		ShowInTaskbar="False"
 		Background="{StaticResource App.Background}" AllowsTransparency="True" WindowStyle="None">
 	<Window.Resources>
-		<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverterKey"/>
+		<sys:Double x:Key="ButtonHeight">60</sys:Double>
+		<sys:Double x:Key="ThumbHeight">40</sys:Double>
 
 		<!-- Slider -->
 		<Color x:Key="Slider.Filled.Static.BackgroundColor">#FF2982CC</Color>
 		<Color x:Key="Slider.Filled.MouseOver.BackgroundColor">#FF1A5280</Color>
 		<Color x:Key="Slider.Filled.Pressed.BackgroundColor">#FF5CA4DE</Color>
 		<Color x:Key="Slider.Disabled.BackgroundColor">#FFF0F0F0</Color>
+		<Color x:Key="Slider.Vacant.BackgroundColor">#FF999999</Color>
 
 		<SolidColorBrush x:Key="Slider.Filled.Static.Background" Color="{StaticResource Slider.Filled.Static.BackgroundColor}"/>
 		<SolidColorBrush x:Key="Slider.Filled.MouseOver.Background" Color="{StaticResource Slider.Filled.MouseOver.BackgroundColor}"/>
 		<SolidColorBrush x:Key="Slider.Filled.Pressed.Background" Color="{StaticResource Slider.Filled.Pressed.BackgroundColor}"/>
 		<SolidColorBrush x:Key="Slider.Disabled.Background" Color="{StaticResource Slider.Disabled.BackgroundColor}"/>
-		<SolidColorBrush x:Key="Slider.Vacant.Background" Color="#FF999999"/>
+		<SolidColorBrush x:Key="Slider.Vacant.Background" Color="{StaticResource Slider.Vacant.BackgroundColor}"/>
 
 		<Style x:Key="SliderButtonHorizontal" TargetType="{x:Type RepeatButton}">
 			<Setter Property="OverridesDefaultStyle" Value="True"/>
@@ -125,7 +128,7 @@
 									</Track.IncreaseRepeatButton>
 									<Track.Thumb>
 										<Thumb x:Name="thumb"
-											   Width="11" Height="40"
+											   Width="11" Height="{DynamicResource ThumbHeight}"
 											   Style="{StaticResource SliderThumbHorizontal}"/>
 									</Track.Thumb>
 								</Track>
@@ -166,20 +169,18 @@
 									<VisualState x:Name="Normal"/>
 									<VisualState x:Name="MouseOver">
 										<Storyboard>
-											<ColorAnimation
-												Storyboard.TargetName="buttonBorder"
-												Storyboard.TargetProperty="(Border.BorderBrush).(SolidColorBrush.Color)"
-												Duration="0:0:0"
-												To="{StaticResource AccessButton.MouseOver.BorderColor}"/>
+											<ColorAnimation Storyboard.TargetName="buttonBorder"
+															Storyboard.TargetProperty="(Border.BorderBrush).(SolidColorBrush.Color)"
+															Duration="0"
+															To="{StaticResource AccessButton.MouseOver.BorderColor}"/>
 										</Storyboard>
 									</VisualState>
 									<VisualState x:Name="Pressed">
 										<Storyboard>
-											<ColorAnimation
-												Storyboard.TargetName="buttonBase"
-												Storyboard.TargetProperty="(Grid.Background).(SolidColorBrush.Color)"
-												Duration="0:0:0"
-												To="{StaticResource AccessButton.Pressed.BackgroundColor}"/>
+											<ColorAnimation Storyboard.TargetName="buttonBase"
+															Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)"
+															Duration="0"
+															To="{StaticResource AccessButton.Pressed.BackgroundColor}"/>
 										</Storyboard>
 									</VisualState>
 									<VisualState x:Name="Disabled"/>
@@ -215,15 +216,11 @@
 			</ListView.Template>
 			<ListView.ItemTemplate>
 				<DataTemplate>
-					<Grid Margin="6,0,0,6">
+					<Grid Margin="4,0,4,4">
 						<Grid.RowDefinitions>
 							<RowDefinition Height="Auto"/>
-							<RowDefinition Height="60"/>
+							<RowDefinition Height="Auto"/>
 						</Grid.RowDefinitions>
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="Auto"/>
-							<ColumnDefinition Width="*"/>
-						</Grid.ColumnDefinitions>
 
 						<!-- Description -->
 						<TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
@@ -234,26 +231,33 @@
 								   Text="{Binding Description, Mode=OneTime}"/>
 
 						<!-- Brightness -->
-						<Button Grid.Row="1" Grid.Column="0"
-								Width="80"
-								Style="{StaticResource AccessButtonStyle}">
-							<TextBlock Margin="2" HorizontalAlignment="Left" VerticalAlignment="Bottom"
-									   Foreground="{StaticResource App.Foreground}"
-									   Text="{Binding Brightness, Mode=OneWay, StringFormat={}{0}%}"/>
-							<i:Interaction.Triggers>
-								<i:EventTrigger EventName="Click">
-									<ei:CallMethodAction TargetObject="{Binding}"
-														 MethodName="IncrementBrightness"/>
-								</i:EventTrigger>
-							</i:Interaction.Triggers>
-						</Button>
+						<Grid Grid.Row="1">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto"/>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
 
-						<controls:QuickSlider Grid.Row="1" Grid.Column="1"
-											  Margin="10,0" VerticalAlignment="Center"
-											  Style="{StaticResource SliderHorizontal}"
-											  AutoToolTipPlacement="TopLeft"
-											  Minimum="0" Maximum="100"
-											  Value="{Binding BrightnessInteractive, Mode=TwoWay, Delay=50}"/>
+							<Button Grid.Column="0"
+									Width="80" Height="{DynamicResource ButtonHeight}" Margin="2,2,0,2"
+									Style="{StaticResource AccessButtonStyle}">
+								<TextBlock Margin="2" HorizontalAlignment="Left" VerticalAlignment="Bottom"
+										   Foreground="{StaticResource App.Foreground}"
+										   Text="{Binding Brightness, Mode=OneWay, StringFormat={}{0}%}"/>
+								<i:Interaction.Triggers>
+									<i:EventTrigger EventName="Click">
+										<ei:CallMethodAction TargetObject="{Binding}"
+															 MethodName="IncrementBrightness"/>
+									</i:EventTrigger>
+								</i:Interaction.Triggers>
+							</Button>
+
+							<controls:QuickSlider Grid.Column="1"
+												  Margin="10,0,6,0" VerticalAlignment="Center"
+												  Style="{StaticResource SliderHorizontal}"
+												  AutoToolTipPlacement="TopLeft"
+												  Minimum="0" Maximum="100"
+												  Value="{Binding BrightnessInteractive, Mode=TwoWay, Delay=50}"/>
+						</Grid>
 					</Grid>
 				</DataTemplate>
 			</ListView.ItemTemplate>

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,8 +10,16 @@ namespace Monitorian.ViewModels
 {
 	public class MenuWindowViewModel : ViewModelBase
 	{
-		public MenuWindowViewModel()
+		private readonly MainController _controller;
+		public Settings Settings => _controller.Settings;
+
+		public MenuWindowViewModel(MainController controller)
 		{
+			if (controller == null)
+				throw new ArgumentNullException(nameof(controller));
+
+			this._controller = controller;
+
 			_isRegistered = RegistryService.IsRegistered();
 		}
 

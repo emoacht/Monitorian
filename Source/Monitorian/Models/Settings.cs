@@ -19,6 +19,14 @@ namespace Monitorian.Models
 	[DataContract]
 	public class Settings : BindableBase
 	{
+		[DataMember]
+		public bool IsLargeElements
+		{
+			get { return _isLargeElements; }
+			set { SetPropertyValue(ref _isLargeElements, value); }
+		}
+		private bool _isLargeElements = true;
+
 		#region Load/Save
 
 		private const string SettingsFileName = "settings.xml";

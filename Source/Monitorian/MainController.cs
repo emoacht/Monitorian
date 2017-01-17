@@ -120,9 +120,9 @@ namespace Monitorian
 			await UpdateAsync();
 		}
 
-		private void ShowMenuWindow(Point e)
+		private void ShowMenuWindow(Point pivot)
 		{
-			var window = new MenuWindow(e);
+			var window = new MenuWindow(this, pivot);
 			window.Show();
 		}
 

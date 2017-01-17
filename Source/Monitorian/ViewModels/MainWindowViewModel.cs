@@ -7,24 +7,20 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
 
-using Monitorian.Models.Monitor;
-using Monitorian.Views;
+using Monitorian.Models;
 
 namespace Monitorian.ViewModels
 {
 	public class MainWindowViewModel : ViewModelBase
 	{
-		private readonly MainWindow _window;
 		private readonly MainController _controller;
+		public Settings Settings => _controller.Settings;
 
-		public MainWindowViewModel(MainWindow window, MainController controller)
+		public MainWindowViewModel(MainController controller)
 		{
-			if (window == null)
-				throw new ArgumentNullException(nameof(window));
 			if (controller == null)
 				throw new ArgumentNullException(nameof(controller));
 
-			this._window = window;
 			this._controller = controller;
 		}
 

@@ -21,11 +21,11 @@ namespace Monitorian.Views
 	{
 		private readonly MenuWindowMover _mover;
 
-		public MenuWindow(Point pivot)
+		public MenuWindow(MainController controller, Point pivot)
 		{
 			InitializeComponent();
 
-			this.DataContext = new MenuWindowViewModel();
+			this.DataContext = new MenuWindowViewModel(controller);
 
 			_mover = new MenuWindowMover(this, pivot);
 		}

@@ -70,6 +70,15 @@ namespace Monitorian.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Large buttons.
+        /// </summary>
+        public static string LargeElements {
+            get {
+                return ResourceManager.GetString("LargeElements", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Project Site.
         /// </summary>
         public static string ProjectSite {

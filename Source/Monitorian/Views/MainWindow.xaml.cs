@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 
+using Monitorian.Models;
 using Monitorian.ViewModels;
 using Monitorian.Views.Movers;
 
@@ -25,7 +27,7 @@ namespace Monitorian.Views
 		{
 			InitializeComponent();
 
-			this.DataContext = new MainWindowViewModel(this, controller);
+			this.DataContext = new MainWindowViewModel(controller);
 
 			_mover = new MainWindowMover(this, controller.NotifyIconComponent.NotifyIcon);
 		}
@@ -37,6 +39,76 @@ namespace Monitorian.Views
 			WindowPosition.DisableTransitions(this);
 			WindowEffect.EnableBackgroundBlur(this);
 		}
+
+		public override void OnApplyTemplate()
+		{
+			base.OnApplyTemplate();
+
+			CheckDefaultHeights();
+
+			BindingOperations.SetBinding(
+				this,
+				IsLargeElementsProperty,
+				new Binding(nameof(Settings.IsLargeElements))
+				{
+					Source = ((MainWindowViewModel)this.DataContext).Settings,
+					Mode = BindingMode.OneWay
+				});
+
+			//this.InvalidateProperty(IsLargeElementsProperty);
+		}
+
+		protected override void OnClosed(EventArgs e)
+		{
+			BindingOperations.ClearBinding(
+				this,
+				IsLargeElementsProperty);
+
+			base.OnClosed(e);
+		}
+
+		#region Elements
+
+		private const double ShrinkFactor = 0.6;
+		private Dictionary<string, double> _defaultHeights;
+
+		private void CheckDefaultHeights()
+		{
+			_defaultHeights = this.Resources.Cast<DictionaryEntry>()
+				.Where(x => ((string)x.Key).EndsWith("Height", StringComparison.Ordinal))
+				.Where(x => (x.Value is double) && ((double)x.Value > 0))
+				.ToDictionary(x => (string)x.Key, x => (double)x.Value);
+		}
+
+		public bool IsLargeElements
+		{
+			get { return (bool)GetValue(IsLargeElementsProperty); }
+			set { SetValue(IsLargeElementsProperty, value); }
+		}
+		public static readonly DependencyProperty IsLargeElementsProperty =
+			DependencyProperty.Register(
+				"IsLargeElements",
+				typeof(bool),
+				typeof(MainWindow),
+				new PropertyMetadata(
+					true,
+					(d, e) =>
+					{
+						// Setting the same value will not trigger calling this method.					
+
+						var window = (MainWindow)d;
+						if (window._defaultHeights == null)
+							return;
+
+						var factor = (bool)e.NewValue ? 1D : ShrinkFactor;
+
+						foreach (var pair in window._defaultHeights)
+						{
+							window.Resources[pair.Key] = pair.Value * factor;
+						}
+					}));
+
+		#endregion
 
 		#region Ready
 

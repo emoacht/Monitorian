@@ -23,8 +23,7 @@
 					<ControlTemplate TargetType="{x:Type ContentControl}">
 						<Grid x:Name="itemBody"
 							  Background="{StaticResource Menu.Item.Normal.Backgound}">
-							<ContentPresenter x:Name="contentPresenter"
-											  Margin="{TemplateBinding Padding}"
+							<ContentPresenter Margin="{TemplateBinding Padding}"
 											  Content="{TemplateBinding Content}"
 											  ContentTemplate="{TemplateBinding ContentTemplate}"/>
 						</Grid>
@@ -76,49 +75,60 @@
 			</Setter>
 		</Style>
 
-		<!-- Close Button -->
-		<Style x:Key="CloseButtonItemStyle" TargetType="{x:Type Button}">
-			<Setter Property="HorizontalContentAlignment" Value="Left"/>
-			<Setter Property="VerticalContentAlignment" Value="Center"/>
+		<!-- Plain Button -->
+		<Style x:Key="PlainButtonItemStyle" TargetType="{x:Type Button}">
 			<Setter Property="Template">
 				<Setter.Value>
 					<ControlTemplate TargetType="{x:Type Button}">
-						<Grid>
-							<Grid Background="Transparent"
-								  Margin="{TemplateBinding Padding}"
-								  SnapsToDevicePixels="True"
-								  UseLayoutRounding="True">
-								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="Auto"/>
-									<ColumnDefinition Width="*"/>
-								</Grid.ColumnDefinitions>
-								<Grid Grid.Column="0"
-									  Width="{Binding RelativeSource={RelativeSource Self}, Path=ActualHeight}">
-									<Path Margin="3"
-										  Stretch="Uniform"
-										  Stroke="{TemplateBinding Foreground}" StrokeThickness="1">
-										<Path.Data>
-											<GeometryGroup>
-												<LineGeometry StartPoint="0,0" EndPoint="1,1"/>
-												<LineGeometry StartPoint="0,1" EndPoint="1,0"/>
-											</GeometryGroup>
-										</Path.Data>
-									</Path>
-								</Grid>
-								<ContentPresenter Grid.Column="1"
-												  Margin="3"
-												  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-												  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-												  Focusable="False"/>
+						<Grid Background="Transparent"
+							  Margin="{TemplateBinding Padding}"
+							  SnapsToDevicePixels="True"
+							  UseLayoutRounding="True">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto"/>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
+							<Grid Grid.Column="0"
+								  Width="{Binding RelativeSource={RelativeSource Self}, Path=ActualHeight}">
 							</Grid>
-							<VisualStateManager.VisualStateGroups>
-								<VisualStateGroup x:Name="CommonStates">
-									<VisualState x:Name="Normal"/>
-									<VisualState x:Name="MouseOver"/>
-									<VisualState x:Name="Pressed"/>
-									<VisualState x:Name="Disabled"/>
-								</VisualStateGroup>
-							</VisualStateManager.VisualStateGroups>
+							<ContentPresenter Grid.Column="1"
+											  Margin="3" HorizontalAlignment="Left" VerticalAlignment="Center"
+											  Focusable="False"/>
+						</Grid>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
+
+		<!-- Close Button -->
+		<Style x:Key="CloseButtonItemStyle" TargetType="{x:Type Button}">
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="{x:Type Button}">
+						<Grid Background="Transparent"
+							  Margin="{TemplateBinding Padding}"
+							  SnapsToDevicePixels="True"
+							  UseLayoutRounding="True">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto"/>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
+							<Grid Grid.Column="0"
+								  Width="{Binding RelativeSource={RelativeSource Self}, Path=ActualHeight}">
+								<Path Margin="3"
+									  Stretch="Uniform"
+									  Stroke="{TemplateBinding Foreground}" StrokeThickness="1">
+									<Path.Data>
+										<GeometryGroup>
+											<LineGeometry StartPoint="0,0" EndPoint="1,1"/>
+											<LineGeometry StartPoint="0,1" EndPoint="1,0"/>
+										</GeometryGroup>
+									</Path.Data>
+								</Path>
+							</Grid>
+							<ContentPresenter Grid.Column="1"
+											  Margin="3" HorizontalAlignment="Left" VerticalAlignment="Center"
+											  Focusable="False"/>
 						</Grid>
 					</ControlTemplate>
 				</Setter.Value>
@@ -151,7 +161,7 @@
 					  Style="{StaticResource CheckBoxItemStyle}"
 					  Foreground="{StaticResource App.Foreground}"
 					  FontSize="14"
-					  Content="{x:Static properties:Resources.Start}"
+					  Content="{x:Static properties:Resources.StartSignIn}"
 					  IsChecked="{Binding IsRegistered}"/>
 		</ContentControl>
 
@@ -171,6 +181,23 @@
 					  FontSize="14"
 					  Content="{x:Static properties:Resources.EnabledUnison}"
 					  IsChecked="{Binding Settings.IsEnabledUnison}"/>
+		</ContentControl>
+
+		<Separator Style="{StaticResource MenuSeparatorStyle}"/>
+
+		<ContentControl Style="{StaticResource MenuItemStyle}">
+			<Button Padding="8,4"
+					Style="{StaticResource PlainButtonItemStyle}"
+					Foreground="{StaticResource App.Foreground}"
+					FontSize="14"
+					Content="{x:Static properties:Resources.EditNames}">
+				<i:Interaction.Triggers>
+					<i:EventTrigger EventName="Click">
+						<ei:CallMethodAction TargetObject="{Binding}"
+											 MethodName="EditNames"/>
+					</i:EventTrigger>
+				</i:Interaction.Triggers>
+			</Button>
 		</ContentControl>
 
 		<Separator Style="{StaticResource MenuSeparatorStyle}"/>

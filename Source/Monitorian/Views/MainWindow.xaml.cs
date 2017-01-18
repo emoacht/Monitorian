@@ -110,26 +110,44 @@ namespace Monitorian.Views
 
 		#endregion
 
-		#region Ready
+		#region Show/Hide
 
-		public bool IsReady { get; private set; } = true;
+		public bool CanEditNames
+		{
+			get { return (bool)GetValue(CanEditNamesProperty); }
+			set { SetValue(CanEditNamesProperty, value); }
+		}
+		public static readonly DependencyProperty CanEditNamesProperty =
+			DependencyProperty.Register(
+				"CanEditNames",
+				typeof(bool),
+				typeof(MainWindow),
+				new PropertyMetadata(false));
+
+		public bool CanBeShown { get; private set; } = true;
+
+		public void Show(bool canEditNames)
+		{
+			this.CanEditNames = canEditNames;
+			this.Show();
+		}
 
 		protected override void OnDeactivated(EventArgs e)
 		{
 			base.OnDeactivated(e);
 
-			if (this.Visibility == Visibility.Visible)
+			if (this.Visibility != Visibility.Visible)
+				return;
+
+			this.Hide();
+			CanEditNames = false;
+			CanBeShown = false;
+
+			Task.Run(async () =>
 			{
-				this.Hide();
-
-				IsReady = false;
-
-				Task.Run(async () =>
-				{
-					await Task.Delay(TimeSpan.FromSeconds(0.2));
-					Dispatcher.Invoke(() => IsReady = true);
-				});
-			}
+				await Task.Delay(TimeSpan.FromSeconds(0.2));
+				this.Dispatcher.Invoke(() => CanBeShown = true);
+			});
 		}
 
 		#endregion

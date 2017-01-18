@@ -20,6 +20,7 @@ namespace Monitorian.Views
 	public partial class MenuWindow : Window
 	{
 		private readonly MenuWindowMover _mover;
+		internal MenuWindowViewModel ViewModel => (MenuWindowViewModel)this.DataContext;
 
 		public MenuWindow(MainController controller, Point pivot)
 		{
@@ -54,6 +55,7 @@ namespace Monitorian.Views
 			if (!e.Cancel)
 			{
 				_isClosing = true;
+				ViewModel.Dispose();
 			}
 
 			base.OnClosing(e);

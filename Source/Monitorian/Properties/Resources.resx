@@ -120,6 +120,9 @@
   <data name="Close" xml:space="preserve">
     <value>Close</value>
   </data>
+  <data name="EditNames" xml:space="preserve">
+    <value>Edit monitor names</value>
+  </data>
   <data name="EnabledUnison" xml:space="preserve">
     <value>Enable moving together</value>
   </data>
@@ -135,7 +138,7 @@
   <data name="RecordException" xml:space="preserve">
     <value>An unexpected problem occurred. Save exception log to Desktop?</value>
   </data>
-  <data name="Start" xml:space="preserve">
+  <data name="StartSignIn" xml:space="preserve">
     <value>Start on sign in</value>
   </data>
 </root>

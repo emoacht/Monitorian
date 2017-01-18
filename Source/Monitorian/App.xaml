@@ -5,6 +5,7 @@
 	<Application.Resources>
 		<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverterKey"/>
 		<converters:VisibilityToBooleanFilterConverter x:Key="VisibilityToBooleanFilterConverterKey"/>
+		<converters:BooleanInverseConverter x:Key="BooleanInverseConverterKey"/>
 
 		<SolidColorBrush x:Key="App.Background" Color="#CC171717"/>
 		<SolidColorBrush x:Key="App.Foreground" Color="White"/>

@@ -35,11 +35,19 @@ namespace Monitorian.Models
 		}
 		private bool _isEnabledUnison = false;
 
+		[DataMember]
+		public Dictionary<string, NamePack> KnownMonitors
+		{
+			get { return _knownMonitors ?? (_knownMonitors = new Dictionary<string, NamePack>()); }
+			private set { _knownMonitors = value; }
+		}
+		private Dictionary<string, NamePack> _knownMonitors;
+
 		#region Load/Save
 
 		private const string SettingsFileName = "settings.xml";
 
-		public void Load()
+		internal void Load()
 		{
 			try
 			{
@@ -74,7 +82,7 @@ namespace Monitorian.Models
 			}
 		}
 
-		public void Save()
+		internal void Save()
 		{
 			try
 			{
@@ -98,5 +106,29 @@ namespace Monitorian.Models
 		}
 
 		#endregion
+	}
+
+	[DataContract]
+	public class NamePack
+	{
+		/// <summary>
+		/// Name
+		/// </summary>
+		/// <remarks>Private setter is for serializer.</remarks>
+		[DataMember]
+		public string Name { get; private set; }
+
+		/// <summary>
+		/// Instantiation time
+		/// </summary>
+		/// <remarks>Private setter is for serializer.</remarks>
+		[DataMember]
+		public long Time { get; private set; }
+
+		public NamePack(string name)
+		{
+			this.Name = name;
+			Time = DateTimeOffset.UtcNow.Ticks;
+		}
 	}
 }

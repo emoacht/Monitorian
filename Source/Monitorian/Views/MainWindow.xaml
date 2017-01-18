@@ -144,6 +144,30 @@
 			</Setter>
 		</Style>
 
+		<!-- Name TextBox -->
+		<Style x:Key="NameTextBoxStyle" TargetType="{x:Type TextBox}" BasedOn="{StaticResource {x:Type TextBox}}">
+			<Setter Property="CaretBrush" Value="{Binding RelativeSource={RelativeSource Self}, Path=Foreground}"/>
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="{x:Type TextBox}">
+						<Border x:Name="border"
+								BorderBrush="{TemplateBinding Foreground}" BorderThickness="1"
+								Background="Transparent"
+								SnapsToDevicePixels="True">
+							<ScrollViewer x:Name="PART_ContentHost"
+										  HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"
+										  Focusable="false"/>
+						</Border>
+						<ControlTemplate.Triggers>
+							<Trigger Property="IsReadOnly" Value="True">
+								<Setter Property="BorderBrush" TargetName="border" Value="Transparent"/>
+							</Trigger>
+						</ControlTemplate.Triggers>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
+
 		<!-- Access Center Like Button -->
 		<Style x:Key="AccessButtonStyle" TargetType="{x:Type Button}">
 			<Setter Property="Template">
@@ -297,13 +321,15 @@
 							<RowDefinition Height="Auto"/>
 						</Grid.RowDefinitions>
 
-						<!-- Description -->
-						<TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
-								   Margin="4,6" VerticalAlignment="Center"
-								   Foreground="{StaticResource App.Foreground}"
-								   FontSize="12"
-								   TextWrapping="Wrap"
-								   Text="{Binding Description, Mode=OneTime}"/>
+						<!-- Name -->
+						<TextBox Grid.Row="0"
+								 Margin="2,5" VerticalAlignment="Center"
+								 Style="{StaticResource NameTextBoxStyle}"
+								 Foreground="{StaticResource App.Foreground}"
+								 FontSize="12"
+								 TextWrapping="Wrap" MaxLength="96"
+								 Text="{Binding Name, Mode=TwoWay}"
+								 IsReadOnly="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Path=CanEditNames, Converter={StaticResource BooleanInverseConverterKey}}"/>
 
 						<!-- Brightness -->
 						<Grid Grid.Row="1">

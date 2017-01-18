@@ -106,15 +106,20 @@ namespace Monitorian
 			NotifyIconComponent.AdjustIcon(e.NewDpi);
 		}
 
-		private async void ShowMainWindow()
+		private void OnEditNamesRequested(object sender, EventArgs e)
+		{
+			ShowMainWindow(true);
+		}
+
+		private async void ShowMainWindow(bool canEditNames = false)
 		{
 			var window = (MainWindow)_current.MainWindow;
-			if (!window.IsReady)
+			if (!window.CanBeShown)
 				return;
 
 			if (window.Visibility != Visibility.Visible)
 			{
-				window.Show();
+				window.Show(canEditNames);
 				window.Activate();
 			}
 			await UpdateAsync();
@@ -123,12 +128,16 @@ namespace Monitorian
 		private void ShowMenuWindow(Point pivot)
 		{
 			var window = new MenuWindow(this, pivot);
+			window.ViewModel.EditNamesRequested += OnEditNamesRequested;
+			window.ViewModel.CloseAppRequested += (sender, e) => _current.Shutdown();
 			window.Show();
 		}
 
 		#region Monitors
 
-		private readonly int _largestCount = 4;
+		private readonly int _maxMonitorCount = 4;
+
+		private readonly int _maxNameCount = 32;
 
 		private int _scanCount = 0;
 		private int _updateCount = 0;
@@ -158,7 +167,8 @@ namespace Monitorian
 						}
 
 						var newMonitor = new MonitorViewModel(item);
-						if (Monitors.Count < _largestCount)
+						FindName(newMonitor);
+						if (Monitors.Count < _maxMonitorCount)
 						{
 							newMonitor.UpdateBrightness();
 							newMonitor.IsTarget = true;
@@ -180,13 +190,13 @@ namespace Monitorian
 				}).ConfigureAwait(false);
 
 				await Task.WhenAll(Monitors
-					.Take(_largestCount)
+					.Take(_maxMonitorCount)
 					.Where(x => x.UpdateTime < scanTime)
 					.Select(x => Task.Run(() =>
 					{
 						x.UpdateBrightness();
 						x.IsTarget = true;
-					})));
+					}))).ConfigureAwait(false);
 			}
 			finally
 			{
@@ -226,7 +236,60 @@ namespace Monitorian
 		private void MonitorsDispose()
 		{
 			foreach (var monitor in Monitors)
+			{
+				StoreName(monitor);
 				monitor.Dispose();
+			}
+			TruncateNames();
+		}
+
+		private void FindName(MonitorViewModel monitor)
+		{
+			NamePack value;
+			if (Settings.KnownMonitors.TryGetValue(monitor.DeviceInstanceId, out value))
+			{
+				monitor.Name = value.Name;
+			}
+		}
+
+		private void StoreName(MonitorViewModel monitor)
+		{
+			if (!Settings.KnownMonitors.ContainsKey(monitor.DeviceInstanceId))
+			{
+				if (monitor.HasName)
+				{
+					// Add
+					Settings.KnownMonitors.Add(monitor.DeviceInstanceId, new NamePack(monitor.Name));
+				}
+			}
+			else
+			{
+				if (monitor.HasName)
+				{
+					// Modify
+					Settings.KnownMonitors[monitor.DeviceInstanceId] = new NamePack(monitor.Name);
+				}
+				else
+				{
+					// Remove
+					Settings.KnownMonitors.Remove(monitor.DeviceInstanceId);
+				}
+			}
+		}
+
+		private void TruncateNames()
+		{
+			if (Settings.KnownMonitors.Count <= _maxNameCount)
+				return;
+
+			foreach (var key in Settings.KnownMonitors
+				.OrderByDescending(x => x.Value.Time)
+				.Skip(_maxNameCount)
+				.Select(x => x.Key)
+				.ToArray())
+			{
+				Settings.KnownMonitors.Remove(key);
+			}
 		}
 
 		#endregion

@@ -25,6 +25,15 @@ namespace Monitorian.ViewModels
 		public byte DisplayIndex => _monitor.DisplayIndex;
 		public byte MonitorIndex => _monitor.MonitorIndex;
 
+		public string Name
+		{
+			get { return HasName ? _name : _monitor.Description; }
+			set { SetPropertyValue(ref _name, value); }
+		}
+		private string _name;
+
+		public bool HasName => !string.IsNullOrWhiteSpace(_name);
+
 		public int Brightness => _monitor.Brightness;
 
 		public int BrightnessInteractive

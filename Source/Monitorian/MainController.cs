@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -135,9 +136,14 @@ namespace Monitorian
 
 		#region Monitors
 
-		private readonly int _maxMonitorCount = 4;
+		private static readonly Lazy<int> _maxMonitorCount = new Lazy<int>(() =>
+		{
+			int count = 4;
+			SetCount(ref count);
+			return count;
+		});
 
-		private readonly int _maxNameCount = 32;
+		private static readonly Lazy<int> _maxNameCount = new Lazy<int>(() => _maxMonitorCount.Value * 4);
 
 		private int _scanCount = 0;
 		private int _updateCount = 0;
@@ -168,7 +174,7 @@ namespace Monitorian
 
 						var newMonitor = new MonitorViewModel(item);
 						FindName(newMonitor);
-						if (Monitors.Count < _maxMonitorCount)
+						if (Monitors.Count < _maxMonitorCount.Value)
 						{
 							newMonitor.UpdateBrightness();
 							newMonitor.IsTarget = true;
@@ -190,7 +196,7 @@ namespace Monitorian
 				}).ConfigureAwait(false);
 
 				await Task.WhenAll(Monitors
-					.Take(_maxMonitorCount)
+					.Take(_maxMonitorCount.Value)
 					.Where(x => x.UpdateTime < scanTime)
 					.Select(x => Task.Run(() =>
 					{
@@ -279,17 +285,27 @@ namespace Monitorian
 
 		private void TruncateNames()
 		{
-			if (Settings.KnownMonitors.Count <= _maxNameCount)
+			if (Settings.KnownMonitors.Count <= _maxNameCount.Value)
 				return;
 
 			foreach (var key in Settings.KnownMonitors
 				.OrderByDescending(x => x.Value.Time)
-				.Skip(_maxNameCount)
+				.Skip(_maxNameCount.Value)
 				.Select(x => x.Key)
 				.ToArray())
 			{
 				Settings.KnownMonitors.Remove(key);
 			}
+		}
+
+		#endregion
+
+		#region Configuration
+
+		[Conditional("UNLIMITED")]
+		private static void SetCount(ref int count)
+		{
+			count *= 8;
 		}
 
 		#endregion

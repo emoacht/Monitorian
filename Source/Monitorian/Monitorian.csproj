@@ -96,12 +96,13 @@
     <Compile Include="ViewModels\MonitorViewModel.cs" />
     <Compile Include="ViewModels\MenuWindowViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
+    <Compile Include="Views\Controls\SwitchTextBox.cs" />
+    <Compile Include="Views\Controls\QuickSlider.cs" />
     <Compile Include="Views\Converters\BooleanInverseConverter.cs" />
     <Compile Include="Views\Converters\VisibilityToBooleanFilterConverter.cs" />
     <Compile Include="Views\Movers\WindowMover.cs" />
     <Compile Include="Views\Movers\MainWindowMover.cs" />
-    <Compile Include="Views\Movers\MenuWindowMover.cs" />
-    <Compile Include="Views\Controls\QuickSlider.cs" />
+    <Compile Include="Views\Movers\MenuWindowMover.cs" />    
     <Compile Include="Views\NotifyIconComponent.cs">
       <SubType>Component</SubType>
     </Compile>

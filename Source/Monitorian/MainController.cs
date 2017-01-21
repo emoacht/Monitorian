@@ -107,12 +107,7 @@ namespace Monitorian
 			NotifyIconComponent.AdjustIcon(e.NewDpi);
 		}
 
-		private void OnEditNamesRequested(object sender, EventArgs e)
-		{
-			ShowMainWindow(true);
-		}
-
-		private async void ShowMainWindow(bool canEditNames = false)
+		private async void ShowMainWindow()
 		{
 			var window = (MainWindow)_current.MainWindow;
 			if (!window.CanBeShown)
@@ -120,7 +115,7 @@ namespace Monitorian
 
 			if (window.Visibility != Visibility.Visible)
 			{
-				window.Show(canEditNames);
+				window.Show();
 				window.Activate();
 			}
 			await UpdateAsync();
@@ -129,7 +124,6 @@ namespace Monitorian
 		private void ShowMenuWindow(Point pivot)
 		{
 			var window = new MenuWindow(this, pivot);
-			window.ViewModel.EditNamesRequested += OnEditNamesRequested;
 			window.ViewModel.CloseAppRequested += (sender, e) => _current.Shutdown();
 			window.Show();
 		}

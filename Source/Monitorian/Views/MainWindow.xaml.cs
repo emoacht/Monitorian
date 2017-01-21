@@ -112,25 +112,7 @@ namespace Monitorian.Views
 
 		#region Show/Hide
 
-		public bool CanEditNames
-		{
-			get { return (bool)GetValue(CanEditNamesProperty); }
-			set { SetValue(CanEditNamesProperty, value); }
-		}
-		public static readonly DependencyProperty CanEditNamesProperty =
-			DependencyProperty.Register(
-				"CanEditNames",
-				typeof(bool),
-				typeof(MainWindow),
-				new PropertyMetadata(false));
-
 		public bool CanBeShown { get; private set; } = true;
-
-		public void Show(bool canEditNames)
-		{
-			this.CanEditNames = canEditNames;
-			this.Show();
-		}
 
 		protected override void OnDeactivated(EventArgs e)
 		{
@@ -139,14 +121,18 @@ namespace Monitorian.Views
 			if (this.Visibility != Visibility.Visible)
 				return;
 
-			this.Hide();
-			CanEditNames = false;
+			// Clear focus.
+			FocusManager.SetFocusedElement(this, null);
 			CanBeShown = false;
 
 			Task.Run(async () =>
 			{
-				await Task.Delay(TimeSpan.FromSeconds(0.2));
-				this.Dispatcher.Invoke(() => CanBeShown = true);
+				await Task.Delay(TimeSpan.FromSeconds(0.1));
+				this.Dispatcher.Invoke(() =>
+				{
+					this.Hide();
+					CanBeShown = true;
+				});
 			});
 		}
 

@@ -120,9 +120,6 @@
   <data name="Close" xml:space="preserve">
     <value>Close</value>
   </data>
-  <data name="EditNames" xml:space="preserve">
-    <value>Edit monitor names</value>
-  </data>
   <data name="EnabledUnison" xml:space="preserve">
     <value>Enable moving together</value>
   </data>

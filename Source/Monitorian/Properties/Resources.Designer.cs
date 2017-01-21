@@ -70,15 +70,6 @@ namespace Monitorian.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Edit monitor names.
-        /// </summary>
-        public static string EditNames {
-            get {
-                return ResourceManager.GetString("EditNames", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Enable moving together.
         /// </summary>
         public static string EnabledUnison {

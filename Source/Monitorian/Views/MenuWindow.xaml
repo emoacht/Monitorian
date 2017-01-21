@@ -187,23 +187,6 @@
 
 		<ContentControl Style="{StaticResource MenuItemStyle}">
 			<Button Padding="8,4"
-					Style="{StaticResource PlainButtonItemStyle}"
-					Foreground="{StaticResource App.Foreground}"
-					FontSize="14"
-					Content="{x:Static properties:Resources.EditNames}">
-				<i:Interaction.Triggers>
-					<i:EventTrigger EventName="Click">
-						<ei:CallMethodAction TargetObject="{Binding}"
-											 MethodName="EditNames"/>
-					</i:EventTrigger>
-				</i:Interaction.Triggers>
-			</Button>
-		</ContentControl>
-
-		<Separator Style="{StaticResource MenuSeparatorStyle}"/>
-
-		<ContentControl Style="{StaticResource MenuItemStyle}">
-			<Button Padding="8,4"
 					Style="{StaticResource CloseButtonItemStyle}"
 					Foreground="{StaticResource App.Foreground}"
 					FontSize="14"

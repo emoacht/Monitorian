@@ -45,13 +45,7 @@ namespace Monitorian.ViewModels
 		}
 		private bool _isRegistered;
 
-		public event EventHandler EditNamesRequested;
 		public event EventHandler CloseAppRequested;
-
-		/// <summary>
-		/// Edits monitor names.
-		/// </summary>
-		public void EditNames() => EditNamesRequested?.Invoke(this, EventArgs.Empty);
 
 		/// <summary>
 		/// Closes this application.
@@ -69,7 +63,6 @@ namespace Monitorian.ViewModels
 
 			if (disposing)
 			{
-				EditNamesRequested = null;
 				CloseAppRequested = null;
 			}
 

@@ -322,14 +322,13 @@
 						</Grid.RowDefinitions>
 
 						<!-- Name -->
-						<TextBox Grid.Row="0"
-								 Margin="2,5" VerticalAlignment="Center"
-								 Style="{StaticResource NameTextBoxStyle}"
-								 Foreground="{StaticResource App.Foreground}"
-								 FontSize="12"
-								 TextWrapping="Wrap" MaxLength="96"
-								 Text="{Binding Name, Mode=TwoWay}"
-								 IsReadOnly="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Path=CanEditNames, Converter={StaticResource BooleanInverseConverterKey}}"/>
+						<controls:SwitchTextBox Grid.Row="0"
+												Margin="2,5" VerticalAlignment="Center"
+												Style="{StaticResource NameTextBoxStyle}"
+												Foreground="{StaticResource App.Foreground}"
+												FontSize="12"
+												TextWrapping="Wrap" MaxLength="96"
+												Text="{Binding Name, Mode=TwoWay}"/>
 
 						<!-- Brightness -->
 						<Grid Grid.Row="1">

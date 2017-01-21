@@ -43,16 +43,6 @@ namespace Monitorian.Views.Controls
 
 		private static event EventHandler<double> Moved; // Static event
 
-		protected override void OnValueChanged(double oldValue, double newValue)
-		{
-			base.OnValueChanged(oldValue, newValue);
-
-			if (IsUnison && _canDrag && (_isDragStarting || _thumb.IsDragging))
-			{
-				Moved?.Invoke(this, newValue - oldValue);
-			}
-		}
-
 		public bool IsUnison
 		{
 			get { return (bool)GetValue(IsUnisonProperty); }
@@ -78,6 +68,16 @@ namespace Monitorian.Views.Controls
 							Moved -= instance.OnMoved;
 						}
 					}));
+
+		protected override void OnValueChanged(double oldValue, double newValue)
+		{
+			base.OnValueChanged(oldValue, newValue);
+
+			if (IsUnison && _canDrag && (_isDragStarting || _thumb.IsDragging))
+			{
+				Moved?.Invoke(this, newValue - oldValue);
+			}
+		}
 
 		private void OnMoved(object sender, double e)
 		{

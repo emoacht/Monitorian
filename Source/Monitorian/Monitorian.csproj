@@ -102,7 +102,7 @@
     <Compile Include="Views\Converters\VisibilityToBooleanFilterConverter.cs" />
     <Compile Include="Views\Movers\WindowMover.cs" />
     <Compile Include="Views\Movers\MainWindowMover.cs" />
-    <Compile Include="Views\Movers\MenuWindowMover.cs" />    
+    <Compile Include="Views\Movers\MenuWindowMover.cs" />
     <Compile Include="Views\NotifyIconComponent.cs">
       <SubType>Component</SubType>
     </Compile>

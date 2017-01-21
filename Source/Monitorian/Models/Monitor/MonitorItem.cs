@@ -23,7 +23,6 @@ namespace Monitorian.Models.Monitor
 		{
 			if (string.IsNullOrWhiteSpace(description))
 				throw new ArgumentNullException(nameof(description));
-
 			if (string.IsNullOrWhiteSpace(deviceInstanceId))
 				throw new ArgumentNullException(nameof(deviceInstanceId));
 
@@ -35,7 +34,7 @@ namespace Monitorian.Models.Monitor
 
 		#region IDisposable
 
-		private bool isDisposed = false;
+		private bool _isDisposed = false;
 
 		public void Dispose()
 		{
@@ -45,7 +44,7 @@ namespace Monitorian.Models.Monitor
 
 		protected virtual void Dispose(bool disposing)
 		{
-			if (isDisposed)
+			if (_isDisposed)
 				return;
 
 			if (disposing)
@@ -54,7 +53,7 @@ namespace Monitorian.Models.Monitor
 			}
 
 			// Free any unmanaged objects here.
-			isDisposed = true;
+			_isDisposed = true;
 		}
 
 		#endregion

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Monitorian.Models.Monitor
 {
-	internal class Error
+	internal static class Error
 	{
 		#region Win32
 

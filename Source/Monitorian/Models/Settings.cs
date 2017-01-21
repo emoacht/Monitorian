@@ -19,6 +19,9 @@ namespace Monitorian.Models
 	[DataContract]
 	public class Settings : BindableBase
 	{
+		/// <summary>
+		/// Whether to use large elements
+		/// </summary>
 		[DataMember]
 		public bool UsesLargeElements
 		{
@@ -27,6 +30,9 @@ namespace Monitorian.Models
 		}
 		private bool _usesLargeElements = true;
 
+		/// <summary>
+		/// Whether to enable moving together
+		/// </summary>
 		[DataMember]
 		public bool EnablesUnison
 		{
@@ -35,6 +41,9 @@ namespace Monitorian.Models
 		}
 		private bool _enablesUnison = false;
 
+		/// <summary>
+		/// Known monitors with user-specified names
+		/// </summary>
 		[DataMember]
 		public Dictionary<string, NamePack> KnownMonitors
 		{

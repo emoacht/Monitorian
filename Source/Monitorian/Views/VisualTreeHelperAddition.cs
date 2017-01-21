@@ -12,7 +12,7 @@ using Monitorian.Helper;
 
 namespace Monitorian.Views
 {
-	internal class VisualTreeHelperAddition
+	internal static class VisualTreeHelperAddition
 	{
 		#region Win32
 
@@ -99,6 +99,9 @@ namespace Monitorian.Views
 
 		private const double DefaultPixelsPerInch = 96D; // Default pixels per Inch
 
+		/// <summary>
+		/// System DPI
+		/// </summary>
 		public static DpiScale SystemDpi { get; } = GetSystemDpi();
 
 		private static DpiScale GetSystemDpi()
@@ -121,6 +124,11 @@ namespace Monitorian.Views
 			}
 		}
 
+		/// <summary>
+		/// Gets Per-Monitor DPI of the monitor to which a specified Visual belongs.
+		/// </summary>
+		/// <param name="visual">Visual</param>
+		/// <returns>DPI information</returns>
 		public static DpiScale GetDpi(Visual visual)
 		{
 			if (visual == null)
@@ -143,6 +151,10 @@ namespace Monitorian.Views
 			return GetDpi(handleMonitor);
 		}
 
+		/// <summary>
+		/// Gets Per-Monitor DPI of the monitor to which the notification area belongs.
+		/// </summary>
+		/// <returns>DPI information</returns>
 		public static DpiScale GetNotificationAreaDpi()
 		{
 			if (!OsVersion.Is81OrNewer)

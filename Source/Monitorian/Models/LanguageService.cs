@@ -19,6 +19,11 @@ namespace Monitorian.Models
 
 		public static readonly IReadOnlyList<string> Arguments = _cultures.Keys.ToArray();
 
+		/// <summary>
+		/// Switches this application's culture depending on given arguments.  
+		/// </summary>
+		/// <param name="args">Arguments</param>
+		/// <returns>True if successfully switched the culture</returns>
 		public static bool Switch(string[] args)
 		{
 			foreach (var arg in args.Select(x => x.ToLower()))

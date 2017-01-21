@@ -48,11 +48,11 @@ namespace Monitorian.ViewModels
 			}
 		}
 
-		public DateTime UpdateTime { get; private set; }
+		public DateTimeOffset UpdateTime { get; private set; }
 
 		public void UpdateBrightness(int brightness = -1)
 		{
-			UpdateTime = DateTime.Now;
+			UpdateTime = DateTimeOffset.Now;
 
 			if (_monitor.UpdateBrightness(brightness))
 			{

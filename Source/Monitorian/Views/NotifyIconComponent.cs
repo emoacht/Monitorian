@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,23 +19,10 @@ namespace Monitorian.Views
 		{
 			_container = new Container();
 
-			NotifyIcon = new NotifyIcon(this._container) { ContextMenuStrip = new ContextMenuStrip() };
+			NotifyIcon = new NotifyIcon(_container) { ContextMenuStrip = new ContextMenuStrip() };
 			NotifyIcon.MouseClick += OnMouseClick;
 			NotifyIcon.MouseDoubleClick += OnMouseDoubleClick;
 		}
-
-		#region Dispose
-
-		protected override void Dispose(bool disposing)
-		{
-			if (disposing)
-			{
-				_container.Dispose();
-			}
-			base.Dispose(disposing);
-		}
-
-		#endregion
 
 		public string Text
 		{
@@ -166,6 +152,27 @@ namespace Monitorian.Views
 			}
 
 			return corners.Last(); // Fallback
+		}
+
+		#endregion
+
+		#region IDisposable
+
+		private bool _isDisposed = false;
+
+		protected override void Dispose(bool disposing)
+		{
+			if (_isDisposed)
+				return;
+
+			if (disposing)
+			{
+				_container.Dispose();
+			}
+
+			_isDisposed = true;
+
+			base.Dispose(disposing);
 		}
 
 		#endregion

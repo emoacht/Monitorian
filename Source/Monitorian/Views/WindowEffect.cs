@@ -12,7 +12,7 @@ using Monitorian.Helper;
 
 namespace Monitorian.Views
 {
-	internal class WindowEffect
+	internal static class WindowEffect
 	{
 		#region Win32 (for Win7)
 
@@ -142,7 +142,7 @@ namespace Monitorian.Views
 			var accent = new AccentPolicy { AccentState = AccentState.ACCENT_ENABLE_BLURBEHIND };
 			var accentSize = Marshal.SizeOf(accent);
 
-			IntPtr accentPointer = IntPtr.Zero;
+			var accentPointer = IntPtr.Zero;
 			try
 			{
 				accentPointer = Marshal.AllocHGlobal(accentSize);

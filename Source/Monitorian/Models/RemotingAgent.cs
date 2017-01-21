@@ -80,6 +80,9 @@ namespace Monitorian.Models
 			}
 		}
 
+		/// <summary>
+		/// Ends remoting.
+		/// </summary>
 		public void End()
 		{
 			_semaphore?.Dispose();

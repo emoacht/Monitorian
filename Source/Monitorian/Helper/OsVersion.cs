@@ -44,7 +44,7 @@ namespace Monitorian.Helper
 
 		#region Cache
 
-		private static Dictionary<string, bool> _cache = new Dictionary<string, bool>();
+		private static readonly Dictionary<string, bool> _cache = new Dictionary<string, bool>();
 
 		private static bool IsEqualToOrNewer(int major, int minor = 0, int build = 0, [CallerMemberName] string propertyName = null)
 		{

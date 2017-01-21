@@ -9,6 +9,7 @@ namespace Monitorian.Helper
 	/// <summary>
 	/// Array search methods
 	/// </summary>
+	/// <remarks>The array must be sorted beforehand.</remarks>
 	public static class ArraySearch
 	{
 		public static int GetNearest(int[] source, int target) =>
@@ -25,10 +26,10 @@ namespace Monitorian.Helper
 
 		public static int GetNearestIndex<T>(T[] source, T target, Func<T, T, T> measure) where T : IComparable
 		{
-			if ((source == null) || !source.Any())
+			if ((source == null) || (source.Length == 0))
 				throw new ArgumentNullException(nameof(source));
 
-			// The source array must be sorted.
+			// The source array must be sorted beforehand.
 			int indexExact = Array.BinarySearch(source, target);
 
 			if (indexExact >= 0)

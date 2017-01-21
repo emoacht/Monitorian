@@ -22,7 +22,7 @@ namespace Monitorian
 
 			ConsoleLogService.Start();
 
-			if (e.Args.Contains(RegistryService.Arguments))
+			if (e.Args.Contains(RegistryService.Argument))
 				await Task.Delay(TimeSpan.FromSeconds(10));
 
 			_agent = new RemotingAgent();

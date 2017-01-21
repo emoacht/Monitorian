@@ -10,11 +10,11 @@ namespace Monitorian.Models
 {
 	internal class RegistryService
 	{
-		public const string Arguments = "/startup";
+		public const string Argument = "/startup";
 
 		private const string Run = @"Software\Microsoft\Windows\CurrentVersion\Run";
 
-		private static string _path = $"{Assembly.GetExecutingAssembly().Location} {Arguments}";
+		private static string _path = $"{Assembly.GetExecutingAssembly().Location} {Argument}";
 
 		public static bool IsRegistered()
 		{

@@ -13,10 +13,7 @@ namespace Monitorian.Models.Watcher
 		private readonly DispatcherTimer _timer;
 		private Func<Task> _onChanged;
 
-		private int _count = 0;
-		private const int _countMax = 3;
-
-		public TimeSpan Interval { get; set; } = TimeSpan.FromSeconds(3);
+		public TimeSpan CheckingInterval { get; set; } = TimeSpan.FromSeconds(3);
 
 		public SettingsWatcher()
 		{
@@ -33,6 +30,9 @@ namespace Monitorian.Models.Watcher
 			SystemEvents.DisplaySettingsChanged += OnDisplaySettingsChanged;
 		}
 
+		private int _count = 0;
+		private const int _countMax = 3;
+
 		private async void OnDisplaySettingsChanged(object sender, EventArgs e)
 		{
 			_timer.Stop();
@@ -40,7 +40,7 @@ namespace Monitorian.Models.Watcher
 			await _onChanged?.Invoke();
 
 			_count = 0;
-			_timer.Interval += Interval;
+			_timer.Interval += CheckingInterval;
 			_timer.Start();
 		}
 
@@ -59,7 +59,7 @@ namespace Monitorian.Models.Watcher
 
 		#region IDisposable
 
-		private bool isDisposed = false;
+		private bool _isDisposed = false;
 
 		public void Dispose()
 		{
@@ -69,7 +69,7 @@ namespace Monitorian.Models.Watcher
 
 		protected virtual void Dispose(bool disposing)
 		{
-			if (isDisposed)
+			if (_isDisposed)
 				return;
 
 			if (disposing)
@@ -79,7 +79,7 @@ namespace Monitorian.Models.Watcher
 			}
 
 			// Free any unmanaged objects here.
-			isDisposed = true;
+			_isDisposed = true;
 		}
 
 		#endregion

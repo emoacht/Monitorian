@@ -123,6 +123,7 @@ namespace Monitorian.Views
 
 			// Clear focus.
 			FocusManager.SetFocusedElement(this, null);
+
 			CanBeShown = false;
 
 			Task.Run(async () =>

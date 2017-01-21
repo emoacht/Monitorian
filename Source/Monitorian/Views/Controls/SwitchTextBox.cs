@@ -21,8 +21,6 @@ namespace Monitorian.Views.Controls
 			_timer = new DispatcherTimer();
 			_timer.Tick += OnTick;
 
-			this.IsReadOnly = true;
-
 			this.PreviewMouseLeftButtonDown += (sender, e) => OnDeviceDown(e.MouseDevice, true);
 			this.PreviewMouseRightButtonDown += (sender, e) => OnDeviceDown(e.MouseDevice, false);
 			this.PreviewStylusDown += (sender, e) => OnDeviceDown(e.StylusDevice, false);
@@ -36,8 +34,15 @@ namespace Monitorian.Views.Controls
 			this.TouchLeave += (sender, e) => OnDeviceUp();
 		}
 
+		protected override void OnInitialized(EventArgs e)
+		{
+			base.OnInitialized(e);
+
+			this.IsReadOnly = true;
+		}
+
 		private InputDevice _device;
-		private Point _position;
+		private Point _startPosition;
 		private const double _tolerance = 8D;
 		private bool _isContextMenuOpenable = true;
 
@@ -47,7 +52,7 @@ namespace Monitorian.Views.Controls
 				return;
 
 			this._device = device;
-			if (!TryGetDevicePosition(_device, out _position))
+			if (!TryGetDevicePosition(_device, out _startPosition))
 				return;
 
 			this._isContextMenuOpenable = isContextMenuOpenable;
@@ -67,16 +72,17 @@ namespace Monitorian.Views.Controls
 		{
 			_timer.Stop();
 
-			Point position;
-			if (!TryGetDevicePosition(_device, out position))
+			Point endPosition;
+			if (!TryGetDevicePosition(_device, out endPosition))
 				return;
 
-			if ((Math.Abs(position.X - _position.X) > _tolerance) ||
-				(Math.Abs(position.Y - _position.Y) > _tolerance))
+			if ((Math.Abs(endPosition.X - _startPosition.X) > _tolerance) ||
+				(Math.Abs(endPosition.Y - _startPosition.Y) > _tolerance))
 				return;
 
 			this.IsReadOnly = false;
 
+			// Get focus.
 			var window = Window.GetWindow(this);
 			FocusManager.SetFocusedElement(window, this);
 			Keyboard.Focus(this);

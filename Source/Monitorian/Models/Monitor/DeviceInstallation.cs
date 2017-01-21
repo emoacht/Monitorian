@@ -186,7 +186,6 @@ namespace Monitorian.Models.Monitor
 		{
 			var classGuid = GUID_DEVINTERFACE_MONITOR;
 			var deviceInfoSet = IntPtr.Zero;
-
 			try
 			{
 				deviceInfoSet = SetupDiGetClassDevs(

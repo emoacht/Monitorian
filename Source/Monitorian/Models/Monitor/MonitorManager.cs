@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Monitorian.Models.Monitor
 {
-	public class MonitorManager
+	internal class MonitorManager
 	{
 		public static IEnumerable<IMonitor> EnumerateMonitors()
 		{
@@ -15,8 +15,7 @@ namespace Monitorian.Models.Monitor
 			if (deviceItems.Count == 0)
 				yield break;
 
-			//Debug.WriteLine("=== DDC/CI ===");
-
+			// By DDC/CI
 			foreach (var handleItem in DeviceContext.GetMonitorHandles())
 			{
 				foreach (var physicalItem in MonitorConfiguration.EnumeratePhysicalMonitors(handleItem.MonitorHandle))
@@ -46,8 +45,7 @@ namespace Monitorian.Models.Monitor
 				}
 			}
 
-			//Debug.WriteLine("=== WMI ===");
-
+			// By WMI
 			var installedItems = DeviceInstallation.EnumerateInstalledMonitors().ToArray();
 
 			foreach (var desktopItem in MSMonitor.EnumerateDesktopMonitors())

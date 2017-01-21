@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Monitorian.Models
 {
-	public class ProductInfo
+	public static class ProductInfo
 	{
 		private static readonly Assembly _assembly = Assembly.GetExecutingAssembly();
 

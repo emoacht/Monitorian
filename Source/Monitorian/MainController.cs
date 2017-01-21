@@ -63,11 +63,10 @@ namespace Monitorian
 			var dpi = VisualTreeHelperAddition.GetNotificationAreaDpi();
 			NotifyIconComponent.ShowIcon("pack://application:,,,/Resources/Brightness.ico", dpi, ProductInfo.Title);
 
-			var window = new MainWindow(this);
-			_current.MainWindow = window;
+			_current.MainWindow = new MainWindow(this);
 			_current.MainWindow.DpiChanged += OnDpiChanged;
 
-			if (!args.Contains(RegistryService.Arguments))
+			if (!args.Contains(RegistryService.Argument))
 				_current.MainWindow.Show();
 
 			agent.ShowRequested += OnMainWindowShowRequested;
@@ -149,7 +148,7 @@ namespace Monitorian
 
 			try
 			{
-				var scanTime = DateTime.Now;
+				var scanTime = DateTimeOffset.Now;
 
 				await Task.Run(() =>
 				{

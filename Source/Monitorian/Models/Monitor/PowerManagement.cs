@@ -88,8 +88,7 @@ namespace Monitorian.Models.Monitor
 
 		public static Guid GetActiveScheme()
 		{
-			IntPtr activePolicyGuid = IntPtr.Zero;
-
+			var activePolicyGuid = IntPtr.Zero;
 			try
 			{
 				if (PowerGetActiveScheme(

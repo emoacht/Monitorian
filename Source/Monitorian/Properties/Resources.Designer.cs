@@ -72,18 +72,9 @@ namespace Monitorian.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Enable moving together.
         /// </summary>
-        public static string EnabledUnison {
+        public static string EnablesUnison {
             get {
-                return ResourceManager.GetString("EnabledUnison", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Large buttons.
-        /// </summary>
-        public static string LargeElements {
-            get {
-                return ResourceManager.GetString("LargeElements", resourceCulture);
+                return ResourceManager.GetString("EnablesUnison", resourceCulture);
             }
         }
         
@@ -120,6 +111,15 @@ namespace Monitorian.Properties {
         public static string StartSignIn {
             get {
                 return ResourceManager.GetString("StartSignIn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use large buttons.
+        /// </summary>
+        public static string UsesLargeElements {
+            get {
+                return ResourceManager.GetString("UsesLargeElements", resourceCulture);
             }
         }
     }

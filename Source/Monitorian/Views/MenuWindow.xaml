@@ -170,8 +170,8 @@
 					  Style="{StaticResource CheckBoxItemStyle}"
 					  Foreground="{StaticResource App.Foreground}"
 					  FontSize="14"
-					  Content="{x:Static properties:Resources.LargeElements}"
-					  IsChecked="{Binding Settings.IsLargeElements}"/>
+					  Content="{x:Static properties:Resources.UsesLargeElements}"
+					  IsChecked="{Binding Settings.UsesLargeElements}"/>
 		</ContentControl>
 
 		<ContentControl Style="{StaticResource MenuItemStyle}">
@@ -179,8 +179,8 @@
 					  Style="{StaticResource CheckBoxItemStyle}"
 					  Foreground="{StaticResource App.Foreground}"
 					  FontSize="14"
-					  Content="{x:Static properties:Resources.EnabledUnison}"
-					  IsChecked="{Binding Settings.IsEnabledUnison}"/>
+					  Content="{x:Static properties:Resources.EnablesUnison}"
+					  IsChecked="{Binding Settings.EnablesUnison}"/>
 		</ContentControl>
 
 		<Separator Style="{StaticResource MenuSeparatorStyle}"/>

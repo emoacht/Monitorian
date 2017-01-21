@@ -20,20 +20,20 @@ namespace Monitorian.Models
 	public class Settings : BindableBase
 	{
 		[DataMember]
-		public bool IsLargeElements
+		public bool UsesLargeElements
 		{
-			get { return _isLargeElements; }
-			set { SetPropertyValue(ref _isLargeElements, value); }
+			get { return _usesLargeElements; }
+			set { SetPropertyValue(ref _usesLargeElements, value); }
 		}
-		private bool _isLargeElements = true;
+		private bool _usesLargeElements = true;
 
 		[DataMember]
-		public bool IsEnabledUnison
+		public bool EnablesUnison
 		{
-			get { return _isEnabledUnison; }
-			set { SetPropertyValue(ref _isEnabledUnison, value); }
+			get { return _enablesUnison; }
+			set { SetPropertyValue(ref _enablesUnison, value); }
 		}
-		private bool _isEnabledUnison = false;
+		private bool _enablesUnison = false;
 
 		[DataMember]
 		public Dictionary<string, NamePack> KnownMonitors

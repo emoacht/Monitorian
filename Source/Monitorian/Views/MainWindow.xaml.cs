@@ -48,21 +48,21 @@ namespace Monitorian.Views
 
 			BindingOperations.SetBinding(
 				this,
-				IsLargeElementsProperty,
-				new Binding(nameof(Settings.IsLargeElements))
+				UsesLargeElementsProperty,
+				new Binding(nameof(Settings.UsesLargeElements))
 				{
 					Source = ((MainWindowViewModel)this.DataContext).Settings,
 					Mode = BindingMode.OneWay
 				});
 
-			//this.InvalidateProperty(IsLargeElementsProperty);
+			//this.InvalidateProperty(UsesLargeElementsProperty);
 		}
 
 		protected override void OnClosed(EventArgs e)
 		{
 			BindingOperations.ClearBinding(
 				this,
-				IsLargeElementsProperty);
+				UsesLargeElementsProperty);
 
 			base.OnClosed(e);
 		}
@@ -80,14 +80,14 @@ namespace Monitorian.Views
 				.ToDictionary(x => (string)x.Key, x => (double)x.Value);
 		}
 
-		public bool IsLargeElements
+		public bool UsesLargeElements
 		{
-			get { return (bool)GetValue(IsLargeElementsProperty); }
-			set { SetValue(IsLargeElementsProperty, value); }
+			get { return (bool)GetValue(UsesLargeElementsProperty); }
+			set { SetValue(UsesLargeElementsProperty, value); }
 		}
-		public static readonly DependencyProperty IsLargeElementsProperty =
+		public static readonly DependencyProperty UsesLargeElementsProperty =
 			DependencyProperty.Register(
-				"IsLargeElements",
+				"UsesLargeElements",
 				typeof(bool),
 				typeof(MainWindow),
 				new PropertyMetadata(

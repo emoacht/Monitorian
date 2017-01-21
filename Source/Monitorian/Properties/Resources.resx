@@ -120,11 +120,8 @@
   <data name="Close" xml:space="preserve">
     <value>Close</value>
   </data>
-  <data name="EnabledUnison" xml:space="preserve">
+  <data name="EnablesUnison" xml:space="preserve">
     <value>Enable moving together</value>
-  </data>
-  <data name="LargeElements" xml:space="preserve">
-    <value>Large buttons</value>
   </data>
   <data name="ProjectSite" xml:space="preserve">
     <value>Project Site</value>
@@ -137,5 +134,8 @@
   </data>
   <data name="StartSignIn" xml:space="preserve">
     <value>Start on sign in</value>
+  </data>
+  <data name="UsesLargeElements" xml:space="preserve">
+    <value>Use large buttons</value>
   </data>
 </root>

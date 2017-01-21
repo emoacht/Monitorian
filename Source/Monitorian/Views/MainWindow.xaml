@@ -367,7 +367,7 @@
 										  Foreground="{StaticResource App.Foreground}"
 										  VerticalContentAlignment="Bottom"
 										  IsChecked="{Binding RelativeSource={RelativeSource Self}, Path=Visibility, Mode=OneWay, Converter={StaticResource VisibilityToBooleanFilterConverterKey}, ConverterParameter=False}"
-										  Visibility="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Path=DataContext.Settings.IsEnabledUnison, Converter={StaticResource BooleanToVisibilityConverterKey}}"/>
+										  Visibility="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Path=DataContext.Settings.EnablesUnison, Converter={StaticResource BooleanToVisibilityConverterKey}}"/>
 
 							<Border Grid.ColumnSpan="3"
 									BorderThickness="2"

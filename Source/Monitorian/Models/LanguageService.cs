@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -11,46 +10,57 @@ namespace Monitorian.Models
 {
 	internal class LanguageService
 	{
-		private static readonly Dictionary<string, string> _cultures = new Dictionary<string, string>
+		private static readonly Dictionary<string, string> _preparedCulturePairs = new Dictionary<string, string>
 		{
 			{ "/en", "en-US" },
 			{ "/ja", "ja-JP" }
 		};
 
-		public static readonly IReadOnlyList<string> Arguments = _cultures.Keys.ToArray();
+		public static IReadOnlyList<string> Arguments => _preparedCulturePairs.Keys.ToArray();
+
+		private static CultureInfo _culture = null;
 
 		/// <summary>
 		/// Switches this application's culture depending on given arguments.  
 		/// </summary>
 		/// <param name="args">Arguments</param>
 		/// <returns>True if successfully switched the culture</returns>
-		public static bool Switch(string[] args)
+		public static bool Switch(IEnumerable<string> args)
 		{
-			foreach (var arg in args.Select(x => x.ToLower()))
+			if (args == null)
+				throw new ArgumentNullException(nameof(args));
+
+			string cultureName;
+			var allCultureNames = new HashSet<string>(CultureInfo.GetCultures(CultureTypes.AllCultures).Select(x => x.Name));
+
+			foreach (var arg in args
+				.Where(x => !string.IsNullOrWhiteSpace(x))
+				.Select(x => x.ToLower()))
 			{
-				if (_cultures.ContainsKey(arg) && SetCulture(_cultures[arg]))
-					return true;
+				if (_preparedCulturePairs.TryGetValue(arg, out cultureName) && allCultureNames.Contains(cultureName))
+				{
+					_culture = new CultureInfo(cultureName);
+
+					CultureInfo.DefaultThreadCurrentCulture = _culture;
+					CultureInfo.DefaultThreadCurrentUICulture = _culture;
+					break;
+				}
 			}
-			return false;
+
+			return Switch();
 		}
 
-		public static CultureInfo GetCulture() => CultureInfo.CurrentCulture;
-
-		public static bool SetCulture(string cultureName)
+		/// <summary>
+		/// Switches current thread's culture.
+		/// </summary>
+		/// <returns>True if successfully switched the culture</returns>
+		public static bool Switch()
 		{
-			CultureInfo cultureInfo;
-			try
-			{
-				cultureInfo = new CultureInfo(cultureName);
-			}
-			catch (CultureNotFoundException)
-			{
-				Debug.WriteLine($"Failed to find culture from culture name ({cultureName}).");
+			if (_culture == null)
 				return false;
-			}
 
-			Thread.CurrentThread.CurrentCulture = cultureInfo;
-			Thread.CurrentThread.CurrentUICulture = cultureInfo;
+			Thread.CurrentThread.CurrentCulture = _culture;
+			Thread.CurrentThread.CurrentUICulture = _culture;
 			return true;
 		}
 	}

@@ -160,7 +160,7 @@
 			<CheckBox Padding="8,4"
 					  Style="{StaticResource CheckBoxItemStyle}"
 					  Foreground="{StaticResource App.Foreground}"
-					  FontSize="14"
+					  FontSize="13"
 					  Content="{x:Static properties:Resources.StartSignIn}"
 					  IsChecked="{Binding IsRegistered}"/>
 		</ContentControl>
@@ -169,7 +169,7 @@
 			<CheckBox Padding="8,4"
 					  Style="{StaticResource CheckBoxItemStyle}"
 					  Foreground="{StaticResource App.Foreground}"
-					  FontSize="14"
+					  FontSize="13"
 					  Content="{x:Static properties:Resources.UsesLargeElements}"
 					  IsChecked="{Binding Settings.UsesLargeElements}"/>
 		</ContentControl>
@@ -178,7 +178,7 @@
 			<CheckBox Padding="8,4"
 					  Style="{StaticResource CheckBoxItemStyle}"
 					  Foreground="{StaticResource App.Foreground}"
-					  FontSize="14"
+					  FontSize="13"
 					  Content="{x:Static properties:Resources.EnablesUnison}"
 					  IsChecked="{Binding Settings.EnablesUnison}"/>
 		</ContentControl>

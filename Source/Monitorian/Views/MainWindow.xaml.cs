@@ -128,12 +128,13 @@ namespace Monitorian.Views
 
 			Task.Run(async () =>
 			{
+				// Wait for this window to be refreshed before being hidden.
 				await Task.Delay(TimeSpan.FromSeconds(0.1));
-				this.Dispatcher.Invoke(() =>
-				{
-					this.Hide();
-					CanBeShown = true;
-				});
+				this.Dispatcher.Invoke(() => this.Hide());
+
+				// Wait a moment to prevent this window from being shown unintendedly. 
+				await Task.Delay(TimeSpan.FromSeconds(0.4));
+				this.Dispatcher.Invoke(() => CanBeShown = true);
 			});
 		}
 

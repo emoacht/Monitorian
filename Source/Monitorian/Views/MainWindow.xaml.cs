@@ -25,6 +25,8 @@ namespace Monitorian.Views
 
 		public MainWindow(MainController controller)
 		{
+			LanguageService.Switch();
+
 			InitializeComponent();
 
 			this.DataContext = new MainWindowViewModel(controller);

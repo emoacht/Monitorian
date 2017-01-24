@@ -12,6 +12,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
+using Monitorian.Models;
 using Monitorian.ViewModels;
 using Monitorian.Views.Movers;
 
@@ -24,6 +25,8 @@ namespace Monitorian.Views
 
 		public MenuWindow(MainController controller, Point pivot)
 		{
+			LanguageService.Switch();
+
 			InitializeComponent();
 
 			this.DataContext = new MenuWindowViewModel(controller);

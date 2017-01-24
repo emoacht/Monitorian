@@ -38,8 +38,6 @@ namespace Monitorian
 		{
 			Settings = new Settings();
 
-			LanguageService.Switch(Environment.GetCommandLineArgs().Skip(1));
-
 			Monitors = new ObservableCollection<MonitorViewModel>();
 			BindingOperations.EnableCollectionSynchronization(Monitors, _monitorsLock);
 
@@ -91,16 +89,12 @@ namespace Monitorian
 
 		private async void OnMainWindowShowRequested(object sender, EventArgs e)
 		{
-			LanguageService.Switch(); // The culture of thread may be system default culture depending on the event.
-
 			ShowMainWindow();
 			await UpdateAsync();
 		}
 
 		private void OnMenuWindowShowRequested(object sender, Point e)
 		{
-			LanguageService.Switch(); // The culture of thread may be system default culture depending on the event.
-
 			ShowMenuWindow(e);
 		}
 

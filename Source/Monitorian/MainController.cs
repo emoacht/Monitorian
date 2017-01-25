@@ -126,6 +126,8 @@ namespace Monitorian
 
 		#region Monitors
 
+		internal event EventHandler<bool> ScanningChanged;
+
 		private static readonly Lazy<int> _maxMonitorCount = new Lazy<int>(() =>
 		{
 			int count = 4;
@@ -140,63 +142,72 @@ namespace Monitorian
 
 		private async Task ScanAsync()
 		{
-			if (Interlocked.Increment(ref _scanCount) > 1)
-				return;
-
+			var isEntered = false;
 			try
 			{
-				var scanTime = DateTimeOffset.Now;
-
-				await Task.Run(() =>
+				isEntered = (Interlocked.Increment(ref _scanCount) == 1);
+				if (isEntered)
 				{
-					var oldMonitors = Monitors.ToList();
+					ScanningChanged?.Invoke(this, true);
 
-					foreach (var item in MonitorManager.EnumerateMonitors())
+					var scanTime = DateTimeOffset.Now;
+
+					await Task.Run(() =>
 					{
-						var oldMonitor = oldMonitors.FirstOrDefault(x =>
-							string.Equals(x.DeviceInstanceId, item.DeviceInstanceId, StringComparison.OrdinalIgnoreCase));
-						if (oldMonitor != null)
+						var oldMonitors = Monitors.ToList();
+
+						foreach (var item in MonitorManager.EnumerateMonitors())
 						{
-							oldMonitors.Remove(oldMonitor);
-							item.Dispose();
-							continue;
+							var oldMonitor = oldMonitors.FirstOrDefault(x =>
+								string.Equals(x.DeviceInstanceId, item.DeviceInstanceId, StringComparison.OrdinalIgnoreCase));
+							if (oldMonitor != null)
+							{
+								oldMonitors.Remove(oldMonitor);
+								item.Dispose();
+								continue;
+							}
+
+							var newMonitor = new MonitorViewModel(item);
+							FindName(newMonitor);
+							if (Monitors.Count < _maxMonitorCount.Value)
+							{
+								newMonitor.UpdateBrightness();
+								newMonitor.IsTarget = true;
+							}
+							lock (_monitorsLock)
+							{
+								Monitors.Add(newMonitor);
+							}
 						}
 
-						var newMonitor = new MonitorViewModel(item);
-						FindName(newMonitor);
-						if (Monitors.Count < _maxMonitorCount.Value)
+						foreach (var oldMonitor in oldMonitors)
 						{
-							newMonitor.UpdateBrightness();
-							newMonitor.IsTarget = true;
+							oldMonitor.Dispose();
+							lock (_monitorsLock)
+							{
+								Monitors.Remove(oldMonitor);
+							}
 						}
-						lock (_monitorsLock)
-						{
-							Monitors.Add(newMonitor);
-						}
-					}
+					});
 
-					foreach (var oldMonitor in oldMonitors)
-					{
-						oldMonitor.Dispose();
-						lock (_monitorsLock)
+					await Task.WhenAll(Monitors
+						.Take(_maxMonitorCount.Value)
+						.Where(x => x.UpdateTime < scanTime)
+						.Select(x => Task.Run(() =>
 						{
-							Monitors.Remove(oldMonitor);
-						}
-					}
-				}).ConfigureAwait(false);
-
-				await Task.WhenAll(Monitors
-					.Take(_maxMonitorCount.Value)
-					.Where(x => x.UpdateTime < scanTime)
-					.Select(x => Task.Run(() =>
-					{
-						x.UpdateBrightness();
-						x.IsTarget = true;
-					}))).ConfigureAwait(false);
+							x.UpdateBrightness();
+							x.IsTarget = true;
+						})));
+				}
 			}
 			finally
 			{
-				Interlocked.Exchange(ref _scanCount, 0);
+				if (isEntered)
+				{
+					ScanningChanged?.Invoke(this, false);
+
+					Interlocked.Exchange(ref _scanCount, 0);
+				}
 			}
 		}
 
@@ -205,18 +216,23 @@ namespace Monitorian
 			if (_scanCount > 0)
 				return;
 
-			if (Interlocked.Increment(ref _updateCount) > 1)
-				return;
-
+			var isEntered = false;
 			try
 			{
-				await Task.WhenAll(Monitors
-					.Where(x => x.IsTarget)
-					.Select(x => Task.Run(() => x.UpdateBrightness())));
+				isEntered = (Interlocked.Increment(ref _updateCount) == 1);
+				if (isEntered)
+				{
+					await Task.WhenAll(Monitors
+						.Where(x => x.IsTarget)
+						.Select(x => Task.Run(() => x.UpdateBrightness())));
+				}
 			}
 			finally
 			{
-				Interlocked.Exchange(ref _updateCount, 0);
+				if (isEntered)
+				{
+					Interlocked.Exchange(ref _updateCount, 0);
+				}
 			}
 		}
 

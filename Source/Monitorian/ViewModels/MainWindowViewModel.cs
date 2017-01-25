@@ -22,6 +22,7 @@ namespace Monitorian.ViewModels
 				throw new ArgumentNullException(nameof(controller));
 
 			this._controller = controller;
+			this._controller.ScanningChanged += OnScanningChanged;
 		}
 
 		public ListCollectionView MonitorsView
@@ -57,5 +58,13 @@ namespace Monitorian.ViewModels
 		}
 
 		public bool IsMonitorsEmpty => MonitorsView.IsEmpty;
+
+		private void OnScanningChanged(object sender, bool e)
+		{
+			IsScanning = e;
+			RaisePropertyChanged(nameof(IsScanning));
+		}
+
+		public bool IsScanning { get; private set; }
 	}
 }

@@ -96,6 +96,7 @@
     <Compile Include="ViewModels\MonitorViewModel.cs" />
     <Compile Include="ViewModels\MenuWindowViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
+    <Compile Include="Views\Controls\PulseLabel.cs" />
     <Compile Include="Views\Controls\SwitchTextBox.cs" />
     <Compile Include="Views\Controls\QuickSlider.cs" />
     <Compile Include="Views\Converters\BooleanInverseConverter.cs" />

@@ -11,10 +11,15 @@
 		<SolidColorBrush x:Key="App.Foreground" Color="White"/>
 		<SolidColorBrush x:Key="App.Link" Color="LightGray"/>
 
-		<Color x:Key="AccessButton.Normal.BackgroundColor">#33FFFFFF</Color>
-		<Color x:Key="AccessButton.Normal.BorderColor">Transparent</Color>
-		<Color x:Key="AccessButton.MouseOver.BorderColor">#FF868686</Color>
-		<Color x:Key="AccessButton.Pressed.BackgroundColor">#FF868686</Color>
+		<SolidColorBrush x:Key="Text.Writable.Border">White</SolidColorBrush>
+		<SolidColorBrush x:Key="Text.Writable.Background">#FF5F5F5F</SolidColorBrush>
+
+		<Color x:Key="Access.Normal.BackgroundColor">#33FFFFFF</Color>
+		<Color x:Key="Access.Normal.BorderColor">Transparent</Color>
+		<Color x:Key="Access.MouseOver.BorderColor">#FF868686</Color>
+		<Color x:Key="Access.Pressed.BackgroundColor">#FF868686</Color>
+
+		<SolidColorBrush x:Key="Unison.Checked.Border" Color="#FFECECEC"/>
 
 		<SolidColorBrush x:Key="Menu.Item.Normal.Backgound" Color="Transparent"/>
 		<SolidColorBrush x:Key="Menu.Item.MouseOver.Background" Color="#FF555555"/>

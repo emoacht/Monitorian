@@ -21,7 +21,7 @@
 			<Setter Property="Template">
 				<Setter.Value>
 					<ControlTemplate TargetType="{x:Type ContentControl}">
-						<Grid x:Name="itemBody"
+						<Grid x:Name="body"
 							  Background="{StaticResource Menu.Item.Normal.Backgound}">
 							<ContentPresenter Margin="{TemplateBinding Padding}"
 											  Content="{TemplateBinding Content}"
@@ -29,7 +29,7 @@
 						</Grid>
 						<ControlTemplate.Triggers>
 							<Trigger Property="IsMouseOver" Value="true">
-								<Setter Property="Background" TargetName="itemBody" Value="{StaticResource Menu.Item.MouseOver.Background}"/>
+								<Setter Property="Background" TargetName="body" Value="{StaticResource Menu.Item.MouseOver.Background}"/>
 							</Trigger>
 						</ControlTemplate.Triggers>
 					</ControlTemplate>
@@ -44,8 +44,7 @@
 					<ControlTemplate TargetType="{x:Type CheckBox}">
 						<Grid Background="Transparent"
 							  Margin="{TemplateBinding Padding}"
-							  SnapsToDevicePixels="True"
-							  UseLayoutRounding="True">
+							  SnapsToDevicePixels="True" UseLayoutRounding="True">
 							<Grid.ColumnDefinitions>
 								<ColumnDefinition Width="Auto"/>
 								<ColumnDefinition Width="*"/>
@@ -82,8 +81,7 @@
 					<ControlTemplate TargetType="{x:Type Button}">
 						<Grid Background="Transparent"
 							  Margin="{TemplateBinding Padding}"
-							  SnapsToDevicePixels="True"
-							  UseLayoutRounding="True">
+							  SnapsToDevicePixels="True" UseLayoutRounding="True">
 							<Grid.ColumnDefinitions>
 								<ColumnDefinition Width="Auto"/>
 								<ColumnDefinition Width="*"/>
@@ -107,8 +105,7 @@
 					<ControlTemplate TargetType="{x:Type Button}">
 						<Grid Background="Transparent"
 							  Margin="{TemplateBinding Padding}"
-							  SnapsToDevicePixels="True"
-							  UseLayoutRounding="True">
+							  SnapsToDevicePixels="True" UseLayoutRounding="True">
 							<Grid.ColumnDefinitions>
 								<ColumnDefinition Width="Auto"/>
 								<ColumnDefinition Width="*"/>
@@ -185,6 +182,7 @@
 
 		<Separator Style="{StaticResource MenuSeparatorStyle}"/>
 
+		<!-- Close -->
 		<ContentControl Style="{StaticResource MenuItemStyle}">
 			<Button Padding="8,4"
 					Style="{StaticResource CloseButtonItemStyle}"

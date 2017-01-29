@@ -424,4 +424,13 @@ namespace Monitorian.Views
 
 		#endregion
 	}
+
+	public enum TaskbarAlignment
+	{
+		None = 0,
+		Left,
+		Top,
+		Right,
+		Bottom,
+	}
 }

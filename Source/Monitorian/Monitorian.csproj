@@ -111,7 +111,6 @@
     <Compile Include="Views\MenuWindow.xaml.cs">
       <DependentUpon>MenuWindow.xaml</DependentUpon>
     </Compile>
-		<Compile Include="Views\TaskbarAlignment.cs" />
     <Compile Include="Views\VisualTreeHelperAddition.cs" />
     <Compile Include="Views\WindowEffect.cs" />
     <Compile Include="Views\WindowPosition.cs" />

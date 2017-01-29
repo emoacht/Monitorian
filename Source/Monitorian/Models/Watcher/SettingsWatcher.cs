@@ -3,22 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Threading;
 using Microsoft.Win32;
 
 namespace Monitorian.Models.Watcher
 {
-	internal class SettingsWatcher : IDisposable
+	internal class SettingsWatcher : TimerWatcher, IDisposable
 	{
-		private readonly DispatcherTimer _timer;
 		private Func<Task> _onChanged;
 
-		public TimeSpan CheckingInterval { get; set; } = TimeSpan.FromSeconds(3);
-
-		public SettingsWatcher()
+		public SettingsWatcher() : base(countLimit: 3)
 		{
-			_timer = new DispatcherTimer();
-			_timer.Tick += OnTick;
 		}
 
 		public void Subscribe(Func<Task> onChanged)
@@ -30,31 +24,18 @@ namespace Monitorian.Models.Watcher
 			SystemEvents.DisplaySettingsChanged += OnDisplaySettingsChanged;
 		}
 
-		private int _count = 0;
-		private const int _countMax = 3;
-
 		private async void OnDisplaySettingsChanged(object sender, EventArgs e)
 		{
-			_timer.Stop();
+			TimerReset();
 
 			await _onChanged?.Invoke();
 
-			_count = 0;
-			_timer.Interval += CheckingInterval;
-			_timer.Start();
+			TimerStart();
 		}
 
-		private async void OnTick(object sender, EventArgs e)
+		protected override Task TimerTick()
 		{
-			_timer.Stop();
-
-			await _onChanged?.Invoke();
-
-			_count++;
-			if (_count <= _countMax)
-			{
-				_timer.Start();
-			}
+			return _onChanged?.Invoke();
 		}
 
 		#region IDisposable

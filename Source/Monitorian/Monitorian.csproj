@@ -92,6 +92,7 @@
     <Compile Include="Models\Watcher\BrightnessWatcher.cs" />
     <Compile Include="Models\Watcher\PowerWatcher.cs" />
     <Compile Include="Models\Watcher\SettingsWatcher.cs" />
+    <Compile Include="Models\Watcher\TimerWatcher.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\MonitorViewModel.cs" />
     <Compile Include="ViewModels\MenuWindowViewModel.cs" />
@@ -110,7 +111,7 @@
     <Compile Include="Views\MenuWindow.xaml.cs">
       <DependentUpon>MenuWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\TaskbarAlignment.cs" />
+		<Compile Include="Views\TaskbarAlignment.cs" />
     <Compile Include="Views\VisualTreeHelperAddition.cs" />
     <Compile Include="Views\WindowEffect.cs" />
     <Compile Include="Views\WindowPosition.cs" />

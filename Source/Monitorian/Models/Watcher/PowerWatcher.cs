@@ -7,11 +7,11 @@ using Microsoft.Win32;
 
 namespace Monitorian.Models.Watcher
 {
-	internal class PowerWatcher : IDisposable
+	internal class PowerWatcher : TimerWatcher, IDisposable
 	{
 		private Func<Task> _onChanged;
 
-		public PowerWatcher()
+		public PowerWatcher() : base(countLimit: 2)
 		{
 		}
 
@@ -24,9 +24,27 @@ namespace Monitorian.Models.Watcher
 			SystemEvents.PowerModeChanged += OnPowerModeChanged;
 		}
 
-		private async void OnPowerModeChanged(object sender, EventArgs e)
+		private async void OnPowerModeChanged(object sender, PowerModeChangedEventArgs e)
 		{
-			await _onChanged?.Invoke();
+			TimerReset();
+
+			switch (e.Mode)
+			{
+				default:
+					await _onChanged?.Invoke();
+					break;
+				case PowerModes.Suspend:
+					// Do nothing.
+					break;
+				case PowerModes.Resume:
+					TimerStart();
+					break;
+			}
+		}
+
+		protected override Task TimerTick()
+		{
+			return _onChanged?.Invoke();
 		}
 
 		#region IDisposable

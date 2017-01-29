@@ -63,13 +63,28 @@ namespace Monitorian.Models.Monitor
 				}
 			}
 
-			//Debug.WriteLine($"Count: {monitors.Count}");
-
 			using (var @class = new ManagementClass(@"root\wmi", "WmiMonitorBrightness", null))
 			using (var instances = @class.GetInstances())
+			using (var enumerator = instances.GetEnumerator())
 			{
-				foreach (ManagementObject instance in instances)
+				while (true)
 				{
+					try
+					{
+						// ManagementObjectCollection.ManagementObjectEnumerator.MoveNext method for 
+						// WmiMonitorBrightness instance may throw a ManagementException when called
+						// immediately after resume.
+						if (!enumerator.MoveNext())
+							break;
+					}
+					catch (ManagementException ex) when (ex.ErrorCode == ManagementStatus.NotSupported)
+					{
+						Debug.WriteLine($"Failed to retrieve data by WmiMonitorBrightness." + Environment.NewLine +
+							ex);
+						yield break;
+					}
+
+					var instance = (ManagementObject)enumerator.Current;
 					var instanceName = (string)instance.GetPropertyValue("InstanceName");
 					var monitor = monitors.FirstOrDefault(x => instanceName.StartsWith(x.DeviceInstanceId, StringComparison.OrdinalIgnoreCase));
 					if (monitor == null)

@@ -101,21 +101,33 @@ namespace Monitorian.Models
 			}
 			else
 			{
-				RecordException(sender, exception);
+				Record(sender, exception);
 			}
 		}
 
 		#region Record
 
-		private const string ExceptionFileName = "exception.txt";
+		private const string LogFileName = "log.txt";
 
 		/// <summary>
-		/// Records exception log to AppData and Desktop.
+		/// Records log to AppData.
+		/// </summary>
+		/// <param name="log">Log</param>
+		public static void Record(string log)
+		{
+			var content = $"[Date: {DateTime.Now}]" + Environment.NewLine
+				+ log + Environment.NewLine + Environment.NewLine;
+
+			RecordToAppData(content);
+		}
+
+		/// <summary>
+		/// Records exception to AppData and Desktop.
 		/// </summary>
 		/// <param name="sender">Sender</param>
 		/// <param name="exception">Exception</param>
 		/// <remarks>A log file of previous dates will be overridden.</remarks>
-		public static void RecordException(object sender, Exception exception)
+		public static void Record(object sender, Exception exception)
 		{
 			var content = $"[Date: {DateTime.Now} Sender: {sender}]" + Environment.NewLine
 				+ exception + Environment.NewLine + Environment.NewLine;
@@ -130,7 +142,7 @@ namespace Monitorian.Models
 			{
 				var filePath = Path.Combine(
 					FolderService.GetAppDataFolderPath(true),
-					ExceptionFileName);
+					LogFileName);
 
 				UpdateText(filePath, content);
 			}
@@ -154,7 +166,7 @@ namespace Monitorian.Models
 			{
 				var filePath = Path.Combine(
 					Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory),
-					ExceptionFileName);
+					LogFileName);
 
 				UpdateText(filePath, content);
 			}

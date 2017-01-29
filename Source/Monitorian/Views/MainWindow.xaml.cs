@@ -114,30 +114,26 @@ namespace Monitorian.Views
 
 		#region Show/Hide
 
-		public bool CanBeShown { get; private set; } = true;
+		public bool CanBeShown => (_preventionTime < DateTimeOffset.Now);
+		private DateTimeOffset _preventionTime;
 
-		protected override void OnDeactivated(EventArgs e)
+		protected override async void OnDeactivated(EventArgs e)
 		{
 			base.OnDeactivated(e);
 
 			if (this.Visibility != Visibility.Visible)
 				return;
 
+			// Set time to prevent this window from being shown unintendedly. 
+			_preventionTime = DateTimeOffset.Now + TimeSpan.FromSeconds(0.5);
+
 			// Clear focus.
 			FocusManager.SetFocusedElement(this, null);
 
-			CanBeShown = false;
+			// Wait for this window to be refreshed before being hidden.
+			await Task.Delay(TimeSpan.FromSeconds(0.1));
 
-			Task.Run(async () =>
-			{
-				// Wait for this window to be refreshed before being hidden.
-				await Task.Delay(TimeSpan.FromSeconds(0.1));
-				this.Dispatcher.Invoke(() => this.Hide());
-
-				// Wait a moment to prevent this window from being shown unintendedly. 
-				await Task.Delay(TimeSpan.FromSeconds(0.4));
-				this.Dispatcher.Invoke(() => CanBeShown = true);
-			});
+			this.Dispatcher.Invoke(() => this.Hide());
 		}
 
 		#endregion

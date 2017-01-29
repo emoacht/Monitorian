@@ -58,7 +58,7 @@ namespace Monitorian
 			Settings.Load();
 
 			var dpi = VisualTreeHelperAddition.GetNotificationAreaDpi();
-			NotifyIconComponent.ShowIcon("pack://application:,,,/Resources/Brightness.ico", dpi, ProductInfo.Title);
+			NotifyIconComponent.ShowIcon("pack://application:,,,/Resources/TrayIcon.ico", dpi, ProductInfo.Title);
 
 			_current.MainWindow = new MainWindow(this);
 			_current.MainWindow.DpiChanged += OnDpiChanged;

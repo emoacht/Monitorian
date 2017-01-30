@@ -24,7 +24,7 @@ namespace Monitorian.Helper
 		/// Converts from wParam of WM_DPICHANGED message to DpiScale.
 		/// </summary>
 		/// <param name="wParam">wParam</param>
-		/// <returns>DpiScale</returns>
+		/// <returns>DPI information</returns>
 		public static DpiScale FromUInt(uint wParam)
 		{
 			var dpiX = (ushort)(wParam & 0xffff);

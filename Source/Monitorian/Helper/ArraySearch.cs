@@ -12,25 +12,25 @@ namespace Monitorian.Helper
 	/// <remarks>The array must be sorted beforehand.</remarks>
 	public static class ArraySearch
 	{
-		public static int GetNearest(int[] source, int target) =>
-			source[GetNearestIndex(source, target)];
+		public static int GetNearest(int[] array, int target) =>
+			array[GetNearestIndex(array, target)];
 
-		public static int GetNearestIndex(int[] source, int target) =>
-			GetNearestIndex(source, target, (a, b) => Math.Abs(a - b));
+		public static int GetNearestIndex(int[] array, int target) =>
+			GetNearestIndex(array, target, (a, b) => Math.Abs(a - b));
 
-		public static int GetNearest(byte[] source, byte target) =>
-			source[GetNearestIndex(source, target)];
+		public static int GetNearest(byte[] array, byte target) =>
+			array[GetNearestIndex(array, target)];
 
-		public static int GetNearestIndex(byte[] source, byte target) =>
-			GetNearestIndex(source, target, (a, b) => (byte)Math.Abs(a - b));
+		public static int GetNearestIndex(byte[] array, byte target) =>
+			GetNearestIndex(array, target, (a, b) => (byte)Math.Abs(a - b));
 
-		public static int GetNearestIndex<T>(T[] source, T target, Func<T, T, T> measure) where T : IComparable
+		public static int GetNearestIndex<T>(T[] array, T target, Func<T, T, T> measure) where T : IComparable
 		{
-			if ((source == null) || (source.Length == 0))
-				throw new ArgumentNullException(nameof(source));
+			if ((array == null) || (array.Length == 0))
+				throw new ArgumentNullException(nameof(array));
 
 			// The source array must be sorted beforehand.
-			int indexExact = Array.BinarySearch(source, target);
+			int indexExact = Array.BinarySearch(array, target);
 
 			if (indexExact >= 0)
 				return indexExact;
@@ -40,11 +40,11 @@ namespace Monitorian.Helper
 			if (indexAfter == 0)
 				return 0; // First index
 
-			if (indexAfter == source.Length)
-				return source.Length - 1; // Last index
+			if (indexAfter == array.Length)
+				return array.Length - 1; // Last index
 
-			T gapBefore = measure(target, source[indexAfter - 1]);
-			T gapAfter = measure(source[indexAfter], target);
+			T gapBefore = measure(target, array[indexAfter - 1]);
+			T gapAfter = measure(array[indexAfter], target);
 
 			if (gapBefore.CompareTo(gapAfter) <= 0)
 				return indexAfter - 1;

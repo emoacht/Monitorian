@@ -10,13 +10,13 @@ namespace Monitorian.Models
 {
 	internal class LanguageService
 	{
-		private static readonly Dictionary<string, string> _preparedCulturePairs = new Dictionary<string, string>
+		private static IReadOnlyDictionary<string, string> PreparedCulturePairs => new Dictionary<string, string>
 		{
 			{ "/en", "en-US" },
 			{ "/ja", "ja-JP" }
 		};
 
-		public static IReadOnlyList<string> Arguments => _preparedCulturePairs.Keys.ToArray();
+		public static IReadOnlyList<string> Arguments => PreparedCulturePairs.Keys.ToArray();
 
 		private static CultureInfo _culture = null;
 
@@ -37,7 +37,7 @@ namespace Monitorian.Models
 				.Where(x => !string.IsNullOrWhiteSpace(x))
 				.Select(x => x.ToLower()))
 			{
-				if (_preparedCulturePairs.TryGetValue(arg, out cultureName) && allCultureNames.Contains(cultureName))
+				if (PreparedCulturePairs.TryGetValue(arg, out cultureName) && allCultureNames.Contains(cultureName))
 				{
 					_culture = new CultureInfo(cultureName);
 

@@ -133,7 +133,7 @@ namespace Monitorian.Views
 			// Wait for this window to be refreshed before being hidden.
 			await Task.Delay(TimeSpan.FromSeconds(0.1));
 
-			this.Dispatcher.Invoke(() => this.Hide());
+			this.Hide();
 		}
 
 		#endregion

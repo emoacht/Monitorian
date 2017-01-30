@@ -16,6 +16,10 @@ namespace Monitorian.Models
 
 		private static string _path = $"{Assembly.GetExecutingAssembly().Location} {Argument}";
 
+		/// <summary>
+		/// Whether this instance is registered in Run of HKCU.
+		/// </summary>
+		/// <returns>True if registered</returns>
 		public static bool IsRegistered()
 		{
 			using (var key = Registry.CurrentUser.OpenSubKey(Run, false))
@@ -25,6 +29,10 @@ namespace Monitorian.Models
 			}
 		}
 
+		/// <summary>
+		/// Registers this instance to Run of HKCU.
+		/// </summary>
+		/// <returns>True if successfully registered</returns>
 		public static bool Register()
 		{
 			if (IsRegistered())
@@ -37,6 +45,10 @@ namespace Monitorian.Models
 			return true;
 		}
 
+		/// <summary>
+		/// Unregisters this instance from Run of HKCU.
+		/// </summary>
+		/// <returns>True if this instance successfully unregistered</returns>
 		public static bool Unregister()
 		{
 			using (var key = Registry.CurrentUser.OpenSubKey(Run, true))

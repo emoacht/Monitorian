@@ -86,7 +86,7 @@
     <Compile Include="Models\FolderService.cs" />
     <Compile Include="Models\LanguageService.cs" />
     <Compile Include="Models\ProductInfo.cs" />
-    <Compile Include="Models\RegistryService.cs" />
+    <Compile Include="Models\StartupService.cs" />
     <Compile Include="Models\RemotingAgent.cs" />
     <Compile Include="Models\Settings.cs" />
     <Compile Include="Models\Watcher\BrightnessWatcher.cs" />
@@ -180,6 +180,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\TrayIcon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\StartupBridge\StartupBridge.csproj">
+      <Project>{735eef09-ea89-4022-828c-575b73981165}</Project>
+      <Name>StartupBridge</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

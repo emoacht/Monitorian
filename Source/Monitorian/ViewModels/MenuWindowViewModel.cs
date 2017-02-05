@@ -19,13 +19,20 @@ namespace Monitorian.ViewModels
 				throw new ArgumentNullException(nameof(controller));
 
 			this._controller = controller;
-
-			_isRegistered = RegistryService.IsRegistered();
 		}
+
+		public bool CanRegister => StartupService.CanRegister();
 
 		public bool IsRegistered
 		{
-			get { return _isRegistered; }
+			get
+			{
+				if (!_isRegistered.HasValue)
+				{
+					_isRegistered = StartupService.IsRegistered();
+				}
+				return _isRegistered.Value;
+			}
 			set
 			{
 				if (_isRegistered == value)
@@ -33,17 +40,17 @@ namespace Monitorian.ViewModels
 
 				if (value)
 				{
-					RegistryService.Register();
+					StartupService.Register();
 				}
 				else
 				{
-					RegistryService.Unregister();
+					StartupService.Unregister();
 				}
 				_isRegistered = value;
 				RaisePropertyChanged();
 			}
 		}
-		private bool _isRegistered;
+		private bool? _isRegistered;
 
 		public event EventHandler CloseAppRequested;
 

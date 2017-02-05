@@ -63,7 +63,7 @@ namespace Monitorian
 			_current.MainWindow = new MainWindow(this);
 			_current.MainWindow.DpiChanged += OnDpiChanged;
 
-			if (!Environment.GetCommandLineArgs().Skip(1).Contains(RegistryService.Argument))
+			if (!StartupService.IsStartedOnSignIn())
 				_current.MainWindow.Show();
 
 			agent.ShowRequested += OnMainWindowShowRequested;

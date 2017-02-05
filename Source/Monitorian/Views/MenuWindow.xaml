@@ -28,7 +28,7 @@
 											  ContentTemplate="{TemplateBinding ContentTemplate}"/>
 						</Grid>
 						<ControlTemplate.Triggers>
-							<Trigger Property="IsMouseOver" Value="true">
+							<Trigger Property="IsMouseOver" Value="True">
 								<Setter Property="Background" TargetName="body" Value="{StaticResource Menu.Item.MouseOver.Background}"/>
 							</Trigger>
 						</ControlTemplate.Triggers>
@@ -62,7 +62,7 @@
 											  Focusable="False"/>
 						</Grid>
 						<ControlTemplate.Triggers>
-							<Trigger Property="IsChecked" Value="true">
+							<Trigger Property="IsChecked" Value="True">
 								<Setter Property="Opacity" TargetName="checkMark" Value="1"/>
 							</Trigger>
 							<Trigger Property="IsChecked" Value="{x:Null}">
@@ -159,7 +159,8 @@
 					  Foreground="{StaticResource App.Foreground}"
 					  FontSize="13"
 					  Content="{x:Static properties:Resources.StartSignIn}"
-					  IsChecked="{Binding IsRegistered}"/>
+					  IsChecked="{Binding IsRegistered}"
+					  Visibility="{Binding CanRegister, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverterKey}}"/>
 		</ContentControl>
 
 		<ContentControl Style="{StaticResource MenuItemStyle}">

@@ -21,10 +21,7 @@ namespace Monitorian
 			base.OnStartup(e);
 
 			ConsoleLogService.Start();
-
-			if (e.Args.Contains(RegistryService.Argument))
-				await Task.Delay(TimeSpan.FromSeconds(10));
-
+			
 			_agent = new RemotingAgent();
 			if (!_agent.Start())
 			{

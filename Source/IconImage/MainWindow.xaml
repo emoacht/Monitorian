@@ -1,0 +1,71 @@
+﻿<Window x:Class="IconImage.MainWindow"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+		xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+		xmlns:local="clr-namespace:IconImage"
+		x:Name="WindowRoot"
+		Title="IconImage"
+		Width="272" Height="360" SizeToContent="WidthAndHeight" ResizeMode="NoResize"
+		Background="{x:Null}">
+	<Window.Resources>
+		<local:ScaleConverter x:Key="ScaleConverterKey"/>
+	</Window.Resources>
+
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="256"/>
+			<RowDefinition Height="Auto"/>
+		</Grid.RowDefinitions>
+
+		<!-- Image -->
+		<Grid Grid.Row="0"
+			  x:Name="ImageGrid"
+			  Width="256" Height="256"
+			  RenderTransformOrigin="0.5 0.5">
+			<local:AppIcon x:Name="ImageContent"
+						   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+			<Grid.RenderTransform>
+				<ScaleTransform ScaleX="{Binding ElementName=ScaleSlider, Path=Value, Converter={StaticResource ScaleConverterKey}, ConverterParameter=256}"
+								ScaleY="{Binding RelativeSource={RelativeSource Self}, Path=ScaleX}"/>
+			</Grid.RenderTransform>
+		</Grid>
+
+		<StackPanel Grid.Row="1"
+					Background="White">
+			<!-- Scale -->
+			<Grid Margin="8">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*"/>
+					<ColumnDefinition Width="Auto"/>
+				</Grid.ColumnDefinitions>
+
+				<Slider Grid.Column="0"
+						x:Name="ScaleSlider"
+						Height="24"
+						Margin="0,4,0,0" VerticalAlignment="Center"
+						Minimum="16" Maximum="256" TickFrequency="8" IsSnapToTickEnabled="True"
+						Value="{Binding ElementName=WindowRoot, Path=ImageLength}"/>
+				<TextBox Grid.Column="1"
+						 Width="36" Height="24"
+						 Margin="8,0,0,0" VerticalAlignment="Center"
+						 HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+						 IsReadOnly="True"
+						 Text="{Binding ElementName=ScaleSlider, Path=Value}"/>
+			</Grid>
+
+			<!-- Save -->
+			<Grid Margin="8,0,8,8">
+				<Button Height="24"
+						Content="Save">
+					<i:Interaction.Triggers>
+						<i:EventTrigger EventName="Click">
+							<ei:CallMethodAction MethodName="SaveImage" TargetObject="{Binding ElementName=WindowRoot}"/>
+						</i:EventTrigger>
+					</i:Interaction.Triggers>
+				</Button>
+			</Grid>
+		</StackPanel>
+	</Grid>
+</Window>

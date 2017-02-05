@@ -10,6 +10,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Monitorian", "Monitorian\Mo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StartupBridge", "StartupBridge\StartupBridge.csproj", "{735EEF09-EA89-4022-828C-575B73981165}"
 EndProject
+Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "Installer", "Installer\Installer.wixproj", "{64CEE60B-ED8E-4F72-813B-0B57F8A205A5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,6 +46,15 @@ Global
 		{735EEF09-EA89-4022-828C-575B73981165}.Unlimited|Any CPU.Build.0 = Unlimited|Any CPU
 		{735EEF09-EA89-4022-828C-575B73981165}.Unlimited|x86.ActiveCfg = Release|Any CPU
 		{735EEF09-EA89-4022-828C-575B73981165}.Unlimited|x86.Build.0 = Release|Any CPU
+		{64CEE60B-ED8E-4F72-813B-0B57F8A205A5}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{64CEE60B-ED8E-4F72-813B-0B57F8A205A5}.Debug|x86.ActiveCfg = Debug|x86
+		{64CEE60B-ED8E-4F72-813B-0B57F8A205A5}.Debug|x86.Build.0 = Debug|x86
+		{64CEE60B-ED8E-4F72-813B-0B57F8A205A5}.Release|Any CPU.ActiveCfg = Release|x86
+		{64CEE60B-ED8E-4F72-813B-0B57F8A205A5}.Release|x86.ActiveCfg = Release|x86
+		{64CEE60B-ED8E-4F72-813B-0B57F8A205A5}.Release|x86.Build.0 = Release|x86
+		{64CEE60B-ED8E-4F72-813B-0B57F8A205A5}.Unlimited|Any CPU.ActiveCfg = Unlimited|x86
+		{64CEE60B-ED8E-4F72-813B-0B57F8A205A5}.Unlimited|x86.ActiveCfg = Unlimited|x86
+		{64CEE60B-ED8E-4F72-813B-0B57F8A205A5}.Unlimited|x86.Build.0 = Unlimited|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

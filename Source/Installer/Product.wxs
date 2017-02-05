@@ -1,0 +1,101 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Product Id="*" Name="Monitorian" Manufacturer="emoacht" Version="0.9.5"
+					 Language="1033" Codepage="1252" UpgradeCode="{81A4D148-75D3-462E-938D-8C208FB48E3C}">
+		<Package Id="*" InstallerVersion="500" Compressed="yes"
+						 InstallScope="perMachine" InstallPrivileges="elevated"
+						 Description="Installer for [ProductName]"/>
+
+		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed."/>
+
+		<Media Id="1" Cabinet="source.cab" EmbedCab="yes"/>
+
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<!-- Program Files -->
+			<Directory Id="ProgramFilesFolder">
+				<Directory Id="INSTALLDIR" Name="$(var.Monitorian.ProjectName)"/>
+			</Directory>
+
+			<!-- Program Menu -->
+			<Directory Id="ProgramMenuFolder"/>
+
+			<!-- Local AppData -->
+			<Directory Id="LocalAppDataFolder">
+				<Directory Id="ApplicationLocalAppDataFolder" Name="$(var.Monitorian.ProjectName)"/>
+			</Directory>
+		</Directory>
+
+		<DirectoryRef Id="INSTALLDIR">
+			<Component Id="MainExecutable" Guid="{54E27434-B1A7-4EB7-9F97-847E0B336BAF}">
+				<File Id="MainExecutableEXE"
+							Source="$(var.Monitorian.TargetPath)" Name="$(var.Monitorian.TargetFileName)"	KeyPath="yes"/>
+			</Component>
+
+			<Component Id="InteractionsLibrary" Guid="{CC7D480D-A83A-4066-9390-0E2871893809}">
+				<File Id="InteractionsDLL"
+							Source="$(var.Monitorian.TargetDir)" Name="Microsoft.Expression.Interactions.dll"	KeyPath="yes"/>
+			</Component>
+
+			<Component Id="InteractivityLibrary" Guid="{CDD5E0E6-FF0A-47DA-AE3E-66D6F6FAB3E8}">
+				<File Id="InteractivityDLL"
+							Source="$(var.Monitorian.TargetDir)" Name="System.Windows.Interactivity.dll" KeyPath="yes"/>
+			</Component>
+
+			<Component Id="BridgeLibrary" Guid="{6B9D6399-5B5A-4AFF-99B0-9892B8C237B8}">
+				<File Id="BridgeDLL"
+							Source="$(var.Monitorian.TargetDir)" Name="StartupBridge.dll" KeyPath="yes"/>
+			</Component>
+
+			<Directory Id="ResourcesFolder_jaJP" Name="ja-JP"
+								 FileSource="$(var.Monitorian.TargetDir)ja-JP">
+				<Component Id="ResourcesLibrary_jaJP" Guid="{9CEFCEF0-E3EF-4455-AD16-EBC8256A67C5}">
+					<File Id="ResourcesDLL_jaJP"
+								Name="$(var.Monitorian.TargetName).resources.dll"	KeyPath="yes"/>
+				</Component>
+			</Directory>
+		</DirectoryRef>
+
+		<!-- Shortcut in Program Menu -->
+		<DirectoryRef Id="ProgramMenuFolder">
+			<Component Id="ApplicationShortcut" Guid="{FEE3D455-9968-475E-9B57-44826C4BF63F}">
+				<Shortcut Id="ApplicationProgramMenuShortcut" Name="$(var.Monitorian.ProjectName)"
+									Target="[#MainExecutableEXE]" WorkingDirectory="INSTALLDIR"
+									Icon="AppIcon.exe" IconIndex="0">
+					<ShortcutProperty Key="System.AppUserModel.ID" Value="[ProductName]"/>
+				</Shortcut>
+				<RegistryValue Root="HKCU" Key="Software\[ProductName]"
+											 Name="ApplicationShortcut" Type="integer" Value="1" KeyPath="yes"/>
+			</Component>
+		</DirectoryRef>
+
+		<!-- Working Folder in Local AppData -->
+		<DirectoryRef Id="ApplicationLocalAppDataFolder">
+			<Component Id="ApplicationWorkingFolder" Guid="{62E835D6-6CB7-4853-8B11-4EA52E47B33F}">
+				<RemoveFile Id="ApplicationLocalAppDataFiles" Directory="ApplicationLocalAppDataFolder" Name="*.*" On="uninstall"/>
+				<RemoveFolder Id="ApplicationLocalAppDataFolder" On="uninstall"/>
+				<RegistryValue Root="HKCU" Key="Software\[ProductName]"
+											 Name="ApplicationWorkingFolder" Type="integer" Value="1" KeyPath="yes"/>
+			</Component>
+		</DirectoryRef>
+
+		<Icon Id="AppIcon.exe" SourceFile="$(var.Monitorian.TargetPath)"/>
+		<Property Id="ARPPRODUCTICON" Value="AppIcon.exe"/>
+
+		<Feature Id="ProductFeature" Level="1">
+			<ComponentRef Id="MainExecutable"/>
+			<ComponentRef Id="InteractionsLibrary"/>
+			<ComponentRef Id="InteractivityLibrary"/>
+			<ComponentRef Id="BridgeLibrary"/>
+			<ComponentRef Id="ResourcesLibrary_jaJP"/>
+			<ComponentRef Id="ApplicationShortcut"/>
+			<ComponentRef Id="ApplicationWorkingFolder"/>
+		</Feature>
+
+		<!-- Clean Current User Run -->
+		<CustomAction Id="CleanCurrentUserRun" Directory="TARGETDIR" Execute="immediate" Return="ignore"
+									ExeCommand="[SystemFolder]reg.exe delete HKCU\Software\Microsoft\Windows\CurrentVersion\Run /v [ProductName] /f"/>
+		<InstallExecuteSequence>
+			<Custom Action="CleanCurrentUserRun" After="InstallFinalize">(NOT UPGRADINGPRODUCTCODE) AND (REMOVE="ALL")</Custom>
+		</InstallExecuteSequence>
+	</Product>
+</Wix>

@@ -44,7 +44,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Resources\AppIcon.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\Icons\AppIcon.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
@@ -176,10 +176,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\AppIcon.ico" />
+    <None Include="Resources\Icons\AppIcon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\TrayIcon.ico" />
+    <Resource Include="Resources\Icons\TrayIcon.ico" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\StartupBridge\StartupBridge.csproj">

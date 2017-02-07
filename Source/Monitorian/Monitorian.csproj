@@ -83,6 +83,7 @@
     <Compile Include="Helper\ArraySearch.cs" />
     <Compile Include="MainController.cs" />
     <Compile Include="Models\ConsoleLogService.cs" />
+    <Compile Include="Models\DocumentService.cs" />
     <Compile Include="Models\FolderService.cs" />
     <Compile Include="Models\LanguageService.cs" />
     <Compile Include="Models\ProductInfo.cs" />
@@ -186,6 +187,11 @@
       <Project>{735eef09-ea89-4022-828c-575b73981165}</Project>
       <Name>StartupBridge</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\..\LICENSE.txt">
+      <Link>Resources\LICENSE.txt</Link>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

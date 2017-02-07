@@ -79,20 +79,11 @@ namespace Monitorian.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Project Site.
+        ///   Looks up a localized string similar to License.
         /// </summary>
-        public static string ProjectSite {
+        public static string License {
             get {
-                return ResourceManager.GetString("ProjectSite", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to https://github.com/emoacht/Monitorian.
-        /// </summary>
-        public static string ProjectSiteUrl {
-            get {
-                return ResourceManager.GetString("ProjectSiteUrl", resourceCulture);
+                return ResourceManager.GetString("License", resourceCulture);
             }
         }
         
@@ -102,6 +93,24 @@ namespace Monitorian.Properties {
         public static string RecordException {
             get {
                 return ResourceManager.GetString("RecordException", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Site.
+        /// </summary>
+        public static string Site {
+            get {
+                return ResourceManager.GetString("Site", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to https://github.com/emoacht/Monitorian.
+        /// </summary>
+        public static string SiteUrl {
+            get {
+                return ResourceManager.GetString("SiteUrl", resourceCulture);
             }
         }
         

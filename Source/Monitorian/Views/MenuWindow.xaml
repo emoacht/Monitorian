@@ -138,14 +138,26 @@
 				   Padding="8,4"
 				   Foreground="{StaticResource App.Foreground}">
 			<Run Text="{Binding Source={x:Static models:ProductInfo.Title}, Mode=OneTime}"/>
-			<Run Text="{Binding Source={x:Static models:ProductInfo.Version}, Mode=OneTime, StringFormat={} {0}}"/>
 			<LineBreak/>
+			<Run Text="{Binding Source={x:Static models:ProductInfo.Version}, Mode=OneTime}"/>
+			<Run Text="|"/>
 			<Run Foreground="{StaticResource App.Link}"
 				 TextDecorations="Underline" Cursor="Hand"
-				 Text="{x:Static properties:Resources.ProjectSite}">
+				 Text="{x:Static properties:Resources.Site}">
 				<i:Interaction.Triggers>
 					<i:EventTrigger EventName="MouseDown">
-						<ei:LaunchUriOrFileAction Path="{x:Static properties:Resources.ProjectSiteUrl}"/>
+						<ei:LaunchUriOrFileAction Path="{x:Static properties:Resources.SiteUrl}"/>
+					</i:EventTrigger>
+				</i:Interaction.Triggers>
+			</Run>
+			<Run Text="|"/>
+			<Run Foreground="{StaticResource App.Link}"
+				 TextDecorations="Underline" Cursor="Hand"
+				 Text="{x:Static properties:Resources.License}">
+				<i:Interaction.Triggers>
+					<i:EventTrigger EventName="MouseDown">
+						<ei:CallMethodAction TargetObject="{Binding}"
+											 MethodName="OpenLicense"/>
 					</i:EventTrigger>
 				</i:Interaction.Triggers>
 			</Run>

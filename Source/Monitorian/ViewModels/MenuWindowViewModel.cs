@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,6 +21,25 @@ namespace Monitorian.ViewModels
 
 			this._controller = controller;
 		}
+
+		#region License
+
+		private const string LicenseFileName = "LICENSE.txt";
+
+		public void OpenLicense()
+		{
+			Task.Run(() =>
+			{
+				var licenseFileContent = DocumentService.ReadEmbeddedFile($"Resources.{LicenseFileName}");
+				var licenseFilePath = DocumentService.SaveAsHtml(LicenseFileName, licenseFileContent);
+
+				Process.Start(licenseFilePath);
+			});
+		}
+
+		#endregion
+
+		#region Startup
 
 		public bool CanRegister => StartupService.CanRegister();
 
@@ -51,6 +71,8 @@ namespace Monitorian.ViewModels
 			}
 		}
 		private bool? _isRegistered;
+
+		#endregion
 
 		public event EventHandler CloseAppRequested;
 

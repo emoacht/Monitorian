@@ -123,14 +123,17 @@
   <data name="EnablesUnison" xml:space="preserve">
     <value>Enable moving together</value>
   </data>
-  <data name="ProjectSite" xml:space="preserve">
-    <value>Project Site</value>
-  </data>
-  <data name="ProjectSiteUrl" xml:space="preserve">
-    <value>https://github.com/emoacht/Monitorian</value>
+  <data name="License" xml:space="preserve">
+    <value>License</value>
   </data>
   <data name="RecordException" xml:space="preserve">
     <value>An unexpected problem occurred. Save exception log to Desktop?</value>
+  </data>
+  <data name="Site" xml:space="preserve">
+    <value>Site</value>
+  </data>
+  <data name="SiteUrl" xml:space="preserve">
+    <value>https://github.com/emoacht/Monitorian</value>
   </data>
   <data name="StartSignIn" xml:space="preserve">
     <value>Start on sign in</value>

@@ -10,7 +10,7 @@ Monitorian is a Windows desktop app to adjust the brightness of multiple monitor
 
  * Windows 7 or newer
  * .NET Framework 4.6.2
-editable.
+
 ##Download
 
 :floppy_disk: [Download executables](https://github.com/emoacht/Monitorian/releases/download/0.9.5/Monitorian095.zip)

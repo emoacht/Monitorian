@@ -125,7 +125,7 @@ namespace Monitorian.Views
 				return;
 
 			// Set time to prevent this window from being shown unintendedly. 
-			_preventionTime = DateTimeOffset.Now + TimeSpan.FromSeconds(0.5);
+			_preventionTime = DateTimeOffset.Now + TimeSpan.FromSeconds(0.2);
 
 			// Clear focus.
 			FocusManager.SetFocusedElement(this, null);

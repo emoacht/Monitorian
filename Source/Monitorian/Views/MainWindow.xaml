@@ -146,11 +146,18 @@
 				<Setter.Value>
 					<ControlTemplate TargetType="{x:Type controls:PulseLabel}">
 						<Grid>
-							<Border x:Name="border"
-									Opacity="1">
-								<ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-												  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-												  RecognizesAccessKey="True"/>
+							<Border>
+								<TextBlock HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+										   VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+										   Text="{TemplateBinding ContentPresenter.Content}">
+									<TextBlock.Foreground>
+										<LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+											<GradientStop x:Name="head" Color="{StaticResource App.ForegroundColor}" Offset="0.0"/>
+											<GradientStop x:Name="middle" Color="{StaticResource App.ForegroundColor}" Offset="0.0"/>
+											<GradientStop x:Name="tail" Color="{StaticResource App.ForegroundColor}" Offset="0.0"/>
+										</LinearGradientBrush>
+									</TextBlock.Foreground>
+								</TextBlock>
 							</Border>
 
 							<VisualStateManager.VisualStateGroups>
@@ -158,11 +165,24 @@
 									<VisualState x:Name="Off"/>
 									<VisualState x:Name="On">
 										<Storyboard>
-											<DoubleAnimation Storyboard.TargetName="border"
-															 Storyboard.TargetProperty="(UIElement.Opacity)"
-															 Duration="0:0:1"
-															 From="1" To="0.4"
-															 AutoReverse="True"
+											<ColorAnimation Storyboard.TargetName="middle"
+															Storyboard.TargetProperty="(GradientStop.Color)"
+															Duration="0"
+															To="{StaticResource App.ShadowColor}"/>
+											<DoubleAnimation Storyboard.TargetName="head"
+															 Storyboard.TargetProperty="(GradientStop.Offset)"
+															 Duration="0:0:1.2"
+															 From="0.0" To="1.8"
+															 RepeatBehavior="Forever"/>
+											<DoubleAnimation Storyboard.TargetName="middle"
+															 Storyboard.TargetProperty="(GradientStop.Offset)"
+															 Duration="0:0:1.2"
+															 From="-0.4" To="1.4"
+															 RepeatBehavior="Forever"/>
+											<DoubleAnimation Storyboard.TargetName="tail"
+															 Storyboard.TargetProperty="(GradientStop.Offset)"
+															 Duration="0:0:1.2"
+															 From="-0.8" To="1.0"
 															 RepeatBehavior="Forever"/>
 										</Storyboard>
 									</VisualState>
@@ -319,7 +339,6 @@
 		<!-- Pulse -->
 		<controls:PulseLabel Margin="6,4"
 							 Style="{StaticResource PulseLabelStyle}"
-							 Foreground="{StaticResource App.Foreground}"
 							 Content="{Binding Source={x:Static models:ProductInfo.Title}, Mode=OneTime}"
 							 IsPulsing="{Binding IsScanning, Mode=OneWay}"
 							 Visibility="{Binding IsMonitorsEmpty, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverterKey}}"/>

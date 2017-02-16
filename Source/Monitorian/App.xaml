@@ -7,9 +7,13 @@
 		<converters:VisibilityToBooleanFilterConverter x:Key="VisibilityToBooleanFilterConverterKey"/>
 		<converters:BooleanInverseConverter x:Key="BooleanInverseConverterKey"/>
 
-		<SolidColorBrush x:Key="App.Background" Color="#CC171717"/>
-		<SolidColorBrush x:Key="App.Foreground" Color="White"/>
-		<SolidColorBrush x:Key="App.Link" Color="LightGray"/>
+		<Color x:Key="App.BackgroundColor">#CC171717</Color>
+		<Color x:Key="App.ForegroundColor">White</Color>
+		<Color x:Key="App.ShadowColor">LightGray</Color>
+
+		<SolidColorBrush x:Key="App.Background" Color="{StaticResource App.BackgroundColor}"/>
+		<SolidColorBrush x:Key="App.Foreground" Color="{StaticResource App.ForegroundColor}"/>
+		<SolidColorBrush x:Key="App.Shadow" Color="{StaticResource App.ShadowColor}"/>
 
 		<SolidColorBrush x:Key="Text.Writable.Border">White</SolidColorBrush>
 		<SolidColorBrush x:Key="Text.Writable.Background">#FF5F5F5F</SolidColorBrush>

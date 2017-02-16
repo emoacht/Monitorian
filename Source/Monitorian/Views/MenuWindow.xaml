@@ -141,7 +141,7 @@
 			<LineBreak/>
 			<Run Text="{Binding Source={x:Static models:ProductInfo.Version}, Mode=OneTime}"/>
 			<Run Text="|"/>
-			<Run Foreground="{StaticResource App.Link}"
+			<Run Foreground="{StaticResource App.Shadow}"
 				 TextDecorations="Underline" Cursor="Hand"
 				 Text="{x:Static properties:Resources.Site}">
 				<i:Interaction.Triggers>
@@ -151,7 +151,7 @@
 				</i:Interaction.Triggers>
 			</Run>
 			<Run Text="|"/>
-			<Run Foreground="{StaticResource App.Link}"
+			<Run Foreground="{StaticResource App.Shadow}"
 				 TextDecorations="Underline" Cursor="Hand"
 				 Text="{x:Static properties:Resources.License}">
 				<i:Interaction.Triggers>

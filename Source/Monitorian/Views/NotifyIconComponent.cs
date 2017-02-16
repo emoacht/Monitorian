@@ -125,7 +125,7 @@ namespace Monitorian.Views
 		}
 
 		/// <summary>
-		/// Gets the point where NotifyIcon is clicked by the position of ContextMenuStrip and NotifyIcon.
+		/// Gets the point where NotifyIcon is clicked from the position of ContextMenuStrip and NotifyIcon.
 		/// </summary>
 		/// <returns>Clicked point</returns>
 		/// <remarks>MouseEventArgs.Location property of MouseClick event does not contain data.</remarks>

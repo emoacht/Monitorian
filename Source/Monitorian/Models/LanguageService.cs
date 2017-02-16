@@ -30,14 +30,14 @@ namespace Monitorian.Models
 			if (args == null)
 				throw new ArgumentNullException(nameof(args));
 
+			var supportedCultureNames = new HashSet<string>(CultureInfo.GetCultures(CultureTypes.AllCultures).Select(x => x.Name));
 			string cultureName;
-			var allCultureNames = new HashSet<string>(CultureInfo.GetCultures(CultureTypes.AllCultures).Select(x => x.Name));
 
 			foreach (var arg in args
 				.Where(x => !string.IsNullOrWhiteSpace(x))
 				.Select(x => x.ToLower()))
 			{
-				if (PreparedCulturePairs.TryGetValue(arg, out cultureName) && allCultureNames.Contains(cultureName))
+				if (PreparedCulturePairs.TryGetValue(arg, out cultureName) && supportedCultureNames.Contains(cultureName))
 				{
 					_culture = new CultureInfo(cultureName);
 

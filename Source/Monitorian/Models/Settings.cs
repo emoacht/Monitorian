@@ -28,7 +28,7 @@ namespace Monitorian.Models
 			get { return _usesLargeElements; }
 			set { SetPropertyValue(ref _usesLargeElements, value); }
 		}
-		private bool _usesLargeElements = true;
+		private bool _usesLargeElements = true; // Default
 
 		/// <summary>
 		/// Whether to enable moving together

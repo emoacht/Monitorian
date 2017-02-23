@@ -1,7 +1,7 @@
 ﻿Monitorian
 ==========
 
-Monitorian is a Windows desktop app to adjust the brightness of multiple monitors at ease.
+Monitorian is a Windows desktop tool to adjust the brightness of multiple monitors with ease.
 
 ![Screenshot](Images/Screenshot.png)<br>
 (DPI: 200%)
@@ -13,7 +13,12 @@ Monitorian is a Windows desktop app to adjust the brightness of multiple monitor
 
 ##Download
 
-:floppy_disk: [Download executables](https://github.com/emoacht/Monitorian/releases/download/0.9.5/Monitorian095.zip)
+ * Windows 10 Anniversary Update (1607) or newer:<br>
+[Monitorian](https://www.microsoft.com/store/apps/9nw33j738bl0) (Windows Store)
+
+ * Other:<br>
+:floppy_disk: [Executables](https://github.com/emoacht/Monitorian/releases/download/1.0.0-executables/Monitorian100.zip)<br>
+:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/1.0.0-installer/MonitorianInstaller100.zip)
 
 ##Remarks
 
@@ -25,10 +30,16 @@ Monitorian is a Windows desktop app to adjust the brightness of multiple monitor
 
 This app is a WPF app developed and tested with Surface Pro 4.
 
-##Author
+##History
 
- - emoacht (emotom[atmark]pobox.com)
+Ver 1.0.0 2017-2-22
+
+ - Initial release
 
 ##License
 
  - MIT License
+
+##Author
+
+ - emoacht (emotom[atmark]pobox.com)

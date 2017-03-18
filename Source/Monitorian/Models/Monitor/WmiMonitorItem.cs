@@ -43,18 +43,20 @@ namespace Monitorian.Models.Monitor
 			{
 				if (_isRemovable)
 				{
-					if (0 <= brightness)
-					{
-						this.Brightness = brightness;
-					}
-					else
-					{
-						this.Brightness = MSMonitor.GetBrightness(DeviceInstanceId);
-					}
+					this.Brightness = (0 <= brightness)
+						? brightness
+						: MSMonitor.GetBrightness(DeviceInstanceId);
 				}
 				else
 				{
 					this.Brightness = PowerManagement.GetActiveSchemeBrightness();
+
+					if (LightSensor.AmbientLightSensorExists)
+					{
+						this.BrightnessAdjusted = (0 <= brightness)
+							? brightness
+							: MSMonitor.GetBrightness(DeviceInstanceId);
+					}
 				}
 				return (0 <= this.Brightness);
 			}

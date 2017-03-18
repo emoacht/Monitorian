@@ -14,6 +14,7 @@ namespace Monitorian.Models.Monitor
 		byte MonitorIndex { get; }
 
 		int Brightness { get; }
+		int BrightnessAdjusted { get; }
 
 		bool UpdateBrightness(int brightness = -1);
 		bool SetBrightness(int brightness);

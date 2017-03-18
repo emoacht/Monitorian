@@ -13,6 +13,7 @@
 	<Window.Resources>
 		<sys:Double x:Key="ButtonHeight">60</sys:Double>
 		<sys:Double x:Key="ThumbHeight">40</sys:Double>
+		<sys:Double x:Key="ShadowHeight">30</sys:Double>
 
 		<!-- Slider -->
 		<Color x:Key="Slider.Filled.Static.BackgroundColor">#FF2982CC</Color>
@@ -108,6 +109,20 @@
 							<Grid>
 								<Border Height="5" Margin="5,0" VerticalAlignment="Center"
 										Background="{StaticResource Slider.Vacant.Background}"/>
+
+								<Grid>
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition x:Name="PART_ShadowLeft" Width="*"/>
+										<ColumnDefinition Width="Auto"/>
+										<ColumnDefinition x:Name="PART_ShadowRight" Width="*"/>
+									</Grid.ColumnDefinitions>
+
+									<Rectangle Grid.Column="1"
+											   x:Name="PART_ShadowCenter"
+											   Width="8" Height="{DynamicResource ShadowHeight}"
+											   Fill="{StaticResource Slider.Vacant.Background}"
+											   IsHitTestVisible="False"/>
+								</Grid>
 
 								<Track x:Name="PART_Track">
 									<Track.DecreaseRepeatButton>
@@ -396,13 +411,15 @@
 								</i:Interaction.Triggers>
 							</Button>
 
-							<controls:QuickSlider Grid.Column="1"
-												  Margin="10,0,6,0" VerticalAlignment="Center"
-												  Style="{StaticResource SliderHorizontal}"
-												  AutoToolTipPlacement="TopLeft"
-												  Minimum="0" Maximum="100"
-												  Value="{Binding BrightnessInteractive, Mode=TwoWay, Delay=50}"
-												  IsUnison="{Binding ElementName=UnisonButton, Path=IsChecked, Mode=TwoWay}"/>
+							<controls:QuickShadowSlider Grid.Column="1"
+														Margin="10,0,6,0" VerticalAlignment="Center"
+														Style="{StaticResource SliderHorizontal}"
+														AutoToolTipPlacement="TopLeft"
+														Minimum="0" Maximum="100"
+														Value="{Binding BrightnessInteractive, Mode=TwoWay, Delay=50}"
+														ShadowValue="{Binding BrightnessAdjusted, Mode=OneWay}"
+														ShadowVisibility="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Path=DataContext.Settings.ShowsAdjusted, Converter={StaticResource BooleanToVisibilityConverterKey}}"
+														IsUnison="{Binding ElementName=UnisonButton, Path=IsChecked, Mode=TwoWay}"/>
 
 							<ToggleButton Grid.Column="2"
 										  x:Name="UnisonButton"

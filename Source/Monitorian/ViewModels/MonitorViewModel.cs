@@ -48,6 +48,8 @@ namespace Monitorian.ViewModels
 			}
 		}
 
+		public int BrightnessAdjusted => _monitor.BrightnessAdjusted;
+
 		public DateTimeOffset UpdateTime { get; private set; }
 
 		public void UpdateBrightness(int brightness = -1)
@@ -58,6 +60,7 @@ namespace Monitorian.ViewModels
 			{
 				RaisePropertyChanged(nameof(Brightness));
 				RaisePropertyChanged(nameof(BrightnessInteractive));
+				RaisePropertyChanged(nameof(BrightnessAdjusted));
 			}
 		}
 

@@ -193,6 +193,15 @@
 					  IsChecked="{Binding Settings.EnablesUnison}"/>
 		</ContentControl>
 
+		<ContentControl Style="{StaticResource MenuItemStyle}">
+			<CheckBox Padding="8,4"
+					  Style="{StaticResource CheckBoxItemStyle}"
+					  Foreground="{StaticResource App.Foreground}"
+					  FontSize="13"
+					  Content="{x:Static properties:Resources.ShowsAdjusted}"
+					  IsChecked="{Binding Settings.ShowsAdjusted}"/>
+		</ContentControl>
+
 		<Separator Style="{StaticResource MenuSeparatorStyle}"/>
 
 		<!-- Close -->

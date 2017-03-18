@@ -42,6 +42,17 @@ namespace Monitorian.Models
 		private bool _enablesUnison = false;
 
 		/// <summary>
+		/// Whether to show adjusted brightness
+		/// </summary>
+		[DataMember]
+		public bool ShowsAdjusted
+		{
+			get { return _showsAdjusted; }
+			set { SetPropertyValue(ref _showsAdjusted, value); }
+		}
+		private bool _showsAdjusted = false;
+
+		/// <summary>
 		/// Known monitors with user-specified names
 		/// </summary>
 		[DataMember]

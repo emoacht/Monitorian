@@ -116,7 +116,7 @@ namespace Monitorian.Views.Controls
 				return false;
 
 			// Slider.UpdateValue private method
-			_updateValue = this.GetType().BaseType.GetMethod("UpdateValue", BindingFlags.NonPublic | BindingFlags.Instance);
+			_updateValue = typeof(Slider).GetMethod("UpdateValue", BindingFlags.NonPublic | BindingFlags.Instance);
 			if (_updateValue == null)
 				return false;
 

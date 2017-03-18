@@ -14,6 +14,7 @@ namespace Monitorian.Models.Monitor
 		public byte MonitorIndex { get; }
 
 		public int Brightness { get; protected set; } = -1;
+		public int BrightnessAdjusted { get; protected set; } = -1;
 
 		public MonitorItem(
 			string description,

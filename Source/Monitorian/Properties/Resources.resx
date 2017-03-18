@@ -129,6 +129,9 @@
   <data name="RecordException" xml:space="preserve">
     <value>An unexpected problem occurred. Save exception log to Desktop?</value>
   </data>
+  <data name="ShowsAdjusted" xml:space="preserve">
+    <value>Show adjusted brightness</value>
+  </data>
   <data name="Site" xml:space="preserve">
     <value>Site</value>
   </data>

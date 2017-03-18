@@ -97,6 +97,15 @@ namespace Monitorian.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show adjusted brightness.
+        /// </summary>
+        public static string ShowsAdjusted {
+            get {
+                return ResourceManager.GetString("ShowsAdjusted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Site.
         /// </summary>
         public static string Site {

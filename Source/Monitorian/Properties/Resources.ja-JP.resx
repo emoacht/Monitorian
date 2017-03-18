@@ -123,6 +123,9 @@
   <data name="EnablesUnison" xml:space="preserve">
     <value>一緒に動かせるようにする</value>
   </data>
+  <data name="ShowsAdjusted" xml:space="preserve">
+    <value>調整後の明るさを表示する</value>
+  </data>
   <data name="StartSignIn" xml:space="preserve">
     <value>サインイン時に起動する</value>
   </data>

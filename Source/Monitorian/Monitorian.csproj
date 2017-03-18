@@ -85,7 +85,7 @@
     <Compile Include="Models\ConsoleLogService.cs" />
     <Compile Include="Models\DocumentService.cs" />
     <Compile Include="Models\FolderService.cs" />
-    <Compile Include="Models\LanguageService.cs" />
+    <Compile Include="Models\LanguageService.cs" />    
     <Compile Include="Models\ProductInfo.cs" />
     <Compile Include="Models\StartupService.cs" />
     <Compile Include="Models\RemotingAgent.cs" />
@@ -99,6 +99,7 @@
     <Compile Include="ViewModels\MenuWindowViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
     <Compile Include="Views\Controls\PulseLabel.cs" />
+    <Compile Include="Views\Controls\QuickShadowSlider.cs" />
     <Compile Include="Views\Controls\SwitchTextBox.cs" />
     <Compile Include="Views\Controls\QuickSlider.cs" />
     <Compile Include="Views\Converters\BooleanInverseConverter.cs" />
@@ -135,6 +136,7 @@
   <ItemGroup>
     <Compile Include="Models\Monitor\DeviceContext.cs" />
     <Compile Include="Models\Monitor\DeviceInstallation.cs" />
+    <Compile Include="Models\Monitor\LightSensor.cs" />
     <Compile Include="Models\Monitor\Error.cs" />
     <Compile Include="Models\Monitor\IMonitor.cs" />
     <Compile Include="Models\Monitor\MonitorItem.cs" />

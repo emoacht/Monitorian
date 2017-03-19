@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Management;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,17 +19,24 @@ namespace Monitorian.Models
 		/// <summary>
 		/// Whether this instance is presumed to have started on sign in
 		/// </summary>
+		/// <param name="lastCloseTime">Last close time of this application</param>
 		/// <returns>True if started on sign in</returns>
-		public static bool IsStartedOnSignIn()
+		public static bool IsStartedOnSignIn(DateTimeOffset lastCloseTime)
 		{
 			// First, check the command-line arguments.
 			if (Environment.GetCommandLineArgs().Skip(1).Contains(Argument))
 				return true;
 
-			// Second, if this assembly is packaged, check if the startup task is enabled.
-			return _isPackaged
-				? StartupTaskIsEnabled()
-				: false;
+			// Second, check if this assembly is packaged and if the startup task is enabled.
+			if (!_isPackaged || !StartupTaskIsEnabled())
+				return false;
+
+			// Third, compare last close time with session start time.
+			if ((default(DateTimeOffset) < lastCloseTime) && TryGetLogonSessionStartTime(out DateTimeOffset startTime))
+			{
+				return (lastCloseTime < startTime);
+			}
+			return false;
 		}
 
 		/// <summary>
@@ -138,6 +146,30 @@ namespace Monitorian.Models
 
 				key.DeleteValue(ProductInfo.Title, false);
 			}
+		}
+
+		#endregion
+
+		#region Session
+
+		private static bool TryGetLogonSessionStartTime(out DateTimeOffset startTime)
+		{
+			var query = new SelectQuery("Win32_LogonSession", "LogonType = 2");
+			using (var searcher = new ManagementObjectSearcher(query))
+			using (var sessions = searcher.Get())
+			{
+				foreach (ManagementObject session in sessions)
+				{
+					var buff = (string)session.GetPropertyValue("StartTime");
+					if (string.IsNullOrEmpty(buff))
+						continue;
+
+					startTime = new DateTimeOffset(ManagementDateTimeConverter.ToDateTime(buff));
+					return true;
+				}
+			}
+			startTime = default(DateTimeOffset);
+			return false;
 		}
 
 		#endregion

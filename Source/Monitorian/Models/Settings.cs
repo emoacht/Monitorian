@@ -63,6 +63,12 @@ namespace Monitorian.Models
 		}
 		private Dictionary<string, NamePack> _knownMonitors;
 
+		/// <summary>
+		/// Last close time of this application
+		/// </summary>
+		[DataMember]
+		public DateTimeOffset LastCloseTime { get; private set; }
+
 		#region Load/Save
 
 		private const string SettingsFileName = "settings.xml";
@@ -100,6 +106,12 @@ namespace Monitorian.Models
 				Debug.WriteLine("Failed to load settings from AppData." + Environment.NewLine
 					+ ex);
 			}
+		}
+
+		internal void SaveOnClose()
+		{
+			LastCloseTime = DateTimeOffset.Now;
+			Save();
 		}
 
 		internal void Save()

@@ -63,7 +63,7 @@ namespace Monitorian
 			_current.MainWindow = new MainWindow(this);
 			_current.MainWindow.DpiChanged += OnDpiChanged;
 
-			if (!StartupService.IsStartedOnSignIn())
+			if (!StartupService.IsStartedOnSignIn(Settings.LastCloseTime))
 				_current.MainWindow.Show();
 
 			agent.ShowRequested += OnMainWindowShowRequested;
@@ -80,7 +80,7 @@ namespace Monitorian
 			MonitorsDispose();
 			NotifyIconComponent.Dispose();
 
-			Settings.Save();
+			Settings.SaveOnClose();
 
 			_settingsWatcher.Dispose();
 			_powerWatcher.Dispose();

@@ -79,13 +79,12 @@
     </ApplicationDefinition>
     <Compile Include="Common\BindableBase.cs" />
     <Compile Include="Helper\OsVersion.cs" />
-    <Compile Include="Helper\DpiScaleExtension.cs" />
     <Compile Include="Helper\ArraySearch.cs" />
     <Compile Include="MainController.cs" />
     <Compile Include="Models\ConsoleLogService.cs" />
     <Compile Include="Models\DocumentService.cs" />
     <Compile Include="Models\FolderService.cs" />
-    <Compile Include="Models\LanguageService.cs" />    
+    <Compile Include="Models\LanguageService.cs" />
     <Compile Include="Models\ProductInfo.cs" />
     <Compile Include="Models\StartupService.cs" />
     <Compile Include="Models\RemotingAgent.cs" />
@@ -104,18 +103,10 @@
     <Compile Include="Views\Controls\QuickSlider.cs" />
     <Compile Include="Views\Converters\BooleanInverseConverter.cs" />
     <Compile Include="Views\Converters\VisibilityToBooleanFilterConverter.cs" />
-    <Compile Include="Views\Movers\WindowMover.cs" />
-    <Compile Include="Views\Movers\MainWindowMover.cs" />
-    <Compile Include="Views\Movers\MenuWindowMover.cs" />
-    <Compile Include="Views\NotifyIconComponent.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="Views\MenuWindow.xaml.cs">
       <DependentUpon>MenuWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\VisualTreeHelperAddition.cs" />
     <Compile Include="Views\WindowEffect.cs" />
-    <Compile Include="Views\WindowPosition.cs" />
     <Page Include="Views\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -185,6 +176,10 @@
     <Resource Include="Resources\Icons\TrayIcon.ico" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ScreenFrame\ScreenFrame.csproj">
+      <Project>{edd1c1b9-c241-4d89-8334-0d29f95c2445}</Project>
+      <Name>ScreenFrame</Name>
+    </ProjectReference>
     <ProjectReference Include="..\StartupBridge\StartupBridge.csproj">
       <Project>{735eef09-ea89-4022-828c-575b73981165}</Project>
       <Name>StartupBridge</Name>

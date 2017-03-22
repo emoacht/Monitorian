@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
 
-namespace Monitorian.Views
+namespace ScreenFrame
 {
 	public class NotifyIconComponent : Component
 	{
@@ -35,7 +35,10 @@ namespace Monitorian.Views
 		private System.Drawing.Icon _icon;
 		public DpiScale _dpi;
 
-		public void ShowIcon(string iconPath, DpiScale dpi, string text)
+		public void ShowIcon(string iconPath, string iconText) =>
+			ShowIcon(iconPath, iconText, VisualTreeHelperAddition.GetNotificationAreaDpi());
+
+		public void ShowIcon(string iconPath, string iconText, DpiScale dpi)
 		{
 			if (string.IsNullOrWhiteSpace(iconPath))
 				throw new ArgumentNullException(nameof(iconPath));
@@ -46,19 +49,16 @@ namespace Monitorian.Views
 				using (var iconStream = iconResource.Stream)
 				{
 					var icon = new System.Drawing.Icon(iconStream);
-					ShowIcon(icon, dpi, text);
+					ShowIcon(icon, iconText, dpi);
 				}
 			}
 		}
 
-		public void ShowIcon(System.Drawing.Icon icon, DpiScale dpi, string text)
+		public void ShowIcon(System.Drawing.Icon icon, string iconText, DpiScale dpi)
 		{
-			if (icon == null)
-				throw new ArgumentNullException(nameof(icon));
-
-			this._icon = icon;
+			this._icon = icon ?? throw new ArgumentNullException(nameof(icon));
 			this._dpi = dpi;
-			this.Text = text;
+			this.Text = iconText;
 
 			NotifyIcon.Icon = GetIcon(this._icon, this._dpi);
 			NotifyIcon.Visible = true;
@@ -73,8 +73,7 @@ namespace Monitorian.Views
 				return;
 
 			this._dpi = dpi;
-
-			NotifyIcon.Icon = GetIcon(this._icon, this._dpi);
+			NotifyIcon.Icon = GetIcon(_icon, this._dpi);
 		}
 
 		private static System.Drawing.Icon GetIcon(System.Drawing.Icon icon, DpiScale dpi)
@@ -141,16 +140,14 @@ namespace Monitorian.Views
 				new Point(contextMenuStrip.Right, contextMenuStrip.Bottom)
 			};
 
-			var notifyIconRect = WindowPosition.GetNotifyIconRect(NotifyIcon);
-			if (notifyIconRect != Rect.Empty)
+			if (WindowPosition.TryGetNotifyIconRect(NotifyIcon, out Rect iconRect))
 			{
 				foreach (var corner in corners)
 				{
-					if (notifyIconRect.Contains(corner))
+					if (iconRect.Contains(corner))
 						return corner;
 				}
 			}
-
 			return corners.Last(); // Fallback
 		}
 

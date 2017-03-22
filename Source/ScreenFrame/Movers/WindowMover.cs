@@ -7,31 +7,28 @@ using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
 
-using Monitorian.Helper;
+using ScreenFrame.Helper;
 
-namespace Monitorian.Views.Movers
+namespace ScreenFrame.Movers
 {
-	internal abstract class WindowMover
+	public abstract class WindowMover
 	{
 		protected readonly Window _window;
 
 		public WindowMover(Window window)
 		{
-			if (window == null)
-				throw new ArgumentNullException(nameof(window));
-
-			this._window = window;
+			this._window = window ?? throw new ArgumentNullException(nameof(window));
 			this._window.SourceInitialized += OnSourceInitialized;
 			this._window.Closed += OnClosed;
 			this._window.DpiChanged += OnDpiChanged;
 		}
 
-		private HwndSource _Source;
+		private HwndSource _source;
 
 		private void OnSourceInitialized(object sender, EventArgs e)
 		{
-			_Source = PresentationSource.FromVisual(_window) as HwndSource;
-			_Source?.AddHook(WndProc);
+			_source = PresentationSource.FromVisual(_window) as HwndSource;
+			_source?.AddHook(WndProc);
 
 			var dpi = VisualTreeHelperAddition.GetDpi(_window);
 			if (!dpi.Equals(VisualTreeHelperAddition.SystemDpi))
@@ -42,7 +39,7 @@ namespace Monitorian.Views.Movers
 
 		private void OnClosed(object sender, EventArgs e)
 		{
-			_Source?.RemoveHook(WndProc);
+			_source?.RemoveHook(WndProc);
 		}
 
 		private void OnDpiChanged(object sender, DpiChangedEventArgs e)
@@ -55,8 +52,7 @@ namespace Monitorian.Views.Movers
 			if (!OsVersion.Is81OrNewer || OsVersion.Is10Redstone1OrNewer)
 				return;
 
-			var content = _window.Content as FrameworkElement;
-			if (content != null)
+			if (_window.Content is FrameworkElement content)
 			{
 				content.LayoutTransform = dpi.IsDefault()
 					? Transform.Identity

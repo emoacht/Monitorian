@@ -1,11 +1,12 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26228.9
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Monitorian", "Monitorian\Monitorian.csproj", "{A4CC5362-9B08-465B-AD64-5CFABC72A4C7}"
 	ProjectSection(ProjectDependencies) = postProject
 		{735EEF09-EA89-4022-828C-575B73981165} = {735EEF09-EA89-4022-828C-575B73981165}
+		{EDD1C1B9-C241-4D89-8334-0D29F95C2445} = {EDD1C1B9-C241-4D89-8334-0D29F95C2445}
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StartupBridge", "StartupBridge\StartupBridge.csproj", "{735EEF09-EA89-4022-828C-575B73981165}"
@@ -13,6 +14,8 @@ EndProject
 Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "Installer", "Installer\Installer.wixproj", "{64CEE60B-ED8E-4F72-813B-0B57F8A205A5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IconImage", "IconImage\IconImage.csproj", "{F78D96C8-CFED-416C-ABB1-A8098CA4F4B8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScreenFrame", "ScreenFrame\ScreenFrame.csproj", "{EDD1C1B9-C241-4D89-8334-0D29F95C2445}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -66,9 +69,20 @@ Global
 		{F78D96C8-CFED-416C-ABB1-A8098CA4F4B8}.Release|x86.ActiveCfg = Release|Any CPU
 		{F78D96C8-CFED-416C-ABB1-A8098CA4F4B8}.Release|x86.Build.0 = Release|Any CPU
 		{F78D96C8-CFED-416C-ABB1-A8098CA4F4B8}.Unlimited|Any CPU.ActiveCfg = Release|Any CPU
-		{F78D96C8-CFED-416C-ABB1-A8098CA4F4B8}.Unlimited|Any CPU.Build.0 = Release|Any CPU
 		{F78D96C8-CFED-416C-ABB1-A8098CA4F4B8}.Unlimited|x86.ActiveCfg = Release|Any CPU
 		{F78D96C8-CFED-416C-ABB1-A8098CA4F4B8}.Unlimited|x86.Build.0 = Release|Any CPU
+		{EDD1C1B9-C241-4D89-8334-0D29F95C2445}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EDD1C1B9-C241-4D89-8334-0D29F95C2445}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EDD1C1B9-C241-4D89-8334-0D29F95C2445}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{EDD1C1B9-C241-4D89-8334-0D29F95C2445}.Debug|x86.Build.0 = Debug|Any CPU
+		{EDD1C1B9-C241-4D89-8334-0D29F95C2445}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EDD1C1B9-C241-4D89-8334-0D29F95C2445}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EDD1C1B9-C241-4D89-8334-0D29F95C2445}.Release|x86.ActiveCfg = Release|Any CPU
+		{EDD1C1B9-C241-4D89-8334-0D29F95C2445}.Release|x86.Build.0 = Release|Any CPU
+		{EDD1C1B9-C241-4D89-8334-0D29F95C2445}.Unlimited|Any CPU.ActiveCfg = Unlimited|Any CPU
+		{EDD1C1B9-C241-4D89-8334-0D29F95C2445}.Unlimited|Any CPU.Build.0 = Unlimited|Any CPU
+		{EDD1C1B9-C241-4D89-8334-0D29F95C2445}.Unlimited|x86.ActiveCfg = Release|Any CPU
+		{EDD1C1B9-C241-4D89-8334-0D29F95C2445}.Unlimited|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace Monitorian.Helper
+namespace ScreenFrame.Helper
 {
 	/// <summary>
 	/// DpiScale extension methods

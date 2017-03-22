@@ -8,9 +8,9 @@ using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
 
-using Monitorian.Helper;
+using ScreenFrame.Helper;
 
-namespace Monitorian.Views
+namespace ScreenFrame
 {
 	internal static class VisualTreeHelperAddition
 	{
@@ -67,8 +67,8 @@ namespace Monitorian.Views
 		private static extern int GetDpiForMonitor(
 			IntPtr hmonitor,
 			MONITOR_DPI_TYPE dpiType,
-			ref uint dpiX,
-			ref uint dpiY);
+			out uint dpiX,
+			out uint dpiY);
 
 		private enum MONITOR_DPI_TYPE
 		{
@@ -93,7 +93,7 @@ namespace Monitorian.Views
 			MDT_Default = MDT_Effective_DPI
 		}
 
-		private const int S_OK = 0x00000000;
+		private const int S_OK = 0x0;
 
 		#endregion
 
@@ -188,14 +188,11 @@ namespace Monitorian.Views
 			if (handleMonitor == IntPtr.Zero)
 				return SystemDpi;
 
-			uint dpiX = 1;
-			uint dpiY = 1;
-
 			var result = GetDpiForMonitor(
 				handleMonitor,
 				MONITOR_DPI_TYPE.MDT_Default,
-				ref dpiX,
-				ref dpiY);
+				out uint dpiX,
+				out uint dpiY);
 			if (result != S_OK)
 				return SystemDpi;
 

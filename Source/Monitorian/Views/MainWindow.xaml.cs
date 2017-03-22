@@ -15,13 +15,13 @@ using System.Windows.Threading;
 
 using Monitorian.Models;
 using Monitorian.ViewModels;
-using Monitorian.Views.Movers;
+using ScreenFrame.Movers;
 
 namespace Monitorian.Views
 {
 	public partial class MainWindow : Window
 	{
-		private readonly MainWindowMover _mover;
+		private readonly StickWindowMover _mover;
 
 		public MainWindow(MainController controller)
 		{
@@ -31,14 +31,14 @@ namespace Monitorian.Views
 
 			this.DataContext = new MainWindowViewModel(controller);
 
-			_mover = new MainWindowMover(this, controller.NotifyIconComponent.NotifyIcon);
+			_mover = new StickWindowMover(this, controller.NotifyIconComponent.NotifyIcon);
 		}
 
 		protected override void OnSourceInitialized(EventArgs e)
 		{
 			base.OnSourceInitialized(e);
 
-			WindowPosition.DisableTransitions(this);
+			WindowEffect.DisableTransitions(this);
 			WindowEffect.EnableBackgroundBlur(this);
 		}
 
@@ -78,7 +78,7 @@ namespace Monitorian.Views
 		{
 			_defaultHeights = this.Resources.Cast<DictionaryEntry>()
 				.Where(x => ((string)x.Key).EndsWith("Height", StringComparison.Ordinal))
-				.Where(x => (x.Value is double) && ((double)x.Value > 0))
+				.Where(x => (x.Value is double height) && (0 < height))
 				.ToDictionary(x => (string)x.Key, x => (double)x.Value);
 		}
 

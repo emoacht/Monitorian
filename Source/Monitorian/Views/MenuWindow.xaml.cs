@@ -14,13 +14,13 @@ using System.Windows.Media.Imaging;
 
 using Monitorian.Models;
 using Monitorian.ViewModels;
-using Monitorian.Views.Movers;
+using ScreenFrame.Movers;
 
 namespace Monitorian.Views
 {
 	public partial class MenuWindow : Window
 	{
-		private readonly MenuWindowMover _mover;
+		private readonly FloatWindowMover _mover;
 		internal MenuWindowViewModel ViewModel => (MenuWindowViewModel)this.DataContext;
 
 		public MenuWindow(MainController controller, Point pivot)
@@ -31,7 +31,7 @@ namespace Monitorian.Views
 
 			this.DataContext = new MenuWindowViewModel(controller);
 
-			_mover = new MenuWindowMover(this, pivot);
+			_mover = new FloatWindowMover(this, pivot);
 		}
 
 		protected override void OnSourceInitialized(EventArgs e)

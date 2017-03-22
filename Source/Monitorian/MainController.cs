@@ -16,6 +16,7 @@ using Monitorian.Models.Monitor;
 using Monitorian.Models.Watcher;
 using Monitorian.ViewModels;
 using Monitorian.Views;
+using ScreenFrame;
 
 namespace Monitorian
 {
@@ -56,9 +57,8 @@ namespace Monitorian
 				throw new ArgumentNullException(nameof(agent));
 
 			Settings.Load();
-
-			var dpi = VisualTreeHelperAddition.GetNotificationAreaDpi();
-			NotifyIconComponent.ShowIcon("pack://application:,,,/Resources/Icons/TrayIcon.ico", dpi, ProductInfo.Title);
+			
+			NotifyIconComponent.ShowIcon("pack://application:,,,/Resources/Icons/TrayIcon.ico", ProductInfo.Title);
 
 			_current.MainWindow = new MainWindow(this);
 			_current.MainWindow.DpiChanged += OnDpiChanged;
@@ -257,10 +257,9 @@ namespace Monitorian
 
 		private void FindName(MonitorViewModel monitor)
 		{
-			NamePack value;
-			if (Settings.KnownMonitors.TryGetValue(monitor.DeviceInstanceId, out value))
+			if (Settings.KnownMonitors.TryGetValue(monitor.DeviceInstanceId, out NamePack knownMonitor))
 			{
-				monitor.Name = value.Name;
+				monitor.Name = knownMonitor.Name;
 			}
 		}
 

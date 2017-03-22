@@ -14,6 +14,37 @@ namespace Monitorian.Views
 {
 	internal static class WindowEffect
 	{
+		#region Win32 (common)
+
+		[DllImport("Dwmapi.dll", SetLastError = true)]
+		private static extern int DwmSetWindowAttribute(
+			IntPtr hwnd,
+			uint dwAttribute,
+			[In] ref bool pvAttribute, // IntPtr
+			uint cbAttribute);
+
+		private enum DWMWA : uint
+		{
+			DWMWA_NCRENDERING_ENABLED = 1,     // [get] Is non-client rendering enabled/disabled
+			DWMWA_NCRENDERING_POLICY,          // [set] Non-client rendering policy
+			DWMWA_TRANSITIONS_FORCEDISABLED,   // [set] Potentially enable/forcibly disable transitions
+			DWMWA_ALLOW_NCPAINT,               // [set] Allow contents rendered in the non-client area to be visible on the DWM-drawn frame.
+			DWMWA_CAPTION_BUTTON_BOUNDS,       // [get] Bounds of the caption button area in window-relative space.
+			DWMWA_NONCLIENT_RTL_LAYOUT,        // [set] Is non-client content RTL mirrored
+			DWMWA_FORCE_ICONIC_REPRESENTATION, // [set] Force this window to display iconic thumbnails.
+			DWMWA_FLIP3D_POLICY,               // [set] Designates how Flip3D will treat the window.
+			DWMWA_EXTENDED_FRAME_BOUNDS,       // [get] Gets the extended frame bounds rectangle in screen space
+			DWMWA_HAS_ICONIC_BITMAP,           // [set] Indicates an available bitmap when there is no better thumbnail representation.
+			DWMWA_DISALLOW_PEEK,               // [set] Don't invoke Peek on the window.
+			DWMWA_EXCLUDED_FROM_PEEK,          // [set] LivePreview exclusion information
+			DWMWA_CLOAK,                       // [set] Cloak or uncloak the window
+			DWMWA_CLOAKED,                     // [get] Gets the cloaked state of the window
+			DWMWA_FREEZE_REPRESENTATION,       // [set] Force this window to freeze the thumbnail without live update
+			DWMWA_LAST
+		}
+
+		#endregion
+
 		#region Win32 (for Win7)
 
 		[DllImport("Dwmapi.dll")]
@@ -22,7 +53,7 @@ namespace Monitorian.Views
 		[DllImport("Dwmapi.dll")]
 		private static extern int DwmEnableBlurBehindWindow(
 			IntPtr hWnd,
-			ref DWM_BLURBEHIND pBlurBehind);
+			[In] ref DWM_BLURBEHIND pBlurBehind);
 
 		[StructLayout(LayoutKind.Sequential)]
 		private struct DWM_BLURBEHIND
@@ -103,6 +134,18 @@ namespace Monitorian.Views
 
 		#endregion
 
+		public static bool DisableTransitions(Window window)
+		{
+			var windowHandle = new WindowInteropHelper(window).Handle;
+			bool value = true;
+
+			return (DwmSetWindowAttribute(
+				windowHandle,
+				(uint)DWMWA.DWMWA_TRANSITIONS_FORCEDISABLED,
+				ref value,
+				(uint)Marshal.SizeOf<bool>()) == S_OK);
+		}
+
 		public static bool EnableBackgroundBlur(Window window)
 		{
 			if (!OsVersion.IsVistaOrNewer)
@@ -119,8 +162,7 @@ namespace Monitorian.Views
 
 		private static bool EnableBackgroundBlurForWin7(Window window)
 		{
-			bool isEnabled;
-			if ((DwmIsCompositionEnabled(out isEnabled) != S_OK) || !isEnabled)
+			if ((DwmIsCompositionEnabled(out bool isEnabled) != S_OK) || !isEnabled)
 				return false;
 
 			var windowHandle = new WindowInteropHelper(window).Handle;
@@ -132,7 +174,9 @@ namespace Monitorian.Views
 				hRgnBlur = IntPtr.Zero
 			};
 
-			return (DwmEnableBlurBehindWindow(windowHandle, ref bb) == S_OK);
+			return (DwmEnableBlurBehindWindow(
+				windowHandle,
+				ref bb) == S_OK);
 		}
 
 		private static bool EnableBackgroundBlurForWin10(Window window)
@@ -155,7 +199,9 @@ namespace Monitorian.Views
 					SizeOfData = accentSize,
 				};
 
-				return SetWindowCompositionAttribute(windowHandle, ref data);
+				return SetWindowCompositionAttribute(
+					windowHandle,
+					ref data);
 			}
 			catch (Exception ex)
 			{

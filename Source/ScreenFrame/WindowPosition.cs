@@ -9,9 +9,9 @@ using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Interop;
 
-namespace Monitorian.Views
+namespace ScreenFrame
 {
-	public static class WindowPosition
+	internal static class WindowPosition
 	{
 		#region Win32
 
@@ -68,7 +68,7 @@ namespace Monitorian.Views
 		private static extern int DwmSetWindowAttribute(
 			IntPtr hwnd,
 			uint dwAttribute,
-			ref bool pvAttribute, // IntPtr
+			[In] ref bool pvAttribute, // IntPtr
 			uint cbAttribute);
 
 		private enum DWMWA : uint
@@ -212,11 +212,10 @@ namespace Monitorian.Views
 		public static Rect GetWindowRect(Window window)
 		{
 			var windowHandle = new WindowInteropHelper(window).Handle;
-			RECT rect;
 
 			if (!GetWindowRect(
 				windowHandle,
-				out rect))
+				out RECT rect))
 			{
 				return Rect.Empty;
 			}
@@ -227,12 +226,11 @@ namespace Monitorian.Views
 		public static Rect GetDwmWindowRect(Window window)
 		{
 			var windowHandle = new WindowInteropHelper(window).Handle;
-			RECT rect;
 
 			if (DwmGetWindowAttribute(
 				windowHandle,
 				(uint)DWMWA.DWMWA_EXTENDED_FRAME_BOUNDS,
-				out rect,
+				out RECT rect,
 				(uint)Marshal.SizeOf<RECT>()) != S_OK)
 			{
 				return Rect.Empty;
@@ -244,21 +242,18 @@ namespace Monitorian.Views
 		public static Padding GetDwmWindowMargin(Window window)
 		{
 			var windowHandle = new WindowInteropHelper(window).Handle;
-			RECT baseRect;
 
 			if (!GetWindowRect(
 				windowHandle,
-				out baseRect))
+				out RECT baseRect))
 			{
 				return Padding.Empty;
 			}
 
-			RECT dwmRect;
-
 			if (DwmGetWindowAttribute(
 				windowHandle,
 				(uint)DWMWA.DWMWA_EXTENDED_FRAME_BOUNDS,
-				out dwmRect,
+				out RECT dwmRect,
 				(uint)Marshal.SizeOf<RECT>()) != S_OK)
 			{
 				return Padding.Empty;
@@ -276,15 +271,11 @@ namespace Monitorian.Views
 			var windowHandle = new WindowInteropHelper(window).Handle;
 			bool value = true;
 
-			if (DwmSetWindowAttribute(
+			return (DwmSetWindowAttribute(
 				windowHandle,
 				(uint)DWMWA.DWMWA_TRANSITIONS_FORCEDISABLED,
 				ref value,
-				(uint)Marshal.SizeOf<bool>()) != S_OK)
-			{
-				return false;
-			}
-			return true;
+				(uint)Marshal.SizeOf<bool>()) == S_OK);
 		}
 
 		#endregion
@@ -311,12 +302,14 @@ namespace Monitorian.Views
 
 		public static TaskbarAlignment GetTaskbarAlignment()
 		{
-			var data = new APPBARDATA { cbSize = (uint)Marshal.SizeOf(typeof(APPBARDATA)) };
+			var data = new APPBARDATA { cbSize = (uint)Marshal.SizeOf<APPBARDATA>() };
 
 			if (SHAppBarMessage(
 				ABM.ABM_GETTASKBARPOS,
 				ref data) == IntPtr.Zero)
+			{
 				return TaskbarAlignment.None;
+			}
 
 			return ConvertToTaskbarAlignment(data.uEdge);
 		}
@@ -348,11 +341,12 @@ namespace Monitorian.Views
 			if (taskbarHandle == IntPtr.Zero)
 				return Rect.Empty;
 
-			RECT taskbarRect;
 			if (!GetWindowRect(
 				taskbarHandle,
-				out taskbarRect))
+				out RECT taskbarRect))
+			{
 				return Rect.Empty;
+			}
 
 			return taskbarRect;
 		}
@@ -370,35 +364,33 @@ namespace Monitorian.Views
 		/// The idea to get the rectangle of a NotifyIcon is derived from:
 		/// https://github.com/rzhw/SuperNotifyIcon
 		/// </remarks>
-		public static Rect GetNotifyIconRect(NotifyIcon notifyIcon)
+		public static bool TryGetNotifyIconRect(NotifyIcon notifyIcon, out Rect iconRect)
 		{
-			NOTIFYICONIDENTIFIER identifier;
-			if (!TryGetNotifyIconIdentifier(notifyIcon, out identifier))
-				return Rect.Empty;
+			iconRect = Rect.Empty;
 
-			RECT iconLocation;
-			int result = Shell_NotifyIconGetRect(ref identifier, out iconLocation);
+			if (!TryGetNotifyIconIdentifier(notifyIcon, out NOTIFYICONIDENTIFIER identifier))
+				return false;
 
+			var result = Shell_NotifyIconGetRect(ref identifier, out RECT iconLocation);
 			switch (result)
 			{
 				case S_OK:
 				case S_FALSE:
-					return iconLocation;
+					iconRect = iconLocation;
+					return true;
 				default:
-					return Rect.Empty;
+					return false;
 			}
 		}
 
 		private static bool TryGetNotifyIconIdentifier(NotifyIcon notifyIcon, out NOTIFYICONIDENTIFIER identifier)
 		{
-			identifier = new NOTIFYICONIDENTIFIER { cbSize = (uint)Marshal.SizeOf(typeof(NOTIFYICONIDENTIFIER)) };
+			identifier = new NOTIFYICONIDENTIFIER { cbSize = (uint)Marshal.SizeOf<NOTIFYICONIDENTIFIER>() };
 
-			int id;
-			if (!TryGetNonPublicFieldValue(notifyIcon, "id", out id))
+			if (!TryGetNonPublicFieldValue(notifyIcon, "id", out int id))
 				return false;
 
-			NativeWindow window;
-			if (!TryGetNonPublicFieldValue(notifyIcon, "window", out window))
+			if (!TryGetNonPublicFieldValue(notifyIcon, "window", out NativeWindow window))
 				return false;
 
 			identifier.uID = (uint)id;
@@ -425,7 +417,7 @@ namespace Monitorian.Views
 		#endregion
 	}
 
-	public enum TaskbarAlignment
+	internal enum TaskbarAlignment
 	{
 		None = 0,
 		Left,

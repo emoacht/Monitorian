@@ -14,10 +14,10 @@ namespace Monitorian.Views.Converters
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			if (!(value is Visibility))
+			if (!(value is Visibility sourceValue))
 				return DependencyProperty.UnsetValue;
 
-			var targetValue = ((Visibility)value == Visibility.Visible) ? true : false;
+			var targetValue = (sourceValue == Visibility.Visible);
 
 			if (IsFilteredOut(targetValue, parameter))
 				return DependencyProperty.UnsetValue;
@@ -27,10 +27,8 @@ namespace Monitorian.Views.Converters
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			if (!(value is bool))
+			if (!(value is bool targetValue))
 				return DependencyProperty.UnsetValue;
-
-			var targetValue = (bool)value;
 
 			if (IsFilteredOut(targetValue, parameter))
 				return DependencyProperty.UnsetValue;
@@ -40,11 +38,10 @@ namespace Monitorian.Views.Converters
 
 		private static bool IsFilteredOut(bool targetValue, object parameter)
 		{
-			bool expectedValue;
-			if (!bool.TryParse((parameter as string ?? parameter?.ToString()), out expectedValue))
+			if (!(parameter is bool expectedValue) && !bool.TryParse(parameter as string, out expectedValue))
 				return false;
 
-			return (expectedValue != targetValue);
+			return (targetValue != expectedValue);
 		}
 	}
 }

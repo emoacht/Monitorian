@@ -52,7 +52,7 @@ namespace Monitorian.Views.Controls
 				return;
 
 			this._device = device;
-			if (!TryGetDevicePosition(_device, out _startPosition))
+			if (!TryGetDevicePosition(this._device, out _startPosition))
 				return;
 
 			this._isContextMenuOpenable = isContextMenuOpenable;
@@ -72,8 +72,7 @@ namespace Monitorian.Views.Controls
 		{
 			_timer.Stop();
 
-			Point endPosition;
-			if (!TryGetDevicePosition(_device, out endPosition))
+			if (!TryGetDevicePosition(_device, out Point endPosition))
 				return;
 
 			if ((Math.Abs(endPosition.X - _startPosition.X) > _tolerance) ||
@@ -91,29 +90,24 @@ namespace Monitorian.Views.Controls
 
 		private bool TryGetDevicePosition(InputDevice device, out Point position)
 		{
-			var mouse = device as MouseDevice;
-			if (mouse != null)
+			switch (device)
 			{
-				position = mouse.GetPosition(this);
-				return true;
-			}
+				case MouseDevice mouse:
+					position = mouse.GetPosition(this);
+					return true;
 
-			var stylus = device as StylusDevice;
-			if (stylus != null)
-			{
-				position = stylus.GetPosition(this);
-				return true;
-			}
+				case StylusDevice stylus:
+					position = stylus.GetPosition(this);
+					return true;
 
-			var touch = device as TouchDevice;
-			if (touch != null)
-			{
-				position = touch.GetTouchPoint(this).Position;
-				return true;
-			}
+				case TouchDevice touch:
+					position = touch.GetTouchPoint(this).Position;
+					return true;
 
-			position = default(Point);
-			return false;
+				default:
+					position = default(Point);
+					return false;
+			}
 		}
 
 		protected override void OnLostFocus(RoutedEventArgs e)

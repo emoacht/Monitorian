@@ -22,10 +22,7 @@ namespace Monitorian.Models.Watcher
 
 		public void Subscribe(Action<string, int> onChanged)
 		{
-			if (onChanged == null)
-				throw new ArgumentNullException(nameof(onChanged));
-
-			this._onChanged = onChanged;
+			this._onChanged = onChanged ?? throw new ArgumentNullException(nameof(onChanged));
 			_watcher.EventArrived += OnEventArrived;
 			_watcher.Start();
 		}

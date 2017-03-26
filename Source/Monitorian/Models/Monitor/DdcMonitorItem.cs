@@ -25,10 +25,7 @@ namespace Monitorian.Models.Monitor
 				displayIndex,
 				monitorIndex)
 		{
-			if (handle == null)
-				throw new ArgumentNullException(nameof(handle));
-
-			this.Handle = handle;
+			this.Handle = handle ?? throw new ArgumentNullException(nameof(handle));
 		}
 
 		private readonly object _lock = new object();

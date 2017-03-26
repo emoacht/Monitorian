@@ -160,12 +160,15 @@ namespace Monitorian.Models
 			{
 				foreach (ManagementObject session in sessions)
 				{
-					var buff = (string)session.GetPropertyValue("StartTime");
-					if (string.IsNullOrEmpty(buff))
-						continue;
+					using (session)
+					{
+						var buff = (string)session.GetPropertyValue("StartTime");
+						if (string.IsNullOrEmpty(buff))
+							continue;
 
-					startTime = new DateTimeOffset(ManagementDateTimeConverter.ToDateTime(buff));
-					return true;
+						startTime = new DateTimeOffset(ManagementDateTimeConverter.ToDateTime(buff));
+						return true;
+					}
 				}
 			}
 			startTime = default(DateTimeOffset);

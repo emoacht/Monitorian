@@ -16,10 +16,7 @@ namespace Monitorian.ViewModels
 
 		public MenuWindowViewModel(MainController controller)
 		{
-			if (controller == null)
-				throw new ArgumentNullException(nameof(controller));
-
-			this._controller = controller;
+			this._controller = controller ?? throw new ArgumentNullException(nameof(controller));
 		}
 
 		#region License

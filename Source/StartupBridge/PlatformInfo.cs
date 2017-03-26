@@ -13,9 +13,9 @@ namespace StartupBridge
 		/// Whether this assembly is packaged in AppX package
 		/// </summary>
 		public static bool IsPackaged => _isPackaged.Value;
-		private static readonly Lazy<bool> _isPackaged = new Lazy<bool>(() => IsPackagedBase());
+		private static readonly Lazy<bool> _isPackaged = new Lazy<bool>(() => IsPackagedWithName());
 
-		private static bool IsPackagedBase()
+		private static bool IsPackagedWithName()
 		{
 			try
 			{

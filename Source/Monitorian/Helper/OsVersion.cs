@@ -48,10 +48,9 @@ namespace Monitorian.Helper
 
 		private static bool IsEqualToOrNewer(int major, int minor = 0, int build = 0, [CallerMemberName] string propertyName = null)
 		{
-			bool value;
-			if (!_cache.TryGetValue(propertyName, out value))
+			if (!_cache.TryGetValue(propertyName, out bool value))
 			{
-				value = new Version(major, minor, build) <= Environment.OSVersion.Version;
+				value = (new Version(major, minor, build) <= Environment.OSVersion.Version);
 				_cache.Add(propertyName, value);
 			}
 			return value;

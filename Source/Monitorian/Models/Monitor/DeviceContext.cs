@@ -143,7 +143,7 @@ namespace Monitorian.Models.Monitor
 
 		public static IEnumerable<DeviceItem> EnumerateMonitorDevices()
 		{
-			var size = (uint)Marshal.SizeOf(typeof(DISPLAY_DEVICE));
+			var size = (uint)Marshal.SizeOf<DISPLAY_DEVICE>();
 			var display = new DISPLAY_DEVICE { cb = size };
 			var monitor = new DISPLAY_DEVICE { cb = size };
 
@@ -152,8 +152,7 @@ namespace Monitorian.Models.Monitor
 				if (display.StateFlags.HasFlag(DISPLAY_DEVICE_FLAG.DISPLAY_DEVICE_MIRRORING_DRIVER))
 					continue;
 
-				byte displayIndex;
-				if (!TryGetDisplayIndex(display.DeviceName, out displayIndex))
+				if (!TryGetDisplayIndex(display.DeviceName, out byte displayIndex))
 					continue;
 
 				byte monitorIndex = 0;
@@ -236,7 +235,7 @@ namespace Monitorian.Models.Monitor
 
 		private static bool MonitorEnum(IntPtr hMonitor, IntPtr hdcMonitor, ref RECT lprcMonitor, IntPtr dwData)
 		{
-			var monitorInfo = new MONITORINFOEX { cbSize = (uint)Marshal.SizeOf(typeof(MONITORINFOEX)) };
+			var monitorInfo = new MONITORINFOEX { cbSize = (uint)Marshal.SizeOf<MONITORINFOEX>() };
 
 			if (!GetMonitorInfo(hMonitor, ref monitorInfo))
 			{
@@ -244,8 +243,7 @@ namespace Monitorian.Models.Monitor
 			}
 			else
 			{
-				byte displayIndex;
-				if (TryGetDisplayIndex(monitorInfo.szDevice, out displayIndex))
+				if (TryGetDisplayIndex(monitorInfo.szDevice, out byte displayIndex))
 				{
 					_handleItems.Add(new HandleItem(
 						monitorHandle: hMonitor,

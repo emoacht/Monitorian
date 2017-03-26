@@ -35,8 +35,7 @@ namespace Monitorian.Models
 			var ipcPortName = $"port-{title}";
 			const string ipcUri = "space";
 
-			bool createdNew;
-			_semaphore = new Semaphore(1, 1, semaphoreName, out createdNew);
+			_semaphore = new Semaphore(1, 1, semaphoreName, out bool createdNew);
 			if (createdNew)
 			{
 				try

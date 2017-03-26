@@ -14,20 +14,18 @@ namespace IconImage
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			double factor;
-			if (!(value is double) || !double.TryParse(parameter.ToString(), out factor))
+			if (!(value is double sourceValue) || !double.TryParse(parameter?.ToString(), out double factor))
 				return DependencyProperty.UnsetValue;
 
-			return (double)value / factor;
+			return sourceValue / factor;
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			double factor;
-			if (!(value is double) || !double.TryParse(parameter.ToString(), out factor))
+			if (!(value is double targetValue) || !double.TryParse(parameter?.ToString(), out double factor))
 				return DependencyProperty.UnsetValue;
 
-			return (double)value * factor;
+			return targetValue * factor;
 		}
 	}
 }

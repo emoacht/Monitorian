@@ -56,8 +56,10 @@ namespace StartupBridge
 				case StartupTaskState.Disabled:
 					var result = task.RequestEnableAsync().AsTask().Result;
 					return (result == StartupTaskState.Enabled);
+
+				default:
+					return false;
 			}
-			return false;
 		}
 
 		/// <summary>

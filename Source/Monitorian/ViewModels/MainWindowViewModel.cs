@@ -18,10 +18,7 @@ namespace Monitorian.ViewModels
 
 		public MainWindowViewModel(MainController controller)
 		{
-			if (controller == null)
-				throw new ArgumentNullException(nameof(controller));
-
-			this._controller = controller;
+			this._controller = controller ?? throw new ArgumentNullException(nameof(controller));
 			this._controller.ScanningChanged += OnScanningChanged;
 		}
 

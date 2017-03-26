@@ -17,7 +17,7 @@ namespace Monitorian.Models.Monitor
 
 		[DllImport("Setupapi.dll", SetLastError = true)]
 		private static extern IntPtr SetupDiGetClassDevs(
-			ref Guid ClassGuid,
+			[MarshalAs(UnmanagedType.LPStruct)] Guid ClassGuid,
 			IntPtr Enumerator, // Null
 			IntPtr hwndParent, // Null
 			DIGCF Flags);
@@ -39,7 +39,7 @@ namespace Monitorian.Models.Monitor
 		private static extern bool SetupDiEnumDeviceInterfaces(
 			IntPtr DeviceInfoSet,
 			IntPtr DeviceInfoData,
-			Guid InterfaceClassGuid,
+			[MarshalAs(UnmanagedType.LPStruct)] Guid InterfaceClassGuid,
 			uint MemberIndex,
 			ref SP_DEVICE_INTERFACE_DATA DeviceInterfaceData);
 
@@ -61,7 +61,7 @@ namespace Monitorian.Models.Monitor
 			ref SP_DEVINFO_DATA DeviceInfoData,
 			StringBuilder DeviceInstanceId,
 			uint DeviceInstanceIdSize,
-			ref uint RequiredSize);
+			out uint RequiredSize);
 
 		[StructLayout(LayoutKind.Sequential)]
 		private struct SP_DEVINFO_DATA
@@ -184,12 +184,11 @@ namespace Monitorian.Models.Monitor
 
 		public static IEnumerable<InstalledItem> EnumerateInstalledMonitors()
 		{
-			var classGuid = GUID_DEVINTERFACE_MONITOR;
 			var deviceInfoSet = IntPtr.Zero;
 			try
 			{
 				deviceInfoSet = SetupDiGetClassDevs(
-					ref classGuid,
+					GUID_DEVINTERFACE_MONITOR,
 					IntPtr.Zero,
 					IntPtr.Zero,
 					DIGCF.DIGCF_DEVICEINTERFACE | DIGCF.DIGCF_PRESENT);
@@ -203,7 +202,7 @@ namespace Monitorian.Models.Monitor
 
 				while (true)
 				{
-					var deviceInfoData = new SP_DEVINFO_DATA { cbSize = (uint)Marshal.SizeOf(typeof(SP_DEVINFO_DATA)) };
+					var deviceInfoData = new SP_DEVINFO_DATA { cbSize = (uint)Marshal.SizeOf<SP_DEVINFO_DATA>() };
 
 					if (SetupDiEnumDeviceInfo(
 						deviceInfoSet,
@@ -211,7 +210,7 @@ namespace Monitorian.Models.Monitor
 						ref deviceInfoData))
 					{
 						var deviceDesc = GetDevicePropertyString(deviceInfoSet, deviceInfoData, SPDRP.SPDRP_DEVICEDESC);
-						//Debug.WriteLine($"DeviseDesc: {deviceDesc}");
+						//Debug.WriteLine($"DeviceDesc: {deviceDesc}");
 
 						var hardwareId = GetDevicePropertyString(deviceInfoSet, deviceInfoData, SPDRP.SPDRP_HARDWAREID);
 						//Debug.WriteLine($"HardwareId: {hardwareId}");
@@ -265,19 +264,17 @@ namespace Monitorian.Models.Monitor
 
 		private static byte[] GetDevicePropertyBytes(IntPtr DeviceInfoSet, SP_DEVINFO_DATA DeviceInfoData, SPDRP property)
 		{
-			uint regDataType;
 			byte[] buffer = null;
 			uint bufferSize = 0;
-			uint requiredSize = 0;
 
 			SetupDiGetDeviceRegistryProperty(
 				DeviceInfoSet,
 				ref DeviceInfoData,
 				property,
-				out regDataType,
+				out uint regDataType,
 				buffer,
 				bufferSize,
-				out requiredSize);
+				out uint requiredSize);
 
 			buffer = new byte[requiredSize];
 			bufferSize = requiredSize;
@@ -300,14 +297,13 @@ namespace Monitorian.Models.Monitor
 		{
 			StringBuilder buffer = null;
 			uint bufferSize = 0;
-			uint requiredSize = 0;
 
 			SetupDiGetDeviceInstanceId(
 				DeviceInfoSet,
 				ref DeviceInfoData,
 				buffer,
 				bufferSize,
-				ref requiredSize);
+				out uint requiredSize);
 
 			buffer = new StringBuilder((int)requiredSize);
 			bufferSize = requiredSize;
@@ -317,7 +313,7 @@ namespace Monitorian.Models.Monitor
 				ref DeviceInfoData,
 				buffer,
 				bufferSize,
-				ref requiredSize))
+				out requiredSize))
 			{
 				return string.Empty;
 			}

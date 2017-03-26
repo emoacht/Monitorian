@@ -14,10 +14,7 @@ namespace Monitorian.ViewModels
 
 		public MonitorViewModel(IMonitor monitor)
 		{
-			if (monitor == null)
-				throw new ArgumentNullException(nameof(monitor));
-
-			this._monitor = monitor;
+			this._monitor = monitor ?? throw new ArgumentNullException(nameof(monitor));
 		}
 
 		public string Description => _monitor.Description;

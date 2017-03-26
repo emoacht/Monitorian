@@ -17,10 +17,7 @@ namespace Monitorian.Models.Watcher
 
 		public void Subscribe(Func<Task> onChanged)
 		{
-			if (onChanged == null)
-				throw new ArgumentNullException(nameof(onChanged));
-
-			this._onChanged = onChanged;
+			this._onChanged = onChanged ?? throw new ArgumentNullException(nameof(onChanged));
 			SystemEvents.PowerModeChanged += OnPowerModeChanged;
 		}
 

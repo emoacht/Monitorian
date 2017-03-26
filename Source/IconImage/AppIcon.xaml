@@ -3,7 +3,6 @@
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-			 xmlns:sys="clr-namespace:System;assembly=mscorlib"
 			 xmlns:local="clr-namespace:IconImage"
 			 mc:Ignorable="d"
 			 d:DesignHeight="256" d:DesignWidth="256"
@@ -129,6 +128,5 @@
 				<RotateTransform Angle="315"/>
 			</Grid.RenderTransform>
 		</Grid>
-
 	</Grid>
 </UserControl>

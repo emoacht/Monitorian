@@ -81,13 +81,6 @@ namespace Monitorian.Models.Monitor
 			out MC_CAPS pdwMonitorCapabilities,
 			out MC_SUPPORTED_COLOR_TEMPERATURE pdwSupportedColorTemperatures);
 
-		[DllImport("Dxva2.dll", SetLastError = true)]
-		[return: MarshalAs(UnmanagedType.Bool)]
-		private static extern bool GetMonitorCapabilities(
-			DdcMonitorItem hMonitor,
-			out MC_CAPS pdwMonitorCapabilities,
-			out MC_SUPPORTED_COLOR_TEMPERATURE pdwSupportedColorTemperatures);
-
 		[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
 		public struct PHYSICAL_MONITOR
 		{
@@ -154,10 +147,9 @@ namespace Monitorian.Models.Monitor
 
 		public static IEnumerable<PhysicalItem> EnumeratePhysicalMonitors(IntPtr monitorHandle)
 		{
-			uint count;
 			if (!GetNumberOfPhysicalMonitorsFromHMONITOR(
 				monitorHandle,
-				out count))
+				out uint count))
 			{
 				Debug.WriteLine($"Failed to get the number of physical monitors. ({Error.CreateMessage()})");
 				yield break;
@@ -186,12 +178,10 @@ namespace Monitorian.Models.Monitor
 				{
 					var handle = new SafePhysicalMonitorHandle(physicalMonitor.hPhysicalMonitor);
 
-					MC_CAPS caps;
-					MC_SUPPORTED_COLOR_TEMPERATURE temperature;
 					bool isSupported = GetMonitorCapabilities(
 						handle,
-						out caps,
-						out temperature)
+						out MC_CAPS caps,
+						out MC_SUPPORTED_COLOR_TEMPERATURE temperature)
 						&& caps.HasFlag(MC_CAPS.MC_CAPS_BRIGHTNESS);
 
 					//Debug.WriteLine($"Handle: {physicalMonitor.hPhysicalMonitor}");
@@ -225,15 +215,11 @@ namespace Monitorian.Models.Monitor
 				return -1;
 			}
 
-			uint minimumBrightness;
-			uint currentBrightness;
-			uint maximumBrightness;
-
 			if (!GetMonitorBrightness(
 				physicalMonitorHandle,
-				out minimumBrightness,
-				out currentBrightness,
-				out maximumBrightness))
+				out uint minimumBrightness,
+				out uint currentBrightness,
+				out uint maximumBrightness))
 			{
 				Debug.WriteLine($"Failed to get brightness. ({Error.CreateMessage()})");
 				return -1;

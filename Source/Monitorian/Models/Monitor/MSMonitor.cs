@@ -49,17 +49,20 @@ namespace Monitorian.Models.Monitor
 			{
 				foreach (ManagementObject instance in instances)
 				{
-					var description = (string)instance.GetPropertyValue("Description");
-					if (string.IsNullOrWhiteSpace(description))
-						continue;
+					using (instance)
+					{
+						var description = (string)instance.GetPropertyValue("Description");
+						if (string.IsNullOrWhiteSpace(description))
+							continue;
 
-					var pnpDeviceId = (string)instance.GetPropertyValue("PNPDeviceID");
-					if (string.IsNullOrWhiteSpace(pnpDeviceId))
-						continue;
+						var pnpDeviceId = (string)instance.GetPropertyValue("PNPDeviceID");
+						if (string.IsNullOrWhiteSpace(pnpDeviceId))
+							continue;
 
-					monitors.Add(new DesktopItem(
-						description: description,
-						deviceInstanceId: pnpDeviceId));
+						monitors.Add(new DesktopItem(
+							description: description,
+							deviceInstanceId: pnpDeviceId));
+					}
 				}
 			}
 
@@ -79,31 +82,33 @@ namespace Monitorian.Models.Monitor
 					}
 					catch (ManagementException ex) when (ex.ErrorCode == ManagementStatus.NotSupported)
 					{
-						Debug.WriteLine($"Failed to retrieve data by WmiMonitorBrightness." + Environment.NewLine +
-							ex);
+						Debug.WriteLine($"Failed to retrieve data by WmiMonitorBrightness." + Environment.NewLine
+							+ ex);
 						yield break;
 					}
 
-					var instance = (ManagementObject)enumerator.Current;
-					var instanceName = (string)instance.GetPropertyValue("InstanceName");
-					var monitor = monitors.FirstOrDefault(x => instanceName.StartsWith(x.DeviceInstanceId, StringComparison.OrdinalIgnoreCase));
-					if (monitor == null)
-						continue;
+					using (var instance = (ManagementObject)enumerator.Current)
+					{
+						var instanceName = (string)instance.GetPropertyValue("InstanceName");
+						var monitor = monitors.FirstOrDefault(x => instanceName.StartsWith(x.DeviceInstanceId, StringComparison.OrdinalIgnoreCase));
+						if (monitor == null)
+							continue;
 
-					var level = (byte[])instance.GetPropertyValue("Level");
+						var level = (byte[])instance.GetPropertyValue("Level");
 
-					//Debug.WriteLine($"Description: {monitor.Description}");
-					//Debug.WriteLine($"DeviceInstanceId: {monitor.DeviceInstanceId}");
-					//Debug.WriteLine($"Level count: {level.Length}");
-					//Debug.WriteLine($"Active (unreliable): {(bool)instance["Active"]}");
+						//Debug.WriteLine($"Description: {monitor.Description}");
+						//Debug.WriteLine($"DeviceInstanceId: {monitor.DeviceInstanceId}");
+						//Debug.WriteLine($"Level count: {level.Length}");
+						//Debug.WriteLine($"Active (unreliable): {(bool)instance["Active"]}");
 
-					if (level.Length <= 0)
-						continue;
+						if (level.Length <= 0)
+							continue;
 
-					yield return new DesktopItem(
-						description: monitor.Description,
-						deviceInstanceId: monitor.DeviceInstanceId,
-						brightnessLevels: level);
+						yield return new DesktopItem(
+							description: monitor.Description,
+							deviceInstanceId: monitor.DeviceInstanceId,
+							brightnessLevels: level);
+					}
 				}
 			}
 		}
@@ -118,10 +123,11 @@ namespace Monitorian.Models.Monitor
 			{
 				foreach (ManagementObject instance in instances)
 				{
-					var instanceName = (string)instance.GetPropertyValue("InstanceName");
-					if (instanceName.StartsWith(deviceInstanceId, StringComparison.OrdinalIgnoreCase))
+					using (instance)
 					{
-						return (byte)instance.GetPropertyValue("CurrentBrightness");
+						var instanceName = (string)instance.GetPropertyValue("InstanceName");
+						if (instanceName.StartsWith(deviceInstanceId, StringComparison.OrdinalIgnoreCase))
+							return (byte)instance.GetPropertyValue("CurrentBrightness");
 					}
 				}
 				return -1;
@@ -140,22 +146,25 @@ namespace Monitorian.Models.Monitor
 			{
 				foreach (ManagementObject instance in instances)
 				{
-					var instanceName = (string)instance.GetPropertyValue("InstanceName");
-					if (instanceName.StartsWith(deviceInstanceId, StringComparison.OrdinalIgnoreCase))
+					using (instance)
 					{
-						object result = instance.InvokeMethod("WmiSetBrightness", new object[] { (uint)timeout, (byte)brightness });
-
-						var isSuccess = (result == null); // Return value will be null if succeeded.
-						if (!isSuccess)
+						var instanceName = (string)instance.GetPropertyValue("InstanceName");
+						if (instanceName.StartsWith(deviceInstanceId, StringComparison.OrdinalIgnoreCase))
 						{
-							var errorCode = (uint)result;
-							isSuccess = (errorCode == 0);
+							object result = instance.InvokeMethod("WmiSetBrightness", new object[] { (uint)timeout, (byte)brightness });
+
+							var isSuccess = (result == null); // Return value will be null if succeeded.
 							if (!isSuccess)
 							{
-								Debug.WriteLine($"Failed to set brightness. ({errorCode})");
+								var errorCode = (uint)result;
+								isSuccess = (errorCode == 0);
+								if (!isSuccess)
+								{
+									Debug.WriteLine($"Failed to set brightness. ({errorCode})");
+								}
 							}
+							return isSuccess;
 						}
-						return isSuccess;
 					}
 				}
 				return false;

@@ -28,10 +28,7 @@ namespace Monitorian.Models.Monitor
 				displayIndex,
 				monitorIndex)
 		{
-			if (brightnessLevels == null)
-				throw new ArgumentNullException(nameof(brightnessLevels));
-
-			this._brightnessLevels = brightnessLevels;
+			this._brightnessLevels = brightnessLevels ?? throw new ArgumentNullException(nameof(brightnessLevels));
 			this._isRemovable = isRemovable;
 		}
 

@@ -133,12 +133,14 @@
 		</Style>
 	</Window.Resources>
 
-	<StackPanel Margin="0,0,0,4">
-		<TextBlock Width="140" Margin="0,4" HorizontalAlignment="Left"
-				   Padding="8,4"
+	<StackPanel Margin="0,4,0,4">
+		<TextBlock HorizontalAlignment="Left"
+				   Padding="8,2,8,2"
+				   Foreground="{StaticResource App.Foreground}"
+				   Text="{Binding Source={x:Static models:ProductInfo.Title}, Mode=OneTime}"/>
+		<TextBlock Width="140" HorizontalAlignment="Left"
+				   Padding="8,0,8,6"
 				   Foreground="{StaticResource App.Foreground}">
-			<Run Text="{Binding Source={x:Static models:ProductInfo.Title}, Mode=OneTime}"/>
-			<LineBreak/>
 			<Run Text="{Binding Source={x:Static models:ProductInfo.Version}, Mode=OneTime}"/>
 			<Run Text="|"/>
 			<Run Foreground="{StaticResource App.Shadow}"

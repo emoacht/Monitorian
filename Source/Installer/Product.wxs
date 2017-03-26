@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-	<Product Id="*" Name="Monitorian" Manufacturer="emoacht" Version="1.0.0"
+	<Product Id="*" Name="Monitorian" Manufacturer="emoacht" Version="1.2.0"
 					 Language="1033" Codepage="1252" UpgradeCode="{81A4D148-75D3-462E-938D-8C208FB48E3C}">
 		<Package Id="*" InstallerVersion="500" Compressed="yes"
 						 InstallScope="perMachine" InstallPrivileges="elevated"
@@ -9,6 +9,8 @@
 		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed."/>
 
 		<Media Id="1" Cabinet="source.cab" EmbedCab="yes"/>
+
+		<Property Id="VEM" Value="yes"/>
 
 		<Directory Id="TARGETDIR" Name="SourceDir">
 			<!-- Program Files -->
@@ -40,10 +42,21 @@
 				<File Id="InteractivityDLL"
 							Source="$(var.Monitorian.TargetDir)" Name="System.Windows.Interactivity.dll" KeyPath="yes"/>
 			</Component>
+			
+			<Component Id="FrameLibrary" Guid="{9BAED8CA-C9C3-4ECD-8D28-289758577A8E}">
+				<File Id="FrameDLL"
+							Source="$(var.Monitorian.TargetDir)" Name="ScreenFrame.dll" KeyPath="yes"/>
+			</Component>
 
 			<Component Id="BridgeLibrary" Guid="{6B9D6399-5B5A-4AFF-99B0-9892B8C237B8}">
 				<File Id="BridgeDLL"
 							Source="$(var.Monitorian.TargetDir)" Name="StartupBridge.dll" KeyPath="yes"/>
+			</Component>
+
+			<Component Id="VisualManifest" Guid="{69BD7D13-0EA9-46F3-9575-EBEEF24A839D}">
+				<Condition><![CDATA[VEM = "yes"]]></Condition>
+				<File Id="VisualManifestXML"
+							Source="$(var.Monitorian.TargetDir)" Name="$(var.Monitorian.TargetName).VisualElementsManifest.xml" KeyPath="yes"/>
 			</Component>
 
 			<Directory Id="ResourcesFolder_jaJP" Name="ja-JP"
@@ -85,7 +98,9 @@
 			<ComponentRef Id="MainExecutable"/>
 			<ComponentRef Id="InteractionsLibrary"/>
 			<ComponentRef Id="InteractivityLibrary"/>
+			<ComponentRef Id="FrameLibrary"/>
 			<ComponentRef Id="BridgeLibrary"/>
+			<ComponentRef Id="VisualManifest"/>
 			<ComponentRef Id="ResourcesLibrary_jaJP"/>
 			<ComponentRef Id="ApplicationShortcut"/>
 			<ComponentRef Id="ApplicationWorkingFolder"/>

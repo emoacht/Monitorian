@@ -57,11 +57,10 @@ namespace Monitorian
 				throw new ArgumentNullException(nameof(agent));
 
 			Settings.Load();
-			
+
 			NotifyIconComponent.ShowIcon("pack://application:,,,/Resources/Icons/TrayIcon.ico", ProductInfo.Title);
 
 			_current.MainWindow = new MainWindow(this);
-			_current.MainWindow.DpiChanged += OnDpiChanged;
 
 			if (!StartupService.IsStartedOnSignIn(Settings.LastCloseTime))
 				_current.MainWindow.Show();
@@ -96,11 +95,6 @@ namespace Monitorian
 		private void OnMenuWindowShowRequested(object sender, Point e)
 		{
 			ShowMenuWindow(e);
-		}
-
-		private void OnDpiChanged(object sender, DpiChangedEventArgs e)
-		{
-			NotifyIconComponent.AdjustIcon(e.NewDpi);
 		}
 
 		private async void ShowMainWindow()

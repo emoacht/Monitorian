@@ -7,11 +7,48 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
 
+using ScreenFrame.Helper;
+
 namespace ScreenFrame
 {
 	public class NotifyIconComponent : Component
 	{
+		#region Type
+
+		private class NotifyIconWindowListener : NativeWindow
+		{
+			public static NotifyIconWindowListener Create(NotifyIcon notifyIcon)
+			{
+				if (!NotifyIconHelper.TryGetNotifyIconWindow(notifyIcon, out NativeWindow window) ||
+					(window.Handle == IntPtr.Zero))
+				{
+					return null;
+				}
+				return new NotifyIconWindowListener(window);
+			}
+
+			private NotifyIconWindowListener(NativeWindow window) => this.AssignHandle(window.Handle);
+
+			public event EventHandler<Message> OnWindowMessageReceived;
+
+			protected override void WndProc(ref Message m)
+			{
+				OnWindowMessageReceived?.Invoke(this, m);
+
+				base.WndProc(ref m);
+			}
+
+			public void Close()
+			{
+				OnWindowMessageReceived = null;
+				this.ReleaseHandle();
+			}
+		}
+
+		#endregion
+
 		private readonly Container _container;
+		private NotifyIconWindowListener _listener;
 
 		public NotifyIcon NotifyIcon { get; }
 
@@ -19,7 +56,7 @@ namespace ScreenFrame
 		{
 			_container = new Container();
 
-			NotifyIcon = new NotifyIcon(_container) { ContextMenuStrip = new ContextMenuStrip() };
+			NotifyIcon = new NotifyIcon(_container);
 			NotifyIcon.MouseClick += OnMouseClick;
 			NotifyIcon.MouseDoubleClick += OnMouseDoubleClick;
 		}
@@ -62,9 +99,31 @@ namespace ScreenFrame
 
 			NotifyIcon.Icon = GetIcon(this._icon, this._dpi);
 			NotifyIcon.Visible = true;
+
+			if (_listener == null)
+			{
+				_listener = NotifyIconWindowListener.Create(NotifyIcon);
+				if (_listener != null)
+				{
+					_listener.OnWindowMessageReceived += OnNotifyIconWindowMessageReceived;
+				}
+			}
 		}
 
-		public void AdjustIcon(DpiScale dpi)
+		private const int WM_DPICHANGED = 0x02E0;
+
+		private void OnNotifyIconWindowMessageReceived(object sender, Message m)
+		{
+			switch (m.Msg)
+			{
+				case WM_DPICHANGED:
+					var dpi = DpiScaleExtension.FromUInt((uint)m.WParam);
+					AdjustIcon(dpi);
+					break;
+			}
+		}
+
+		private void AdjustIcon(DpiScale dpi)
 		{
 			if (_icon == null)
 				return;
@@ -108,9 +167,12 @@ namespace ScreenFrame
 
 		private void OnMouseClick(object sender, MouseEventArgs e)
 		{
+			NotifyIconHelper.SetNotifyIconWindowForeground(NotifyIcon);
+
 			if (e.Button == MouseButtons.Right)
 			{
-				MouseRightButtonClick?.Invoke(this, GetNotifyIconClickedPoint());
+				if (NotifyIconHelper.TryGetNotifyIconClickedPoint(NotifyIcon, out Point point))
+					MouseRightButtonClick?.Invoke(this, point);
 			}
 			else
 			{
@@ -121,34 +183,6 @@ namespace ScreenFrame
 		private void OnMouseDoubleClick(object sender, MouseEventArgs e)
 		{
 			MouseLeftButtonClick?.Invoke(this, null);
-		}
-
-		/// <summary>
-		/// Gets the point where NotifyIcon is clicked from the position of ContextMenuStrip and NotifyIcon.
-		/// </summary>
-		/// <returns>Clicked point</returns>
-		/// <remarks>MouseEventArgs.Location property of MouseClick event does not contain data.</remarks>
-		private Point GetNotifyIconClickedPoint()
-		{
-			var contextMenuStrip = NotifyIcon.ContextMenuStrip;
-
-			var corners = new Point[]
-			{
-				//new Point(contextMenuStrip.Left, contextMenuStrip.Top),
-				//new Point(contextMenuStrip.Right, contextMenuStrip.Top),
-				new Point(contextMenuStrip.Left, contextMenuStrip.Bottom),
-				new Point(contextMenuStrip.Right, contextMenuStrip.Bottom)
-			};
-
-			if (WindowPosition.TryGetNotifyIconRect(NotifyIcon, out Rect iconRect))
-			{
-				foreach (var corner in corners)
-				{
-					if (iconRect.Contains(corner))
-						return corner;
-				}
-			}
-			return corners.Last(); // Fallback
 		}
 
 		#endregion
@@ -165,6 +199,7 @@ namespace ScreenFrame
 			if (disposing)
 			{
 				_container.Dispose();
+				_listener?.Close();
 			}
 
 			_isDisposed = true;

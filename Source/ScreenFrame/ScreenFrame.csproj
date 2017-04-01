@@ -59,17 +59,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Helper\OsVersion.cs" />
+    <Compile Include="Helper\DpiScaleExtension.cs" />
+    <Compile Include="Movers\WindowMover.cs" />
     <Compile Include="Movers\BasicWindowMover.cs" />
     <Compile Include="Movers\StickWindowMover.cs" />
     <Compile Include="Movers\FloatWindowMover.cs" />
     <Compile Include="NotifyIconComponent.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="NotifyIconHelper.cs" />
     <Compile Include="VisualTreeHelperAddition.cs" />
-    <Compile Include="Helper\DpiScaleExtension.cs" />
+    <Compile Include="WindowHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Movers\WindowMover.cs" />
-    <Compile Include="WindowPosition.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

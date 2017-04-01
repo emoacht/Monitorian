@@ -22,16 +22,16 @@ namespace ScreenFrame.Movers
 
 		private bool TryGetAdjacentLocationToTaskbar(double windowWidth, double windowHeight, out Point location)
 		{
-			if (!WindowPosition.TryGetTaskbar(out Rect taskbarRect, out TaskbarAlignment taskbarAlignment))
+			if (!WindowHelper.TryGetTaskbar(out Rect taskbarRect, out TaskbarAlignment taskbarAlignment))
 			{
 				location = default(Point);
 				return false;
 			}
 
-			if (!WindowPosition.TryGetNotifyIconRect(_notifyIcon, out Rect iconRect))
+			if (!NotifyIconHelper.TryGetNotifyIconRect(_notifyIcon, out Rect iconRect))
 				iconRect = taskbarRect; // Fallback
 
-			var margin = WindowPosition.GetDwmWindowMargin(_window);
+			var margin = WindowHelper.GetDwmWindowMargin(_window);
 			if (margin == Padding.Empty)
 				margin = new Padding(0); // Fallback
 

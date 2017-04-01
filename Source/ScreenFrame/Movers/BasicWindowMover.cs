@@ -17,7 +17,7 @@ namespace ScreenFrame.Movers
 
 		protected override void HandleWindowPosChanging(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
 		{
-			var position = Marshal.PtrToStructure<WindowPosition.WINDOWPOS>(lParam);
+			var position = Marshal.PtrToStructure<WindowHelper.WINDOWPOS>(lParam);
 
 			double width = position.cx;
 			double height = position.cy;
@@ -34,9 +34,9 @@ namespace ScreenFrame.Movers
 			{
 				position.x = (int)location.X;
 				position.y = (int)location.Y;
-				position.flags &= ~WindowPosition.SWP.SWP_NOMOVE;
+				position.flags &= ~WindowHelper.SWP.SWP_NOMOVE;
 
-				Marshal.StructureToPtr<WindowPosition.WINDOWPOS>(position, lParam, true);
+				Marshal.StructureToPtr<WindowHelper.WINDOWPOS>(position, lParam, true);
 			}
 		}
 

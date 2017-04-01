@@ -24,7 +24,7 @@ namespace ScreenFrame.Movers
 			var x = _pivot.X;
 			var y = _pivot.Y;
 
-			var taskbarAlignment = WindowPosition.GetTaskbarAlignment();
+			var taskbarAlignment = WindowHelper.GetTaskbarAlignment();
 			switch (taskbarAlignment)
 			{
 				case TaskbarAlignment.Left:

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,7 +10,7 @@ using System.Windows.Interop;
 
 namespace ScreenFrame
 {
-	internal static class WindowPosition
+	internal static class WindowHelper
 	{
 		#region Win32
 
@@ -107,27 +106,6 @@ namespace ScreenFrame
 			public int lParam;
 		}
 
-		[StructLayout(LayoutKind.Sequential)]
-		private struct RECT
-		{
-			public int left;
-			public int top;
-			public int right;
-			public int bottom;
-
-			public static implicit operator Rect(RECT rect)
-			{
-				if ((rect.right - rect.left < 0) || (rect.bottom - rect.top < 0))
-					return Rect.Empty;
-
-				return new Rect(
-					rect.left,
-					rect.top,
-					rect.right - rect.left,
-					rect.bottom - rect.top);
-			}
-		}
-
 		private enum ABM : uint
 		{
 			ABM_NEW = 0x00000000,
@@ -151,33 +129,35 @@ namespace ScreenFrame
 			ABE_BOTTOM = 3
 		}
 
-		[DllImport("Shell32.dll", SetLastError = true)]
-		private static extern int Shell_NotifyIconGetRect(
-			[In] ref NOTIFYICONIDENTIFIER identifier,
-			out RECT iconLocation);
-
 		[StructLayout(LayoutKind.Sequential)]
-		private struct NOTIFYICONIDENTIFIER
+		public struct POINT
 		{
-			public uint cbSize;
-			public IntPtr hWnd;
-			public uint uID;
-			public GUID guidItem; // System.Guid can be used.
+			public int x;
+			public int y;
+
+			public static implicit operator Point(POINT point) => new Point(point.x, point.y);
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
-		private struct GUID
+		public struct RECT
 		{
-			public uint Data1;
-			public ushort Data2;
-			public ushort Data3;
+			public int left;
+			public int top;
+			public int right;
+			public int bottom;
 
-			[MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-			public byte[] Data4;
+			public static implicit operator Rect(RECT rect)
+			{
+				if ((rect.right - rect.left < 0) || (rect.bottom - rect.top < 0))
+					return Rect.Empty;
+
+				return new Rect(
+					rect.left,
+					rect.top,
+					rect.right - rect.left,
+					rect.bottom - rect.top);
+			}
 		}
-
-		private const int S_OK = 0x00000000;
-		private const int S_FALSE = 0x00000001;
 
 		[StructLayout(LayoutKind.Sequential)]
 		public struct WINDOWPOS
@@ -190,6 +170,9 @@ namespace ScreenFrame
 			public int cy;
 			public SWP flags;
 		}
+
+		public const int S_OK = 0x0;
+		public const int S_FALSE = 0x1;
 
 		#endregion
 
@@ -284,7 +267,7 @@ namespace ScreenFrame
 
 		public static bool TryGetTaskbar(out Rect taskbarRect, out TaskbarAlignment taskbarAlignment)
 		{
-			var data = new APPBARDATA { cbSize = (uint)Marshal.SizeOf(typeof(APPBARDATA)) };
+			var data = new APPBARDATA { cbSize = (uint)Marshal.SizeOf<APPBARDATA>() };
 
 			if (SHAppBarMessage(
 				ABM.ABM_GETTASKBARPOS,
@@ -349,69 +332,6 @@ namespace ScreenFrame
 			}
 
 			return taskbarRect;
-		}
-
-		#endregion
-
-		#region NotifyIcon
-
-		/// <summary>
-		/// Gets the rectangle of a specified NotifyIcon.
-		/// </summary>
-		/// <param name="notifyIcon">NotifyIcon</param>
-		/// <returns>Rectangle of the NotifyIcon</returns>
-		/// <remarks>
-		/// The idea to get the rectangle of a NotifyIcon is derived from:
-		/// https://github.com/rzhw/SuperNotifyIcon
-		/// </remarks>
-		public static bool TryGetNotifyIconRect(NotifyIcon notifyIcon, out Rect iconRect)
-		{
-			iconRect = Rect.Empty;
-
-			if (!TryGetNotifyIconIdentifier(notifyIcon, out NOTIFYICONIDENTIFIER identifier))
-				return false;
-
-			var result = Shell_NotifyIconGetRect(ref identifier, out RECT iconLocation);
-			switch (result)
-			{
-				case S_OK:
-				case S_FALSE:
-					iconRect = iconLocation;
-					return true;
-				default:
-					return false;
-			}
-		}
-
-		private static bool TryGetNotifyIconIdentifier(NotifyIcon notifyIcon, out NOTIFYICONIDENTIFIER identifier)
-		{
-			identifier = new NOTIFYICONIDENTIFIER { cbSize = (uint)Marshal.SizeOf<NOTIFYICONIDENTIFIER>() };
-
-			if (!TryGetNonPublicFieldValue(notifyIcon, "id", out int id))
-				return false;
-
-			if (!TryGetNonPublicFieldValue(notifyIcon, "window", out NativeWindow window))
-				return false;
-
-			identifier.uID = (uint)id;
-			identifier.hWnd = window.Handle;
-			return true;
-		}
-
-		private static bool TryGetNonPublicFieldValue<T>(object instance, string fieldName, out T fieldValue)
-		{
-			fieldValue = default(T);
-
-			var fieldInfo = instance.GetType().GetField(fieldName, BindingFlags.NonPublic | BindingFlags.Instance);
-			if (fieldInfo == null)
-				return false;
-
-			var value = fieldInfo.GetValue(instance);
-			if (!(value is T))
-				return false;
-
-			fieldValue = (T)value;
-			return true;
 		}
 
 		#endregion

@@ -30,7 +30,7 @@ namespace Monitorian.Views.Controls
 
 			_track = this.GetTemplateChild("PART_Track") as Track;
 			_thumb = _track?.Thumb;
-			_canDrag = FindNonPublicMembers();
+			_canDrag = (_thumb != null) && _canUseNonPublicMembers.Value;
 			if (!_canDrag)
 			{
 				// Fallback
@@ -104,43 +104,36 @@ namespace Monitorian.Views.Controls
 
 		private bool _isDragStarting;
 
-		private MethodInfo _updateValue;
-		private PropertyInfo _thumbIsDragging;
-		private FieldInfo _thumbOriginThumbPoint;
-		private FieldInfo _thumbPreviousScreenCoordPosition;
-		private FieldInfo _thumbOriginScreenCoordPosition;
+		private static Lazy<bool> _canUseNonPublicMembers = new Lazy<bool>(() => FindNonPublicMembers());
 
-		private bool FindNonPublicMembers()
+		private static MethodInfo _updateValue;
+		private static PropertyInfo _thumbIsDragging;
+		private static FieldInfo _thumbOriginThumbPoint;
+		private static FieldInfo _thumbPreviousScreenCoordPosition;
+		private static FieldInfo _thumbOriginScreenCoordPosition;
+
+		private static bool FindNonPublicMembers()
 		{
-			if (_thumb == null)
-				return false;
-
 			// Slider.UpdateValue private method
 			_updateValue = typeof(Slider).GetMethod("UpdateValue", BindingFlags.NonPublic | BindingFlags.Instance);
-			if (_updateValue == null)
-				return false;
 
 			// Thumb.IsDragging public readonly property
-			_thumbIsDragging = _thumb.GetType().GetProperty("IsDragging", BindingFlags.Public | BindingFlags.Instance);
-			if (_thumbIsDragging == null)
-				return false;
+			_thumbIsDragging = typeof(Thumb).GetProperty("IsDragging", BindingFlags.Public | BindingFlags.Instance);
 
 			// Thumb._originThumbPoint private field
-			_thumbOriginThumbPoint = _thumb.GetType().GetField("_originThumbPoint", BindingFlags.NonPublic | BindingFlags.Instance);
-			if (_thumbOriginThumbPoint == null)
-				return false;
+			_thumbOriginThumbPoint = typeof(Thumb).GetField("_originThumbPoint", BindingFlags.NonPublic | BindingFlags.Instance);
 
 			// Thumb._previousScreenCoordPosition private field
-			_thumbPreviousScreenCoordPosition = _thumb.GetType().GetField("_previousScreenCoordPosition", BindingFlags.NonPublic | BindingFlags.Instance);
-			if (_thumbPreviousScreenCoordPosition == null)
-				return false;
+			_thumbPreviousScreenCoordPosition = typeof(Thumb).GetField("_previousScreenCoordPosition", BindingFlags.NonPublic | BindingFlags.Instance);
 
 			// Thumb._originScreenCoordPosition private field
-			_thumbOriginScreenCoordPosition = _thumb.GetType().GetField("_originScreenCoordPosition", BindingFlags.NonPublic | BindingFlags.Instance);
-			if (_thumbOriginScreenCoordPosition == null)
-				return false;
+			_thumbOriginScreenCoordPosition = typeof(Thumb).GetField("_originScreenCoordPosition", BindingFlags.NonPublic | BindingFlags.Instance);
 
-			return true;
+			return (_updateValue != null)
+				&& (_thumbIsDragging != null)
+				&& (_thumbOriginThumbPoint != null)
+				&& (_thumbPreviousScreenCoordPosition != null)
+				&& (_thumbOriginScreenCoordPosition != null);
 		}
 
 		protected override void OnPreviewMouseDown(MouseButtonEventArgs e)

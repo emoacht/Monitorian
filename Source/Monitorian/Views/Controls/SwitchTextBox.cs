@@ -43,7 +43,7 @@ namespace Monitorian.Views.Controls
 
 		private InputDevice _device;
 		private Point _startPosition;
-		private const double _tolerance = 8D;
+		private const double _tolerance = 10D;
 		private bool _isContextMenuOpenable = true;
 
 		private void OnDeviceDown(InputDevice device, bool isContextMenuOpenable)
@@ -75,8 +75,7 @@ namespace Monitorian.Views.Controls
 			if (!TryGetDevicePosition(_device, out Point endPosition))
 				return;
 
-			if ((Math.Abs(endPosition.X - _startPosition.X) > _tolerance) ||
-				(Math.Abs(endPosition.Y - _startPosition.Y) > _tolerance))
+			if (new Vector(endPosition.X - _startPosition.X, endPosition.Y - _startPosition.Y).Length > _tolerance)
 				return;
 
 			this.IsReadOnly = false;

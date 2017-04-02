@@ -64,9 +64,7 @@
     <Compile Include="Movers\BasicWindowMover.cs" />
     <Compile Include="Movers\StickWindowMover.cs" />
     <Compile Include="Movers\FloatWindowMover.cs" />
-    <Compile Include="NotifyIconComponent.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="NotifyIconContainer.cs" />
     <Compile Include="NotifyIconHelper.cs" />
     <Compile Include="VisualTreeHelperAddition.cs" />
     <Compile Include="WindowHelper.cs" />

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,52 +10,49 @@ using ScreenFrame.Helper;
 
 namespace ScreenFrame
 {
-	public class NotifyIconComponent : Component
+	public class NotifyIconContainer : IDisposable
 	{
 		#region Type
 
 		private class NotifyIconWindowListener : NativeWindow
 		{
-			public static NotifyIconWindowListener Create(NotifyIcon notifyIcon)
+			public static NotifyIconWindowListener Create(NotifyIconContainer container)
 			{
-				if (!NotifyIconHelper.TryGetNotifyIconWindow(notifyIcon, out NativeWindow window) ||
+				if (!NotifyIconHelper.TryGetNotifyIconWindow(container.NotifyIcon, out NativeWindow window) ||
 					(window.Handle == IntPtr.Zero))
 				{
 					return null;
 				}
-				return new NotifyIconWindowListener(window);
+				return new NotifyIconWindowListener(container, window);
 			}
 
-			private NotifyIconWindowListener(NativeWindow window) => this.AssignHandle(window.Handle);
+			private readonly NotifyIconContainer _container;
 
-			public event EventHandler<Message> OnWindowMessageReceived;
+			private NotifyIconWindowListener(NotifyIconContainer container, NativeWindow window)
+			{
+				this._container = container;
+				this.AssignHandle(window.Handle);
+			}
 
 			protected override void WndProc(ref Message m)
 			{
-				OnWindowMessageReceived?.Invoke(this, m);
+				_container.WndProc(ref m);
 
 				base.WndProc(ref m);
 			}
 
-			public void Close()
-			{
-				OnWindowMessageReceived = null;
-				this.ReleaseHandle();
-			}
+			public void Close() => this.ReleaseHandle();
 		}
 
 		#endregion
 
-		private readonly Container _container;
-		private NotifyIconWindowListener _listener;
-
 		public NotifyIcon NotifyIcon { get; }
 
-		public NotifyIconComponent()
-		{
-			_container = new Container();
+		private NotifyIconWindowListener _listener;
 
-			NotifyIcon = new NotifyIcon(_container);
+		public NotifyIconContainer()
+		{
+			NotifyIcon = new NotifyIcon();
 			NotifyIcon.MouseClick += OnMouseClick;
 			NotifyIcon.MouseDoubleClick += OnMouseDoubleClick;
 		}
@@ -70,12 +66,9 @@ namespace ScreenFrame
 		#region Icon
 
 		private System.Drawing.Icon _icon;
-		public DpiScale _dpi;
+		private DpiScale _dpi;
 
-		public void ShowIcon(string iconPath, string iconText) =>
-			ShowIcon(iconPath, iconText, VisualTreeHelperAddition.GetNotificationAreaDpi());
-
-		public void ShowIcon(string iconPath, string iconText, DpiScale dpi)
+		public void ShowIcon(string iconPath, string iconText)
 		{
 			if (string.IsNullOrWhiteSpace(iconPath))
 				throw new ArgumentNullException(nameof(iconPath));
@@ -86,53 +79,49 @@ namespace ScreenFrame
 				using (var iconStream = iconResource.Stream)
 				{
 					var icon = new System.Drawing.Icon(iconStream);
-					ShowIcon(icon, iconText, dpi);
+					ShowIcon(icon, iconText);
 				}
 			}
 		}
 
-		public void ShowIcon(System.Drawing.Icon icon, string iconText, DpiScale dpi)
+		public void ShowIcon(System.Drawing.Icon icon, string iconText)
 		{
 			this._icon = icon ?? throw new ArgumentNullException(nameof(icon));
-			this._dpi = dpi;
-			this.Text = iconText;
+			_dpi = VisualTreeHelperAddition.GetNotificationAreaDpi();
+			Text = iconText;
 
-			NotifyIcon.Icon = GetIcon(this._icon, this._dpi);
+			NotifyIcon.Icon = GetIcon(this._icon, _dpi);
 			NotifyIcon.Visible = true;
 
 			if (_listener == null)
 			{
-				_listener = NotifyIconWindowListener.Create(NotifyIcon);
-				if (_listener != null)
-				{
-					_listener.OnWindowMessageReceived += OnNotifyIconWindowMessageReceived;
-				}
+				_listener = NotifyIconWindowListener.Create(this);
 			}
 		}
 
 		private const int WM_DPICHANGED = 0x02E0;
 
-		private void OnNotifyIconWindowMessageReceived(object sender, Message m)
+		protected virtual void WndProc(ref Message m)
 		{
 			switch (m.Msg)
 			{
 				case WM_DPICHANGED:
-					var dpi = DpiScaleExtension.FromUInt((uint)m.WParam);
-					AdjustIcon(dpi);
+					var oldDpi = _dpi;
+					_dpi = DpiScaleExtension.FromUInt((uint)m.WParam);
+					if (!oldDpi.Equals(_dpi))
+					{
+						OnDpiChanged(oldDpi, _dpi);
+					}
 					break;
 			}
 		}
 
-		private void AdjustIcon(DpiScale dpi)
+		protected virtual void OnDpiChanged(DpiScale oldDpi, DpiScale newDpi)
 		{
-			if (_icon == null)
-				return;
-
-			if (dpi.Equals(this._dpi))
-				return;
-
-			this._dpi = dpi;
-			NotifyIcon.Icon = GetIcon(_icon, this._dpi);
+			if (_icon != null)
+			{
+				NotifyIcon.Icon = GetIcon(_icon, newDpi);
+			}
 		}
 
 		private static System.Drawing.Icon GetIcon(System.Drawing.Icon icon, DpiScale dpi)
@@ -191,20 +180,24 @@ namespace ScreenFrame
 
 		private bool _isDisposed = false;
 
-		protected override void Dispose(bool disposing)
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		protected virtual void Dispose(bool disposing)
 		{
 			if (_isDisposed)
 				return;
 
 			if (disposing)
 			{
-				_container.Dispose();
 				_listener?.Close();
+				NotifyIcon.Dispose();
 			}
 
 			_isDisposed = true;
-
-			base.Dispose(disposing);
 		}
 
 		#endregion

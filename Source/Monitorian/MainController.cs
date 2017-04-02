@@ -29,7 +29,7 @@ namespace Monitorian
 		public ObservableCollection<MonitorViewModel> Monitors { get; }
 		private readonly object _monitorsLock = new object();
 
-		public NotifyIconComponent NotifyIconComponent { get; }
+		public NotifyIconContainer NotifyIconContainer { get; }
 
 		private readonly SettingsWatcher _settingsWatcher;
 		private readonly PowerWatcher _powerWatcher;
@@ -42,9 +42,9 @@ namespace Monitorian
 			Monitors = new ObservableCollection<MonitorViewModel>();
 			BindingOperations.EnableCollectionSynchronization(Monitors, _monitorsLock);
 
-			NotifyIconComponent = new NotifyIconComponent();
-			NotifyIconComponent.MouseLeftButtonClick += OnMainWindowShowRequested;
-			NotifyIconComponent.MouseRightButtonClick += OnMenuWindowShowRequested;
+			NotifyIconContainer = new NotifyIconContainer();
+			NotifyIconContainer.MouseLeftButtonClick += OnMainWindowShowRequested;
+			NotifyIconContainer.MouseRightButtonClick += OnMenuWindowShowRequested;
 
 			_settingsWatcher = new SettingsWatcher();
 			_powerWatcher = new PowerWatcher();
@@ -58,7 +58,7 @@ namespace Monitorian
 
 			Settings.Load();
 
-			NotifyIconComponent.ShowIcon("pack://application:,,,/Resources/Icons/TrayIcon.ico", ProductInfo.Title);
+			NotifyIconContainer.ShowIcon("pack://application:,,,/Resources/Icons/TrayIcon.ico", ProductInfo.Title);
 
 			_current.MainWindow = new MainWindow(this);
 
@@ -77,7 +77,7 @@ namespace Monitorian
 		internal void End()
 		{
 			MonitorsDispose();
-			NotifyIconComponent.Dispose();
+			NotifyIconContainer.Dispose();
 
 			Settings.SaveOnClose();
 

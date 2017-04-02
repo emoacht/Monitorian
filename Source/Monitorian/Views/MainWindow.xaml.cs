@@ -31,7 +31,7 @@ namespace Monitorian.Views
 
 			this.DataContext = new MainWindowViewModel(controller);
 
-			_mover = new StickWindowMover(this, controller.NotifyIconComponent.NotifyIcon);
+			_mover = new StickWindowMover(this, controller.NotifyIconContainer.NotifyIcon);
 		}
 
 		protected override void OnSourceInitialized(EventArgs e)

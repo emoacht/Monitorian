@@ -97,18 +97,17 @@ namespace Monitorian
 			ShowMenuWindow(e);
 		}
 
-		private async void ShowMainWindow()
+		private void ShowMainWindow()
 		{
 			var window = (MainWindow)_current.MainWindow;
 			if (!window.CanBeShown)
 				return;
 
-			if (window.Visibility != Visibility.Visible)
-			{
-				window.Show();
-				window.Activate();
-			}
-			await UpdateAsync();
+			if (window.Visibility == Visibility.Visible)
+				return;
+
+			window.Show();
+			window.Activate();
 		}
 
 		private void ShowMenuWindow(Point pivot)

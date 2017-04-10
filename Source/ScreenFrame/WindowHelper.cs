@@ -261,6 +261,9 @@ namespace ScreenFrame
 				(uint)Marshal.SizeOf<bool>()) == S_OK);
 		}
 
+		public static IEnumerable<SWP> EnumerateFlags(SWP flags) =>
+			Enum.GetValues(typeof(SWP)).Cast<SWP>().Where(x => flags.HasFlag(x));
+
 		#endregion
 
 		#region Taskbar

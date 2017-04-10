@@ -19,7 +19,7 @@ namespace ScreenFrame.Movers
 		protected override bool TryGetAdjacentLocation(double windowWidth, double windowHeight, out Point location) =>
 			TryGetAdjacentLocationToPivot(windowWidth, windowHeight, out location);
 
-		private bool TryGetAdjacentLocationToPivot(double windowWidth, double windowHeight, out Point location)
+		protected bool TryGetAdjacentLocationToPivot(double windowWidth, double windowHeight, out Point location)
 		{
 			var x = _pivot.X;
 			var y = _pivot.Y;

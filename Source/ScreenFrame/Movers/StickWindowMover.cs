@@ -20,7 +20,7 @@ namespace ScreenFrame.Movers
 		protected override bool TryGetAdjacentLocation(double windowWidth, double windowHeight, out Point location) =>
 			TryGetAdjacentLocationToTaskbar(windowWidth, windowHeight, out location);
 
-		private bool TryGetAdjacentLocationToTaskbar(double windowWidth, double windowHeight, out Point location)
+		protected bool TryGetAdjacentLocationToTaskbar(double windowWidth, double windowHeight, out Point location)
 		{
 			if (!WindowHelper.TryGetTaskbar(out Rect taskbarRect, out TaskbarAlignment taskbarAlignment))
 			{

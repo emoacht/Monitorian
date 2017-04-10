@@ -188,7 +188,7 @@ namespace Monitorian.Models
 			}
 
 			using (var sw = new StreamWriter(filePath, false, Encoding.UTF8)) // BOM will be emitted.
-				sw.Write(string.Join(Environment.NewLine, GetLastLines(oldContent, "[Date:", 9).Reverse()) + newContent);
+				sw.Write(string.Join(Environment.NewLine, GetLastLines(oldContent, "[Date:", 99).Reverse()) + newContent);
 		}
 
 		private static IEnumerable<string> GetLastLines(string source, string sectionHeader, int sectionCount)

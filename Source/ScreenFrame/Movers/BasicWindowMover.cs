@@ -13,8 +13,6 @@ namespace ScreenFrame.Movers
 		public BasicWindowMover(Window window) : base(window)
 		{ }
 
-		private bool _isInitial = true;
-
 		protected override void HandleWindowPosChanging(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
 		{
 			var position = Marshal.PtrToStructure<WindowHelper.WINDOWPOS>(lParam);
@@ -22,7 +20,7 @@ namespace ScreenFrame.Movers
 			double width = position.cx;
 			double height = position.cy;
 
-			if (_isInitial)
+			if (position.flags.HasFlag(WindowHelper.SWP.SWP_SHOWWINDOW))
 			{
 				var dpi = VisualTreeHelperAddition.GetDpi(_window);
 				width = _window.ActualWidth * dpi.DpiScaleX;
@@ -42,7 +40,6 @@ namespace ScreenFrame.Movers
 
 		protected override void HandleWindowPosChanged(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
 		{
-			_isInitial = false;
 		}
 
 		protected abstract bool TryGetAdjacentLocation(double windowWidth, double windowHeight, out Point location);

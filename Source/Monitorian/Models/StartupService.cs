@@ -19,9 +19,9 @@ namespace Monitorian.Models
 		/// <summary>
 		/// Whether this instance is presumed to have started on sign in
 		/// </summary>
-		/// <param name="lastCloseTime">Last close time of this application</param>
+		/// <param name="lastSaveTime">Last time when settings are saved</param>
 		/// <returns>True if started on sign in</returns>
-		public static bool IsStartedOnSignIn(DateTimeOffset lastCloseTime)
+		public static bool IsStartedOnSignIn(DateTimeOffset lastSaveTime)
 		{
 			// First, check the command-line arguments.
 			if (Environment.GetCommandLineArgs().Skip(1).Contains(Argument))
@@ -31,10 +31,10 @@ namespace Monitorian.Models
 			if (!_isPackaged || !StartupTaskIsEnabled())
 				return false;
 
-			// Third, compare last close time with session start time.
-			if ((default(DateTimeOffset) < lastCloseTime) && TryGetLogonSessionStartTime(out DateTimeOffset startTime))
+			// Third, compare last time when settings are saved with session start time.
+			if ((default(DateTimeOffset) < lastSaveTime) && TryGetLogonSessionStartTime(out DateTimeOffset startTime))
 			{
-				return (lastCloseTime < startTime);
+				return (lastSaveTime < startTime);
 			}
 			return false;
 		}

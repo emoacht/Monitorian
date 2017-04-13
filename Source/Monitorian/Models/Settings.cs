@@ -64,10 +64,10 @@ namespace Monitorian.Models
 		private Dictionary<string, NamePack> _knownMonitors;
 
 		/// <summary>
-		/// Last close time of this application
+		/// Last time when settings are saved
 		/// </summary>
 		[DataMember]
-		public DateTimeOffset LastCloseTime { get; private set; }
+		public DateTimeOffset LastSaveTime { get; private set; }
 
 		#region Load/Save
 
@@ -108,14 +108,10 @@ namespace Monitorian.Models
 			}
 		}
 
-		internal void SaveOnClose()
-		{
-			LastCloseTime = DateTimeOffset.Now;
-			Save();
-		}
-
 		internal void Save()
 		{
+			LastSaveTime = DateTimeOffset.Now;
+
 			try
 			{
 				var filePath = Path.Combine(
@@ -146,21 +142,24 @@ namespace Monitorian.Models
 		/// <summary>
 		/// Name
 		/// </summary>
-		/// <remarks>Private setter is for serializer.</remarks>
-		[DataMember]
-		public string Name { get; private set; }
+		public string Name
+		{
+			get { Time = DateTimeOffset.UtcNow.Ticks; return _name; }
+			set { Time = DateTimeOffset.UtcNow.Ticks; _name = value; }
+		}
+		[DataMember(Name = "Name")]
+		private string _name;
 
 		/// <summary>
-		/// Instantiation time
+		/// Last access time
 		/// </summary>
-		/// <remarks>Private setter is for serializer.</remarks>
+		/// <remarks>The serializer requires setter.</remarks>
 		[DataMember]
 		public long Time { get; private set; }
 
 		public NamePack(string name)
 		{
 			this.Name = name;
-			Time = DateTimeOffset.UtcNow.Ticks;
 		}
 	}
 }

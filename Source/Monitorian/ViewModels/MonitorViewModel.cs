@@ -22,14 +22,41 @@ namespace Monitorian.ViewModels
 		public byte DisplayIndex => _monitor.DisplayIndex;
 		public byte MonitorIndex => _monitor.MonitorIndex;
 
+		#region Name
+
+		private bool _isNameChanged;
+
 		public string Name
 		{
 			get { return HasName ? _name : _monitor.Description; }
-			set { SetPropertyValue(ref _name, value); }
+			set
+			{
+				if (SetPropertyValue(ref _name, value))
+					_isNameChanged = true;
+			}
 		}
 		private string _name;
 
 		public bool HasName => !string.IsNullOrWhiteSpace(_name);
+
+		public void RestoreName(string name)
+		{
+			this._name = name;
+		}
+
+		public bool CheckNameChanged()
+		{
+			if (_isNameChanged)
+			{
+				_isNameChanged = false;
+				return true;
+			}
+			return false;
+		}
+
+		#endregion
+
+		#region Brightness
 
 		public int Brightness => _monitor.Brightness;
 
@@ -78,6 +105,8 @@ namespace Monitorian.ViewModels
 				RaisePropertyChanged(nameof(BrightnessInteractive));
 			}
 		}
+
+		#endregion
 
 		public bool IsTarget
 		{

@@ -11,10 +11,20 @@ using ScreenFrame.Helper;
 
 namespace ScreenFrame.Movers
 {
+	/// <summary>
+	/// Window mover
+	/// </summary>
 	public abstract class WindowMover
 	{
+		/// <summary>
+		/// Window to be moved
+		/// </summary>
 		protected readonly Window _window;
 
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="window">Window to be moved</param>
 		public WindowMover(Window window)
 		{
 			this._window = window ?? throw new ArgumentNullException(nameof(window));
@@ -47,6 +57,10 @@ namespace ScreenFrame.Movers
 			AdjustWindow(e.NewDpi);
 		}
 
+		/// <summary>
+		/// Adjusts DPI of window.
+		/// </summary>
+		/// <param name="dpi">DPI information</param>
 		protected virtual void AdjustWindow(DpiScale dpi)
 		{
 			if (!OsVersion.Is81OrNewer || OsVersion.Is10Redstone1OrNewer)
@@ -86,10 +100,19 @@ namespace ScreenFrame.Movers
 			return IntPtr.Zero;
 		}
 
+		/// <summary>
+		/// Handles window position changing event.
+		/// </summary>
 		protected abstract void HandleWindowPosChanging(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled);
 
+		/// <summary>
+		/// Handles window position changed event.
+		/// </summary>
 		protected abstract void HandleWindowPosChanged(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled);
 
+		/// <summary>
+		/// Handles DPI changed event.
+		/// </summary>
 		protected virtual void HandleDpiChanged(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
 		{
 			if (!OsVersion.Is10Redstone1OrNewer)

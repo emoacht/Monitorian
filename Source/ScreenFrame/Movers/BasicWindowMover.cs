@@ -8,11 +8,21 @@ using System.Windows;
 
 namespace ScreenFrame.Movers
 {
+	/// <summary>
+	/// Window mover which implements basic functions
+	/// </summary>
 	public abstract class BasicWindowMover : WindowMover
 	{
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="window">Window to be moved</param>
 		public BasicWindowMover(Window window) : base(window)
 		{ }
 
+		/// <summary>
+		/// Handles window position changing event.
+		/// </summary>
 		protected override void HandleWindowPosChanging(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
 		{
 			var position = Marshal.PtrToStructure<WindowHelper.WINDOWPOS>(lParam);
@@ -38,10 +48,19 @@ namespace ScreenFrame.Movers
 			}
 		}
 
+		/// <summary>
+		/// Handles window position changed event.
+		/// </summary>
 		protected override void HandleWindowPosChanged(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
-		{
-		}
+		{ }
 
+		/// <summary>
+		/// Tries to get the adjacent location using specified window width and height.
+		/// </summary>
+		/// <param name="windowWidth">Window width</param>
+		/// <param name="windowHeight">Window height</param>
+		/// <param name="location">Location of window</param>
+		/// <returns>True if succeeded</returns>
 		protected abstract bool TryGetAdjacentLocation(double windowWidth, double windowHeight, out Point location);
 	}
 }

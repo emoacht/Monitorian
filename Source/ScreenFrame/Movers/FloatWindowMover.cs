@@ -7,18 +7,40 @@ using System.Windows;
 
 namespace ScreenFrame.Movers
 {
+	/// <summary>
+	/// Window mover which implements functions for float window
+	/// </summary>
 	public class FloatWindowMover : BasicWindowMover
 	{
 		private readonly Point _pivot;
 
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="window">Window to be moved</param>
+		/// <param name="pivot">Pivot point to be referred</param>
 		public FloatWindowMover(Window window, Point pivot) : base(window)
 		{
 			this._pivot = pivot;
 		}
 
+		/// <summary>
+		/// Tries to get the adjacent location using specified window width and height.
+		/// </summary>
+		/// <param name="windowWidth">Window width</param>
+		/// <param name="windowHeight">Window height</param>
+		/// <param name="location">Location of window</param>
+		/// <returns>True if succeeded</returns>
 		protected override bool TryGetAdjacentLocation(double windowWidth, double windowHeight, out Point location) =>
 			TryGetAdjacentLocationToPivot(windowWidth, windowHeight, out location);
 
+		/// <summary>
+		/// Tries to get the adjacent location to pivot point using specified window width and height.
+		/// </summary>
+		/// <param name="windowWidth">Window width</param>
+		/// <param name="windowHeight">Window height</param>
+		/// <param name="location">Location of window</param>
+		/// <returns>True if succeeded</returns>
 		protected bool TryGetAdjacentLocationToPivot(double windowWidth, double windowHeight, out Point location)
 		{
 			var x = _pivot.X;

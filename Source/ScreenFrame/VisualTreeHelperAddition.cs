@@ -12,6 +12,9 @@ using ScreenFrame.Helper;
 
 namespace ScreenFrame
 {
+	/// <summary>
+	/// Additional methods for <see cref="VisualTreeHelper"/>
+	/// </summary>
 	public static class VisualTreeHelperAddition
 	{
 		#region Win32

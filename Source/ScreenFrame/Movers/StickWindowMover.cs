@@ -8,18 +8,40 @@ using System.Windows.Forms;
 
 namespace ScreenFrame.Movers
 {
+	/// <summary>
+	/// Window mover which implements functions for stick window.
+	/// </summary>
 	public class StickWindowMover : BasicWindowMover
 	{
 		private readonly NotifyIcon _notifyIcon;
 
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="window">Window to be moved</param>
+		/// <param name="notifyIcon">NotifyIcon to be referred</param>
 		public StickWindowMover(Window window, NotifyIcon notifyIcon) : base(window)
 		{
 			this._notifyIcon = notifyIcon ?? throw new ArgumentNullException(nameof(notifyIcon));
 		}
 
+		/// <summary>
+		/// Tries to get the adjacent location using specified window width and height.
+		/// </summary>
+		/// <param name="windowWidth">Window width</param>
+		/// <param name="windowHeight">Window height</param>
+		/// <param name="location">Location of window</param>
+		/// <returns>True if succeeded</returns>
 		protected override bool TryGetAdjacentLocation(double windowWidth, double windowHeight, out Point location) =>
 			TryGetAdjacentLocationToTaskbar(windowWidth, windowHeight, out location);
 
+		/// <summary>
+		/// Tries to get the adjacent location to NotifyIcon using specified window width and height.
+		/// </summary>
+		/// <param name="windowWidth">Window width</param>
+		/// <param name="windowHeight">Window height</param>
+		/// <param name="location">Location of window</param>
+		/// <returns>True if succeeded</returns>
 		protected bool TryGetAdjacentLocationToTaskbar(double windowWidth, double windowHeight, out Point location)
 		{
 			if (!WindowHelper.TryGetTaskbar(out Rect taskbarRect, out TaskbarAlignment taskbarAlignment))

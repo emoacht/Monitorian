@@ -16,7 +16,7 @@ namespace Monitorian.Models
 		/// Gets folder path to this application's folder in local AppData.
 		/// </summary>
 		/// <param name="createsFolder">Whether to create this application's folder if it does not exist</param>
-		/// <returns>This method should not throw an exception because it is inside local AppData.</returns>
+		/// <returns>This method should not throw an exception because the folder is in local AppData.</returns>
 		public static string GetAppDataFolderPath(bool createsFolder)
 		{
 			if (string.IsNullOrWhiteSpace(_folderPath))

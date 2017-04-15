@@ -112,6 +112,7 @@ namespace ScreenFrame
 					{
 						OnDpiChanged(oldDpi, _dpi);
 					}
+					m.Result = IntPtr.Zero;
 					break;
 			}
 		}

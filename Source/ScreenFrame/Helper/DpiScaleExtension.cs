@@ -10,7 +10,7 @@ namespace ScreenFrame.Helper
 	/// <summary>
 	/// DpiScale extension methods
 	/// </summary>
-	public static class DpiScaleExtension
+	internal static class DpiScaleExtension
 	{
 		private const double DefaultPixelsPerInch = 96D; // Default pixels per Inch
 

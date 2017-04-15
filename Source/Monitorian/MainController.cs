@@ -174,7 +174,7 @@ namespace Monitorian
 							}
 
 							var newMonitor = new MonitorViewModel(item);
-							FindName(newMonitor);
+							RetrieveName(newMonitor);
 							if (Monitors.Count < _maxMonitorCount.Value)
 							{
 								newMonitor.UpdateBrightness();
@@ -257,7 +257,7 @@ namespace Monitorian
 				monitor.Dispose();
 		}
 
-		private void FindName(MonitorViewModel monitor)
+		private void RetrieveName(MonitorViewModel monitor)
 		{
 			if (Settings.KnownMonitors.TryGetValue(monitor.DeviceInstanceId, out NamePack knownMonitor))
 			{

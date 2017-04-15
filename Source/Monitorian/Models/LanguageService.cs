@@ -31,7 +31,7 @@ namespace Monitorian.Models
 				throw new ArgumentNullException(nameof(args));
 
 			var supportedCultureNames = new HashSet<string>(CultureInfo.GetCultures(CultureTypes.AllCultures).Select(x => x.Name));
-			
+
 			foreach (var arg in args
 				.Where(x => !string.IsNullOrWhiteSpace(x))
 				.Select(x => x.ToLower()))

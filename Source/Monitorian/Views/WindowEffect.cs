@@ -77,7 +77,7 @@ namespace Monitorian.Views
 			DWM_BB_TRANSITIONONMAXIMIZED = 0x00000004
 		}
 
-		private const int S_OK = 0x00000000;
+		private const int S_OK = 0x0;
 
 		#endregion
 
@@ -88,7 +88,7 @@ namespace Monitorian.Views
 		/// </summary>
 		/// <param name="hwnd">Window handle</param>
 		/// <param name="data">Attribute data</param>
-		/// <returns>True if succeeded. False if not.</returns>
+		/// <returns>True if succeeded</returns>
 		/// <remarks>
 		/// This API and relevant parameters are derived from:
 		/// https://github.com/riverar/sample-win10-aeroglass 

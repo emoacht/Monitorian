@@ -12,8 +12,7 @@ namespace Monitorian.Models.Watcher
 		private Func<Task> _onChanged;
 
 		public SettingsWatcher() : base(countLimit: 3)
-		{
-		}
+		{ }
 
 		public void Subscribe(Func<Task> onChanged)
 		{

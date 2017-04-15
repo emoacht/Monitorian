@@ -124,7 +124,7 @@ namespace Monitorian.Views
 			if (this.Visibility != Visibility.Visible)
 				return;
 
-			// Set time to prevent this window from being shown unintendedly. 
+			// Set time to prevent this window from being shown unintentionally. 
 			_preventionTime = DateTimeOffset.Now + TimeSpan.FromSeconds(0.2);
 
 			// Clear focus.

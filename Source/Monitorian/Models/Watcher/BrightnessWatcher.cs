@@ -54,8 +54,9 @@ namespace Monitorian.Models.Watcher
 			if (disposing)
 			{
 				// Free any other managed objects here.
-				_watcher.Stop();
 				_watcher.EventArrived -= OnEventArrived;
+				_watcher.Stop();
+				_watcher.Dispose();
 			}
 
 			// Free any unmanaged objects here.

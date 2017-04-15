@@ -18,7 +18,7 @@ namespace Monitorian.Helper
 		public static int GetNearestIndex(int[] array, int target) =>
 			GetNearestIndex(array, target, (a, b) => Math.Abs(a - b));
 
-		public static int GetNearest(byte[] array, byte target) =>
+		public static byte GetNearest(byte[] array, byte target) =>
 			array[GetNearestIndex(array, target)];
 
 		public static int GetNearestIndex(byte[] array, byte target) =>

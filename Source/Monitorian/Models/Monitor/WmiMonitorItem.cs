@@ -62,7 +62,7 @@ namespace Monitorian.Models.Monitor
 		public bool SetBrightness(int brightness)
 		{
 			if ((brightness < 0) || (100 < brightness))
-				throw new ArgumentOutOfRangeException(nameof(brightness));
+				throw new ArgumentOutOfRangeException(nameof(brightness), "The brightness must be within 0 to 100.");
 
 			lock (_lock)
 			{

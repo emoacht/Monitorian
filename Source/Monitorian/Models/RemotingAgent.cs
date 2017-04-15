@@ -26,7 +26,7 @@ namespace Monitorian.Models
 		/// <summary>
 		/// Starts remoting.
 		/// </summary>
-		/// <returns>True if no other instance there and this instance started remoting server. False if not.</returns>
+		/// <returns>True if no other instance there and this instance started remoting server</returns>
 		public bool Start()
 		{
 			// Determine Semaphore name and IPC port name using assembly title.

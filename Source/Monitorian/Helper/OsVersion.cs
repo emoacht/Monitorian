@@ -42,6 +42,12 @@ namespace Monitorian.Helper
 		/// <remarks>Windows 10 (Redstone 1) = version 10.0.14393</remarks>
 		public static bool Is10Redstone1OrNewer => IsEqualToOrNewer(10, 0, 14393);
 
+		/// <summary>
+		/// Whether OS is Windows 10 (Redstone 2) or newer
+		/// </summary>
+		/// <remarks>Windows 10 (Redstone 2) = version 10.0.15063</remarks>
+		public static bool Is10Redstone2OrNewer => IsEqualToOrNewer(10, 0, 15063);
+
 		#region Cache
 
 		private static readonly Dictionary<string, bool> _cache = new Dictionary<string, bool>();

@@ -12,8 +12,7 @@ namespace Monitorian.Models.Watcher
 		private Func<Task> _onChanged;
 
 		public PowerWatcher() : base(countLimit: 2)
-		{
-		}
+		{ }
 
 		public void Subscribe(Func<Task> onChanged)
 		{

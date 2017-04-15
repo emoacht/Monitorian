@@ -10,6 +10,9 @@ using ScreenFrame.Helper;
 
 namespace ScreenFrame
 {
+	/// <summary>
+	/// Container of NotifyIcon
+	/// </summary>
 	public class NotifyIconContainer : IDisposable
 	{
 		#region Type
@@ -46,10 +49,16 @@ namespace ScreenFrame
 
 		#endregion
 
+		/// <summary>
+		/// NotifyIcon instance
+		/// </summary>
 		public NotifyIcon NotifyIcon { get; }
 
 		private NotifyIconWindowListener _listener;
 
+		/// <summary>
+		/// Constructor
+		/// </summary>
 		public NotifyIconContainer()
 		{
 			NotifyIcon = new NotifyIcon();
@@ -57,6 +66,9 @@ namespace ScreenFrame
 			NotifyIcon.MouseDoubleClick += OnMouseDoubleClick;
 		}
 
+		/// <summary>
+		/// NotifyIcon text
+		/// </summary>
 		public string Text
 		{
 			get { return NotifyIcon.Text; }
@@ -68,6 +80,11 @@ namespace ScreenFrame
 		private System.Drawing.Icon _icon;
 		private DpiScale _dpi;
 
+		/// <summary>
+		/// Shows NotifyIcon.
+		/// </summary>
+		/// <param name="iconPath">Path to icon for NotifyIcon</param>
+		/// <param name="iconText">Text for NotifyIcon</param>
 		public void ShowIcon(string iconPath, string iconText)
 		{
 			if (string.IsNullOrWhiteSpace(iconPath))
@@ -84,6 +101,11 @@ namespace ScreenFrame
 			}
 		}
 
+		/// <summary>
+		/// Shows NotifyIcon.
+		/// </summary>
+		/// <param name="icon">Icon for NotifyIcon</param>
+		/// <param name="iconText">Text for NotifyIcon</param>
 		public void ShowIcon(System.Drawing.Icon icon, string iconText)
 		{
 			this._icon = icon ?? throw new ArgumentNullException(nameof(icon));
@@ -101,6 +123,10 @@ namespace ScreenFrame
 
 		private const int WM_DPICHANGED = 0x02E0;
 
+		/// <summary>
+		/// Processes windows message sent to NotifyIcon.
+		/// </summary>
+		/// <param name="m">Message</param>
 		protected virtual void WndProc(ref Message m)
 		{
 			switch (m.Msg)
@@ -117,6 +143,11 @@ namespace ScreenFrame
 			}
 		}
 
+		/// <summary>
+		/// Called when DPI of the monitor to which NotifyIcon belongs changed.
+		/// </summary>
+		/// <param name="oldDpi">Old DPI information</param>
+		/// <param name="newDpi">New DPI information</param>
 		protected virtual void OnDpiChanged(DpiScale oldDpi, DpiScale newDpi)
 		{
 			if (_icon != null)
@@ -152,7 +183,14 @@ namespace ScreenFrame
 
 		#region Click
 
+		/// <summary>
+		/// This event is raised after mouse left button is clicked on NotifyIcon.
+		/// </summary>
 		public event EventHandler MouseLeftButtonClick;
+
+		/// <summary>
+		/// This event is raised after mouse right button is clicked on NotifyIcon.
+		/// </summary>
 		public event EventHandler<Point> MouseRightButtonClick;
 
 		private void OnMouseClick(object sender, MouseEventArgs e)
@@ -181,12 +219,18 @@ namespace ScreenFrame
 
 		private bool _isDisposed = false;
 
+		/// <summary>
+		/// Public implementation of Dispose pattern
+		/// </summary>
 		public void Dispose()
 		{
 			Dispose(true);
 			GC.SuppressFinalize(this);
 		}
 
+		/// <summary>
+		/// Protected implementation of Dispose pattern
+		/// </summary>
 		protected virtual void Dispose(bool disposing)
 		{
 			if (_isDisposed)

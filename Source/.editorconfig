@@ -1,0 +1,9 @@
+﻿root = true
+
+[*.{cs,vb,xaml}]
+indent_style = tab
+indent_size = 4
+end_of_line = crlf
+insert_final_newline = false
+trim_trailing_whitespace = true
+charset = utf-8-bom

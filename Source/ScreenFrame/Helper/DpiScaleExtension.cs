@@ -21,14 +21,15 @@ namespace ScreenFrame.Helper
 			(0 < a.DpiScaleX) && (0 < a.DpiScaleY);
 
 		/// <summary>
-		/// Converts from wParam of WM_DPICHANGED message to DpiScale.
+		/// Converts WM_DPICHANGED message's wParam value to DpiScale.
 		/// </summary>
-		/// <param name="wParam">wParam</param>
+		/// <param name="wParam">wParam value</param>
 		/// <returns>DPI information</returns>
-		public static DpiScale FromUInt(uint wParam)
+		public static DpiScale FromIntPtr(IntPtr wParam)
 		{
-			var dpiX = (ushort)(wParam & 0xffff);
-			var dpiY = (ushort)(wParam >> 16);
+			var buff = (uint)wParam;
+			var dpiX = (ushort)(buff & 0xffff);
+			var dpiY = (ushort)(buff >> 16);
 
 			return new DpiScale(dpiX / DefaultPixelsPerInch, dpiY / DefaultPixelsPerInch);
 		}

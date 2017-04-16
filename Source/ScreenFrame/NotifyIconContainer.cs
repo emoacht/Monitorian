@@ -133,7 +133,7 @@ namespace ScreenFrame
 			{
 				case WM_DPICHANGED:
 					var oldDpi = _dpi;
-					_dpi = DpiScaleExtension.FromUInt((uint)m.WParam);
+					_dpi = DpiScaleExtension.FromIntPtr(m.WParam);
 					if (!oldDpi.Equals(_dpi))
 					{
 						OnDpiChanged(oldDpi, _dpi);

@@ -117,7 +117,7 @@ namespace ScreenFrame.Movers
 		{
 			if (!OsVersion.Is10Redstone1OrNewer)
 			{
-				var dpi = DpiScaleExtension.FromUInt((uint)wParam);
+				var dpi = DpiScaleExtension.FromIntPtr(wParam);
 				VisualTreeHelper.SetRootDpi(_window, dpi);
 				handled = true;
 			}

@@ -116,7 +116,7 @@ namespace Monitorian.Models.Monitor
 			{
 				// Message: This program is blocked by group policy. For more information, 
 				// contact your system administrator. (Exception from HRESULT: 0x800704EC).
-				// This error code means 04EC -> 1260 -> ERROR_ACCESS_DISABLED_BY_POLICY
+				// This error code means 0x04EC -> 1260 -> ERROR_ACCESS_DISABLED_BY_POLICY
 				return false;
 			}
 			finally

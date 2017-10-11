@@ -255,13 +255,32 @@ namespace Monitorian.Views.Controls
 
 			var cumulativeDistance = e.CumulativeManipulation.Translation;
 			var cumulativeValue = _track.ValueFromDistance(cumulativeDistance.X, cumulativeDistance.Y);
-			var currentValue = _originValue + cumulativeValue;
-			currentValue = Math.Min(this.Maximum, Math.Max(this.Minimum, Math.Round(currentValue)));
+			var newValue = _originValue + cumulativeValue;
+			newValue = Math.Min(this.Maximum, Math.Max(this.Minimum, Math.Round(newValue)));
 
-			if (this.Value == currentValue)
+			if (this.Value == newValue)
 				return;
 
-			this.Value = currentValue;
+			this.Value = newValue;
+		}
+
+		#endregion
+
+		#region MouseWheel
+
+		private const double ReductionFactor = 0.05;
+
+		protected override void OnMouseWheel(MouseWheelEventArgs e)
+		{
+			base.OnMouseWheel(e);
+
+			if (e.Delta == 0)
+				return;
+
+			var newValue = this.Value + e.Delta * ReductionFactor;
+			newValue = Math.Min(this.Maximum, Math.Max(this.Minimum, Math.Round(newValue)));
+
+			this.Value = newValue;
 		}
 
 		#endregion

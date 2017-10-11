@@ -81,7 +81,8 @@ namespace Monitorian.Models
 					FolderService.GetAppDataFolderPath(false),
 					SettingsFileName);
 
-				if (!File.Exists(filePath))
+				var fileInfo = new FileInfo(filePath);
+				if (!fileInfo.Exists | (fileInfo.Length == 0))
 					return;
 
 				using (var sr = new StreamReader(filePath, Encoding.UTF8))
@@ -97,12 +98,14 @@ namespace Monitorian.Models
 						.ForEach(x => x.SetValue(this, x.GetValue(loaded)));
 				}
 			}
-			catch (SerializationException)
-			{
-				// Ignore broken settings file.
-			}
 			catch (Exception ex)
 			{
+				if ((ex is SerializationException) | (ex is XmlException))
+				{
+					// Ignore faulty settings file.
+					return;
+				}
+
 				Debug.WriteLine("Failed to load settings from AppData." + Environment.NewLine
 					+ ex);
 			}

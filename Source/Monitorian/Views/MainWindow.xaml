@@ -37,7 +37,7 @@
 					<ControlTemplate TargetType="{x:Type RepeatButton}">
 						<Border Background="Transparent">
 							<Rectangle Width="{TemplateBinding Width}"
-									   Height="5"
+									   Height="3"
 									   Margin="{TemplateBinding Padding}"
 									   Fill="{TemplateBinding Foreground}"/>
 						</Border>
@@ -107,7 +107,7 @@
 								Background="{TemplateBinding Background}"
 								SnapsToDevicePixels="True">
 							<Grid>
-								<Border Height="5" Margin="5,0" VerticalAlignment="Center"
+								<Border Height="3" Margin="5,0" VerticalAlignment="Center"
 										Background="{StaticResource Slider.Vacant.Background}"/>
 
 								<Grid>

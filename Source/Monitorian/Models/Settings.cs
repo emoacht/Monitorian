@@ -82,7 +82,7 @@ namespace Monitorian.Models
 					SettingsFileName);
 
 				var fileInfo = new FileInfo(filePath);
-				if (!fileInfo.Exists | (fileInfo.Length == 0))
+				if (!fileInfo.Exists || (fileInfo.Length == 0))
 					return;
 
 				using (var sr = new StreamReader(filePath, Encoding.UTF8))

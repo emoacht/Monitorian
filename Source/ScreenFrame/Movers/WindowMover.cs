@@ -78,22 +78,25 @@ namespace ScreenFrame.Movers
 		private const int WM_WINDOWPOSCHANGED = 0x0047;
 		private const int WM_DPICHANGED = 0x02E0;
 
-		private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+		/// <summary>
+		/// Handles window messages.
+		/// </summary>
+		protected virtual IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
 		{
 			switch (msg)
 			{
 				case WM_WINDOWPOSCHANGING:
-					//Debug.WriteLine("WM_WINDOWPOSCHANGING");
+					//Debug.WriteLine(nameof(WM_WINDOWPOSCHANGING));
 					HandleWindowPosChanging(hwnd, msg, wParam, lParam, ref handled);
 					break;
 
 				case WM_WINDOWPOSCHANGED:
-					//Debug.WriteLine("WM_WINDOWPOSCHANGED");
+					//Debug.WriteLine(nameof(WM_WINDOWPOSCHANGED));
 					HandleWindowPosChanged(hwnd, msg, wParam, lParam, ref handled);
 					break;
 
 				case WM_DPICHANGED:
-					//Debug.WriteLine("WM_DPICHANGED");
+					//Debug.WriteLine(nameof(WM_DPICHANGED));
 					HandleDpiChanged(hwnd, msg, wParam, lParam, ref handled);
 					break;
 			}
@@ -115,12 +118,12 @@ namespace ScreenFrame.Movers
 		/// </summary>
 		protected virtual void HandleDpiChanged(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
 		{
-			if (!OsVersion.Is10Redstone1OrNewer)
-			{
-				var dpi = DpiScaleExtension.FromIntPtr(wParam);
-				VisualTreeHelper.SetRootDpi(_window, dpi);
-				handled = true;
-			}
+			if (OsVersion.Is10Redstone1OrNewer)
+				return;
+
+			var dpi = DpiScaleExtension.FromIntPtr(wParam);
+			VisualTreeHelper.SetRootDpi(_window, dpi);
+			handled = true;
 		}
 	}
 }

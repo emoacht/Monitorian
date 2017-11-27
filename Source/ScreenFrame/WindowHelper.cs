@@ -136,6 +136,7 @@ namespace ScreenFrame
 			public int y;
 
 			public static implicit operator Point(POINT point) => new Point(point.x, point.y);
+			public static implicit operator POINT(Point point) => new POINT { x = (int)point.X, y = (int)point.Y };
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
@@ -156,6 +157,17 @@ namespace ScreenFrame
 					rect.top,
 					rect.right - rect.left,
 					rect.bottom - rect.top);
+			}
+
+			public static implicit operator RECT(Rect rect)
+			{
+				return new RECT
+				{
+					left = (int)rect.X,
+					top = (int)rect.Y,
+					right = (int)rect.Right,
+					bottom = (int)rect.Bottom
+				};
 			}
 		}
 
@@ -178,18 +190,18 @@ namespace ScreenFrame
 
 		#region Window
 
-		public static bool SetWindowLocation(Window window, Point location)
+		public static bool SetWindowPosition(Window window, Rect Position)
 		{
 			var windowHandle = new WindowInteropHelper(window).Handle;
 
 			return SetWindowPos(
 				windowHandle,
 				new IntPtr(-1), // HWND_TOPMOST
-				(int)location.X,
-				(int)location.Y,
-				0,
-				0,
-				SWP.SWP_NOSIZE);
+				(int)Position.X,
+				(int)Position.Y,
+				(int)Position.Width,
+				(int)Position.Height,
+				SWP.SWP_NOZORDER);
 		}
 
 		public static Rect GetWindowRect(Window window)

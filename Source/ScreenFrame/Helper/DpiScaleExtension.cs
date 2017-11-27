@@ -8,7 +8,7 @@ using System.Windows;
 namespace ScreenFrame.Helper
 {
 	/// <summary>
-	/// DpiScale extension methods
+	/// Extension methods for <see cref="System.Windows.DpiScale"/>
 	/// </summary>
 	internal static class DpiScaleExtension
 	{

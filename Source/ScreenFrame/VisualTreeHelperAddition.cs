@@ -9,6 +9,7 @@ using System.Windows.Interop;
 using System.Windows.Media;
 
 using ScreenFrame.Helper;
+using static ScreenFrame.WindowHelper;
 
 namespace ScreenFrame
 {
@@ -147,11 +148,11 @@ namespace ScreenFrame
 			if (source == null)
 				return SystemDpi;
 
-			var handleMonitor = MonitorFromWindow(
+			var monitorHandle = MonitorFromWindow(
 				source.Handle,
 				MONITOR_DEFAULTTO.MONITOR_DEFAULTTONEAREST);
 
-			return GetDpi(handleMonitor);
+			return GetDpi(monitorHandle);
 		}
 
 		/// <summary>
@@ -163,36 +164,36 @@ namespace ScreenFrame
 			if (!OsVersion.Is81OrNewer)
 				return SystemDpi;
 
-			var handleTaskBar = FindWindowEx(
+			var taskbarHandle = FindWindowEx(
 				IntPtr.Zero,
 				IntPtr.Zero,
 				"Shell_TrayWnd",
 				string.Empty);
-			if (handleTaskBar == IntPtr.Zero)
+			if (taskbarHandle == IntPtr.Zero)
 				return SystemDpi;
 
-			var handleNotificationArea = FindWindowEx(
-				handleTaskBar,
+			var notificationAreaHandle = FindWindowEx(
+				taskbarHandle,
 				IntPtr.Zero,
 				"TrayNotifyWnd",
 				string.Empty);
-			if (handleNotificationArea == IntPtr.Zero)
+			if (notificationAreaHandle == IntPtr.Zero)
 				return SystemDpi;
 
-			var handleMonitor = MonitorFromWindow(
-				handleNotificationArea,
+			var monitorHandle = MonitorFromWindow(
+				notificationAreaHandle,
 				MONITOR_DEFAULTTO.MONITOR_DEFAULTTOPRIMARY);
 
-			return GetDpi(handleMonitor);
+			return GetDpi(monitorHandle);
 		}
 
-		private static DpiScale GetDpi(IntPtr handleMonitor)
+		private static DpiScale GetDpi(IntPtr monitorHandle)
 		{
-			if (handleMonitor == IntPtr.Zero)
+			if (monitorHandle == IntPtr.Zero)
 				return SystemDpi;
 
 			var result = GetDpiForMonitor(
-				handleMonitor,
+				monitorHandle,
 				MONITOR_DPI_TYPE.MDT_Default,
 				out uint dpiX,
 				out uint dpiY);
@@ -200,6 +201,30 @@ namespace ScreenFrame
 				return SystemDpi;
 
 			return new DpiScale(dpiX / DefaultPixelsPerInch, dpiY / DefaultPixelsPerInch);
+		}
+
+		/// <summary>
+		/// Converts WM_DPICHANGED message's wParam value to DpiScale.
+		/// </summary>
+		/// <param name="wParam">wParam value</param>
+		/// <returns>DPI information</returns>
+		public static DpiScale ConvertToDpiScale(IntPtr wParam)
+		{
+			var buff = (uint)wParam;
+			var dpiX = (ushort)(buff & 0xffff);
+			var dpiY = (ushort)(buff >> 16);
+
+			return new DpiScale(dpiX / DefaultPixelsPerInch, dpiY / DefaultPixelsPerInch);
+		}
+
+		/// <summary>
+		/// Converts WM_DPICHANGED message's lParam value to Rect.
+		/// </summary>
+		/// <param name="lParam">lParam value</param>
+		/// <returns>Rectangle</returns>
+		public static Rect ConvertToRect(IntPtr lParam)
+		{
+			return Marshal.PtrToStructure<RECT>(lParam);
 		}
 	}
 }

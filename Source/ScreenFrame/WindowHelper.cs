@@ -22,6 +22,47 @@ namespace ScreenFrame
 			string lpszWindow);
 
 		[DllImport("User32.dll", SetLastError = true)]
+		private static extern IntPtr MonitorFromWindow(
+			IntPtr hwnd,
+			MONITOR_DEFAULTTO dwFlags);
+
+		private enum MONITOR_DEFAULTTO : uint
+		{
+			/// <summary>
+			/// If no display monitor intersects, returns null.
+			/// </summary>
+			MONITOR_DEFAULTTONULL = 0x00000000,
+
+			/// <summary>
+			/// If no display monitor intersects, returns a handle to the primary display monitor.
+			/// </summary>
+			MONITOR_DEFAULTTOPRIMARY = 0x00000001,
+
+			/// <summary>
+			/// If no display monitor intersects, returns a handle to the display monitor that is nearest to the rectangle.
+			/// </summary>
+			MONITOR_DEFAULTTONEAREST = 0x00000002,
+		}
+
+		[DllImport("User32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		public static extern bool GetMonitorInfo(
+			IntPtr hMonitor,
+			ref MONITORINFOEX lpmi);
+
+		[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+		public struct MONITORINFOEX
+		{
+			public uint cbSize;
+			public RECT rcMonitor;
+			public RECT rcWork;
+			public uint dwFlags;
+
+			[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+			public string szDevice;
+		}
+
+		[DllImport("User32.dll", SetLastError = true)]
 		private static extern bool GetWindowRect(
 			IntPtr hWnd,
 			out RECT lpRect);
@@ -185,6 +226,25 @@ namespace ScreenFrame
 
 		public const int S_OK = 0x0;
 		public const int S_FALSE = 0x1;
+
+		#endregion
+
+		#region Monitor
+
+		public static Rect GetMonitorRect(Window window)
+		{
+			var windowHandle = new WindowInteropHelper(window).Handle;
+
+			var monitorHandle = MonitorFromWindow(
+				windowHandle,
+				MONITOR_DEFAULTTO.MONITOR_DEFAULTTONEAREST);
+
+			var monitorInfo = new MONITORINFOEX { cbSize = (uint)Marshal.SizeOf<MONITORINFOEX>() };
+
+			return GetMonitorInfo(monitorHandle, ref monitorInfo)
+				? (Rect)monitorInfo.rcMonitor
+				: Rect.Empty;
+		}
 
 		#endregion
 

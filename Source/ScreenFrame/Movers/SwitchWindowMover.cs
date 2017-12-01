@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -51,8 +50,7 @@ namespace ScreenFrame.Movers
 			_departureTimer.Tick += (sender, e) =>
 			{
 				_departureTimer.Stop();
-				IsDeparted = true;
-				Debug.WriteLine("Departed!");
+				InitiateDeparture();
 			};
 		}
 
@@ -76,23 +74,35 @@ namespace ScreenFrame.Movers
 				case WM_EXITSIZEMOVE:
 					//Debug.WriteLine(nameof(WM_EXITSIZEMOVE));
 					_departureTimer.Stop();
+					CheckDeparture();
 					break;
 
 				case WM_MOVE:
 					//Debug.WriteLine(nameof(WM_MOVE));
-					if (IsDeparted)
-					{
-						var windowRect = WindowHelper.GetDwmWindowRect(_window);
-						if (WindowHelper.TryGetTaskbar(out Rect taskbarRect, out TaskbarAlignment _) &&
-							RectExtension.IsInContactOrIntersected(windowRect, taskbarRect))
-						{
-							IsDeparted = false;
-							Debug.WriteLine("Rejoined!");
-						}
-					}
+					CheckDeparture();
 					break;
 			}
 			return base.WndProc(hwnd, msg, wParam, lParam, ref handled);
+		}
+
+		private void InitiateDeparture()
+		{
+			IsDeparted = true;
+		}
+
+		private void CheckDeparture()
+		{
+			if (!IsDeparted)
+				return;
+
+			if (!WindowHelper.TryGetTaskbar(out Rect taskbarRect, out TaskbarAlignment _))
+				return;
+
+			var windowRect = WindowHelper.GetDwmWindowRect(_window);
+			if (!windowRect.IntersectsWith(taskbarRect))
+				return;
+
+			IsDeparted = false;
 		}
 
 		/// <summary>
@@ -122,7 +132,7 @@ namespace ScreenFrame.Movers
 
 			if (IsDeparted)
 			{
-				var windowRect = RectExtension.FromIntPtr(lParam);
+				var windowRect = VisualTreeHelperAddition.ConvertToRect(lParam);
 				WindowHelper.SetWindowPosition(_window, windowRect);
 			}
 			base.HandleDpiChanged(hwnd, msg, wParam, lParam, ref handled);

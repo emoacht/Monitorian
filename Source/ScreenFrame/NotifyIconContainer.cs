@@ -6,8 +6,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
 
-using ScreenFrame.Helper;
-
 namespace ScreenFrame
 {
 	/// <summary>
@@ -133,7 +131,7 @@ namespace ScreenFrame
 			{
 				case WM_DPICHANGED:
 					var oldDpi = _dpi;
-					_dpi = DpiScaleExtension.FromIntPtr(m.WParam);
+					_dpi = VisualTreeHelperAddition.ConvertToDpiScale(m.WParam);
 					if (!oldDpi.Equals(_dpi))
 					{
 						OnDpiChanged(oldDpi, _dpi);

@@ -22,6 +22,11 @@ namespace ScreenFrame.Movers
 		protected readonly Window _window;
 
 		/// <summary>
+		/// Per-Monitor DPI of window
+		/// </summary>
+		public DpiScale Dpi => VisualTreeHelperAddition.GetDpi(_window);
+
+		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="window">Window to be moved</param>
@@ -121,7 +126,7 @@ namespace ScreenFrame.Movers
 			if (OsVersion.Is10Redstone1OrNewer)
 				return;
 
-			var dpi = DpiScaleExtension.FromIntPtr(wParam);
+			var dpi = VisualTreeHelperAddition.ConvertToDpiScale(wParam);
 			VisualTreeHelper.SetRootDpi(_window, dpi);
 			handled = true;
 		}

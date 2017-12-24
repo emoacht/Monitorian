@@ -5,7 +5,6 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Forms;
 using System.Windows.Interop;
 
 namespace ScreenFrame
@@ -95,6 +94,7 @@ namespace ScreenFrame
 			SWP_NOSIZE = 0x0001,
 			SWP_NOZORDER = 0x0004,
 			SWP_SHOWWINDOW = 0x0040,
+			SWP_CHANGEWINDOWSTATE = 0x8000 // Undocumented value
 		}
 
 		[DllImport("Dwmapi.dll", SetLastError = true)]
@@ -231,7 +231,7 @@ namespace ScreenFrame
 
 		#region Monitor
 
-		public static Rect GetMonitorRect(Window window)
+		public static bool TryGetMonitorRect(Window window, out Rect monitorRect)
 		{
 			var windowHandle = new WindowInteropHelper(window).Handle;
 
@@ -241,9 +241,13 @@ namespace ScreenFrame
 
 			var monitorInfo = new MONITORINFOEX { cbSize = (uint)Marshal.SizeOf<MONITORINFOEX>() };
 
-			return GetMonitorInfo(monitorHandle, ref monitorInfo)
-				? (Rect)monitorInfo.rcMonitor
-				: Rect.Empty;
+			if (!GetMonitorInfo(monitorHandle, ref monitorInfo))
+			{
+				monitorRect = Rect.Empty;
+				return false;
+			}
+			monitorRect = monitorInfo.rcMonitor;
+			return true;
 		}
 
 		#endregion
@@ -264,7 +268,7 @@ namespace ScreenFrame
 				SWP.SWP_NOZORDER);
 		}
 
-		public static Rect GetWindowRect(Window window)
+		public static bool TryGetWindowRect(Window window, out Rect windowRect)
 		{
 			var windowHandle = new WindowInteropHelper(window).Handle;
 
@@ -272,13 +276,14 @@ namespace ScreenFrame
 				windowHandle,
 				out RECT rect))
 			{
-				return Rect.Empty;
+				windowRect = Rect.Empty;
+				return false;
 			}
-
-			return rect;
+			windowRect = rect;
+			return true;
 		}
 
-		public static Rect GetDwmWindowRect(Window window)
+		public static bool TryGetDwmWindowRect(Window window, out Rect windowRect)
 		{
 			var windowHandle = new WindowInteropHelper(window).Handle;
 
@@ -288,13 +293,14 @@ namespace ScreenFrame
 				out RECT rect,
 				(uint)Marshal.SizeOf<RECT>()) != S_OK)
 			{
-				return Rect.Empty;
+				windowRect = Rect.Empty;
+				return false;
 			}
-
-			return rect;
+			windowRect = rect;
+			return true;
 		}
 
-		public static Padding GetDwmWindowMargin(Window window)
+		public static bool TryGetDwmWindowMargin(Window window, out Thickness windowMargin)
 		{
 			var windowHandle = new WindowInteropHelper(window).Handle;
 
@@ -302,7 +308,8 @@ namespace ScreenFrame
 				windowHandle,
 				out RECT baseRect))
 			{
-				return Padding.Empty;
+				windowMargin = default(Thickness);
+				return false;
 			}
 
 			if (DwmGetWindowAttribute(
@@ -311,14 +318,16 @@ namespace ScreenFrame
 				out RECT dwmRect,
 				(uint)Marshal.SizeOf<RECT>()) != S_OK)
 			{
-				return Padding.Empty;
+				windowMargin = default(Thickness);
+				return false;
 			}
 
-			return new Padding(
+			windowMargin = new Thickness(
 				dwmRect.left - baseRect.left,
 				dwmRect.top - baseRect.top,
 				baseRect.right - dwmRect.right,
 				baseRect.bottom - dwmRect.bottom);
+			return true;
 		}
 
 		public static bool DisableTransitions(Window window)
@@ -389,7 +398,7 @@ namespace ScreenFrame
 			}
 		}
 
-		public static Rect GetTaskbarRect()
+		public static bool TryGetTaskbarRect(out Rect taskbarRect)
 		{
 			var taskbarHandle = FindWindowEx(
 				IntPtr.Zero,
@@ -397,16 +406,20 @@ namespace ScreenFrame
 				"Shell_TrayWnd",
 				string.Empty);
 			if (taskbarHandle == IntPtr.Zero)
-				return Rect.Empty;
+			{
+				taskbarRect = Rect.Empty;
+				return false;
+			}
 
 			if (!GetWindowRect(
 				taskbarHandle,
-				out RECT taskbarRect))
+				out RECT rect))
 			{
-				return Rect.Empty;
+				taskbarRect = Rect.Empty;
+				return false;
 			}
-
-			return taskbarRect;
+			taskbarRect = rect;
+			return true;
 		}
 
 		#endregion

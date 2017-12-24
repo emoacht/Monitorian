@@ -7,8 +7,6 @@ using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Threading;
 
-using ScreenFrame.Helper;
-
 namespace ScreenFrame.Movers
 {
 	/// <summary>
@@ -19,7 +17,21 @@ namespace ScreenFrame.Movers
 		/// <summary>
 		/// Whether the window is departed from taskbar
 		/// </summary>
-		public bool IsDeparted { get; private set; }
+		public bool IsDeparted
+		{
+			get => _isDeparted;
+			private set
+			{
+				_isDeparted = value;
+				IsDepartedChanged?.Invoke(this, EventArgs.Empty);
+			}
+		}
+		private bool _isDeparted;
+
+		/// <summary>
+		/// Occurs when IsDeparted is changed.
+		/// </summary>
+		public event EventHandler IsDepartedChanged;
 
 		/// <summary>
 		/// Time interval before departure
@@ -54,9 +66,19 @@ namespace ScreenFrame.Movers
 			};
 		}
 
+		/// <summary>
+		/// Alignment of pivot
+		/// </summary>
+		public override PivotAlignment PivotAlignment
+		{
+			get => IsDeparted ? PivotAlignment.None : base.PivotAlignment;
+			protected set => base.PivotAlignment = value;
+		}
+
 		private const int WM_ENTERSIZEMOVE = 0x0231;
 		private const int WM_EXITSIZEMOVE = 0x0232;
 		private const int WM_MOVE = 0x0003;
+		private const int WM_SIZE = 0x0005;
 
 		/// <summary>
 		/// Handles window messages.
@@ -78,7 +100,8 @@ namespace ScreenFrame.Movers
 					break;
 
 				case WM_MOVE:
-					//Debug.WriteLine(nameof(WM_MOVE));
+				case WM_SIZE:
+					//Debug.WriteLine($"{nameof(WM_MOVE)}/{nameof(WM_SIZE)}");
 					CheckDeparture();
 					break;
 			}
@@ -98,7 +121,9 @@ namespace ScreenFrame.Movers
 			if (!WindowHelper.TryGetTaskbar(out Rect taskbarRect, out TaskbarAlignment _))
 				return;
 
-			var windowRect = WindowHelper.GetDwmWindowRect(_window);
+			if (!WindowHelper.TryGetDwmWindowRect(_window, out Rect windowRect))
+				return;
+
 			if (!windowRect.IntersectsWith(taskbarRect))
 				return;
 
@@ -120,22 +145,6 @@ namespace ScreenFrame.Movers
 				return false;
 			}
 			return base.TryGetAdjacentLocation(windowWidth, windowHeight, out location);
-		}
-
-		/// <summary>
-		/// Handles DPI changed event.
-		/// </summary>
-		protected override void HandleDpiChanged(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
-		{
-			if (OsVersion.Is10Redstone1OrNewer)
-				return;
-
-			if (IsDeparted)
-			{
-				var windowRect = VisualTreeHelperAddition.ConvertToRect(lParam);
-				WindowHelper.SetWindowPosition(_window, windowRect);
-			}
-			base.HandleDpiChanged(hwnd, msg, wParam, lParam, ref handled);
 		}
 	}
 }

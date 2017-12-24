@@ -25,6 +25,11 @@ namespace ScreenFrame.Movers
 		}
 
 		/// <summary>
+		/// Alignment of pivot
+		/// </summary>
+		public override PivotAlignment PivotAlignment { get; protected set; }
+
+		/// <summary>
 		/// Tries to get the adjacent location using specified window width and height.
 		/// </summary>
 		/// <param name="windowWidth">Window width</param>
@@ -53,12 +58,14 @@ namespace ScreenFrame.Movers
 					// Place this window at the top-right of the pivot.
 					x += 1;
 					y += -windowHeight - 1;
+					PivotAlignment = PivotAlignment.BottomLeft;
 					break;
 
 				case TaskbarAlignment.Top:
-					// Place this window at the bottom-left of the pivot.
+					// Place this window at the bottom-left of the pivot.					
 					x += -windowWidth - 1;
 					y += 1;
+					PivotAlignment = PivotAlignment.TopRight;
 					break;
 
 				case TaskbarAlignment.Right:
@@ -66,6 +73,7 @@ namespace ScreenFrame.Movers
 					// Place this window at the top-left of the pivot.
 					x += -windowWidth - 1;
 					y += -windowHeight - 1;
+					PivotAlignment = PivotAlignment.BottomRight;
 					break;
 
 				default:

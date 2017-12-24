@@ -21,6 +21,11 @@ namespace ScreenFrame.Movers
 		{ }
 
 		/// <summary>
+		/// Alignment of pivot
+		/// </summary>
+		public abstract PivotAlignment PivotAlignment { get; protected set; }
+
+		/// <summary>
 		/// Handles window position changing event.
 		/// </summary>
 		protected override void HandleWindowPosChanging(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
@@ -83,8 +88,7 @@ namespace ScreenFrame.Movers
 		{
 			position = new Rect(location, new Size(windowWidth, windowHeight));
 
-			var monitorRect = WindowHelper.GetMonitorRect(_window);
-			if (monitorRect.IsEmpty)
+			if (!WindowHelper.TryGetMonitorRect(_window, out Rect monitorRect))
 				return false;
 
 			position.Intersect(monitorRect);

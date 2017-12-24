@@ -26,6 +26,11 @@ namespace ScreenFrame.Movers
 		}
 
 		/// <summary>
+		/// Alignment of pivot
+		/// </summary>
+		public override PivotAlignment PivotAlignment { get; protected set; }
+
+		/// <summary>
 		/// Tries to get the adjacent location using specified window width and height.
 		/// </summary>
 		/// <param name="windowWidth">Window width</param>
@@ -53,9 +58,8 @@ namespace ScreenFrame.Movers
 			if (!NotifyIconHelper.TryGetNotifyIconRect(_notifyIcon, out Rect iconRect))
 				iconRect = taskbarRect; // Fallback
 
-			var margin = WindowHelper.GetDwmWindowMargin(_window);
-			if (margin == Padding.Empty)
-				margin = new Padding(0); // Fallback
+			if (!WindowHelper.TryGetDwmWindowMargin(_window, out Thickness windowMargin))
+				windowMargin = new Thickness(0); // Fallback
 
 			double x = 0;
 			double y = 0;
@@ -64,15 +68,17 @@ namespace ScreenFrame.Movers
 			{
 				case TaskbarAlignment.Top:
 				case TaskbarAlignment.Bottom:
-					x = iconRect.Right - windowWidth + margin.Right;
+					x = iconRect.Right - windowWidth + windowMargin.Right;
 
 					switch (taskbarAlignment)
 					{
 						case TaskbarAlignment.Top:
-							y = taskbarRect.Bottom - margin.Top;
+							y = taskbarRect.Bottom - windowMargin.Top;
+							PivotAlignment = PivotAlignment.TopRight;
 							break;
 						case TaskbarAlignment.Bottom:
-							y = taskbarRect.Top - windowHeight + margin.Bottom;
+							y = taskbarRect.Top - windowHeight + windowMargin.Bottom;
+							PivotAlignment = PivotAlignment.BottomRight;
 							break;
 					}
 					break;
@@ -81,14 +87,16 @@ namespace ScreenFrame.Movers
 					switch (taskbarAlignment)
 					{
 						case TaskbarAlignment.Left:
-							x = taskbarRect.Right - margin.Left;
+							x = taskbarRect.Right - windowMargin.Left;
+							PivotAlignment = PivotAlignment.BottomLeft;
 							break;
 						case TaskbarAlignment.Right:
-							x = taskbarRect.Left - windowWidth + margin.Right;
+							x = taskbarRect.Left - windowWidth + windowMargin.Right;
+							PivotAlignment = PivotAlignment.BottomRight;
 							break;
 					}
 
-					y = iconRect.Bottom - windowHeight + margin.Bottom;
+					y = iconRect.Bottom - windowHeight + windowMargin.Bottom;
 					break;
 			}
 			location = new Point(x, y);

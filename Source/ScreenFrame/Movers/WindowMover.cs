@@ -126,6 +126,12 @@ namespace ScreenFrame.Movers
 			if (OsVersion.Is10Redstone1OrNewer)
 				return;
 
+			if (_window.SizeToContent != SizeToContent.WidthAndHeight)
+			{
+				var windowRect = VisualTreeHelperAddition.ConvertToRect(lParam);
+				WindowHelper.SetWindowPosition(_window, windowRect);
+			}
+
 			var dpi = VisualTreeHelperAddition.ConvertToDpiScale(wParam);
 			VisualTreeHelper.SetRootDpi(_window, dpi);
 			handled = true;

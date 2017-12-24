@@ -69,6 +69,7 @@
     <Compile Include="Movers\SwitchWindowMover.cs" />
     <Compile Include="NotifyIconContainer.cs" />
     <Compile Include="NotifyIconHelper.cs" />
+    <Compile Include="PivotAlignment.cs" />
     <Compile Include="VisualTreeHelperAddition.cs" />
     <Compile Include="WindowHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

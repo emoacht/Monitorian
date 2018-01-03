@@ -16,20 +16,20 @@ Monitorian is a Windows desktop tool to adjust the brightness of multiple monito
 [Monitorian](https://www.microsoft.com/store/apps/9nw33j738bl0) (Windows Store)
 
  * Other:<br>
-:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/1.2.4-Installer/MonitorianInstaller124.zip) or :floppy_disk: [Executables](https://github.com/emoacht/Monitorian/releases/download/1.2.4-Executables/Monitorian124.zip)
+:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/1.2.4-Installer/MonitorianInstaller124.zip) | :floppy_disk: [Executables](https://github.com/emoacht/Monitorian/releases/download/1.2.4-Executables/Monitorian124.zip)
 
 ## Install/Uninstall
 
 When you use only executables, please note the following:
 
- - The settings file will be created at `[system drive]\Users\[user name]\AppData\Local\Monitorian\`
- - The registry value will be added when you checks "Start on sign in" at `HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run`
+ - The settings file will be created at: `[system drive]\Users\[user name]\AppData\Local\Monitorian\`
+ - When you check [Start on sign in]", a registry value will be added to: `HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run`
 
 ## Remarks
 
  - An external monitor must be DDC/CI enabled.
  - The number of monitors shown at a time is currently up to 4.
- - To change the monitor name in this app, press and hold the name until it turns to be editable.
+ - To rename the monitor in this app, press and hold the name until it turns to be editable.
 
 ## Development
 

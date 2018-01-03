@@ -4,7 +4,7 @@
 					 Language="1033" Codepage="1252" UpgradeCode="{81A4D148-75D3-462E-938D-8C208FB48E3C}">
 		<Package Id="*" InstallerVersion="500" Compressed="yes"
 						 InstallScope="perMachine" InstallPrivileges="elevated"
-						 Description="Installer for [ProductName]"/>
+						 Description="Installer for Monitorian"/>
 
 		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed."/>
 

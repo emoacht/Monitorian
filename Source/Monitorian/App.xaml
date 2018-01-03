@@ -13,10 +13,10 @@
 
 		<SolidColorBrush x:Key="App.Background" Color="{StaticResource App.BackgroundColor}"/>
 		<SolidColorBrush x:Key="App.Foreground" Color="{StaticResource App.ForegroundColor}"/>
-		<SolidColorBrush x:Key="App.Shadow" Color="{StaticResource App.ShadowColor}"/>
+		<SolidColorBrush x:Key="App.Foreground.Shadow" Color="{StaticResource App.ShadowColor}"/>
 
-		<SolidColorBrush x:Key="Text.Writable.Border">White</SolidColorBrush>
-		<SolidColorBrush x:Key="Text.Writable.Background">#FF5F5F5F</SolidColorBrush>
+		<SolidColorBrush x:Key="Text.Writable.Border" Color="{StaticResource App.ForegroundColor}"/>
+		<SolidColorBrush x:Key="Text.Writable.Background" Color="#FF5F5F5F"/>
 
 		<Color x:Key="Access.Normal.BackgroundColor">#33FFFFFF</Color>
 		<Color x:Key="Access.Normal.BorderColor">Transparent</Color>
@@ -26,7 +26,7 @@
 		<SolidColorBrush x:Key="Unison.Checked.Border" Color="#FFECECEC"/>
 
 		<SolidColorBrush x:Key="Menu.Item.Normal.Backgound" Color="Transparent"/>
-		<SolidColorBrush x:Key="Menu.Item.MouseOver.Background" Color="#FF555555"/>
+		<SolidColorBrush x:Key="Menu.Item.MouseOver.Background" Color="#FF5F5F5F"/>
 		<SolidColorBrush x:Key="Menu.Separator" Color="#FF808080"/>
 
 	</Application.Resources>

@@ -25,8 +25,8 @@ namespace Monitorian.Models
 		[DataMember]
 		public bool UsesLargeElements
 		{
-			get { return _usesLargeElements; }
-			set { SetPropertyValue(ref _usesLargeElements, value); }
+			get => _usesLargeElements;
+			set => SetPropertyValue(ref _usesLargeElements, value);
 		}
 		private bool _usesLargeElements = true; // Default
 
@@ -36,8 +36,8 @@ namespace Monitorian.Models
 		[DataMember]
 		public bool EnablesUnison
 		{
-			get { return _enablesUnison; }
-			set { SetPropertyValue(ref _enablesUnison, value); }
+			get => _enablesUnison;
+			set => SetPropertyValue(ref _enablesUnison, value);
 		}
 		private bool _enablesUnison = false;
 
@@ -47,8 +47,8 @@ namespace Monitorian.Models
 		[DataMember]
 		public bool ShowsAdjusted
 		{
-			get { return _showsAdjusted; }
-			set { SetPropertyValue(ref _showsAdjusted, value); }
+			get => _showsAdjusted;
+			set => SetPropertyValue(ref _showsAdjusted, value);
 		}
 		private bool _showsAdjusted = false;
 
@@ -58,8 +58,8 @@ namespace Monitorian.Models
 		[DataMember]
 		public Dictionary<string, NamePack> KnownMonitors
 		{
-			get { return _knownMonitors ?? (_knownMonitors = new Dictionary<string, NamePack>()); }
-			private set { _knownMonitors = value; }
+			get => _knownMonitors ?? (_knownMonitors = new Dictionary<string, NamePack>());
+			private set => _knownMonitors = value;
 		}
 		private Dictionary<string, NamePack> _knownMonitors;
 

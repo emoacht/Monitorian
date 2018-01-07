@@ -28,7 +28,7 @@ namespace Monitorian.ViewModels
 
 		public string Name
 		{
-			get { return HasName ? _name : _monitor.Description; }
+			get => HasName ? _name : _monitor.Description;
 			set
 			{
 				if (SetPropertyValue(ref _name, value))
@@ -62,7 +62,7 @@ namespace Monitorian.ViewModels
 
 		public int BrightnessInteractive
 		{
-			get { return Brightness; }
+			get => Brightness;
 			set
 			{
 				if (Brightness == value)
@@ -110,8 +110,8 @@ namespace Monitorian.ViewModels
 
 		public bool IsTarget
 		{
-			get { return _isTarget; }
-			set { SetPropertyValue(ref _isTarget, value); }
+			get => _isTarget;
+			set => SetPropertyValue(ref _isTarget, value);
 		}
 		private bool _isTarget = false;
 

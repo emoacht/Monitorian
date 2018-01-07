@@ -69,8 +69,8 @@ namespace ScreenFrame
 		/// </summary>
 		public string Text
 		{
-			get { return NotifyIcon.Text; }
-			set { NotifyIcon.Text = value; }
+			get => NotifyIcon.Text;
+			set => NotifyIcon.Text = value;
 		}
 
 		#region Icon

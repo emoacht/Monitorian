@@ -80,11 +80,12 @@
     <Compile Include="Common\BindableBase.cs" />
     <Compile Include="Helper\OsVersion.cs" />
     <Compile Include="Helper\ArraySearch.cs" />
-    <Compile Include="MainController.cs" />
-    <Compile Include="Models\ConsoleLogService.cs" />
+    <Compile Include="MainController.cs" />    
+    <Compile Include="Models\DebugService.cs" />
     <Compile Include="Models\DocumentService.cs" />
     <Compile Include="Models\FolderService.cs" />
     <Compile Include="Models\LanguageService.cs" />
+    <Compile Include="Models\LogService.cs" />
     <Compile Include="Models\ProductInfo.cs" />
     <Compile Include="Models\StartupService.cs" />
     <Compile Include="Models\RemotingAgent.cs" />

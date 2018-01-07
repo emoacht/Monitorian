@@ -13,27 +13,11 @@ using Monitorian.Properties;
 
 namespace Monitorian.Models
 {
-	internal class ConsoleLogService
+	internal class LogService
 	{
-		#region Win32
-
-		[DllImport("Kernel32.dll", SetLastError = true)]
-		private static extern bool AllocConsole();
-
-		[DllImport("kernel32.dll", SetLastError = true)]
-		[return: MarshalAs(UnmanagedType.Bool)]
-		private static extern bool AttachConsole(uint dwProcessId);
-
-		[DllImport("Kernel32.dll", SetLastError = true)]
-		private static extern bool FreeConsole();
-
-		private const uint ATTACH_PARENT_PROCESS = uint.MaxValue;
-
-		#endregion
-
 		public static void Start()
 		{
-			StartConsole();
+			DebugService.StartConsole();
 
 			App.Current.DispatcherUnhandledException += OnDispatcherUnhandledException;
 			TaskScheduler.UnobservedTaskException += OnUnobservedTaskException;
@@ -42,83 +26,53 @@ namespace Monitorian.Models
 
 		public static void End()
 		{
-			EndConsole();
+			DebugService.EndConsole();
 
 			App.Current.DispatcherUnhandledException -= OnDispatcherUnhandledException;
 			TaskScheduler.UnobservedTaskException -= OnUnobservedTaskException;
 			AppDomain.CurrentDomain.UnhandledException -= OnUnhandledException;
 		}
 
-		private static ConsoleTraceListener _listener;
-
-		[Conditional("DEBUG")]
-		private static void StartConsole()
-		{
-			if (Debugger.IsAttached || _listener != null)
-				return;
-
-			if (!AttachConsole(ATTACH_PARENT_PROCESS))
-				return;
-
-			_listener = new ConsoleTraceListener();
-			Trace.Listeners.Add(_listener);
-		}
-
-		[Conditional("DEBUG")]
-		private static void EndConsole()
-		{
-			if (_listener == null)
-				return;
-
-			Trace.Listeners.Remove(_listener);
-
-			FreeConsole();
-		}
-
 		private static void OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
 		{
-			OnException(sender, e.Exception, "DispatcherUnhandledException");
+			OnException(sender, e.Exception, nameof(Application.DispatcherUnhandledException));
 			//e.Handled = true;
 		}
 
 		private static void OnUnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
 		{
-			OnException(sender, e.Exception, "UnobservedTaskException");
+			OnException(sender, e.Exception, nameof(TaskScheduler.UnobservedTaskException));
 			//e.SetObserved();
 		}
 
 		private static void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
 		{
-			OnException(sender, (Exception)e.ExceptionObject, "UnhandledException");
+			OnException(sender, (Exception)e.ExceptionObject, nameof(AppDomain.UnhandledException));
 		}
 
-		private static void OnException(object sender, Exception exception, string description)
+		private static void OnException(object sender, Exception exception, string exceptionName)
 		{
-			if (Debugger.IsAttached || _listener != null)
-			{
-				Debug.WriteLine($"[{description}]" + Environment.NewLine
-					+ exception);
-			}
-			else
-			{
-				Record(sender, exception);
-			}
+			if (DebugService.WriteConsole(exception, exceptionName))
+				return;
+
+			RecordException(sender, exception);
 		}
 
 		#region Record
 
-		private const string LogFileName = "log.txt";
+		private const string OperationFileName = "operation.log";
+		private const string ExceptionFileName = "exception.log";
 
 		/// <summary>
-		/// Records log to AppData.
+		/// Records operation to AppData.
 		/// </summary>
 		/// <param name="log">Log</param>
-		public static void Record(string log)
+		public static void RecordOperation(string log)
 		{
 			var content = $"[Date: {DateTime.Now}]" + Environment.NewLine
 				+ log + Environment.NewLine + Environment.NewLine;
 
-			RecordToAppData(content);
+			RecordToAppData(content, OperationFileName);
 		}
 
 		/// <summary>
@@ -127,33 +81,33 @@ namespace Monitorian.Models
 		/// <param name="sender">Sender</param>
 		/// <param name="exception">Exception</param>
 		/// <remarks>A log file of previous dates will be overridden.</remarks>
-		public static void Record(object sender, Exception exception)
+		public static void RecordException(object sender, Exception exception)
 		{
 			var content = $"[Date: {DateTime.Now} Sender: {sender}]" + Environment.NewLine
 				+ exception + Environment.NewLine + Environment.NewLine;
 
-			RecordToAppData(content);
-			RecordToDesktop(content);
+			RecordToAppData(content, ExceptionFileName);
+			RecordToDesktop(content, ExceptionFileName);
 		}
 
-		private static void RecordToAppData(string content)
+		private static void RecordToAppData(string content, string fileName)
 		{
 			try
 			{
 				var filePath = Path.Combine(
 					FolderService.GetAppDataFolderPath(true),
-					LogFileName);
+					fileName);
 
 				UpdateText(filePath, content);
 			}
 			catch (Exception ex)
 			{
-				Debug.WriteLine("Failed to record exception log to AppData." + Environment.NewLine
+				Debug.WriteLine("Failed to record log to AppData." + Environment.NewLine
 					+ ex);
 			}
 		}
 
-		private static void RecordToDesktop(string content)
+		private static void RecordToDesktop(string content, string fileName)
 		{
 			var response = MessageBox.Show(
 				Resources.RecordException,
@@ -166,16 +120,18 @@ namespace Monitorian.Models
 			{
 				var filePath = Path.Combine(
 					Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory),
-					LogFileName);
+					fileName);
 
 				UpdateText(filePath, content);
 			}
 			catch (Exception ex)
 			{
-				Debug.WriteLine("Failed to record exception log to Desktop." + Environment.NewLine
+				Debug.WriteLine("Failed to record log to Desktop." + Environment.NewLine
 					+ ex);
 			}
 		}
+
+		private const int SectionCountMax = 100;
 
 		private static void UpdateText(string filePath, string newContent)
 		{
@@ -185,13 +141,15 @@ namespace Monitorian.Models
 			{
 				using (var sr = new StreamReader(filePath, Encoding.UTF8))
 					oldContent = sr.ReadToEnd();
+
+				oldContent = string.Join(Environment.NewLine, EnumerateLastLines(oldContent, "[Date:", SectionCountMax - 1).Reverse());
 			}
 
 			using (var sw = new StreamWriter(filePath, false, Encoding.UTF8)) // BOM will be emitted.
-				sw.Write(string.Join(Environment.NewLine, GetLastLines(oldContent, "[Date:", 99).Reverse()) + newContent);
+				sw.Write(oldContent + newContent);
 		}
 
-		private static IEnumerable<string> GetLastLines(string source, string sectionHeader, int sectionCount)
+		private static IEnumerable<string> EnumerateLastLines(string source, string sectionHeader, int sectionCount)
 		{
 			if (string.IsNullOrEmpty(source))
 				yield break;

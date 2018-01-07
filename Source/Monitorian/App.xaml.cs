@@ -20,8 +20,8 @@ namespace Monitorian
 		{
 			base.OnStartup(e);
 
-			ConsoleLogService.Start();
-			
+			LogService.Start();
+
 			_agent = new RemotingAgent();
 			if (!_agent.Start())
 			{
@@ -43,7 +43,7 @@ namespace Monitorian
 			_agent?.End();
 			_controller?.End();
 
-			ConsoleLogService.End();
+			LogService.End();
 
 			base.OnExit(e);
 		}

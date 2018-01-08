@@ -63,12 +63,6 @@ namespace Monitorian.Models
 		}
 		private Dictionary<string, NamePack> _knownMonitors;
 
-		/// <summary>
-		/// Last time when settings are saved
-		/// </summary>
-		[DataMember]
-		public DateTimeOffset LastSaveTime { get; private set; }
-
 		#region Load/Save
 
 		private const string SettingsFileName = "settings.xml";
@@ -113,8 +107,6 @@ namespace Monitorian.Models
 
 		internal void Save()
 		{
-			LastSaveTime = DateTimeOffset.Now;
-
 			try
 			{
 				var filePath = Path.Combine(

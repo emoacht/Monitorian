@@ -80,14 +80,13 @@
     <Compile Include="Common\BindableBase.cs" />
     <Compile Include="Helper\OsVersion.cs" />
     <Compile Include="Helper\ArraySearch.cs" />
-    <Compile Include="MainController.cs" />    
+    <Compile Include="MainController.cs" />
     <Compile Include="Models\DebugService.cs" />
     <Compile Include="Models\DocumentService.cs" />
     <Compile Include="Models\FolderService.cs" />
     <Compile Include="Models\LanguageService.cs" />
     <Compile Include="Models\LogService.cs" />
     <Compile Include="Models\ProductInfo.cs" />
-    <Compile Include="Models\StartupService.cs" />
     <Compile Include="Models\RemotingAgent.cs" />
     <Compile Include="Models\Settings.cs" />
     <Compile Include="Models\Watcher\BrightnessWatcher.cs" />
@@ -182,9 +181,9 @@
       <Project>{edd1c1b9-c241-4d89-8334-0d29f95c2445}</Project>
       <Name>ScreenFrame</Name>
     </ProjectReference>
-    <ProjectReference Include="..\StartupBridge\StartupBridge.csproj">
-      <Project>{735eef09-ea89-4022-828c-575b73981165}</Project>
-      <Name>StartupBridge</Name>
+    <ProjectReference Include="..\StartupAgency\StartupAgency.csproj">
+      <Project>{f44ea754-e653-4696-8a12-c86224292908}</Project>
+      <Name>StartupAgency</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

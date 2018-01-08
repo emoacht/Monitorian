@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ScreenFrame.Helper
+namespace StartupAgency.Helper
 {
 	/// <summary>
 	/// OS version information

@@ -7,6 +7,9 @@ using Windows.ApplicationModel;
 
 namespace StartupBridge
 {
+	/// <summary>
+	/// Platform information
+	/// </summary>
 	public static class PlatformInfo
 	{
 		/// <summary>

@@ -7,6 +7,9 @@ using Windows.ApplicationModel;
 
 namespace StartupBridge
 {
+	/// <summary>
+	/// StartupTask broker
+	/// </summary>
 	public static class StartupTaskBroker
 	{
 		/// <summary>

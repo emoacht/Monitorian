@@ -17,6 +17,7 @@ using Monitorian.Models.Watcher;
 using Monitorian.ViewModels;
 using Monitorian.Views;
 using ScreenFrame;
+using StartupAgency;
 
 namespace Monitorian
 {
@@ -25,6 +26,9 @@ namespace Monitorian
 		private readonly Application _current = Application.Current;
 
 		public Settings Settings { get; }
+		internal StartupAgent StartupAgent { get; }
+
+		private const string StartupTaskId = "MonitorianStartupTask";
 
 		public ObservableCollection<MonitorViewModel> Monitors { get; }
 		private readonly object _monitorsLock = new object();
@@ -38,6 +42,7 @@ namespace Monitorian
 		public MainController()
 		{
 			Settings = new Settings();
+			StartupAgent = new StartupAgent(StartupTaskId);
 
 			Monitors = new ObservableCollection<MonitorViewModel>();
 			BindingOperations.EnableCollectionSynchronization(Monitors, _monitorsLock);
@@ -63,7 +68,7 @@ namespace Monitorian
 			_current.MainWindow = new MainWindow(this);
 			_current.MainWindow.Deactivated += OnMainWindowDeactivated;
 
-			if (!StartupService.IsStartedOnSignIn(Settings.LastSaveTime))
+			if (!StartupAgent.IsStartedOnSignIn())
 				_current.MainWindow.Show();
 
 			agent.ShowRequested += OnMainWindowShowRequested;

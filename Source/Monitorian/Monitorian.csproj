@@ -78,8 +78,11 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Common\BindableBase.cs" />
+    <Compile Include="Common\ObservableDictionary.cs" />
+    <Compile Include="Common\ObservableKeyedList.cs" />
     <Compile Include="Helper\OsVersion.cs" />
     <Compile Include="Helper\ArraySearch.cs" />
+    <Compile Include="Helper\Throttle.cs" />
     <Compile Include="MainController.cs" />
     <Compile Include="Models\DebugService.cs" />
     <Compile Include="Models\DocumentService.cs" />

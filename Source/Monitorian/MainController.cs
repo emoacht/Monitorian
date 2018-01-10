@@ -61,7 +61,8 @@ namespace Monitorian
 			if (agent == null)
 				throw new ArgumentNullException(nameof(agent));
 
-			Settings.Load();
+			Settings.Initiate();
+			Settings.KnownMonitors.AbsoluteCapacity = _maxNameCount.Value;
 
 			NotifyIconContainer.ShowIcon("pack://application:,,,/Resources/Icons/TrayIcon.ico", ProductInfo.Title);
 
@@ -84,8 +85,6 @@ namespace Monitorian
 		{
 			MonitorsDispose();
 			NotifyIconContainer.Dispose();
-
-			Settings.Save();
 
 			_settingsWatcher.Dispose();
 			_powerWatcher.Dispose();
@@ -126,13 +125,11 @@ namespace Monitorian
 
 		private void OnMainWindowDeactivated(object sender, EventArgs e)
 		{
-			if (StoreNames())
-				Settings.Save();
+			StoreNames();
 		}
 
 		private void OnMenuWindowDeactivated(object sender, EventArgs e)
 		{
-			Settings.Save();
 		}
 
 		#region Monitors
@@ -264,71 +261,30 @@ namespace Monitorian
 
 		private void RetrieveName(MonitorViewModel monitor)
 		{
-			if (Settings.KnownMonitors.TryGetValue(monitor.DeviceInstanceId, out NamePack knownMonitor))
+			if (Settings.KnownMonitors.TryGetValue(monitor.DeviceInstanceId, out string knownMonitor))
 			{
-				monitor.RestoreName(knownMonitor.Name);
+				monitor.RestoreName(knownMonitor);
 			}
 		}
 
-		private bool StoreNames()
+		private void StoreNames()
 		{
-			var isNameChanged = false;
-
 			foreach (var monitor in Monitors)
-			{
-				if (StoreName(monitor))
-					isNameChanged = true;
-			}
-
-			if (isNameChanged)
-			{
-				TruncateNames();
-				return true;
-			}
-			return false;
+				StoreName(monitor);
 		}
 
-		private bool StoreName(MonitorViewModel monitor)
+		private void StoreName(MonitorViewModel monitor)
 		{
 			if (!monitor.CheckNameChanged())
-				return false;
+				return;
 
-			if (!Settings.KnownMonitors.ContainsKey(monitor.DeviceInstanceId))
+			if (monitor.HasName)
 			{
-				if (monitor.HasName)
-				{
-					// Add
-					Settings.KnownMonitors.Add(monitor.DeviceInstanceId, new NamePack(monitor.Name));
-				}
+				Settings.KnownMonitors.Add(monitor.DeviceInstanceId, monitor.Name);
 			}
 			else
 			{
-				if (monitor.HasName)
-				{
-					// Change
-					Settings.KnownMonitors[monitor.DeviceInstanceId].Name = monitor.Name;
-				}
-				else
-				{
-					// Remove
-					Settings.KnownMonitors.Remove(monitor.DeviceInstanceId);
-				}
-			}
-			return true;
-		}
-
-		private void TruncateNames()
-		{
-			if (Settings.KnownMonitors.Count <= _maxNameCount.Value)
-				return;
-
-			foreach (var key in Settings.KnownMonitors
-				.OrderByDescending(x => x.Value.Time)
-				.Skip(_maxNameCount.Value)
-				.Select(x => x.Key)
-				.ToArray())
-			{
-				Settings.KnownMonitors.Remove(key);
+				Settings.KnownMonitors.Remove(monitor.DeviceInstanceId);
 			}
 		}
 

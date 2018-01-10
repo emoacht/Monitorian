@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Xml;
 
 using Monitorian.Common;
+using Monitorian.Helper;
 
 namespace Monitorian.Models
 {
@@ -19,6 +20,8 @@ namespace Monitorian.Models
 	[DataContract]
 	public class Settings : BindableBase
 	{
+		#region Settings
+
 		/// <summary>
 		/// Whether to use large elements
 		/// </summary>
@@ -56,18 +59,34 @@ namespace Monitorian.Models
 		/// Known monitors with user-specified names
 		/// </summary>
 		[DataMember]
-		public Dictionary<string, NamePack> KnownMonitors
+		public ObservableKeyedList<string, string> KnownMonitors
 		{
-			get => _knownMonitors ?? (_knownMonitors = new Dictionary<string, NamePack>());
+			get => _knownMonitors ?? (_knownMonitors = new ObservableKeyedList<string, string>());
 			private set => _knownMonitors = value;
 		}
-		private Dictionary<string, NamePack> _knownMonitors;
+		private ObservableKeyedList<string, string> _knownMonitors;
+
+		#endregion
+
+		private Throttle _throttle;
+
+		internal void Initiate()
+		{
+			Load(this);
+
+			_throttle = new Throttle(
+				TimeSpan.FromMilliseconds(100),
+				() => Save(this));
+
+			KnownMonitors.CollectionChanged += (sender, e) => RaisePropertyChanged(nameof(KnownMonitors));
+			PropertyChanged += (sender, e) => _throttle.Invoke();
+		}
 
 		#region Load/Save
 
 		private const string SettingsFileName = "settings.xml";
 
-		internal void Load()
+		private static void Load<T>(T instance) where T : class
 		{
 			try
 			{
@@ -82,14 +101,13 @@ namespace Monitorian.Models
 				using (var sr = new StreamReader(filePath, Encoding.UTF8))
 				using (var xr = XmlReader.Create(sr))
 				{
-					var serializer = new DataContractSerializer(typeof(Settings));
-					var loaded = (Settings)serializer.ReadObject(xr);
+					var serializer = new DataContractSerializer(typeof(T));
+					var loaded = (T)serializer.ReadObject(xr);
 
-					typeof(Settings)
-						.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)
+					typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)
 						.Where(x => x.CanWrite)
 						.ToList()
-						.ForEach(x => x.SetValue(this, x.GetValue(loaded)));
+						.ForEach(x => x.SetValue(instance, x.GetValue(loaded)));
 				}
 			}
 			catch (Exception ex)
@@ -105,7 +123,7 @@ namespace Monitorian.Models
 			}
 		}
 
-		internal void Save()
+		private static void Save<T>(T instance) where T : class
 		{
 			try
 			{
@@ -116,8 +134,8 @@ namespace Monitorian.Models
 				using (var sw = new StreamWriter(filePath, false, Encoding.UTF8)) // BOM will be emitted.
 				using (var xw = XmlWriter.Create(sw, new XmlWriterSettings { Indent = true }))
 				{
-					var serializer = new DataContractSerializer(typeof(Settings));
-					serializer.WriteObject(xw, this);
+					var serializer = new DataContractSerializer(typeof(T));
+					serializer.WriteObject(xw, instance);
 					xw.Flush();
 				}
 			}
@@ -129,32 +147,5 @@ namespace Monitorian.Models
 		}
 
 		#endregion
-	}
-
-	[DataContract]
-	public class NamePack
-	{
-		/// <summary>
-		/// Name
-		/// </summary>
-		public string Name
-		{
-			get { Time = DateTimeOffset.UtcNow.Ticks; return _name; }
-			set { Time = DateTimeOffset.UtcNow.Ticks; _name = value; }
-		}
-		[DataMember(Name = "Name")]
-		private string _name;
-
-		/// <summary>
-		/// Last access time
-		/// </summary>
-		/// <remarks>The serializer requires setter.</remarks>
-		[DataMember]
-		public long Time { get; private set; }
-
-		public NamePack(string name)
-		{
-			this.Name = name;
-		}
 	}
 }

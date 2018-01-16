@@ -67,7 +67,6 @@ namespace Monitorian
 			NotifyIconContainer.ShowIcon("pack://application:,,,/Resources/Icons/TrayIcon.ico", ProductInfo.Title);
 
 			_current.MainWindow = new MainWindow(this);
-			_current.MainWindow.Deactivated += OnMainWindowDeactivated;
 
 			if (!StartupAgent.IsStartedOnSignIn())
 				_current.MainWindow.Show();
@@ -119,17 +118,7 @@ namespace Monitorian
 		{
 			var window = new MenuWindow(this, pivot);
 			window.ViewModel.CloseAppRequested += (sender, e) => _current.Shutdown();
-			window.Deactivated += OnMenuWindowDeactivated;
 			window.Show();
-		}
-
-		private void OnMainWindowDeactivated(object sender, EventArgs e)
-		{
-			StoreNames();
-		}
-
-		private void OnMenuWindowDeactivated(object sender, EventArgs e)
-		{
 		}
 
 		#region Monitors
@@ -175,8 +164,7 @@ namespace Monitorian
 								continue;
 							}
 
-							var newMonitor = new MonitorViewModel(item);
-							RetrieveName(newMonitor);
+							var newMonitor = new MonitorViewModel(this, item);
 							if (Monitors.Count < _maxMonitorCount.Value)
 							{
 								newMonitor.UpdateBrightness();
@@ -257,35 +245,6 @@ namespace Monitorian
 		{
 			foreach (var monitor in Monitors)
 				monitor.Dispose();
-		}
-
-		private void RetrieveName(MonitorViewModel monitor)
-		{
-			if (Settings.KnownMonitors.TryGetValue(monitor.DeviceInstanceId, out string knownMonitor))
-			{
-				monitor.RestoreName(knownMonitor);
-			}
-		}
-
-		private void StoreNames()
-		{
-			foreach (var monitor in Monitors)
-				StoreName(monitor);
-		}
-
-		private void StoreName(MonitorViewModel monitor)
-		{
-			if (!monitor.CheckNameChanged())
-				return;
-
-			if (monitor.HasName)
-			{
-				Settings.KnownMonitors.Add(monitor.DeviceInstanceId, monitor.Name);
-			}
-			else
-			{
-				Settings.KnownMonitors.Remove(monitor.DeviceInstanceId);
-			}
 		}
 
 		#endregion

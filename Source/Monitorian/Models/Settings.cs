@@ -79,26 +79,23 @@ namespace Monitorian.Models
 				() => Save(this));
 
 			KnownMonitors.CollectionChanged += (sender, e) => RaisePropertyChanged(nameof(KnownMonitors));
-			PropertyChanged += (sender, e) => _throttle.Invoke();
+			PropertyChanged += async (sender, e) => await _throttle.PushAsync();
 		}
 
 		#region Load/Save
 
 		private const string SettingsFileName = "settings.xml";
+		private static readonly string _settingsFilePath = Path.Combine(FolderService.AppDataFolderPath, SettingsFileName);
 
 		private static void Load<T>(T instance) where T : class
 		{
+			var fileInfo = new FileInfo(_settingsFilePath);
+			if (!fileInfo.Exists || (fileInfo.Length == 0))
+				return;
+
 			try
 			{
-				var filePath = Path.Combine(
-					FolderService.GetAppDataFolderPath(false),
-					SettingsFileName);
-
-				var fileInfo = new FileInfo(filePath);
-				if (!fileInfo.Exists || (fileInfo.Length == 0))
-					return;
-
-				using (var sr = new StreamReader(filePath, Encoding.UTF8))
+				using (var sr = new StreamReader(_settingsFilePath, Encoding.UTF8))
 				using (var xr = XmlReader.Create(sr))
 				{
 					var serializer = new DataContractSerializer(typeof(T));
@@ -127,11 +124,9 @@ namespace Monitorian.Models
 		{
 			try
 			{
-				var filePath = Path.Combine(
-					FolderService.GetAppDataFolderPath(true),
-					SettingsFileName);
+				FolderService.AssureAppDataFolder();
 
-				using (var sw = new StreamWriter(filePath, false, Encoding.UTF8)) // BOM will be emitted.
+				using (var sw = new StreamWriter(_settingsFilePath, false, Encoding.UTF8)) // BOM will be emitted.
 				using (var xw = XmlWriter.Create(sw, new XmlWriterSettings { Indent = true }))
 				{
 					var serializer = new DataContractSerializer(typeof(T));

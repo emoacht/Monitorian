@@ -40,11 +40,11 @@ namespace Monitorian.Helper
 			}
 		}
 
-		public void Invoke()
+		public async Task PushAsync()
 		{
 			try
 			{
-				_semaphore.Wait();
+				await _semaphore.WaitAsync();
 
 				_timer.Stop();
 				_timer.Start();

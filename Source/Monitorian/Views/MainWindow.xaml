@@ -382,7 +382,7 @@
 
 						<!-- Name -->
 						<controls:SwitchTextBox Grid.Row="0"
-												Margin="2,5" VerticalAlignment="Center"
+												Margin="2,5" HorizontalAlignment="Left" VerticalAlignment="Center"
 												Style="{StaticResource NameTextBoxStyle}"
 												Foreground="{StaticResource App.Foreground}"
 												FontSize="12"

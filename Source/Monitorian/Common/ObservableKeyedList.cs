@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -14,12 +15,12 @@ namespace Monitorian.Common
 	/// <typeparam name="TKey">Type of keys</typeparam>
 	/// <typeparam name="TValue">Type of values</typeparam>
 	/// <remarks>The last accessed item will be automatically moved to the head.</remarks>
-	[Serializable]
+	[DataContract]
 	public class ObservableKeyedList<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>, INotifyCollectionChanged
 	{
-		[field: NonSerialized]
 		public event NotifyCollectionChangedEventHandler CollectionChanged;
 
+		[DataMember(Name = "InnerList")]
 		protected List<KeyValuePair<TKey, TValue>> List
 		{
 			get => _list ?? (_list = new List<KeyValuePair<TKey, TValue>>());
@@ -32,7 +33,6 @@ namespace Monitorian.Common
 		IEnumerator IEnumerable.GetEnumerator() => List.GetEnumerator();
 
 		protected object Lock => _lock ?? (_lock = new object());
-		[field: NonSerialized]
 		private object _lock;
 
 		/// <summary>
@@ -160,6 +160,16 @@ namespace Monitorian.Common
 					action: NotifyCollectionChangedAction.Remove,
 					changedItem: oldItem));
 				return true;
+			}
+		}
+
+		public void Clear()
+		{
+			lock (Lock)
+			{
+				List.Clear();
+				CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(
+					action: NotifyCollectionChangedAction.Reset));
 			}
 		}
 	}

@@ -10,11 +10,15 @@ namespace Monitorian.ViewModels
 {
 	public class MonitorViewModel : ViewModelBase
 	{
+		private readonly MainController _controller;
 		private readonly IMonitor _monitor;
 
-		public MonitorViewModel(IMonitor monitor)
+		public MonitorViewModel(MainController controller, IMonitor monitor)
 		{
+			this._controller = controller ?? throw new ArgumentNullException(nameof(controller));
 			this._monitor = monitor ?? throw new ArgumentNullException(nameof(monitor));
+
+			LoadName();
 		}
 
 		public string Description => _monitor.Description;
@@ -24,34 +28,34 @@ namespace Monitorian.ViewModels
 
 		#region Name
 
-		private bool _isNameChanged;
-
 		public string Name
 		{
-			get => HasName ? _name : _monitor.Description;
+			get => _name ?? _monitor.Description;
 			set
 			{
-				if (SetPropertyValue(ref _name, value))
-					_isNameChanged = true;
+				if (SetPropertyValue(ref _name, GetValueOrNull(value)))
+					SaveName();
 			}
 		}
 		private string _name;
 
-		public bool HasName => !string.IsNullOrWhiteSpace(_name);
+		private static string GetValueOrNull(string value) => !string.IsNullOrWhiteSpace(value) ? value : null;
 
-		public void RestoreName(string name)
+		private void LoadName()
 		{
-			this._name = name;
+			_name = _controller.Settings.KnownMonitors.TryGetValue(DeviceInstanceId, out string value) ? value : null;
 		}
 
-		public bool CheckNameChanged()
+		private void SaveName()
 		{
-			if (_isNameChanged)
+			if (_name != null)
 			{
-				_isNameChanged = false;
-				return true;
+				_controller.Settings.KnownMonitors.Add(DeviceInstanceId, _name);
 			}
-			return false;
+			else
+			{
+				_controller.Settings.KnownMonitors.Remove(DeviceInstanceId);
+			}
 		}
 
 		#endregion

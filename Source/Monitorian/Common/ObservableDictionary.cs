@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,12 +14,12 @@ namespace Monitorian.Common
 	/// </summary>
 	/// <typeparam name="TKey">Type of keys</typeparam>
 	/// <typeparam name="TValue">Type of values</typeparam>
-	[Serializable]
+	[DataContract]
 	public class ObservableDictionary<TKey, TValue> : IDictionary<TKey, TValue>, INotifyCollectionChanged
 	{
-		[field: NonSerialized]
 		public event NotifyCollectionChangedEventHandler CollectionChanged;
 
+		[DataMember(Name = "InnerDictionary")]
 		protected IDictionary<TKey, TValue> Dictionary
 		{
 			get => _dictionary ?? (_dictionary = new Dictionary<TKey, TValue>());
@@ -38,7 +39,6 @@ namespace Monitorian.Common
 		IEnumerator IEnumerable.GetEnumerator() => Dictionary.GetEnumerator();
 
 		protected object Lock => _lock ?? (_lock = new object());
-		[field: NonSerialized]
 		private object _lock;
 
 		public virtual TValue this[TKey key]

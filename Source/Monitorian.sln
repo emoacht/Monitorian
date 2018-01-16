@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.2010
+VisualStudioVersion = 15.0.27130.2020
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Monitorian", "Monitorian\Monitorian.csproj", "{A4CC5362-9B08-465B-AD64-5CFABC72A4C7}"
 	ProjectSection(ProjectDependencies) = postProject

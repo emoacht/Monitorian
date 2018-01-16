@@ -52,15 +52,19 @@ namespace StartupAgency.Helper
 		#region Cache
 
 		private static readonly Dictionary<string, bool> _cache = new Dictionary<string, bool>();
+		private static readonly object _lock = new object();
 
 		private static bool IsEqualToOrNewer(int major, int minor = 0, int build = 0, [CallerMemberName] string propertyName = null)
 		{
-			if (!_cache.TryGetValue(propertyName, out bool value))
+			lock (_lock)
 			{
-				value = (new Version(major, minor, build) <= GetOsVersion());
-				_cache.Add(propertyName, value);
+				if (!_cache.TryGetValue(propertyName, out bool value))
+				{
+					value = (new Version(major, minor, build) <= GetOsVersion());
+					_cache.Add(propertyName, value);
+				}
+				return value;
 			}
-			return value;
 		}
 
 		private static Version GetOsVersion()

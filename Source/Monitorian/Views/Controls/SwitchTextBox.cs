@@ -41,9 +41,9 @@ namespace Monitorian.Views.Controls
 			this.IsReadOnly = true;
 		}
 
+		private const double Tolerance = 10D;
 		private InputDevice _device;
 		private Point _startPosition;
-		private const double _tolerance = 10D;
 		private bool _isContextMenuOpenable = true;
 
 		private void OnDeviceDown(InputDevice device, bool isContextMenuOpenable)
@@ -75,7 +75,7 @@ namespace Monitorian.Views.Controls
 			if (!TryGetDevicePosition(_device, out Point endPosition))
 				return;
 
-			if (new Vector(endPosition.X - _startPosition.X, endPosition.Y - _startPosition.Y).Length > _tolerance)
+			if (new Vector(endPosition.X - _startPosition.X, endPosition.Y - _startPosition.Y).Length > Tolerance)
 				return;
 
 			this.IsReadOnly = false;
@@ -111,6 +111,11 @@ namespace Monitorian.Views.Controls
 
 		protected override void OnLostFocus(RoutedEventArgs e)
 		{
+			// If a TextBox has focus when the window is deactivated, LostFocus event will occur
+			// after Window.Deactivated event. Since a TextBox's text will be updated to source when
+			// LostFocus event occurs by default, Window.Deactivated event is not always appropriate
+			// to capture the latest text. 
+
 			_timer.Stop();
 
 			this.IsReadOnly = true;

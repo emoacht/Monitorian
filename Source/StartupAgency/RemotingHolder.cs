@@ -9,28 +9,24 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Monitorian.Models
+namespace StartupAgency
 {
-	public class RemotingAgent
+	internal class RemotingHolder
 	{
 		private Semaphore _semaphore;
 		private IpcServerChannel _server;
 		private RemotingSpace _space;
 
-		public event EventHandler ShowRequested
-		{
-			add { if (_space != null) { _space.ShowRequested += value; } }
-			remove { if (_space != null) { _space.ShowRequested -= value; } }
-		}
-
 		/// <summary>
-		/// Starts remoting.
+		/// Creates semaphore to start remoting.
 		/// </summary>
-		/// <returns>True if no other instance there and this instance started remoting server</returns>
-		public bool Start()
+		/// <returns>True if no other instance there and this instance instantiated remoting server</returns>
+		public bool Create(string title)
 		{
+			if (string.IsNullOrWhiteSpace(title))
+				throw new ArgumentNullException(nameof(title));
+
 			// Determine Semaphore name and IPC port name using assembly title.
-			var title = ProductInfo.Title ?? "Titleless";
 			var semaphoreName = $"semaphore-{title}";
 			var ipcPortName = $"port-{title}";
 			const string ipcUri = "space";
@@ -68,7 +64,7 @@ namespace Monitorian.Models
 					_space = Activator.GetObject(typeof(RemotingSpace), ipcPath) as RemotingSpace;
 
 					// Raise event.
-					_space?.ShowRequest();
+					_space?.RaiseShowRequested();
 				}
 				catch (RemotingException ex)
 				{
@@ -80,24 +76,35 @@ namespace Monitorian.Models
 		}
 
 		/// <summary>
-		/// Ends remoting.
+		/// Releases semaphore to end remoting.
 		/// </summary>
-		public void End()
+		public void Release()
 		{
 			_semaphore?.Dispose();
 		}
+
+		public event EventHandler ShowRequested
+		{
+			add { if (_space != null) { _space.ShowRequested += value; } }
+			remove { if (_space != null) { _space.ShowRequested -= value; } }
+		}
 	}
 
-	public class RemotingSpace : MarshalByRefObject
+	internal class RemotingSpace : MarshalByRefObject
 	{
+		public override object InitializeLifetimeService() => null;
+
 		public event EventHandler ShowRequested;
 
-		public void ShowRequest()
+		/// <summary>
+		/// Raise event.
+		/// </summary>
+		/// <remarks>
+		/// This method is intended to be called by an instance other than that instantiated this object.
+		/// </remarks>
+		public void RaiseShowRequested()
 		{
-			// This method will be called by an instance other than one which instantiated this object.
-			App.Current.Dispatcher.Invoke(() => ShowRequested?.Invoke(this, null));
+			ShowRequested?.Invoke(this, null);
 		}
-
-		public override object InitializeLifetimeService() => null;
 	}
 }

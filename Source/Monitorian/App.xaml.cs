@@ -3,17 +3,17 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 
 using Monitorian.Models;
+using StartupAgency;
 
 namespace Monitorian
 {
 	public partial class App : Application
 	{
-		private RemotingAgent _agent;
+		private StartupAgent _agent;
 		private MainController _controller;
 
 		protected override async void OnStartup(StartupEventArgs e)
@@ -22,17 +22,17 @@ namespace Monitorian
 
 			LogService.Start();
 
-			_agent = new RemotingAgent();
-			if (!_agent.Start())
+			_agent = new StartupAgent();
+			if (!_agent.Start(ProductInfo.StartupTaskId))
 			{
-				this.Shutdown();
+				this.Shutdown(0); // This shutdown is expected behavior.
 				return;
 			}
 
 			LanguageService.Switch(e.Args);
 
-			_controller = new MainController();
-			await _controller.InitiateAsync(_agent);
+			_controller = new MainController(_agent);
+			await _controller.InitiateAsync();
 
 			//this.MainWindow = new MainWindow();
 			//this.MainWindow.Show();
@@ -40,8 +40,8 @@ namespace Monitorian
 
 		protected override void OnExit(ExitEventArgs e)
 		{
-			_agent?.End();
 			_controller?.End();
+			_agent.Dispose();
 
 			LogService.End();
 

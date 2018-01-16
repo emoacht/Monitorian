@@ -17,8 +17,10 @@ namespace StartupAgency.Worker
 		/// <summary>
 		/// Startup task ID
 		/// </summary>
-		/// <remarks>This ID must match that in AppxManifest.xml.</remarks>
+		/// <remarks>Startup task ID must match that in AppxManifest.xml.</remarks>
 		private readonly string _taskId;
+
+		private DateTimeOffset _lastStartTime;
 
 		public BridgeWorker(string taskId)
 		{
@@ -26,19 +28,19 @@ namespace StartupAgency.Worker
 				throw new ArgumentNullException(nameof(taskId));
 
 			this._taskId = taskId;
+
+			// Get and update last start time.
+			_lastStartTime = StartupData.LastStartTime;
 		}
 
 		public bool IsStartedOnSignIn()
 		{
-			// Get and update last start time.
-			var lastStartTime = StartupData.LastStartTime;
-
 			if (!IsRegistered())
 				return false;
 
 			// Compare last start time with session start time.
 			if (TryGetLogonSessionStartTime(out DateTimeOffset sessionStartTime) &&
-				(sessionStartTime < lastStartTime))
+				(sessionStartTime < _lastStartTime))
 				return false;
 
 			return true;

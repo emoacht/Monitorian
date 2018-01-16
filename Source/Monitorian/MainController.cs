@@ -23,12 +23,10 @@ namespace Monitorian
 {
 	public class MainController
 	{
-		private readonly Application _current = Application.Current;
+		private readonly Application _current = App.Current;
 
 		public Settings Settings { get; }
 		internal StartupAgent StartupAgent { get; }
-
-		private const string StartupTaskId = "MonitorianStartupTask";
 
 		public ObservableCollection<MonitorViewModel> Monitors { get; }
 		private readonly object _monitorsLock = new object();
@@ -39,10 +37,10 @@ namespace Monitorian
 		private readonly PowerWatcher _powerWatcher;
 		private readonly BrightnessWatcher _brightnessWatcher;
 
-		public MainController()
+		public MainController(StartupAgent agent)
 		{
 			Settings = new Settings();
-			StartupAgent = new StartupAgent(StartupTaskId);
+			StartupAgent = agent ?? throw new ArgumentNullException(nameof(agent));
 
 			Monitors = new ObservableCollection<MonitorViewModel>();
 			BindingOperations.EnableCollectionSynchronization(Monitors, _monitorsLock);
@@ -56,11 +54,8 @@ namespace Monitorian
 			_brightnessWatcher = new BrightnessWatcher();
 		}
 
-		internal async Task InitiateAsync(RemotingAgent agent)
+		internal async Task InitiateAsync()
 		{
-			if (agent == null)
-				throw new ArgumentNullException(nameof(agent));
-
 			Settings.Initiate();
 			Settings.KnownMonitors.AbsoluteCapacity = _maxNameCount.Value;
 
@@ -71,7 +66,7 @@ namespace Monitorian
 			if (!StartupAgent.IsStartedOnSignIn())
 				_current.MainWindow.Show();
 
-			agent.ShowRequested += OnMainWindowShowRequested;
+			StartupAgent.ShowRequested += OnMainWindowShowRequested;
 
 			await ScanAsync();
 
@@ -92,7 +87,7 @@ namespace Monitorian
 
 		private async void OnMainWindowShowRequested(object sender, EventArgs e)
 		{
-			ShowMainWindow();
+			_current.Dispatcher.Invoke(() => ShowMainWindow());
 			await UpdateAsync();
 		}
 

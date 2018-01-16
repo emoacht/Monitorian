@@ -52,10 +52,10 @@
   <ItemGroup>
     <Reference Include="Microsoft.Expression.Interactions, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
-    <Reference Include="System.Runtime.Remoting" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
@@ -90,7 +90,6 @@
     <Compile Include="Models\LanguageService.cs" />
     <Compile Include="Models\LogService.cs" />
     <Compile Include="Models\ProductInfo.cs" />
-    <Compile Include="Models\RemotingAgent.cs" />
     <Compile Include="Models\Settings.cs" />
     <Compile Include="Models\Watcher\BrightnessWatcher.cs" />
     <Compile Include="Models\Watcher\PowerWatcher.cs" />

@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Monitorian.Models;
-using StartupAgency;
 
 namespace Monitorian.ViewModels
 {
@@ -14,7 +13,6 @@ namespace Monitorian.ViewModels
 	{
 		private readonly MainController _controller;
 		public Settings Settings => _controller.Settings;
-		private StartupAgent _startupAgent => _controller.StartupAgent;
 
 		public MenuWindowViewModel(MainController controller)
 		{
@@ -40,7 +38,7 @@ namespace Monitorian.ViewModels
 
 		#region Startup
 
-		public bool CanRegister => _startupAgent.CanRegister();
+		public bool CanRegister => _controller.StartupAgent.CanRegister();
 
 		public bool IsRegistered
 		{
@@ -48,7 +46,7 @@ namespace Monitorian.ViewModels
 			{
 				if (!_isRegistered.HasValue)
 				{
-					_isRegistered = _startupAgent.IsRegistered();
+					_isRegistered = _controller.StartupAgent.IsRegistered();
 				}
 				return _isRegistered.Value;
 			}
@@ -59,11 +57,11 @@ namespace Monitorian.ViewModels
 
 				if (value)
 				{
-					_startupAgent.Register();
+					_controller.StartupAgent.Register();
 				}
 				else
 				{
-					_startupAgent.Unregister();
+					_controller.StartupAgent.Unregister();
 				}
 				_isRegistered = value;
 				RaisePropertyChanged();

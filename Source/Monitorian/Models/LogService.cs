@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -17,7 +16,7 @@ namespace Monitorian.Models
 	{
 		public static void Start()
 		{
-			DebugService.StartConsole();
+			ConsoleService.StartConsole();
 
 			App.Current.DispatcherUnhandledException += OnDispatcherUnhandledException;
 			TaskScheduler.UnobservedTaskException += OnUnobservedTaskException;
@@ -26,7 +25,7 @@ namespace Monitorian.Models
 
 		public static void End()
 		{
-			DebugService.EndConsole();
+			ConsoleService.EndConsole();
 
 			App.Current.DispatcherUnhandledException -= OnDispatcherUnhandledException;
 			TaskScheduler.UnobservedTaskException -= OnUnobservedTaskException;
@@ -52,7 +51,7 @@ namespace Monitorian.Models
 
 		private static void OnException(object sender, Exception exception, string exceptionName)
 		{
-			if (DebugService.WriteConsole(exception, exceptionName))
+			if (ConsoleService.WriteConsole(exception, exceptionName))
 				return;
 
 			RecordException(sender, exception);
@@ -72,7 +71,7 @@ namespace Monitorian.Models
 			var content = $"[Date: {DateTime.Now}]" + Environment.NewLine
 				+ log + Environment.NewLine + Environment.NewLine;
 
-			RecordToAppData(content, OperationFileName);
+			RecordToAppData(OperationFileName, content);
 		}
 
 		/// <summary>
@@ -86,31 +85,35 @@ namespace Monitorian.Models
 			var content = $"[Date: {DateTime.Now} Sender: {sender}]" + Environment.NewLine
 				+ exception + Environment.NewLine + Environment.NewLine;
 
-			RecordToAppData(content, ExceptionFileName);
-			RecordToDesktop(content, ExceptionFileName);
+			RecordToAppData(ExceptionFileName, content);
+			RecordToDesktop(ExceptionFileName, content);
 		}
 
-		private static void RecordToAppData(string content, string fileName)
+		private static void RecordToAppData(string fileName, string content)
 		{
 			try
 			{
-				var filePath = Path.Combine(
-					FolderService.GetAppDataFolderPath(true),
+				FolderService.AssureAppDataFolder();
+
+				var appDataFilePath = Path.Combine(
+					FolderService.AppDataFolderPath,
 					fileName);
 
-				UpdateText(filePath, content);
+				UpdateText(appDataFilePath, content);
 			}
 			catch (Exception ex)
 			{
-				Debug.WriteLine("Failed to record log to AppData." + Environment.NewLine
+				Trace.WriteLine("Failed to record log to AppData." + Environment.NewLine
 					+ ex);
 			}
 		}
 
-		private static void RecordToDesktop(string content, string fileName)
+		private static string RecordMessage => Resources.RecordException;
+
+		private static void RecordToDesktop(string fileName, string content)
 		{
 			var response = MessageBox.Show(
-				Resources.RecordException,
+				RecordMessage,
 				ProductInfo.Title,
 				MessageBoxButton.YesNo, MessageBoxImage.Error, MessageBoxResult.Yes);
 			if (response != MessageBoxResult.Yes)
@@ -118,20 +121,20 @@ namespace Monitorian.Models
 
 			try
 			{
-				var filePath = Path.Combine(
+				var desktopFilePath = Path.Combine(
 					Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory),
 					fileName);
 
-				UpdateText(filePath, content);
+				UpdateText(desktopFilePath, content);
 			}
 			catch (Exception ex)
 			{
-				Debug.WriteLine("Failed to record log to Desktop." + Environment.NewLine
+				Trace.WriteLine("Failed to record log to Desktop." + Environment.NewLine
 					+ ex);
 			}
 		}
 
-		private const int SectionCountMax = 100;
+		private const int MaxSectionCount = 100;
 
 		private static void UpdateText(string filePath, string newContent)
 		{
@@ -142,7 +145,7 @@ namespace Monitorian.Models
 				using (var sr = new StreamReader(filePath, Encoding.UTF8))
 					oldContent = sr.ReadToEnd();
 
-				oldContent = string.Join(Environment.NewLine, EnumerateLastLines(oldContent, "[Date:", SectionCountMax - 1).Reverse());
+				oldContent = string.Join(Environment.NewLine, EnumerateLastLines(oldContent, "[Date:", MaxSectionCount - 1).Reverse());
 			}
 
 			using (var sw = new StreamWriter(filePath, false, Encoding.UTF8)) // BOM will be emitted.

@@ -8,28 +8,29 @@ using System.Threading.Tasks;
 
 namespace Monitorian.Models
 {
-	internal class FolderService
+	internal static class FolderService
 	{
-		private static string _folderPath;
-
-		/// <summary>
-		/// Gets folder path to this application's folder in local AppData.
-		/// </summary>
-		/// <param name="createsFolder">Whether to create this application's folder if it does not exist</param>
-		/// <returns>This method should not throw an exception because the folder is in local AppData.</returns>
-		public static string GetAppDataFolderPath(bool createsFolder)
+		public static string AppDataFolderPath
 		{
-			if (string.IsNullOrWhiteSpace(_folderPath))
+			get
 			{
-				_folderPath = Path.Combine(
-					Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-					Assembly.GetExecutingAssembly().GetName().Name);
+				if (_appDataFolderPath == null)
+				{
+					var appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+					if (string.IsNullOrEmpty(appDataPath)) // This should not happen.
+						throw new DirectoryNotFoundException();
+
+					_appDataFolderPath = Path.Combine(appDataPath, Assembly.GetExecutingAssembly().GetName().Name);
+				}
+				return _appDataFolderPath;
 			}
+		}
+		private static string _appDataFolderPath;
 
-			if (createsFolder && !Directory.Exists(_folderPath))
-				Directory.CreateDirectory(_folderPath);
-
-			return _folderPath;
+		public static void AssureAppDataFolder()
+		{
+			if (!Directory.Exists(AppDataFolderPath))
+				Directory.CreateDirectory(AppDataFolderPath);
 		}
 	}
 }

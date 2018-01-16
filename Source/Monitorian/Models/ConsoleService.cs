@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Monitorian.Models
 {
-	internal class DebugService
+	internal class ConsoleService
 	{
 		#region Win32
 

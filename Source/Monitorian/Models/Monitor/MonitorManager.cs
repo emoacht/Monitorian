@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,28 +19,27 @@ namespace Monitorian.Models.Monitor
 			{
 				foreach (var physicalItem in MonitorConfiguration.EnumeratePhysicalMonitors(handleItem.MonitorHandle))
 				{
-					//Debug.WriteLine($"Display: {handleItem.DisplayIndex}, Monitor: {physicalItem.MonitorIndex}");
-
 					var index = deviceItems.FindIndex(x =>
 						(x.DisplayIndex == handleItem.DisplayIndex) &&
 						(x.MonitorIndex == physicalItem.MonitorIndex) &&
 						string.Equals(x.Description, physicalItem.Description, StringComparison.OrdinalIgnoreCase));
-					if (0 <= index)
+					if (index < 0)
 					{
-						yield return new DdcMonitorItem(
-							description: deviceItems[index].Description,
-							deviceInstanceId: deviceItems[index].DeviceInstanceId,
-							displayIndex: deviceItems[index].DisplayIndex,
-							monitorIndex: deviceItems[index].MonitorIndex,
-							handle: physicalItem.Handle);
-
-						deviceItems.RemoveAt(index);
-						if (deviceItems.Count == 0)
-							yield break;
-						else
-							continue;
+						physicalItem.Handle.Dispose();
+						continue;
 					}
-					physicalItem.Handle.Dispose();
+
+					var deviceItem = deviceItems[index];
+					yield return new DdcMonitorItem(
+						description: deviceItem.Description,
+						deviceInstanceId: deviceItem.DeviceInstanceId,
+						displayIndex: deviceItem.DisplayIndex,
+						monitorIndex: deviceItem.MonitorIndex,
+						handle: physicalItem.Handle);
+
+					deviceItems.RemoveAt(index);
+					if (deviceItems.Count == 0)
+						yield break;
 				}
 			}
 
@@ -55,21 +53,32 @@ namespace Monitorian.Models.Monitor
 					var index = deviceItems.FindIndex(x =>
 						string.Equals(x.DeviceInstanceId, desktopItem.DeviceInstanceId, StringComparison.OrdinalIgnoreCase) &&
 						string.Equals(x.DeviceInstanceId, installedItem.DeviceInstanceId, StringComparison.OrdinalIgnoreCase));
-					if (0 <= index)
-					{
-						yield return new WmiMonitorItem(
-							description: deviceItems[index].Description,
-							deviceInstanceId: deviceItems[index].DeviceInstanceId,
-							displayIndex: deviceItems[index].DisplayIndex,
-							monitorIndex: deviceItems[index].MonitorIndex,
-							brightnessLevels: desktopItem.BrightnessLevels,
-							isRemovable: installedItem.IsRemovable);
+					if (index < 0)
+						continue;
 
-						deviceItems.RemoveAt(index);
-						if (deviceItems.Count == 0)
-							yield break;
-					}
+					var deviceItem = deviceItems[index];
+					yield return new WmiMonitorItem(
+						description: deviceItem.Description,
+						deviceInstanceId: deviceItem.DeviceInstanceId,
+						displayIndex: deviceItem.DisplayIndex,
+						monitorIndex: deviceItem.MonitorIndex,
+						brightnessLevels: desktopItem.BrightnessLevels,
+						isRemovable: installedItem.IsRemovable);
+
+					deviceItems.RemoveAt(index);
+					if (deviceItems.Count == 0)
+						yield break;
 				}
+			}
+
+			// Rest
+			foreach (var deviceItem in deviceItems)
+			{
+				yield return new InaccessibleMonitorItem(
+					description: deviceItem.Description,
+					deviceInstanceId: deviceItem.DeviceInstanceId,
+					displayIndex: deviceItem.DisplayIndex,
+					monitorIndex: deviceItem.MonitorIndex);
 			}
 		}
 	}

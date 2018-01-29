@@ -12,6 +12,7 @@ namespace Monitorian.Models.Monitor
 		string DeviceInstanceId { get; }
 		byte DisplayIndex { get; }
 		byte MonitorIndex { get; }
+		bool IsAccessible { get; }
 
 		int Brightness { get; }
 		int BrightnessAdjusted { get; }

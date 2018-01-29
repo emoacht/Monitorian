@@ -11,7 +11,7 @@ namespace Monitorian.Models.Monitor
 	/// <summary>
 	/// Physical monitor managed by WMI (internal monitor)
 	/// </summary>
-	internal class WmiMonitorItem : MonitorItem, IMonitor
+	internal class WmiMonitorItem : MonitorItem
 	{
 		private readonly byte[] _brightnessLevels;
 		private readonly bool _isRemovable;
@@ -26,7 +26,8 @@ namespace Monitorian.Models.Monitor
 				description,
 				deviceInstanceId,
 				displayIndex,
-				monitorIndex)
+				monitorIndex,
+				isAccessible: true)
 		{
 			this._brightnessLevels = brightnessLevels ?? throw new ArgumentNullException(nameof(brightnessLevels));
 			this._isRemovable = isRemovable;
@@ -34,7 +35,7 @@ namespace Monitorian.Models.Monitor
 
 		private readonly object _lock = new object();
 
-		public bool UpdateBrightness(int brightness = -1)
+		public override bool UpdateBrightness(int brightness = -1)
 		{
 			lock (_lock)
 			{
@@ -59,7 +60,7 @@ namespace Monitorian.Models.Monitor
 			}
 		}
 
-		public bool SetBrightness(int brightness)
+		public override bool SetBrightness(int brightness)
 		{
 			if ((brightness < 0) || (100 < brightness))
 				throw new ArgumentOutOfRangeException(nameof(brightness), "The brightness must be within 0 to 100.");

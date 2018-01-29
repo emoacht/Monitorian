@@ -143,52 +143,79 @@ namespace Monitorian
 					ScanningChanged?.Invoke(this, true);
 
 					var scanTime = DateTimeOffset.Now;
+					int accessibleMonitorCount = 0;
 
 					await Task.Run(() =>
 					{
-						var oldMonitors = Monitors.ToList();
+						var oldMonitorIndices = Enumerable.Range(0, Monitors.Count).ToList();
+						var newMonitorItems = new List<IMonitor>();
 
 						foreach (var item in MonitorManager.EnumerateMonitors())
 						{
-							var oldMonitor = oldMonitors.FirstOrDefault(x =>
-								string.Equals(x.DeviceInstanceId, item.DeviceInstanceId, StringComparison.OrdinalIgnoreCase));
-							if (oldMonitor != null)
+							var isExisting = false;
+
+							foreach (int index in oldMonitorIndices)
 							{
-								oldMonitors.Remove(oldMonitor);
-								item.Dispose();
-								continue;
+								if (string.Equals(Monitors[index].DeviceInstanceId, item.DeviceInstanceId, StringComparison.OrdinalIgnoreCase))
+								{
+									isExisting = true;
+									oldMonitorIndices.Remove(index);
+									item.Dispose();
+									break;
+								}
 							}
 
-							var newMonitor = new MonitorViewModel(this, item);
-							if (Monitors.Count < _maxMonitorCount.Value)
+							if (!isExisting)
+								newMonitorItems.Add(item);
+						}
+
+						if (oldMonitorIndices.Count > 0)
+						{
+							oldMonitorIndices.Reverse(); // Reverse indices to start removing from the tail.
+							foreach (var index in oldMonitorIndices)
 							{
-								newMonitor.UpdateBrightness();
-								newMonitor.IsTarget = true;
-							}
-							lock (_monitorsLock)
-							{
-								Monitors.Add(newMonitor);
+								Monitors[index].Dispose();
+								lock (_monitorsLock)
+								{
+									Monitors.RemoveAt(index);
+								}
 							}
 						}
 
-						foreach (var oldMonitor in oldMonitors)
+						if (newMonitorItems.Count > 0)
 						{
-							oldMonitor.Dispose();
-							lock (_monitorsLock)
+							foreach (var item in newMonitorItems)
 							{
-								Monitors.Remove(oldMonitor);
+								var newMonitor = new MonitorViewModel(this, item);
+								if (newMonitor.IsAccessible && (Monitors.Count < _maxMonitorCount.Value))
+								{
+									newMonitor.UpdateBrightness();
+									newMonitor.IsTarget = true;
+									accessibleMonitorCount++;
+								}
+								lock (_monitorsLock)
+								{
+									Monitors.Add(newMonitor);
+								}
 							}
 						}
 					});
 
 					await Task.WhenAll(Monitors
 						.Take(_maxMonitorCount.Value)
-						.Where(x => x.UpdateTime < scanTime)
+						.Where(x => x.IsAccessible && (x.UpdateTime < scanTime))
 						.Select(x => Task.Run(() =>
 						{
 							x.UpdateBrightness();
 							x.IsTarget = true;
+							Interlocked.Increment(ref accessibleMonitorCount);
 						})));
+
+					var accessibleMonitorExists = (accessibleMonitorCount > 0);
+					Monitors
+						.Where(x => !x.IsAccessible)
+						.ToList()
+						.ForEach(x => x.IsTarget = !accessibleMonitorExists);
 				}
 			}
 			finally

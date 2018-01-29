@@ -25,6 +25,7 @@ namespace Monitorian.ViewModels
 		public string DeviceInstanceId => _monitor.DeviceInstanceId;
 		public byte DisplayIndex => _monitor.DisplayIndex;
 		public byte MonitorIndex => _monitor.MonitorIndex;
+		public bool IsAccessible => _monitor.IsAccessible;
 
 		#region Name
 

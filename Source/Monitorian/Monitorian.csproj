@@ -105,6 +105,7 @@
     <Compile Include="Views\Controls\SwitchTextBox.cs" />
     <Compile Include="Views\Controls\QuickSlider.cs" />
     <Compile Include="Views\Converters\BooleanInverseConverter.cs" />
+    <Compile Include="Views\Converters\VisibilityInverseConverter.cs" />
     <Compile Include="Views\Converters\VisibilityToBooleanFilterConverter.cs" />
     <Compile Include="Views\MenuWindow.xaml.cs">
       <DependentUpon>MenuWindow.xaml</DependentUpon>
@@ -133,6 +134,7 @@
     <Compile Include="Models\Monitor\LightSensor.cs" />
     <Compile Include="Models\Monitor\Error.cs" />
     <Compile Include="Models\Monitor\IMonitor.cs" />
+    <Compile Include="Models\Monitor\InaccessibleMonitorItem.cs" />
     <Compile Include="Models\Monitor\MonitorItem.cs" />
     <Compile Include="Models\Monitor\MonitorConfiguration.cs" />
     <Compile Include="Models\Monitor\PowerManagement.cs" />

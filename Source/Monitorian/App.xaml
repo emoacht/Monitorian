@@ -6,6 +6,7 @@
 		<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverterKey"/>
 		<converters:VisibilityToBooleanFilterConverter x:Key="VisibilityToBooleanFilterConverterKey"/>
 		<converters:BooleanInverseConverter x:Key="BooleanInverseConverterKey"/>
+		<converters:VisibilityInverseConverter x:Key="VisibilityInverseConverterKey"/>
 
 		<Color x:Key="App.BackgroundColor">#CC171717</Color>
 		<Color x:Key="App.ForegroundColor">White</Color>

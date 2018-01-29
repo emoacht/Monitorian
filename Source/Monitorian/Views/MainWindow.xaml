@@ -6,6 +6,7 @@
 		xmlns:sys="clr-namespace:System;assembly=mscorlib"
 		xmlns:models="clr-namespace:Monitorian.Models"
 		xmlns:controls="clr-namespace:Monitorian.Views.Controls"
+		xmlns:properties="clr-namespace:Monitorian.Properties"
 		Width="360" Height="200"
 		ResizeMode="NoResize" SizeToContent="WidthAndHeight"
 		ShowInTaskbar="False"
@@ -390,7 +391,9 @@
 												Text="{Binding Name, Mode=TwoWay}"/>
 
 						<!-- Brightness -->
-						<Grid Grid.Row="1">
+						<Grid Grid.Row="1"
+							  x:Name="BrightnessGrid"
+							  Visibility="{Binding IsAccessible, Converter={StaticResource BooleanToVisibilityConverterKey}}">
 							<Grid.ColumnDefinitions>
 								<ColumnDefinition Width="Auto"/>
 								<ColumnDefinition Width="*"/>
@@ -434,6 +437,13 @@
 									BorderBrush="{StaticResource Unison.Checked.Border}" BorderThickness="2"
 									IsHitTestVisible="False"
 									Visibility="{Binding ElementName=UnisonButton, Path=IsChecked, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverterKey}}"/>
+						</Grid>
+
+						<Grid Grid.Row="1"
+							  Visibility="{Binding ElementName=BrightnessGrid, Path=Visibility, Converter={StaticResource VisibilityInverseConverterKey}}">
+							<TextBlock Margin="4"
+									   Foreground="{StaticResource App.Foreground}"
+									   Text="{x:Static properties:Resources.NotControllable}"/>
 						</Grid>
 					</Grid>
 				</DataTemplate>

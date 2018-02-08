@@ -156,7 +156,9 @@ namespace Monitorian
 
 							foreach (int index in oldMonitorIndices)
 							{
-								if (string.Equals(Monitors[index].DeviceInstanceId, item.DeviceInstanceId, StringComparison.OrdinalIgnoreCase))
+								var oldMonitor = Monitors[index];
+								if (string.Equals(oldMonitor.DeviceInstanceId, item.DeviceInstanceId, StringComparison.OrdinalIgnoreCase)
+									&& (oldMonitor.IsAccessible == item.IsAccessible))
 								{
 									isExisting = true;
 									oldMonitorIndices.Remove(index);
@@ -187,7 +189,7 @@ namespace Monitorian
 							foreach (var item in newMonitorItems)
 							{
 								var newMonitor = new MonitorViewModel(this, item);
-								if (newMonitor.IsAccessible && (Monitors.Count < _maxMonitorCount.Value))
+								if (newMonitor.IsControllable && (Monitors.Count < _maxMonitorCount.Value))
 								{
 									newMonitor.UpdateBrightness();
 									newMonitor.IsTarget = true;
@@ -203,7 +205,7 @@ namespace Monitorian
 
 					await Task.WhenAll(Monitors
 						.Take(_maxMonitorCount.Value)
-						.Where(x => x.IsAccessible && (x.UpdateTime < scanTime))
+						.Where(x => x.IsControllable && (x.UpdateTime < scanTime))
 						.Select(x => Task.Run(() =>
 						{
 							x.UpdateBrightness();
@@ -213,7 +215,7 @@ namespace Monitorian
 
 					var accessibleMonitorExists = (accessibleMonitorCount > 0);
 					Monitors
-						.Where(x => !x.IsAccessible)
+						.Where(x => !x.IsControllable)
 						.ToList()
 						.ForEach(x => x.IsTarget = !accessibleMonitorExists);
 				}

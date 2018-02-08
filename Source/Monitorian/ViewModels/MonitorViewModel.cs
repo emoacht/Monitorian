@@ -27,6 +27,13 @@ namespace Monitorian.ViewModels
 		public byte MonitorIndex => _monitor.MonitorIndex;
 		public bool IsAccessible => _monitor.IsAccessible;
 
+		public bool IsControllable
+		{
+			get => _monitor.IsAccessible && _isControllable;
+			private set => SetPropertyValue(ref _isControllable, value);
+		}
+		private bool _isControllable = true;
+
 		#region Name
 
 		public string Name
@@ -87,9 +94,14 @@ namespace Monitorian.ViewModels
 
 			if (_monitor.UpdateBrightness(brightness))
 			{
+				OnSuccess();
 				RaisePropertyChanged(nameof(Brightness));
 				RaisePropertyChanged(nameof(BrightnessInteractive));
 				RaisePropertyChanged(nameof(BrightnessAdjusted));
+			}
+			else
+			{
+				OnFailure();
 			}
 		}
 
@@ -106,9 +118,28 @@ namespace Monitorian.ViewModels
 		{
 			if (_monitor.SetBrightness(brightness))
 			{
+				OnSuccess();
 				RaisePropertyChanged(nameof(Brightness));
 				RaisePropertyChanged(nameof(BrightnessInteractive));
 			}
+			else
+			{
+				OnFailure();
+			}
+		}
+
+		private int _failureCount = 0;
+		private const int MaxFailureCount = 3;
+
+		private void OnSuccess()
+		{
+			_failureCount = 0;
+		}
+
+		private void OnFailure()
+		{
+			if (++_failureCount >= MaxFailureCount)
+				IsControllable = false;
 		}
 
 		#endregion

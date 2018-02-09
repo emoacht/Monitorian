@@ -29,7 +29,7 @@ namespace Monitorian.ViewModels
 
 		public bool IsControllable
 		{
-			get => _monitor.IsAccessible && _isControllable;
+			get => IsAccessible && _isControllable;
 			private set => SetPropertyValue(ref _isControllable, value);
 		}
 		private bool _isControllable = true;
@@ -51,7 +51,8 @@ namespace Monitorian.ViewModels
 
 		private void LoadName()
 		{
-			_name = _controller.Settings.KnownMonitors.TryGetValue(DeviceInstanceId, out string value) ? value : null;
+			if (_controller.Settings.KnownMonitors.TryGetValue(DeviceInstanceId, out string value))
+				_name = value;
 		}
 
 		private void SaveName()
@@ -128,8 +129,7 @@ namespace Monitorian.ViewModels
 			}
 		}
 
-		private int _failureCount = 0;
-		private const int MaxFailureCount = 3;
+		private byte _failureCount = 0;
 
 		private void OnSuccess()
 		{
@@ -138,7 +138,7 @@ namespace Monitorian.ViewModels
 
 		private void OnFailure()
 		{
-			if (++_failureCount >= MaxFailureCount)
+			if (_failureCount++ > 0)
 				IsControllable = false;
 		}
 

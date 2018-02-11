@@ -46,7 +46,7 @@ namespace Monitorian
 			BindingOperations.EnableCollectionSynchronization(Monitors, _monitorsLock);
 
 			NotifyIconContainer = new NotifyIconContainer();
-			NotifyIconContainer.MouseLeftButtonClick += OnMainWindowShowRequested;
+			NotifyIconContainer.MouseLeftButtonClick += OnMainWindowShowRequestedBySelf;
 			NotifyIconContainer.MouseRightButtonClick += OnMenuWindowShowRequested;
 
 			_settingsWatcher = new SettingsWatcher();
@@ -66,7 +66,7 @@ namespace Monitorian
 			if (!StartupAgent.IsStartedOnSignIn())
 				_current.MainWindow.Show();
 
-			StartupAgent.ShowRequested += OnMainWindowShowRequested;
+			StartupAgent.ShowRequested += OnMainWindowShowRequestedByOther;
 
 			await ScanAsync();
 
@@ -85,10 +85,16 @@ namespace Monitorian
 			_brightnessWatcher.Dispose();
 		}
 
-		private async void OnMainWindowShowRequested(object sender, EventArgs e)
+		private async void OnMainWindowShowRequestedBySelf(object sender, EventArgs e)
+		{
+			ShowMainWindow();
+			await UpdateAsync();
+		}
+
+		private async void OnMainWindowShowRequestedByOther(object sender, EventArgs e)
 		{
 			_current.Dispatcher.Invoke(() => ShowMainWindow());
-			await UpdateAsync();
+			await ScanAsync();
 		}
 
 		private void OnMenuWindowShowRequested(object sender, Point e)

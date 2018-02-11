@@ -19,8 +19,8 @@ namespace ScreenFrame
 		{
 			public static NotifyIconWindowListener Create(NotifyIconContainer container)
 			{
-				if (!NotifyIconHelper.TryGetNotifyIconWindow(container.NotifyIcon, out NativeWindow window) ||
-					(window.Handle == IntPtr.Zero))
+				if (!NotifyIconHelper.TryGetNotifyIconWindow(container.NotifyIcon, out NativeWindow window)
+					|| (window.Handle == IntPtr.Zero))
 				{
 					return null;
 				}
@@ -182,12 +182,12 @@ namespace ScreenFrame
 		#region Click
 
 		/// <summary>
-		/// This event is raised after mouse left button is clicked on NotifyIcon.
+		/// Occurs when mouse left button is clicked while mouse pointer is over NotifyIcon.
 		/// </summary>
 		public event EventHandler MouseLeftButtonClick;
 
 		/// <summary>
-		/// This event is raised after mouse right button is clicked on NotifyIcon.
+		/// Occurs when mouse right button is clicked while mouse pointer is over NotifyIcon.
 		/// </summary>
 		public event EventHandler<Point> MouseRightButtonClick;
 

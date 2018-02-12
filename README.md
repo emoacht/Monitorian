@@ -9,6 +9,8 @@ Monitorian is a Windows desktop tool to adjust the brightness of multiple monito
 
  * Windows 7 or newer
  * .NET Framework 4.6.2
+ * An external monitor must be DDC/CI enabled.
+![OSD](Images/Dell-ddcci.jpg)
 
 ## Download
 
@@ -16,7 +18,7 @@ Monitorian is a Windows desktop tool to adjust the brightness of multiple monito
 [Monitorian](https://www.microsoft.com/store/apps/9nw33j738bl0) (Windows Store)
 
  * Other:<br>
-:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/1.4.0-Installer/MonitorianInstaller140.zip) | :floppy_disk: [Executables](https://github.com/emoacht/Monitorian/releases/download/1.4.0-Executables/Monitarian140.zip)
+:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/1.5.0-Installer/MonitorianInstaller150.zip) | :floppy_disk: [Executables](https://github.com/emoacht/Monitorian/releases/download/1.5.0-Executables/Monitorian150.zip)
 
 ## Install/Uninstall
 
@@ -27,15 +29,18 @@ When you use only executables, please note the following:
 
 ## Remarks
 
- - An external monitor must be DDC/CI enabled.
- - The number of monitors shown at a time is currently up to 4.
  - To rename the monitor in this app, press and hold the name until it turns to be editable.
+ - The number of monitors shown at a time is currently up to 4.
 
 ## Development
 
 This app is a WPF app developed and tested with Surface Pro 4.
 
 ## History
+
+Ver 1.5.0 2018-2-12
+
+ - Improved handling of uncontrollable monitor
 
 Ver 1.4.0 2018-1-17
 

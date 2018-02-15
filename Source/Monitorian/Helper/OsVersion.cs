@@ -60,10 +60,10 @@ namespace Monitorian.Helper
 				if (!_cache.TryGetValue(propertyName, out bool value))
 				{
 					value = (new Version(major, minor, build) <= Environment.OSVersion.Version);
-					_cache.Add(propertyName, value);
+					_cache[propertyName] = value; // Indexer is safer than Add method.
 				}
 				return value;
-			}			
+			}
 		}
 
 		#endregion

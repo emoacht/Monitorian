@@ -61,7 +61,7 @@ namespace ScreenFrame.Helper
 				if (!_cache.TryGetValue(propertyName, out bool value))
 				{
 					value = (new Version(major, minor, build) <= GetOsVersion());
-					_cache.Add(propertyName, value);
+					_cache[propertyName] = value; // Indexer is safer than Add method.
 				}
 				return value;
 			}

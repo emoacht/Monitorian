@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -58,6 +59,7 @@ namespace Monitorian
 		{
 			Settings.Initiate();
 			Settings.KnownMonitors.AbsoluteCapacity = _maxNameCount.Value;
+			Settings.PropertyChanged += OnSettingsChanged;
 
 			NotifyIconContainer.ShowIcon("pack://application:,,,/Resources/Icons/TrayIcon.ico", ProductInfo.Title);
 
@@ -120,6 +122,12 @@ namespace Monitorian
 			var window = new MenuWindow(this, pivot);
 			window.ViewModel.CloseAppRequested += (sender, e) => _current.Shutdown();
 			window.Show();
+		}
+
+		private void OnSettingsChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == nameof(Settings.EnablesUnison))
+				OnSettingsEnablesUnisonChanged();
 		}
 
 		#region Monitors
@@ -275,6 +283,47 @@ namespace Monitorian
 		{
 			foreach (var monitor in Monitors)
 				monitor.Dispose();
+		}
+
+		#endregion
+
+		#region Name
+
+		private void OnSettingsEnablesUnisonChanged()
+		{
+			if (Settings.EnablesUnison)
+				return;
+
+			Monitors
+				.Where(x => x.IsUnison)
+				.ToList()
+				.ForEach(x => x.IsUnison = false);
+		}
+
+		internal bool TryLoadName(string deviceInstanceId, ref string name, ref bool isUnison)
+		{
+			if (Settings.KnownMonitors.TryGetValue(deviceInstanceId, out MonitorValuePack value))
+			{
+				name = value.Name;
+				isUnison = value.IsUnison;
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+
+		internal void SaveName(string deviceInstanceId, string name, bool isUnison)
+		{
+			if ((name != null) || isUnison)
+			{
+				Settings.KnownMonitors.Add(deviceInstanceId, new MonitorValuePack(name, isUnison));
+			}
+			else
+			{
+				Settings.KnownMonitors.Remove(deviceInstanceId);
+			}
 		}
 
 		#endregion

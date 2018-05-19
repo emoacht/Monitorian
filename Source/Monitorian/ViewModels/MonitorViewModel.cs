@@ -18,7 +18,7 @@ namespace Monitorian.ViewModels
 			this._controller = controller ?? throw new ArgumentNullException(nameof(controller));
 			this._monitor = monitor ?? throw new ArgumentNullException(nameof(monitor));
 
-			LoadName();
+			this._controller.TryLoadName(DeviceInstanceId, ref _name, ref _isUnison);			
 		}
 
 		public string Description => _monitor.Description;
@@ -42,30 +42,23 @@ namespace Monitorian.ViewModels
 			set
 			{
 				if (SetPropertyValue(ref _name, GetValueOrNull(value)))
-					SaveName();
+					_controller.SaveName(DeviceInstanceId, _name, _isUnison);
 			}
 		}
 		private string _name;
 
 		private static string GetValueOrNull(string value) => !string.IsNullOrWhiteSpace(value) ? value : null;
 
-		private void LoadName()
+		public bool IsUnison
 		{
-			if (_controller.Settings.KnownMonitors.TryGetValue(DeviceInstanceId, out string value))
-				_name = value;
-		}
-
-		private void SaveName()
-		{
-			if (_name != null)
+			get => _isUnison;
+			set
 			{
-				_controller.Settings.KnownMonitors.Add(DeviceInstanceId, _name);
-			}
-			else
-			{
-				_controller.Settings.KnownMonitors.Remove(DeviceInstanceId);
+				if (SetPropertyValue(ref _isUnison, value))
+					_controller.SaveName(DeviceInstanceId, _name, _isUnison);
 			}
 		}
+		private bool _isUnison;
 
 		#endregion
 
@@ -87,6 +80,8 @@ namespace Monitorian.ViewModels
 
 		public int BrightnessAdjusted => _monitor.BrightnessAdjusted;
 
+		public int BrightnessUnison => Brightness;
+
 		public DateTimeOffset UpdateTime { get; private set; }
 
 		public void UpdateBrightness(int brightness = -1)
@@ -96,6 +91,10 @@ namespace Monitorian.ViewModels
 			if (_monitor.UpdateBrightness(brightness))
 			{
 				OnSuccess();
+
+				if (IsUnison && (0 <= brightness))
+					RaisePropertyChanged(nameof(BrightnessUnison));
+
 				RaisePropertyChanged(nameof(Brightness));
 				RaisePropertyChanged(nameof(BrightnessInteractive));
 				RaisePropertyChanged(nameof(BrightnessAdjusted));

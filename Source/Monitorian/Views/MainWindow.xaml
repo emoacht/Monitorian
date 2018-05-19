@@ -422,21 +422,21 @@
 														Value="{Binding BrightnessInteractive, Mode=TwoWay, Delay=50}"
 														ShadowValue="{Binding BrightnessAdjusted, Mode=OneWay}"
 														ShadowVisibility="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Path=DataContext.Settings.ShowsAdjusted, Converter={StaticResource BooleanToVisibilityConverterKey}}"
-														IsUnison="{Binding ElementName=UnisonButton, Path=IsChecked, Mode=TwoWay}"/>
+														IsUnison="{Binding IsUnison, Mode=TwoWay}"
+														ValueUnison="{Binding BrightnessUnison, Mode=OneWay}"/>
 
 							<ToggleButton Grid.Column="2"
-										  x:Name="UnisonButton"
 										  Width="16" Height="{DynamicResource ButtonHeight}" Margin="0,2,2,2"
 										  Style="{StaticResource UnisonButtonStyle}"
 										  Foreground="{StaticResource App.Foreground}"
 										  VerticalContentAlignment="Bottom"
-										  IsChecked="{Binding RelativeSource={RelativeSource Self}, Path=Visibility, Mode=OneWay, Converter={StaticResource VisibilityToBooleanFilterConverterKey}, ConverterParameter=False}"
+										  IsChecked="{Binding IsUnison, Mode=TwoWay}"
 										  Visibility="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Path=DataContext.Settings.EnablesUnison, Converter={StaticResource BooleanToVisibilityConverterKey}}"/>
 
 							<Border Grid.ColumnSpan="3"
 									BorderBrush="{StaticResource Unison.Checked.Border}" BorderThickness="2"
 									IsHitTestVisible="False"
-									Visibility="{Binding ElementName=UnisonButton, Path=IsChecked, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverterKey}}"/>
+									Visibility="{Binding IsUnison, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverterKey}}"/>
 						</Grid>
 
 						<!-- Alternative -->

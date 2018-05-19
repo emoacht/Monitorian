@@ -59,12 +59,12 @@ namespace Monitorian.Models
 		/// Known monitors with user-specified names
 		/// </summary>
 		[DataMember]
-		public ObservableKeyedList<string, string> KnownMonitors
+		public ObservableKeyedList<string, MonitorValuePack> KnownMonitors
 		{
-			get => _knownMonitors ?? (_knownMonitors = new ObservableKeyedList<string, string>());
+			get => _knownMonitors ?? (_knownMonitors = new ObservableKeyedList<string, MonitorValuePack>());
 			private set => _knownMonitors = value;
 		}
-		private ObservableKeyedList<string, string> _knownMonitors;
+		private ObservableKeyedList<string, MonitorValuePack> _knownMonitors;
 
 		#endregion
 
@@ -142,5 +142,21 @@ namespace Monitorian.Models
 		}
 
 		#endregion
+	}
+
+	[DataContract]
+	public class MonitorValuePack
+	{
+		[DataMember]
+		public string Name { get; private set; }
+
+		[DataMember(Name = "Unison")]
+		public bool IsUnison { get; private set; }
+
+		public MonitorValuePack(string name, bool isUnison)
+		{
+			this.Name = name;
+			this.IsUnison = isUnison;
+		}
 	}
 }

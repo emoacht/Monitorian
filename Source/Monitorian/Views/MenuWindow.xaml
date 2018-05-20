@@ -138,8 +138,8 @@
 				   Padding="8,2,8,2"
 				   Foreground="{StaticResource App.Foreground}"
 				   Text="{Binding Source={x:Static models:ProductInfo.Title}, Mode=OneTime}"/>
-		<TextBlock Width="140" HorizontalAlignment="Left"
-				   Padding="8,0,8,6"
+		<TextBlock Width="160" HorizontalAlignment="Left"
+				    Padding="8,0,8,6"
 				   Foreground="{StaticResource App.Foreground}">
 			<Run Text="{Binding Source={x:Static models:ProductInfo.Version}, Mode=OneTime}"/>
 			<Run Text="|"/>
@@ -160,6 +160,17 @@
 					<i:EventTrigger EventName="MouseDown">
 						<ei:CallMethodAction TargetObject="{Binding}"
 											 MethodName="OpenLicense"/>
+					</i:EventTrigger>
+				</i:Interaction.Triggers>
+			</Run>
+			<Run Text="|"/>
+			<Run Foreground="{StaticResource App.Foreground.Shadow}"
+				 TextDecorations="Underline" Cursor="Hand"
+				 Text="{x:Static properties:Resources.Probe}">
+				<i:Interaction.Triggers>
+					<i:EventTrigger EventName="MouseDown">
+						<ei:CallMethodAction TargetObject="{Binding}"
+											 MethodName="PerformProbe"/>
 					</i:EventTrigger>
 				</i:Interaction.Triggers>
 			</Run>

@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -19,10 +22,14 @@ namespace Monitorian.Models.Monitor
 			{
 				foreach (var physicalItem in MonitorConfiguration.EnumeratePhysicalMonitors(handleItem.MonitorHandle))
 				{
-					var index = deviceItems.FindIndex(x =>
-						(x.DisplayIndex == handleItem.DisplayIndex) &&
-						(x.MonitorIndex == physicalItem.MonitorIndex) &&
-						string.Equals(x.Description, physicalItem.Description, StringComparison.OrdinalIgnoreCase));
+					int index = -1;
+					if (physicalItem.IsBrightnessSupported)
+					{
+						index = deviceItems.FindIndex(x =>
+							(x.DisplayIndex == handleItem.DisplayIndex) &&
+							(x.MonitorIndex == physicalItem.MonitorIndex) &&
+							string.Equals(x.Description, physicalItem.Description, StringComparison.OrdinalIgnoreCase));
+					}
 					if (index < 0)
 					{
 						physicalItem.Handle.Dispose();
@@ -50,9 +57,13 @@ namespace Monitorian.Models.Monitor
 			{
 				foreach (var installedItem in installedItems)
 				{
-					var index = deviceItems.FindIndex(x =>
-						string.Equals(x.DeviceInstanceId, desktopItem.DeviceInstanceId, StringComparison.OrdinalIgnoreCase) &&
-						string.Equals(x.DeviceInstanceId, installedItem.DeviceInstanceId, StringComparison.OrdinalIgnoreCase));
+					int index = -1;
+					if (desktopItem.BrightnessLevels.Any())
+					{
+						index = deviceItems.FindIndex(x =>
+							string.Equals(x.DeviceInstanceId, desktopItem.DeviceInstanceId, StringComparison.OrdinalIgnoreCase) &&
+							string.Equals(x.DeviceInstanceId, installedItem.DeviceInstanceId, StringComparison.OrdinalIgnoreCase));
+					}
 					if (index < 0)
 						continue;
 
@@ -81,5 +92,51 @@ namespace Monitorian.Models.Monitor
 					monitorIndex: deviceItem.MonitorIndex);
 			}
 		}
+
+		#region Probe
+
+		public static string ProbeMonitors()
+		{
+			var data = new MonitorData();
+
+			using (var ms = new MemoryStream())
+			using (var jw = JsonReaderWriterFactory.CreateJsonWriter(ms, Encoding.UTF8, true, true))
+			{
+				var serializer = new DataContractJsonSerializer(typeof(MonitorData));
+				serializer.WriteObject(jw, data);
+				jw.Flush();
+				return Encoding.UTF8.GetString(ms.ToArray());
+			}
+		}
+
+		[DataContract]
+		private class MonitorData
+		{
+			[DataMember(Order = 0, Name = "Device Context - DeviceItems")]
+			public DeviceContext.DeviceItem[] DeviceItems { get; private set; }
+
+			[DataMember(Order = 1, Name = "Monitor Configuration - PhysicalItems")]
+			public Dictionary<DeviceContext.HandleItem, MonitorConfiguration.PhysicalItem[]> PhysicalItems { get; private set; }
+
+			[DataMember(Order = 2, Name = "Device Installation - InstalledItems")]
+			public DeviceInstallation.InstalledItem[] InstalledItems { get; private set; }
+
+			[DataMember(Order = 3, Name = "MSMonitorClass - DesktopItems")]
+			public MSMonitor.DesktopItem[] DesktopItems { get; private set; }
+
+			public MonitorData()
+			{
+				DeviceItems = DeviceContext.EnumerateMonitorDevices().ToArray();
+
+				PhysicalItems = DeviceContext.GetMonitorHandles().ToDictionary(
+					x => x,
+					x => MonitorConfiguration.EnumeratePhysicalMonitors(x.MonitorHandle).ToArray());
+
+				InstalledItems = DeviceInstallation.EnumerateInstalledMonitors().ToArray();
+				DesktopItems = MSMonitor.EnumerateDesktopMonitors().ToArray();
+			}
+		}
+
+		#endregion
 	}
 }

@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 using Monitorian.Models;
+using Monitorian.Models.Monitor;
 
 namespace Monitorian.ViewModels
 {
@@ -31,6 +33,27 @@ namespace Monitorian.ViewModels
 				var licenseFilePath = DocumentService.SaveAsHtml(LicenseFileName, licenseFileContent);
 
 				Process.Start(licenseFilePath);
+			});
+		}
+
+		#endregion
+
+		#region Probe
+
+		private const string ProbeFileName = "Probe.log";
+
+		public void PerformProbe()
+		{
+			var probeFilePath = Path.Combine(
+				Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory),
+				ProbeFileName);
+
+			Task.Run(() =>
+			{
+				var log = $"[Date: {DateTime.Now}]" + Environment.NewLine
+					+ MonitorManager.ProbeMonitors();
+
+				File.WriteAllText(probeFilePath, log, Encoding.UTF8);
 			});
 		}
 

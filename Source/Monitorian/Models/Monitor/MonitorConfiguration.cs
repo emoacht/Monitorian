@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -126,19 +127,29 @@ namespace Monitorian.Models.Monitor
 
 		#region Type
 
+		[DataContract]
 		public class PhysicalItem
 		{
-			public string Description { get; }
+			[DataMember]
+			public string Description { get; private set; }
+
 			public SafePhysicalMonitorHandle Handle { get; }
-			public int MonitorIndex { get; }
+
+			[DataMember]
+			public bool IsBrightnessSupported { get; private set; }
+
+			[DataMember]
+			public int MonitorIndex { get; private set; }
 
 			public PhysicalItem(
 				string description,
 				SafePhysicalMonitorHandle handle,
+				bool isBrightnessSupported,
 				int monitorIndex)
 			{
 				this.Description = description;
 				this.Handle = handle;
+				this.IsBrightnessSupported = isBrightnessSupported;
 				this.MonitorIndex = monitorIndex;
 			}
 		}
@@ -178,7 +189,7 @@ namespace Monitorian.Models.Monitor
 				{
 					var handle = new SafePhysicalMonitorHandle(physicalMonitor.hPhysicalMonitor);
 
-					bool isSupported = GetMonitorCapabilities(
+					bool isBrighnessSupported = GetMonitorCapabilities(
 						handle,
 						out MC_CAPS caps,
 						out MC_SUPPORTED_COLOR_TEMPERATURE temperature)
@@ -186,15 +197,14 @@ namespace Monitorian.Models.Monitor
 
 					//Debug.WriteLine($"Handle: {physicalMonitor.hPhysicalMonitor}");
 					//Debug.WriteLine($"Description: {physicalMonitor.szPhysicalMonitorDescription}");
-					//Debug.WriteLine($"IsSupported: {isSupported}");
+					//Debug.WriteLine($"IsBrighnessSupported: {isBrighnessSupported}");
 
-					if (isSupported)
-					{
-						yield return new PhysicalItem(
-							description: physicalMonitor.szPhysicalMonitorDescription,
-							handle: handle,
-							monitorIndex: monitorIndex);
-					}
+					yield return new PhysicalItem(
+						description: physicalMonitor.szPhysicalMonitorDescription,
+						handle: handle,
+						isBrightnessSupported: isBrighnessSupported,
+						monitorIndex: monitorIndex);
+
 					monitorIndex++;
 				}
 			}

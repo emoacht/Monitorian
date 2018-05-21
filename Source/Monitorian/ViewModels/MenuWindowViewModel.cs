@@ -40,10 +40,28 @@ namespace Monitorian.ViewModels
 
 		#region Probe
 
+		private int _count = 0;
+		private const int CountDivider = 3;
+
+		public void EnableProbe()
+		{
+			if (!CanProbe && (++_count % CountDivider == 0))
+				CanProbe = true;
+		}
+
+		public bool CanProbe
+		{
+			get => _canProbe;
+			private set => SetPropertyValue(ref _canProbe, value);
+		}
+		private bool _canProbe;
+
 		private const string ProbeFileName = "Probe.log";
 
 		public void PerformProbe()
 		{
+			CanProbe = false;
+
 			var probeFilePath = Path.Combine(
 				Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory),
 				ProbeFileName);

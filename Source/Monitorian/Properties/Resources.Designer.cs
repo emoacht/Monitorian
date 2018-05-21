@@ -97,7 +97,7 @@ namespace Monitorian.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Probe.
+        ///   Looks up a localized string similar to Probe monitors.
         /// </summary>
         public static string Probe {
             get {

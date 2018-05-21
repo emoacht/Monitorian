@@ -137,9 +137,16 @@
 		<TextBlock HorizontalAlignment="Left"
 				   Padding="8,2,8,2"
 				   Foreground="{StaticResource App.Foreground}"
-				   Text="{Binding Source={x:Static models:ProductInfo.Title}, Mode=OneTime}"/>
-		<TextBlock Width="160" HorizontalAlignment="Left"
-				    Padding="8,0,8,6"
+				   Text="{Binding Source={x:Static models:ProductInfo.Title}, Mode=OneTime}">
+			<i:Interaction.Triggers>
+				<i:EventTrigger EventName="MouseDown">
+					<ei:CallMethodAction TargetObject="{Binding}"
+										 MethodName="EnableProbe"/>
+				</i:EventTrigger>
+			</i:Interaction.Triggers>
+		</TextBlock>
+		<TextBlock Width="140" HorizontalAlignment="Left"
+				   Padding="8,0,8,6"
 				   Foreground="{StaticResource App.Foreground}">
 			<Run Text="{Binding Source={x:Static models:ProductInfo.Version}, Mode=OneTime}"/>
 			<Run Text="|"/>
@@ -163,20 +170,25 @@
 					</i:EventTrigger>
 				</i:Interaction.Triggers>
 			</Run>
-			<Run Text="|"/>
-			<Run Foreground="{StaticResource App.Foreground.Shadow}"
-				 TextDecorations="Underline" Cursor="Hand"
-				 Text="{x:Static properties:Resources.Probe}">
+		</TextBlock>
+
+		<Separator Style="{StaticResource MenuSeparatorStyle}"/>
+
+		<ContentControl Style="{StaticResource MenuItemStyle}">
+			<Button Padding="8,4"
+					Style="{StaticResource PlainButtonItemStyle}"
+					Foreground="{StaticResource App.Foreground}"
+					FontSize="13"
+					Content="{x:Static properties:Resources.Probe}"
+					Visibility="{Binding CanProbe, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverterKey}}">
 				<i:Interaction.Triggers>
-					<i:EventTrigger EventName="MouseDown">
+					<i:EventTrigger EventName="Click">
 						<ei:CallMethodAction TargetObject="{Binding}"
 											 MethodName="PerformProbe"/>
 					</i:EventTrigger>
 				</i:Interaction.Triggers>
-			</Run>
-		</TextBlock>
-
-		<Separator Style="{StaticResource MenuSeparatorStyle}"/>
+			</Button>
+		</ContentControl>
 
 		<ContentControl Style="{StaticResource MenuItemStyle}">
 			<CheckBox Padding="8,4"

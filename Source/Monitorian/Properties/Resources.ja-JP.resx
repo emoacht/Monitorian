@@ -126,6 +126,9 @@
   <data name="NotControllable" xml:space="preserve">
     <value>このモニターはコントロールできません。必要条件を参照。</value>
   </data>
+  <data name="Probe" xml:space="preserve">
+    <value>モニターを調査する</value>
+  </data>
   <data name="ShowsAdjusted" xml:space="preserve">
     <value>調整後の明るさを表示する</value>
   </data>

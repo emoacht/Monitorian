@@ -17,16 +17,16 @@ namespace Monitorian.Models.Monitor
 		private readonly bool _isRemovable;
 
 		public WmiMonitorItem(
-			string description,
 			string deviceInstanceId,
+			string description,
 			byte displayIndex,
 			byte monitorIndex,
 			byte[] brightnessLevels,
 			bool isRemovable) : base(
-				description,
-				deviceInstanceId,
-				displayIndex,
-				monitorIndex,
+				deviceInstanceId: deviceInstanceId,
+				description: description,
+				displayIndex: displayIndex,
+				monitorIndex: monitorIndex,
 				isAccessible: true)
 		{
 			this._brightnessLevels = brightnessLevels ?? throw new ArgumentNullException(nameof(brightnessLevels));

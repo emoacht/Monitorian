@@ -38,11 +38,12 @@ namespace Monitorian.Models.Monitor
 
 					var deviceItem = deviceItems[index];
 					yield return new DdcMonitorItem(
-						description: deviceItem.Description,
 						deviceInstanceId: deviceItem.DeviceInstanceId,
+						description: deviceItem.Description,
 						displayIndex: deviceItem.DisplayIndex,
 						monitorIndex: deviceItem.MonitorIndex,
-						handle: physicalItem.Handle);
+						handle: physicalItem.Handle,
+						isLowLevel: physicalItem.IsLowLevel);
 
 					deviceItems.RemoveAt(index);
 					if (deviceItems.Count == 0)
@@ -69,8 +70,8 @@ namespace Monitorian.Models.Monitor
 
 					var deviceItem = deviceItems[index];
 					yield return new WmiMonitorItem(
-						description: deviceItem.Description,
 						deviceInstanceId: deviceItem.DeviceInstanceId,
+						description: deviceItem.Description,
 						displayIndex: deviceItem.DisplayIndex,
 						monitorIndex: deviceItem.MonitorIndex,
 						brightnessLevels: desktopItem.BrightnessLevels,
@@ -86,8 +87,8 @@ namespace Monitorian.Models.Monitor
 			foreach (var deviceItem in deviceItems)
 			{
 				yield return new InaccessibleMonitorItem(
-					description: deviceItem.Description,
 					deviceInstanceId: deviceItem.DeviceInstanceId,
+					description: deviceItem.Description,
 					displayIndex: deviceItem.DisplayIndex,
 					monitorIndex: deviceItem.MonitorIndex);
 			}

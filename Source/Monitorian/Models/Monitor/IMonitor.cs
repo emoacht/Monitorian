@@ -8,8 +8,8 @@ namespace Monitorian.Models.Monitor
 {
 	public interface IMonitor : IDisposable
 	{
-		string Description { get; }
 		string DeviceInstanceId { get; }
+		string Description { get; }
 		byte DisplayIndex { get; }
 		byte MonitorIndex { get; }
 		bool IsAccessible { get; }

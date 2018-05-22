@@ -18,34 +18,6 @@ namespace Monitorian.Models.Monitor
 
 		[DllImport("Dxva2.dll", SetLastError = true)]
 		[return: MarshalAs(UnmanagedType.Bool)]
-		private static extern bool GetMonitorBrightness(
-			IntPtr hMonitor,
-			out uint pdwMinimumBrightness,
-			out uint pdwCurrentBrightness,
-			out uint pdwMaximumBrightness);
-
-		[DllImport("Dxva2.dll", SetLastError = true)]
-		[return: MarshalAs(UnmanagedType.Bool)]
-		private static extern bool GetMonitorBrightness(
-			SafePhysicalMonitorHandle hMonitor,
-			out uint pdwMinimumBrightness,
-			out uint pdwCurrentBrightness,
-			out uint pdwMaximumBrightness);
-
-		[DllImport("Dxva2.dll", SetLastError = true)]
-		[return: MarshalAs(UnmanagedType.Bool)]
-		private static extern bool SetMonitorBrightness(
-			IntPtr hMonitor,
-			uint dwNewBrightness);
-
-		[DllImport("Dxva2.dll", SetLastError = true)]
-		[return: MarshalAs(UnmanagedType.Bool)]
-		private static extern bool SetMonitorBrightness(
-			SafePhysicalMonitorHandle hMonitor,
-			uint dwNewBrightness);
-
-		[DllImport("Dxva2.dll", SetLastError = true)]
-		[return: MarshalAs(UnmanagedType.Bool)]
 		private static extern bool GetNumberOfPhysicalMonitorsFromHMONITOR(
 			IntPtr hMonitor,
 			out uint pdwNumberOfPhysicalMonitors);
@@ -71,16 +43,55 @@ namespace Monitorian.Models.Monitor
 		[DllImport("Dxva2.dll", SetLastError = true)]
 		[return: MarshalAs(UnmanagedType.Bool)]
 		private static extern bool GetMonitorCapabilities(
-			IntPtr hMonitor,
+			SafePhysicalMonitorHandle hMonitor,
 			out MC_CAPS pdwMonitorCapabilities,
 			out MC_SUPPORTED_COLOR_TEMPERATURE pdwSupportedColorTemperatures);
 
 		[DllImport("Dxva2.dll", SetLastError = true)]
 		[return: MarshalAs(UnmanagedType.Bool)]
-		private static extern bool GetMonitorCapabilities(
+		private static extern bool GetMonitorBrightness(
 			SafePhysicalMonitorHandle hMonitor,
-			out MC_CAPS pdwMonitorCapabilities,
-			out MC_SUPPORTED_COLOR_TEMPERATURE pdwSupportedColorTemperatures);
+			out uint pdwMinimumBrightness,
+			out uint pdwCurrentBrightness,
+			out uint pdwMaximumBrightness);
+
+		[DllImport("Dxva2.dll", SetLastError = true)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		private static extern bool SetMonitorBrightness(
+			SafePhysicalMonitorHandle hMonitor,
+			uint dwNewBrightness);
+
+		[DllImport("Dxva2.dll", SetLastError = true)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		private static extern bool GetCapabilitiesStringLength(
+			SafePhysicalMonitorHandle hMonitor,
+			out uint pdwCapabilitiesStringLengthInCharacters);
+
+		[DllImport("Dxva2.dll", SetLastError = true)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		private static extern bool CapabilitiesRequestAndCapabilitiesReply(
+			SafePhysicalMonitorHandle hMonitor,
+
+			[MarshalAs(UnmanagedType.LPStr)]
+			[Out] StringBuilder pszASCIICapabilitiesString,
+
+			uint dwCapabilitiesStringLengthInCharacters);
+
+		[DllImport("Dxva2.dll", SetLastError = true)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		private static extern bool GetVCPFeatureAndVCPFeatureReply(
+			SafePhysicalMonitorHandle hMonitor,
+			byte bVCPCode,
+			out LPMC_VCP_CODE_TYPE pvct,
+			out uint pdwCurrentValue,
+			out uint pdwMaximumValue);
+
+		[DllImport("Dxva2.dll", SetLastError = true)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		private static extern bool SetVCPFeature(
+			SafePhysicalMonitorHandle hMonitor,
+			byte bVCPCode,
+			uint dwNewValue);
 
 		[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
 		public struct PHYSICAL_MONITOR
@@ -123,6 +134,14 @@ namespace Monitorian.Models.Monitor
 			MC_SUPPORTED_COLOR_TEMPERATURE_11500K = 0x00000080
 		}
 
+		private enum LPMC_VCP_CODE_TYPE
+		{
+			MC_MOMENTARY,
+			MC_SET_PARAMETER
+		}
+
+		private const byte LuminanceCode = 0x10; // VCP Code of Luminance
+
 		#endregion
 
 		#region Type
@@ -133,24 +152,29 @@ namespace Monitorian.Models.Monitor
 			[DataMember]
 			public string Description { get; private set; }
 
+			[DataMember]
+			public int MonitorIndex { get; private set; }
+
 			public SafePhysicalMonitorHandle Handle { get; }
 
 			[DataMember]
 			public bool IsBrightnessSupported { get; private set; }
 
 			[DataMember]
-			public int MonitorIndex { get; private set; }
+			public bool IsLowLevel { get; private set; }
 
 			public PhysicalItem(
 				string description,
+				int monitorIndex,
 				SafePhysicalMonitorHandle handle,
 				bool isBrightnessSupported,
-				int monitorIndex)
+				bool isLowLevel)
 			{
 				this.Description = description;
+				this.MonitorIndex = monitorIndex;
 				this.Handle = handle;
 				this.IsBrightnessSupported = isBrightnessSupported;
-				this.MonitorIndex = monitorIndex;
+				this.IsLowLevel = isLowLevel;
 			}
 		}
 
@@ -189,21 +213,41 @@ namespace Monitorian.Models.Monitor
 				{
 					var handle = new SafePhysicalMonitorHandle(physicalMonitor.hPhysicalMonitor);
 
-					bool isBrighnessSupported = GetMonitorCapabilities(
+					bool isBrightnessSupported = GetMonitorCapabilities(
 						handle,
 						out MC_CAPS caps,
 						out MC_SUPPORTED_COLOR_TEMPERATURE temperature)
 						&& caps.HasFlag(MC_CAPS.MC_CAPS_BRIGHTNESS);
 
-					//Debug.WriteLine($"Handle: {physicalMonitor.hPhysicalMonitor}");
+					bool isLowLevel = false;
+
+					if (!isBrightnessSupported)
+					{
+						if (GetCapabilitiesStringLength(
+							handle,
+							out uint capabilitiesStringLength))
+						{
+							var capabilitiesString = new StringBuilder((int)capabilitiesStringLength);
+
+							isLowLevel = isBrightnessSupported = CapabilitiesRequestAndCapabilitiesReply(
+								handle,
+								capabilitiesString,
+								capabilitiesStringLength)
+								&& IsBrightnessSupportedLowLevel(capabilitiesString.ToString());
+						}
+					}
+
 					//Debug.WriteLine($"Description: {physicalMonitor.szPhysicalMonitorDescription}");
-					//Debug.WriteLine($"IsBrighnessSupported: {isBrighnessSupported}");
+					//Debug.WriteLine($"Handle: {physicalMonitor.hPhysicalMonitor}");
+					//Debug.WriteLine($"IsBrighnessSupported: {isBrightnessSupported}");
+					//Debug.WriteLine($"IsLowLevel: {isLowLevel}");
 
 					yield return new PhysicalItem(
 						description: physicalMonitor.szPhysicalMonitorDescription,
+						monitorIndex: monitorIndex,
 						handle: handle,
-						isBrightnessSupported: isBrighnessSupported,
-						monitorIndex: monitorIndex);
+						isBrightnessSupported: isBrightnessSupported,
+						isLowLevel: isLowLevel);
 
 					monitorIndex++;
 				}
@@ -214,7 +258,40 @@ namespace Monitorian.Models.Monitor
 			}
 		}
 
-		public static int GetBrightness(SafePhysicalMonitorHandle physicalMonitorHandle)
+		private static bool IsBrightnessSupportedLowLevel(string source)
+		{
+			if (string.IsNullOrWhiteSpace(source))
+				return false;
+
+			var index = source.IndexOf("vcp", StringComparison.OrdinalIgnoreCase);
+			if (index < 0)
+				return false;
+
+			int depth = 0;
+			var buff = new StringBuilder();
+
+			foreach (char c in source.Substring(index + 3).TrimStart())
+			{
+				switch (c)
+				{
+					case '(':
+						depth++;
+						break;
+					case ')':
+						depth--;
+						break;
+					default:
+						if (depth == 1) { buff.Append(c); }
+						break;
+				}
+				if (depth <= 0)
+					break;
+			}
+
+			return buff.ToString().Split().Any(x => x == "10"); // 10 is VCP Code of Luminance.
+		}
+
+		public static int GetBrightness(SafePhysicalMonitorHandle physicalMonitorHandle, bool useLowLevel = false)
 		{
 			if (physicalMonitorHandle == null)
 				throw new ArgumentNullException(nameof(physicalMonitorHandle));
@@ -225,22 +302,36 @@ namespace Monitorian.Models.Monitor
 				return -1;
 			}
 
-			if (!GetMonitorBrightness(
-				physicalMonitorHandle,
-				out uint minimumBrightness,
-				out uint currentBrightness,
-				out uint maximumBrightness))
+			if (!useLowLevel)
 			{
-				Debug.WriteLine($"Failed to get brightness. ({Error.CreateMessage()})");
-				return -1;
+				if (!GetMonitorBrightness(
+					physicalMonitorHandle,
+					out uint minimumBrightness,
+					out uint currentBrightness,
+					out uint maximumBrightness))
+				{
+					Debug.WriteLine($"Failed to get brightness. ({Error.CreateMessage()})");
+					return -1;
+				}
+				return (int)currentBrightness;
 			}
-
-			//Debug.WriteLine($"Minimum: {minimumBrightness}, Current {currentBrightness}, Maximum: {maximumBrightness}");
-
-			return (int)currentBrightness;
+			else
+			{
+				if (!GetVCPFeatureAndVCPFeatureReply(
+					physicalMonitorHandle,
+					LuminanceCode,
+					out LPMC_VCP_CODE_TYPE _,
+					out uint currentValue,
+					out uint maximumValue))
+				{
+					Debug.WriteLine($"Failed to get brightness (Low level). ({Error.CreateMessage()})");
+					return -1;
+				}
+				return (int)currentValue;
+			}
 		}
 
-		public static bool SetBrightness(SafePhysicalMonitorHandle physicalMonitorHandle, int brightness)
+		public static bool SetBrightness(SafePhysicalMonitorHandle physicalMonitorHandle, int brightness, bool useLowLevel = false)
 		{
 			if (physicalMonitorHandle == null)
 				throw new ArgumentNullException(nameof(physicalMonitorHandle));
@@ -253,12 +344,27 @@ namespace Monitorian.Models.Monitor
 				return false;
 			}
 
-			if (!SetMonitorBrightness(physicalMonitorHandle, (uint)brightness))
+			if (!useLowLevel)
 			{
-				Debug.WriteLine($"Failed to set brightness. ({Error.CreateMessage()})");
-				return false;
+				if (!SetMonitorBrightness(
+					physicalMonitorHandle,
+					(uint)brightness))
+				{
+					Debug.WriteLine($"Failed to set brightness. ({Error.CreateMessage()})");
+					return false;
+				}
 			}
-
+			else
+			{
+				if (!SetVCPFeature(
+					physicalMonitorHandle,
+					LuminanceCode,
+					(uint)brightness))
+				{
+					Debug.WriteLine($"Failed to set brightness (Low level). ({Error.CreateMessage()})");
+					return false;
+				}
+			}
 			return true;
 		}
 	}

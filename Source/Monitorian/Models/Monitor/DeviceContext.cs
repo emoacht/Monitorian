@@ -137,17 +137,17 @@ namespace Monitorian.Models.Monitor
 		[DataContract]
 		public class HandleItem
 		{
-			public IntPtr MonitorHandle { get; }
-
 			[DataMember]
 			public int DisplayIndex { get; private set; }
 
+			public IntPtr MonitorHandle { get; }
+
 			public HandleItem(
-				IntPtr monitorHandle,
-				int displayIndex)
+				int displayIndex,
+				IntPtr monitorHandle)
 			{
-				this.MonitorHandle = monitorHandle;
 				this.DisplayIndex = displayIndex;
+				this.MonitorHandle = monitorHandle;
 			}
 		}
 

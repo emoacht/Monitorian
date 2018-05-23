@@ -60,7 +60,7 @@ namespace Monitorian.Models.Monitor
 		private static extern bool SetupDiGetDeviceInstanceId(
 			IntPtr DeviceInfoSet,
 			ref SP_DEVINFO_DATA DeviceInfoData,
-			StringBuilder DeviceInstanceId,
+			[Out] StringBuilder DeviceInstanceId,
 			uint DeviceInstanceIdSize,
 			out uint RequiredSize);
 

@@ -32,19 +32,19 @@ namespace Monitorian.Models.Monitor
 		{
 			var message = new StringBuilder($"Code: {errorCode}");
 
-			var buff = new StringBuilder(512); // This 512 capacity is arbitrary.
+			var buffer = new StringBuilder(512); // This 512 capacity is arbitrary.
 
 			var messageLength = FormatMessage(
 			  FORMAT_MESSAGE_FROM_SYSTEM,
 			  IntPtr.Zero,
 			  (uint)errorCode,
 			  0x0409, // US (English)
-			  buff,
-			  buff.Capacity,
+			  buffer,
+			  buffer.Capacity,
 			  IntPtr.Zero);
 
 			if (0 < messageLength)
-				message.Append($", Message: {buff}");
+				message.Append($", Message: {buffer}");
 
 			return message.ToString();
 		}

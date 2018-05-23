@@ -21,7 +21,7 @@ namespace Monitorian.Models.Monitor
 			byte displayIndex,
 			byte monitorIndex,
 			SafePhysicalMonitorHandle handle,
-			bool isLowLevel) : base(
+			bool isLowLevel = false) : base(
 				deviceInstanceId: deviceInstanceId,
 				description: description,
 				displayIndex: displayIndex,

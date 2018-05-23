@@ -168,7 +168,7 @@ namespace Monitorian.Models.Monitor
 				int monitorIndex,
 				SafePhysicalMonitorHandle handle,
 				bool isBrightnessSupported,
-				bool isLowLevel)
+				bool isLowLevel = false)
 			{
 				this.Description = description;
 				this.MonitorIndex = monitorIndex;
@@ -216,7 +216,7 @@ namespace Monitorian.Models.Monitor
 					bool isBrightnessSupported = GetMonitorCapabilities(
 						handle,
 						out MC_CAPS caps,
-						out MC_SUPPORTED_COLOR_TEMPERATURE temperature)
+						out MC_SUPPORTED_COLOR_TEMPERATURE _)
 						&& caps.HasFlag(MC_CAPS.MC_CAPS_BRIGHTNESS);
 
 					bool isLowLevel = false;
@@ -233,7 +233,7 @@ namespace Monitorian.Models.Monitor
 								handle,
 								capabilitiesString,
 								capabilitiesStringLength)
-								&& IsBrightnessSupportedLowLevel(capabilitiesString.ToString());
+								&& IsLowLevelBrightnessSupported(capabilitiesString.ToString());
 						}
 					}
 
@@ -258,7 +258,7 @@ namespace Monitorian.Models.Monitor
 			}
 		}
 
-		private static bool IsBrightnessSupportedLowLevel(string source)
+		private static bool IsLowLevelBrightnessSupported(string source)
 		{
 			if (string.IsNullOrWhiteSpace(source))
 				return false;
@@ -268,7 +268,7 @@ namespace Monitorian.Models.Monitor
 				return false;
 
 			int depth = 0;
-			var buff = new StringBuilder();
+			var buffer = new StringBuilder(source.Length);
 
 			foreach (char c in source.Substring(index + 3).TrimStart())
 			{
@@ -281,14 +281,14 @@ namespace Monitorian.Models.Monitor
 						depth--;
 						break;
 					default:
-						if (depth == 1) { buff.Append(c); }
+						if (depth == 1) { buffer.Append(c); }
 						break;
 				}
 				if (depth <= 0)
 					break;
 			}
 
-			return buff.ToString().Split().Any(x => x == "10"); // 10 is VCP Code of Luminance.
+			return buffer.ToString().Split().Any(x => x == "10"); // 10 (hex) is VCP Code of Luminance.
 		}
 
 		public static int GetBrightness(SafePhysicalMonitorHandle physicalMonitorHandle, bool useLowLevel = false)

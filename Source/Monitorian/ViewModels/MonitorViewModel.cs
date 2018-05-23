@@ -21,8 +21,8 @@ namespace Monitorian.ViewModels
 			this._controller.TryLoadName(DeviceInstanceId, ref _name, ref _isUnison);			
 		}
 
-		public string Description => _monitor.Description;
 		public string DeviceInstanceId => _monitor.DeviceInstanceId;
+		public string Description => _monitor.Description;		
 		public byte DisplayIndex => _monitor.DisplayIndex;
 		public byte MonitorIndex => _monitor.MonitorIndex;
 		public bool IsAccessible => _monitor.IsAccessible;

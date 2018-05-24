@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -105,37 +106,48 @@ namespace Monitorian.Models.Monitor
 
 		#region Type
 
+		[DataContract]
 		public class DeviceItem
 		{
-			public string Description { get; }
-			public string DeviceInstanceId { get; }
-			public byte DisplayIndex { get; }
-			public byte MonitorIndex { get; }
+			[DataMember(Order = 0)]
+			public string DeviceInstanceId { get; private set; }
+
+			[DataMember(Order = 1)]
+			public string Description { get; private set; }
+
+			[DataMember(Order = 2)]
+			public byte DisplayIndex { get; private set; }
+
+			[DataMember(Order = 3)]
+			public byte MonitorIndex { get; private set; }
 
 			public DeviceItem(
-				string description,
 				string deviceInstanceId,
+				string description,
 				byte displayIndex,
 				byte monitorIndex)
 			{
-				this.Description = description;
 				this.DeviceInstanceId = deviceInstanceId;
+				this.Description = description;
 				this.DisplayIndex = displayIndex;
 				this.MonitorIndex = monitorIndex;
 			}
 		}
 
+		[DataContract]
 		public class HandleItem
 		{
+			[DataMember]
+			public int DisplayIndex { get; private set; }
+
 			public IntPtr MonitorHandle { get; }
-			public int DisplayIndex { get; }
 
 			public HandleItem(
-				IntPtr monitorHandle,
-				int displayIndex)
+				int displayIndex,
+				IntPtr monitorHandle)
 			{
-				this.MonitorHandle = monitorHandle;
 				this.DisplayIndex = displayIndex;
+				this.MonitorHandle = monitorHandle;
 			}
 		}
 
@@ -162,18 +174,17 @@ namespace Monitorian.Models.Monitor
 					var deviceInstanceId = GetDeviceInstanceId(monitor.DeviceID);
 					var isActive = monitor.StateFlags.HasFlag(DISPLAY_DEVICE_FLAG.DISPLAY_DEVICE_ACTIVE);
 
-					//Debug.WriteLine($"Monitor DeviceName: {monitor.DeviceName} (Display: {displayIndex}, Monitor: {monitorIndex})");
-					//Debug.WriteLine($"DeviceString: {monitor.DeviceString}");
 					//Debug.WriteLine($"DeviceId: {monitor.DeviceID}");
 					//Debug.WriteLine($"DeviceInstanceId: {deviceInstanceId}");
+					//Debug.WriteLine($"DeviceString: {monitor.DeviceString}");
 					//Debug.WriteLine($"IsActive {isActive}");
 
 					if (!isActive)
 						continue;
 
 					yield return new DeviceItem(
-						description: monitor.DeviceString,
 						deviceInstanceId: deviceInstanceId,
+						description: monitor.DeviceString,
 						displayIndex: displayIndex,
 						monitorIndex: monitorIndex);
 

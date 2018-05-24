@@ -210,9 +210,9 @@ namespace ScreenFrame
 		/// <returns>DPI information</returns>
 		public static DpiScale ConvertToDpiScale(IntPtr wParam)
 		{
-			var buff = (uint)wParam;
-			var dpiX = (ushort)(buff & 0xffff);
-			var dpiY = (ushort)(buff >> 16);
+			var dword = (uint)wParam;
+			var dpiX = (ushort)(dword & 0xffff);
+			var dpiY = (ushort)(dword >> 16);
 
 			return new DpiScale(dpiX / DefaultPixelsPerInch, dpiY / DefaultPixelsPerInch);
 		}

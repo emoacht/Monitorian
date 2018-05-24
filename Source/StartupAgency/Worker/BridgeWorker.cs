@@ -66,11 +66,11 @@ namespace StartupAgency.Worker
 				{
 					using (session)
 					{
-						var buff = (string)session.GetPropertyValue("StartTime");
-						if (string.IsNullOrEmpty(buff))
+						var startTimeString = (string)session.GetPropertyValue("StartTime");
+						if (string.IsNullOrEmpty(startTimeString))
 							continue;
 
-						startTime = new DateTimeOffset(ManagementDateTimeConverter.ToDateTime(buff));
+						startTime = new DateTimeOffset(ManagementDateTimeConverter.ToDateTime(startTimeString));
 						return true;
 					}
 				}

@@ -97,6 +97,15 @@ namespace Monitorian.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Probe into monitors.
+        /// </summary>
+        public static string Probe {
+            get {
+                return ResourceManager.GetString("Probe", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to An unexpected problem occurred. Save exception log to Desktop?.
         /// </summary>
         public static string RecordException {

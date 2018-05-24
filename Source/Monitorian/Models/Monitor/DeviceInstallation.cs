@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -59,7 +60,7 @@ namespace Monitorian.Models.Monitor
 		private static extern bool SetupDiGetDeviceInstanceId(
 			IntPtr DeviceInfoSet,
 			ref SP_DEVINFO_DATA DeviceInfoData,
-			StringBuilder DeviceInstanceId,
+			[Out] StringBuilder DeviceInstanceId,
 			uint DeviceInstanceIdSize,
 			out uint RequiredSize);
 
@@ -161,19 +162,25 @@ namespace Monitorian.Models.Monitor
 
 		#region Type
 
+		[DataContract]
 		public class InstalledItem
 		{
-			public string Description { get; }
-			public string DeviceInstanceId { get; }
-			public bool IsRemovable { get; }
+			[DataMember(Order = 0)]
+			public string DeviceInstanceId { get; private set; }
+
+			[DataMember(Order = 1)]
+			public string Description { get; private set; }
+
+			[DataMember(Order = 2)]
+			public bool IsRemovable { get; private set; }
 
 			public InstalledItem(
-				string description,
 				string deviceInstanceId,
+				string description,
 				bool isRemovable)
 			{
-				this.Description = description;
 				this.DeviceInstanceId = deviceInstanceId;
+				this.Description = description;
 				this.IsRemovable = isRemovable;
 			}
 		}
@@ -209,22 +216,20 @@ namespace Monitorian.Models.Monitor
 						memberIndex,
 						ref deviceInfoData))
 					{
-						var deviceDesc = GetDevicePropertyString(deviceInfoSet, deviceInfoData, SPDRP.SPDRP_DEVICEDESC);
-						//Debug.WriteLine($"DeviceDesc: {deviceDesc}");
-
-						var hardwareId = GetDevicePropertyString(deviceInfoSet, deviceInfoData, SPDRP.SPDRP_HARDWAREID);
-						//Debug.WriteLine($"HardwareId: {hardwareId}");
-
 						var deviceInstanceId = GetDeviceInstanceId(deviceInfoSet, deviceInfoData);
-						//Debug.WriteLine($"DeviceInstanceId: {deviceInstanceId}");
+						var deviceDesc = GetDevicePropertyString(deviceInfoSet, deviceInfoData, SPDRP.SPDRP_DEVICEDESC);
 
 						var capability = (CM_DEVCAP)GetDevicePropertyUInt(deviceInfoSet, deviceInfoData, SPDRP.SPDRP_CAPABILITIES);
 						var isRemovable = capability.HasFlag(CM_DEVCAP.CM_DEVCAP_REMOVABLE);
+
+						//Debug.WriteLine($"DeviceInstanceId: {deviceInstanceId}");
+						//Debug.WriteLine($"DeviceDesc: {deviceDesc}");
+						//Debug.WriteLine($"HardwareId: {GetDevicePropertyString(deviceInfoSet, deviceInfoData, SPDRP.SPDRP_HARDWAREID)}");
 						//Debug.WriteLine($"IsRemovable: {isRemovable}");
 
 						yield return new InstalledItem(
-							description: deviceDesc,
 							deviceInstanceId: deviceInstanceId,
+							description: deviceDesc,
 							isRemovable: isRemovable);
 					}
 					else

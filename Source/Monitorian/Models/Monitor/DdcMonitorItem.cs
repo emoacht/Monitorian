@@ -12,21 +12,24 @@ namespace Monitorian.Models.Monitor
 	/// </summary>
 	internal class DdcMonitorItem : MonitorItem
 	{
-		public SafePhysicalMonitorHandle Handle { get; }
+		private readonly SafePhysicalMonitorHandle _handle;
+		private readonly bool _isLowLevel;
 
 		public DdcMonitorItem(
-			string description,
 			string deviceInstanceId,
+			string description,
 			byte displayIndex,
 			byte monitorIndex,
-			SafePhysicalMonitorHandle handle) : base(
-				description,
-				deviceInstanceId,
-				displayIndex,
-				monitorIndex,
+			SafePhysicalMonitorHandle handle,
+			bool isLowLevel = false) : base(
+				deviceInstanceId: deviceInstanceId,
+				description: description,
+				displayIndex: displayIndex,
+				monitorIndex: monitorIndex,
 				isAccessible: true)
 		{
-			this.Handle = handle ?? throw new ArgumentNullException(nameof(handle));
+			this._handle = handle ?? throw new ArgumentNullException(nameof(handle));
+			this._isLowLevel = isLowLevel;
 		}
 
 		private readonly object _lock = new object();
@@ -35,7 +38,7 @@ namespace Monitorian.Models.Monitor
 		{
 			lock (_lock)
 			{
-				this.Brightness = MonitorConfiguration.GetBrightness(Handle);
+				this.Brightness = MonitorConfiguration.GetBrightness(_handle, _isLowLevel);
 				return (0 <= this.Brightness);
 			}
 		}
@@ -47,7 +50,7 @@ namespace Monitorian.Models.Monitor
 
 			lock (_lock)
 			{
-				if (MonitorConfiguration.SetBrightness(Handle, brightness))
+				if (MonitorConfiguration.SetBrightness(_handle, brightness, _isLowLevel))
 				{
 					this.Brightness = brightness;
 					return true;
@@ -70,7 +73,7 @@ namespace Monitorian.Models.Monitor
 				if (disposing)
 				{
 					// Free any other managed objects here.
-					Handle.Dispose();
+					_handle.Dispose();
 				}
 
 				// Free any unmanaged objects here.

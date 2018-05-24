@@ -8,8 +8,8 @@ namespace Monitorian.Models.Monitor
 {
 	internal abstract class MonitorItem : IMonitor, IDisposable
 	{
-		public string Description { get; }
 		public string DeviceInstanceId { get; }
+		public string Description { get; }		
 		public byte DisplayIndex { get; }
 		public byte MonitorIndex { get; }
 		public bool IsAccessible { get; }
@@ -18,19 +18,19 @@ namespace Monitorian.Models.Monitor
 		public int BrightnessAdjusted { get; protected set; } = -1;
 
 		public MonitorItem(
-			string description,
 			string deviceInstanceId,
+			string description,			
 			byte displayIndex,
 			byte monitorIndex,
 			bool isAccessible)
 		{
-			if (string.IsNullOrWhiteSpace(description))
-				throw new ArgumentNullException(nameof(description));
 			if (string.IsNullOrWhiteSpace(deviceInstanceId))
 				throw new ArgumentNullException(nameof(deviceInstanceId));
-
-			this.Description = description;
+			if (string.IsNullOrWhiteSpace(description))
+				throw new ArgumentNullException(nameof(description));
+			
 			this.DeviceInstanceId = deviceInstanceId;
+			this.Description = description;			
 			this.DisplayIndex = displayIndex;
 			this.MonitorIndex = monitorIndex;
 			this.IsAccessible = isAccessible;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Management;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,24 +16,32 @@ namespace Monitorian.Models.Monitor
 	{
 		#region Type
 
+		[DataContract]
 		public class DesktopItem
 		{
-			public string Description { get; }
-			public string DeviceInstanceId { get; }
-			public byte[] BrightnessLevels { get; }
+			[DataMember(Order = 0)]
+			public string DeviceInstanceId { get; private set; }
+
+			[DataMember(Order = 1)]
+			public string Description { get; private set; }
+
+			[DataMember(Order = 2)]
+			public byte[] BrightnessLevels { get; private set; }
 
 			public DesktopItem(
-				string description,
-				string deviceInstanceId)
+				string deviceInstanceId,
+				string description)
 			{
-				this.Description = description;
 				this.DeviceInstanceId = deviceInstanceId;
+				this.Description = description;
 			}
 
 			public DesktopItem(
-				string description,
 				string deviceInstanceId,
-				byte[] brightnessLevels) : this(description, deviceInstanceId)
+				string description,
+				byte[] brightnessLevels) : this(
+					deviceInstanceId: deviceInstanceId,
+					description: description)
 			{
 				this.BrightnessLevels = brightnessLevels;
 			}
@@ -51,17 +60,17 @@ namespace Monitorian.Models.Monitor
 				{
 					using (instance)
 					{
-						var description = (string)instance.GetPropertyValue("Description");
-						if (string.IsNullOrWhiteSpace(description))
-							continue;
-
 						var pnpDeviceId = (string)instance.GetPropertyValue("PNPDeviceID");
 						if (string.IsNullOrWhiteSpace(pnpDeviceId))
 							continue;
 
+						var description = (string)instance.GetPropertyValue("Description");
+						if (string.IsNullOrWhiteSpace(description))
+							continue;
+
 						monitors.Add(new DesktopItem(
-							description: description,
-							deviceInstanceId: pnpDeviceId));
+							deviceInstanceId: pnpDeviceId,
+							description: description));
 					}
 				}
 			}
@@ -96,17 +105,14 @@ namespace Monitorian.Models.Monitor
 
 						var level = (byte[])instance.GetPropertyValue("Level");
 
-						//Debug.WriteLine($"Description: {monitor.Description}");
 						//Debug.WriteLine($"DeviceInstanceId: {monitor.DeviceInstanceId}");
-						//Debug.WriteLine($"Level count: {level.Length}");
+						//Debug.WriteLine($"Description: {monitor.Description}");
+						//Debug.WriteLine($"Level length: {level.Length}");
 						//Debug.WriteLine($"Active (unreliable): {(bool)instance["Active"]}");
 
-						if (level.Length <= 0)
-							continue;
-
 						yield return new DesktopItem(
-							description: monitor.Description,
 							deviceInstanceId: monitor.DeviceInstanceId,
+							description: monitor.Description,
 							brightnessLevels: level);
 					}
 				}

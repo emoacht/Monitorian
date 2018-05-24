@@ -69,6 +69,25 @@ namespace Monitorian.Views.Controls
 						}
 					}));
 
+		public int ValueUnison
+		{
+			get { return (int)GetValue(ValueUnisonProperty); }
+			set { SetValue(ValueUnisonProperty, value); }
+		}
+		public static readonly DependencyProperty ValueUnisonProperty =
+			DependencyProperty.Register(
+				"ValueUnison",
+				typeof(int),
+				typeof(QuickSlider),
+				new PropertyMetadata(
+					0,
+					(d, e) =>
+					{
+						var instance = (QuickSlider)d;
+
+						Moved?.Invoke(instance, (int)e.NewValue - instance.Value);
+					}));
+
 		protected override void OnValueChanged(double oldValue, double newValue)
 		{
 			base.OnValueChanged(oldValue, newValue);

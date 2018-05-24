@@ -9,14 +9,14 @@ namespace Monitorian.Models.Monitor
 	internal class InaccessibleMonitorItem : MonitorItem
 	{
 		public InaccessibleMonitorItem(
-			string description,
 			string deviceInstanceId,
+			string description,
 			byte displayIndex,
 			byte monitorIndex) : base(
-				description,
-				deviceInstanceId,
-				displayIndex,
-				monitorIndex,
+				deviceInstanceId: deviceInstanceId,
+				description: description,
+				displayIndex: displayIndex,
+				monitorIndex: monitorIndex,
 				isAccessible: false)
 		{ }
 

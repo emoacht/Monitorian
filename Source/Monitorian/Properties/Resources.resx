@@ -130,7 +130,7 @@
     <value>This monitor is not controllable. See requirements.</value>
   </data>
   <data name="Probe" xml:space="preserve">
-    <value>Probe monitors</value>
+    <value>Probe into monitors</value>
   </data>
   <data name="RecordException" xml:space="preserve">
     <value>An unexpected problem occurred. Save exception log to Desktop?</value>

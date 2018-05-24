@@ -56,7 +56,7 @@ namespace Monitorian.ViewModels
 		}
 		private bool _canProbe;
 
-		private const string ProbeFileName = "Probe.log";
+		private const string ProbeFileName = "probe.log";
 
 		public void PerformProbe()
 		{

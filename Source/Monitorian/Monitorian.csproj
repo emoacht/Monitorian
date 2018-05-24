@@ -82,6 +82,7 @@
     <Compile Include="Common\ObservableKeyedList.cs" />
     <Compile Include="Helper\OsVersion.cs" />
     <Compile Include="Helper\ArraySearch.cs" />
+    <Compile Include="Helper\StringExtension.cs" />
     <Compile Include="Helper\Throttle.cs" />
     <Compile Include="MainController.cs" />
     <Compile Include="Models\ConsoleService.cs" />

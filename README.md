@@ -36,6 +36,8 @@ When you use only executables, please note the following:
 
 This app is a WPF app developed and tested with Surface Pro 4.
 
+To know the capabilities of monitors, click the app title in menu window 3 times and then hit the appeared button. It will create a log file on the desktop.
+
 ## History
 
 Ver 1.6.0 2018-5-25

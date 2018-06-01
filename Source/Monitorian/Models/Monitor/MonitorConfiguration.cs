@@ -267,28 +267,48 @@ namespace Monitorian.Models.Monitor
 			if (index < 0)
 				return false;
 
-			int depth = 0;
-			var buffer = new StringBuilder(source.Length);
+			return EnumerateCodes().Any(x => x == "10"); // 10 (hex) is VCP Code of Luminance.
 
-			foreach (char c in source.Substring(index + 3).TrimStart())
+			IEnumerable<string> EnumerateCodes()
 			{
-				switch (c)
-				{
-					case '(':
-						depth++;
-						break;
-					case ')':
-						depth--;
-						break;
-					default:
-						if (depth == 1) { buffer.Append(c); }
-						break;
-				}
-				if (depth <= 0)
-					break;
-			}
+				int depth = 0;
+				var buffer = new StringBuilder(2);
 
-			return buffer.ToString().Split().Any(x => x == "10"); // 10 (hex) is VCP Code of Luminance.
+				foreach (char c in source.Skip(index + 3))
+				{
+					switch (c)
+					{
+						case '(':
+							depth++;
+							break;
+						case ')':
+							depth--;
+							if (depth <= 0)
+							{
+								if (0 < buffer.Length)
+								{
+									yield return buffer.ToString();
+								}
+								yield break; // End of enumeration
+							}
+							break;
+						default:
+							if (depth == 1)
+							{
+								if (!Char.IsWhiteSpace(c))
+								{
+									buffer.Append(c);
+								}
+								else if (0 < buffer.Length)
+								{
+									yield return buffer.ToString();
+									buffer.Clear();
+								}
+							}
+							break;
+					}
+				}
+			}
 		}
 
 		public static int GetBrightness(SafePhysicalMonitorHandle physicalMonitorHandle, bool useLowLevel = false)

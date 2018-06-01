@@ -249,6 +249,34 @@ namespace Monitorian.Models.Monitor
 			}
 		}
 
+		private static string GetDeviceInstanceId(IntPtr DeviceInfoSet, SP_DEVINFO_DATA DeviceInfoData)
+		{
+			StringBuilder buffer = null;
+			uint bufferSize = 0;
+
+			SetupDiGetDeviceInstanceId(
+				DeviceInfoSet,
+				ref DeviceInfoData,
+				buffer,
+				bufferSize,
+				out uint requiredSize);
+
+			buffer = new StringBuilder((int)requiredSize);
+			bufferSize = requiredSize;
+
+			if (!SetupDiGetDeviceInstanceId(
+				DeviceInfoSet,
+				ref DeviceInfoData,
+				buffer,
+				bufferSize,
+				out requiredSize))
+			{
+				return string.Empty;
+			}
+
+			return buffer.ToString();
+		}
+
 		private static string GetDevicePropertyString(IntPtr DeviceInfoSet, SP_DEVINFO_DATA DeviceInfoData, SPDRP property)
 		{
 			var buffer = GetDevicePropertyBytes(DeviceInfoSet, DeviceInfoData, property);
@@ -289,41 +317,14 @@ namespace Monitorian.Models.Monitor
 				ref DeviceInfoData,
 				property,
 				out regDataType,
-				buffer, bufferSize,
+				buffer,
+				bufferSize,
 				out requiredSize))
 			{
 				Array.Empty<byte>();
 			}
 
 			return buffer;
-		}
-
-		private static string GetDeviceInstanceId(IntPtr DeviceInfoSet, SP_DEVINFO_DATA DeviceInfoData)
-		{
-			StringBuilder buffer = null;
-			uint bufferSize = 0;
-
-			SetupDiGetDeviceInstanceId(
-				DeviceInfoSet,
-				ref DeviceInfoData,
-				buffer,
-				bufferSize,
-				out uint requiredSize);
-
-			buffer = new StringBuilder((int)requiredSize);
-			bufferSize = requiredSize;
-
-			if (!SetupDiGetDeviceInstanceId(
-				DeviceInfoSet,
-				ref DeviceInfoData,
-				buffer,
-				bufferSize,
-				out requiredSize))
-			{
-				return string.Empty;
-			}
-
-			return buffer.ToString();
 		}
 	}
 }

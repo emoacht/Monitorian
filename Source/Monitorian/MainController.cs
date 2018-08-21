@@ -159,12 +159,12 @@ namespace Monitorian
 					var scanTime = DateTimeOffset.Now;
 					int accessibleMonitorCount = 0;
 
-					await Task.Run(() =>
+					await Task.Run(async () =>
 					{
 						var oldMonitorIndices = Enumerable.Range(0, Monitors.Count).ToList();
 						var newMonitorItems = new List<IMonitor>();
 
-						foreach (var item in MonitorManager.EnumerateMonitors())
+						foreach (var item in await MonitorManager.EnumerateMonitorsAsync())
 						{
 							var isExisting = false;
 

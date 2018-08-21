@@ -7,14 +7,70 @@ using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Threading.Tasks;
 
+using Monitorian.Helper;
+using UniversalSupplement;
+
 namespace Monitorian.Models.Monitor
 {
 	internal class MonitorManager
 	{
-		public static IEnumerable<IMonitor> EnumerateMonitors()
+		#region Type
+
+		private class DeviceItemPlus
 		{
-			var deviceItems = DeviceContext.EnumerateMonitorDevices().ToList();
-			if (deviceItems.Count == 0)
+			private readonly DeviceContext.DeviceItem _deviceItem;
+
+			public string DeviceInstanceId => _deviceItem.DeviceInstanceId;
+			public string Description => _deviceItem.Description;
+			public string AlternateDescription { get; }
+			public byte DisplayIndex => _deviceItem.DisplayIndex;
+			public byte MonitorIndex => _deviceItem.MonitorIndex;
+
+			public DeviceItemPlus(
+				DeviceContext.DeviceItem deviceItem,
+				string alternateDescription = null)
+			{
+				this._deviceItem = deviceItem ?? throw new ArgumentNullException(nameof(deviceItem));
+				this.AlternateDescription = alternateDescription ?? deviceItem.Description;
+			}
+		}
+
+		#endregion
+
+		public static async Task<IEnumerable<IMonitor>> EnumerateMonitorsAsync()
+		{
+			var deviceItems = await GetMonitorDevicesAsync();
+
+			return EnumerateMonitors(deviceItems);
+		}
+
+		private static async Task<List<DeviceItemPlus>> GetMonitorDevicesAsync()
+		{
+			if (!OsVersion.Is10Redstone4OrNewer)
+				return DeviceContext.EnumerateMonitorDevices().Select(x => new DeviceItemPlus(x)).ToList();
+
+			const string genericDescription = "Generic PnP Monitor";
+
+			var displayItems = await DisplayInformation.GetDisplayMonitorsAsync();
+
+			return DeviceContext.EnumerateMonitorDevices()
+				.Select(x =>
+				{
+					string alternateDescription = null;
+					if (string.Equals(x.Description, genericDescription, StringComparison.OrdinalIgnoreCase))
+					{
+						var displayItem = displayItems.FirstOrDefault(y => string.Equals(x.DeviceInstanceId, y.DeviceInstanceId, StringComparison.OrdinalIgnoreCase));
+						if (!string.IsNullOrWhiteSpace(displayItem?.DisplayName))
+							alternateDescription = displayItem.DisplayName;
+					}
+					return new DeviceItemPlus(x, alternateDescription);
+				})
+				.ToList();
+		}
+
+		private static IEnumerable<IMonitor> EnumerateMonitors(List<DeviceItemPlus> deviceItems)
+		{
+			if (!(deviceItems?.Any() == true))
 				yield break;
 
 			// By DDC/CI
@@ -39,7 +95,7 @@ namespace Monitorian.Models.Monitor
 					var deviceItem = deviceItems[index];
 					yield return new DdcMonitorItem(
 						deviceInstanceId: deviceItem.DeviceInstanceId,
-						description: deviceItem.Description,
+						description: deviceItem.AlternateDescription,
 						displayIndex: deviceItem.DisplayIndex,
 						monitorIndex: deviceItem.MonitorIndex,
 						handle: physicalItem.Handle,
@@ -71,7 +127,7 @@ namespace Monitorian.Models.Monitor
 					var deviceItem = deviceItems[index];
 					yield return new WmiMonitorItem(
 						deviceInstanceId: deviceItem.DeviceInstanceId,
-						description: deviceItem.Description,
+						description: deviceItem.AlternateDescription,
 						displayIndex: deviceItem.DisplayIndex,
 						monitorIndex: deviceItem.MonitorIndex,
 						brightnessLevels: desktopItem.BrightnessLevels,
@@ -88,7 +144,7 @@ namespace Monitorian.Models.Monitor
 			{
 				yield return new InaccessibleMonitorItem(
 					deviceInstanceId: deviceItem.DeviceInstanceId,
-					description: deviceItem.Description,
+					description: deviceItem.AlternateDescription,
 					displayIndex: deviceItem.DisplayIndex,
 					monitorIndex: deviceItem.MonitorIndex);
 			}
@@ -125,6 +181,9 @@ namespace Monitorian.Models.Monitor
 			[DataMember(Order = 3, Name = "MSMonitorClass - DesktopItems")]
 			public MSMonitor.DesktopItem[] DesktopItems { get; private set; }
 
+			[DataMember(Order = 4, Name = "DisplayMonitor - DisplayItems")]
+			public DisplayInformation.DisplayItem[] DisplayItems { get; private set; }
+
 			public MonitorData()
 			{
 				DeviceItems = DeviceContext.EnumerateMonitorDevices().ToArray();
@@ -135,6 +194,9 @@ namespace Monitorian.Models.Monitor
 
 				InstalledItems = DeviceInstallation.EnumerateInstalledMonitors().ToArray();
 				DesktopItems = MSMonitor.EnumerateDesktopMonitors().ToArray();
+
+				if (OsVersion.Is10Redstone4OrNewer)
+					DisplayItems = DisplayInformation.GetDisplayMonitorsAsync().Result;
 			}
 		}
 

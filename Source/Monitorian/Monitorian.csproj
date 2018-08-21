@@ -190,6 +190,10 @@
       <Project>{f44ea754-e653-4696-8a12-c86224292908}</Project>
       <Name>StartupAgency</Name>
     </ProjectReference>
+    <ProjectReference Include="..\UniversalSupplement\UniversalSupplement.csproj">
+      <Project>{6e338214-e33c-4014-9bdd-6d914e6c536d}</Project>
+      <Name>UniversalSupplement</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\..\LICENSE.txt">

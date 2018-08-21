@@ -19,7 +19,7 @@ namespace StartupBridge
 		/// <summary>
 		/// Whether the startup task for a specified AppX package can be enabled
 		/// </summary>
-		/// <param name="taskId">Id of startup task</param>
+		/// <param name="taskId">Startup task ID</param>
 		/// <returns>True if the startup task can be enabled</returns>
 		public static bool CanEnable(string taskId)
 		{
@@ -33,7 +33,7 @@ namespace StartupBridge
 		/// <summary>
 		/// Whether the startup task for a specified AppX package is enabled
 		/// </summary>
-		/// <param name="taskId">Id of startup task</param>
+		/// <param name="taskId">Startup task ID</param>
 		/// <returns>True if the startup task is enabled</returns>
 		public static bool IsEnabled(string taskId)
 		{
@@ -47,7 +47,7 @@ namespace StartupBridge
 		/// <summary>
 		/// Enables the startup task for a specified AppX package.
 		/// </summary>
-		/// <param name="taskId">Id of startup task</param>
+		/// <param name="taskId">Startup task ID</param>
 		/// <returns>True if the startup task is enabled</returns>
 		public static bool Enable(string taskId)
 		{
@@ -72,7 +72,7 @@ namespace StartupBridge
 		/// <summary>
 		/// Disables the startup task for a specified AppX package.
 		/// </summary>
-		/// <param name="taskId">Id of startup task</param>
+		/// <param name="taskId">Startup task ID</param>
 		public static void Disable(string taskId)
 		{
 			if (!PlatformInfo.IsPackaged)

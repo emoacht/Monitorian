@@ -67,6 +67,8 @@ namespace UniversalSupplement
 			const string deviceInstanceIdKey = "System.Devices.DeviceInstanceId";
 
 			var devices = await DeviceInformation.FindAllAsync(DisplayMonitor.GetDeviceSelector(), new[] { deviceInstanceIdKey });
+			if (devices == null)
+				return Array.Empty<DisplayItem>();
 
 			var items = new List<DisplayItem>(devices.Count);
 			foreach (var device in devices)

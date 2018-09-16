@@ -304,7 +304,7 @@ namespace Monitorian.Models.Monitor
 				DeviceInfoSet,
 				ref DeviceInfoData,
 				property,
-				out uint regDataType,
+				out _,
 				buffer,
 				bufferSize,
 				out uint requiredSize);
@@ -316,12 +316,12 @@ namespace Monitorian.Models.Monitor
 				DeviceInfoSet,
 				ref DeviceInfoData,
 				property,
-				out regDataType,
+				out _,
 				buffer,
 				bufferSize,
 				out requiredSize))
 			{
-				Array.Empty<byte>();
+				return Array.Empty<byte>();
 			}
 
 			return buffer;

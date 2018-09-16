@@ -210,6 +210,12 @@ namespace Monitorian.Models.Monitor
 
 		private static string GetDeviceInstanceId(string deviceId)
 		{
+			// The typical format of device ID is as follows:
+			// \\?\DISPLAY#<hardware-specific-ID>#<instance-specific-ID>#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
+			// \\?\ is extended-length path prefix.
+			// DISPLAY indicates display device.
+			// {e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} means GUID_DEVINTERFACE_MONITOR.
+
 			var index = deviceId.IndexOf("DISPLAY", StringComparison.Ordinal);
 			if (index < 0)
 				return null;

@@ -25,7 +25,7 @@ Monitorian is a Windows desktop tool to adjust the brightness of multiple monito
 When you use only executables, please note the following:
 
  - The settings file will be created at: `[system drive]\Users\[user name]\AppData\Local\Monitorian\`
- - When you check [Start on sign in]", a registry value will be added to: `HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run`
+ - When you check [Start on sign in], a registry value will be added to: `HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run`
 
 ## Remarks
 

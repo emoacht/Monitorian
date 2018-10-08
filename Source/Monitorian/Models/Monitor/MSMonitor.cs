@@ -49,6 +49,8 @@ namespace Monitorian.Models.Monitor
 
 		#endregion
 
+		private const uint COR_E_SYSTEM = 0x80131501;
+
 		public static IEnumerable<DesktopItem> EnumerateDesktopMonitors()
 		{
 			var monitors = new List<DesktopItem>();
@@ -89,11 +91,11 @@ namespace Monitorian.Models.Monitor
 						if (!enumerator.MoveNext())
 							break;
 					}
-					catch (ManagementException ex) when (ex.ErrorCode == ManagementStatus.NotSupported)
+					catch (ManagementException ex) when ((ex.ErrorCode == ManagementStatus.NotSupported) || ((uint)ex.HResult == COR_E_SYSTEM))
 					{
 						Debug.WriteLine($"Failed to retrieve data by WmiMonitorBrightness." + Environment.NewLine
 							+ ex);
-						yield break;
+						continue;
 					}
 
 					using (var instance = (ManagementObject)enumerator.Current)

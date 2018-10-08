@@ -58,6 +58,14 @@ namespace UniversalSupplement
 
 		#endregion
 
+		// System error code: 0x80070057 = 0x57 = ERROR_INVALID_PARAMETER
+		// Error message: The parameter is incorrect.
+		private const uint ERROR_INVALID_PARAMETER = 0x80070057;
+
+		// System error code: 0x8007001F = 0x1F = ERROR_GEN_FAILURE
+		// Error message: A device attached to the system is not functioning.
+		private const uint ERROR_GEN_FAILURE = 0x8007001F;
+
 		/// <summary>
 		/// Gets display monitor information.
 		/// </summary>
@@ -66,34 +74,44 @@ namespace UniversalSupplement
 		{
 			const string deviceInstanceIdKey = "System.Devices.DeviceInstanceId";
 
-			var devices = await DeviceInformation.FindAllAsync(DisplayMonitor.GetDeviceSelector(), new[] { deviceInstanceIdKey });
-			if (devices == null)
-				return Array.Empty<DisplayItem>();
-
-			var items = new List<DisplayItem>(devices.Count);
-			foreach (var device in devices)
+			try
 			{
-				if (!device.Properties.TryGetValue(deviceInstanceIdKey, out object value))
-					continue;
+				var devices = await DeviceInformation.FindAllAsync(DisplayMonitor.GetDeviceSelector(), new[] { deviceInstanceIdKey });
+				if (devices?.Any() == true)
+				{
+					var items = new List<DisplayItem>(devices.Count);
+					foreach (var device in devices)
+					{
+						if (!device.Properties.TryGetValue(deviceInstanceIdKey, out object value))
+							continue;
 
-				var deviceInstanceId = value as string;
-				if (string.IsNullOrWhiteSpace(deviceInstanceId))
-					continue;
+						var deviceInstanceId = value as string;
+						if (string.IsNullOrWhiteSpace(deviceInstanceId))
+							continue;
 
-				var displayMonitor = await DisplayMonitor.FromInterfaceIdAsync(device.Id);
-				//var displayMonitor = await DisplayMonitor.FromIdAsync(deviceInstanceId);
+						var displayMonitor = await DisplayMonitor.FromInterfaceIdAsync(device.Id);
+						//var displayMonitor = await DisplayMonitor.FromIdAsync(deviceInstanceId);
 
-				//Debug.WriteLine($"DeviceInstanceId: {deviceInstanceId}");
-				//Debug.WriteLine($"DeviceName: {device.Name}");
-				//Debug.WriteLine($"DisplayName: {displayMonitor.DisplayName}");
-				//Debug.WriteLine($"ConnectionKind: {displayMonitor.ConnectionKind}");
+						//Debug.WriteLine($"DeviceInstanceId: {deviceInstanceId}");
+						//Debug.WriteLine($"DeviceName: {device.Name}");
+						//Debug.WriteLine($"DisplayName: {displayMonitor.DisplayName}");
+						//Debug.WriteLine($"ConnectionKind: {displayMonitor.ConnectionKind}");
 
-				items.Add(new DisplayItem(
-					deviceInstanceId: deviceInstanceId,
-					displayName: displayMonitor.DisplayName,
-					isInternal: (displayMonitor.ConnectionKind == DisplayMonitorConnectionKind.Internal)));
+						items.Add(new DisplayItem(
+							deviceInstanceId: deviceInstanceId,
+							displayName: displayMonitor.DisplayName,
+							isInternal: (displayMonitor.ConnectionKind == DisplayMonitorConnectionKind.Internal)));
+					}
+					return items.ToArray();
+				}
 			}
-			return items.ToArray();
+			catch (ArgumentException ax) when ((uint)ax.HResult == ERROR_INVALID_PARAMETER)
+			{
+			}
+			catch (Exception ex) when ((uint)ex.HResult == ERROR_GEN_FAILURE)
+			{
+			}
+			return Array.Empty<DisplayItem>();
 		}
 	}
 }

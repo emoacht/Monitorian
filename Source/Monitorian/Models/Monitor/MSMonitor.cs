@@ -95,7 +95,7 @@ namespace Monitorian.Models.Monitor
 					{
 						Debug.WriteLine($"Failed to retrieve data by WmiMonitorBrightness." + Environment.NewLine
 							+ ex);
-						continue;
+						yield break;
 					}
 
 					using (var instance = (ManagementObject)enumerator.Current)

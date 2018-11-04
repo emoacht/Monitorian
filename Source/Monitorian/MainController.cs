@@ -156,9 +156,6 @@ namespace Monitorian
 				{
 					ScanningChanged?.Invoke(this, true);
 
-					var scanTime = DateTimeOffset.Now;
-					int accessibleMonitorCount = 0;
-
 					await Task.Run(async () =>
 					{
 						var oldMonitorIndices = Enumerable.Range(0, Monitors.Count).ToList();
@@ -203,12 +200,6 @@ namespace Monitorian
 							foreach (var item in newMonitorItems)
 							{
 								var newMonitor = new MonitorViewModel(this, item);
-								if (newMonitor.IsControllable && (Monitors.Count < _maxMonitorCount.Value))
-								{
-									newMonitor.UpdateBrightness();
-									newMonitor.IsTarget = true;
-									accessibleMonitorCount++;
-								}
 								lock (_monitorsLock)
 								{
 									Monitors.Add(newMonitor);
@@ -217,21 +208,33 @@ namespace Monitorian
 						}
 					});
 
-					await Task.WhenAll(Monitors
-						.Take(_maxMonitorCount.Value)
-						.Where(x => x.IsControllable && (x.UpdateTime < scanTime))
-						.Select(x => Task.Run(() =>
-						{
-							x.UpdateBrightness();
-							x.IsTarget = true;
-							Interlocked.Increment(ref accessibleMonitorCount);
-						})));
+					var controllableMonitorExists = false;
 
-					var accessibleMonitorExists = (accessibleMonitorCount > 0);
+					await Task.WhenAll(Monitors
+						.Where(x => x.IsControllable)
+						.Select((x, index) =>
+						{
+							controllableMonitorExists = true;
+
+							if (index < _maxMonitorCount.Value)
+							{
+								return Task.Run(() =>
+								{
+									x.UpdateBrightness();
+									x.IsTarget = true;
+								});
+							}
+							else
+							{
+								x.IsTarget = false;
+								return Task.CompletedTask;
+							}
+						}));
+
 					Monitors
 						.Where(x => !x.IsControllable)
 						.ToList()
-						.ForEach(x => x.IsTarget = !accessibleMonitorExists);
+						.ForEach(x => x.IsTarget = !controllableMonitorExists);
 				}
 			}
 			finally

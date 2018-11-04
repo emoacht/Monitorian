@@ -49,8 +49,6 @@ namespace Monitorian.Models.Monitor
 
 		#endregion
 
-		private const uint COR_E_SYSTEM = 0x80131501;
-
 		public static IEnumerable<DesktopItem> EnumerateDesktopMonitors()
 		{
 			var monitors = new List<DesktopItem>();
@@ -85,16 +83,20 @@ namespace Monitorian.Models.Monitor
 				{
 					try
 					{
-						// ManagementObjectCollection.ManagementObjectEnumerator.MoveNext method for 
-						// WmiMonitorBrightness instance may throw a ManagementException when called
-						// immediately after resume.
 						if (!enumerator.MoveNext())
 							break;
 					}
-					catch (ManagementException ex) when ((ex.ErrorCode == ManagementStatus.NotSupported) || ((uint)ex.HResult == COR_E_SYSTEM))
+					catch (ManagementException me)
 					{
-						Debug.WriteLine($"Failed to retrieve data by WmiMonitorBrightness." + Environment.NewLine
-							+ ex);
+						// ManagementObjectCollection.ManagementObjectEnumerator.MoveNext method for 
+						// WmiMonitorBrightness instance may throw a ManagementException when called
+						// immediately after resume.
+						// The ManagementException is caused by various reasons including:
+						// ErrorCode is ManagementStatus.NotSupported,
+						// ErrorCode is ManagementStatus.CallCanceled,
+						// HResult is 0x80131501.
+						Debug.WriteLine($"Failed to retrieve data by WmiMonitorBrightness. HResult: {me.HResult} ErrorCode: {me.ErrorCode}" + Environment.NewLine
+							+ me);
 						yield break;
 					}
 

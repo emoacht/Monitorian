@@ -163,7 +163,7 @@ namespace Monitorian
 
 						foreach (var item in await MonitorManager.EnumerateMonitorsAsync())
 						{
-							var isExisting = false;
+							var oldMonitorExists = false;
 
 							foreach (int index in oldMonitorIndices)
 							{
@@ -171,14 +171,14 @@ namespace Monitorian
 								if (string.Equals(oldMonitor.DeviceInstanceId, item.DeviceInstanceId, StringComparison.OrdinalIgnoreCase)
 									&& (oldMonitor.IsAccessible == item.IsAccessible))
 								{
-									isExisting = true;
+									oldMonitorExists = true;
 									oldMonitorIndices.Remove(index);
 									item.Dispose();
 									break;
 								}
 							}
 
-							if (!isExisting)
+							if (!oldMonitorExists)
 								newMonitorItems.Add(item);
 						}
 
@@ -276,10 +276,7 @@ namespace Monitorian
 		private void Update(string instanceName, int brightness)
 		{
 			var monitor = Monitors.FirstOrDefault(x => instanceName.StartsWith(x.DeviceInstanceId, StringComparison.OrdinalIgnoreCase));
-			if (monitor != null)
-			{
-				monitor.UpdateBrightness(brightness);
-			}
+			monitor?.UpdateBrightness(brightness);
 		}
 
 		private void MonitorsDispose()
@@ -290,7 +287,7 @@ namespace Monitorian
 
 		#endregion
 
-		#region Name
+		#region Name & Unison
 
 		private void OnSettingsEnablesUnisonChanged()
 		{
@@ -303,7 +300,7 @@ namespace Monitorian
 				.ForEach(x => x.IsUnison = false);
 		}
 
-		internal bool TryLoadName(string deviceInstanceId, ref string name, ref bool isUnison)
+		internal bool TryLoadNameUnison(string deviceInstanceId, ref string name, ref bool isUnison)
 		{
 			if (Settings.KnownMonitors.TryGetValue(deviceInstanceId, out MonitorValuePack value))
 			{
@@ -317,7 +314,7 @@ namespace Monitorian
 			}
 		}
 
-		internal void SaveName(string deviceInstanceId, string name, bool isUnison)
+		internal void SaveNameUnison(string deviceInstanceId, string name, bool isUnison)
 		{
 			if ((name != null) || isUnison)
 			{

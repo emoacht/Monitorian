@@ -80,6 +80,7 @@
     <Compile Include="Common\BindableBase.cs" />
     <Compile Include="Common\ObservableDictionary.cs" />
     <Compile Include="Common\ObservableKeyedList.cs" />
+    <Compile Include="Helper\ExceptionExtension.cs" />
     <Compile Include="Helper\OsVersion.cs" />
     <Compile Include="Helper\ArraySearch.cs" />
     <Compile Include="Helper\StringExtension.cs" />

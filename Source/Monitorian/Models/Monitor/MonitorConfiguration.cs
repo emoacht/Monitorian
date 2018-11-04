@@ -186,7 +186,7 @@ namespace Monitorian.Models.Monitor
 				monitorHandle,
 				out uint count))
 			{
-				Debug.WriteLine($"Failed to get the number of physical monitors. ({Error.CreateMessage()})");
+				Debug.WriteLine($"Failed to get the number of physical monitors. {Error.CreateMessage()}");
 				yield break;
 			}
 			if (count == 0)
@@ -203,7 +203,7 @@ namespace Monitorian.Models.Monitor
 					count,
 					physicalMonitors))
 				{
-					Debug.WriteLine($"Failed to get an array of physical monitors. ({Error.CreateMessage()})");
+					Debug.WriteLine($"Failed to get an array of physical monitors. {Error.CreateMessage()}");
 					yield break;
 				}
 
@@ -330,7 +330,7 @@ namespace Monitorian.Models.Monitor
 					out uint currentBrightness,
 					out uint maximumBrightness))
 				{
-					Debug.WriteLine($"Failed to get brightness. ({Error.CreateMessage()})");
+					Debug.WriteLine($"Failed to get brightness. {Error.CreateMessage()}");
 					return -1;
 				}
 				return (int)currentBrightness;
@@ -344,7 +344,7 @@ namespace Monitorian.Models.Monitor
 					out uint currentValue,
 					out uint maximumValue))
 				{
-					Debug.WriteLine($"Failed to get brightness (Low level). ({Error.CreateMessage()})");
+					Debug.WriteLine($"Failed to get brightness (Low level). {Error.CreateMessage()}");
 					return -1;
 				}
 				return (int)currentValue;
@@ -370,7 +370,7 @@ namespace Monitorian.Models.Monitor
 					physicalMonitorHandle,
 					(uint)brightness))
 				{
-					Debug.WriteLine($"Failed to set brightness. ({Error.CreateMessage()})");
+					Debug.WriteLine($"Failed to set brightness. {Error.CreateMessage()}");
 					return false;
 				}
 			}
@@ -381,7 +381,7 @@ namespace Monitorian.Models.Monitor
 					LuminanceCode,
 					(uint)brightness))
 				{
-					Debug.WriteLine($"Failed to set brightness (Low level). ({Error.CreateMessage()})");
+					Debug.WriteLine($"Failed to set brightness (Low level). {Error.CreateMessage()}");
 					return false;
 				}
 			}

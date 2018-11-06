@@ -18,11 +18,11 @@ namespace Monitorian.ViewModels
 			this._controller = controller ?? throw new ArgumentNullException(nameof(controller));
 			this._monitor = monitor ?? throw new ArgumentNullException(nameof(monitor));
 
-			this._controller.TryLoadName(DeviceInstanceId, ref _name, ref _isUnison);			
+			this._controller.TryLoadNameUnison(DeviceInstanceId, ref _name, ref _isUnison);
 		}
 
 		public string DeviceInstanceId => _monitor.DeviceInstanceId;
-		public string Description => _monitor.Description;		
+		public string Description => _monitor.Description;
 		public byte DisplayIndex => _monitor.DisplayIndex;
 		public byte MonitorIndex => _monitor.MonitorIndex;
 		public bool IsAccessible => _monitor.IsAccessible;
@@ -34,7 +34,7 @@ namespace Monitorian.ViewModels
 		}
 		private bool _isControllable = true;
 
-		#region Name
+		#region Name & Unison
 
 		public string Name
 		{
@@ -42,7 +42,7 @@ namespace Monitorian.ViewModels
 			set
 			{
 				if (SetPropertyValue(ref _name, GetValueOrNull(value)))
-					_controller.SaveName(DeviceInstanceId, _name, _isUnison);
+					_controller.SaveNameUnison(DeviceInstanceId, _name, _isUnison);
 			}
 		}
 		private string _name;
@@ -55,7 +55,7 @@ namespace Monitorian.ViewModels
 			set
 			{
 				if (SetPropertyValue(ref _isUnison, value))
-					_controller.SaveName(DeviceInstanceId, _name, _isUnison);
+					_controller.SaveNameUnison(DeviceInstanceId, _name, _isUnison);
 			}
 		}
 		private bool _isUnison;

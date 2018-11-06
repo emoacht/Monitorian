@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 
+using Monitorian.Helper;
 using Monitorian.Properties;
 
 namespace Monitorian.Models
@@ -83,7 +84,7 @@ namespace Monitorian.Models
 		public static void RecordException(object sender, Exception exception)
 		{
 			var content = $"[Date: {DateTime.Now} Sender: {sender}]" + Environment.NewLine
-				+ exception + Environment.NewLine + Environment.NewLine;
+				+ exception.ToDetailedString() + Environment.NewLine + Environment.NewLine;
 
 			RecordToAppData(ExceptionFileName, content);
 			RecordToDesktop(ExceptionFileName, content);

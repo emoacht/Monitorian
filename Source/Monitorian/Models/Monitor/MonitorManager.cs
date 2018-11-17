@@ -61,7 +61,13 @@ namespace Monitorian.Models.Monitor
 					{
 						var displayItem = displayItems.FirstOrDefault(y => string.Equals(x.DeviceInstanceId, y.DeviceInstanceId, StringComparison.OrdinalIgnoreCase));
 						if (!string.IsNullOrWhiteSpace(displayItem?.DisplayName))
+						{
 							alternateDescription = displayItem.DisplayName;
+						}
+						else if (!string.IsNullOrEmpty(displayItem?.ConnectionDescription))
+						{
+							alternateDescription = $"{x.Description} ({displayItem.ConnectionDescription})";
+						}
 					}
 					return new DeviceItemPlus(x, alternateDescription);
 				})

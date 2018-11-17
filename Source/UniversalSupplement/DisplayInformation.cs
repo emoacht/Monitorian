@@ -45,14 +45,22 @@ namespace UniversalSupplement
 			[DataMember(Order = 2)]
 			public bool IsInternal { get; private set; }
 
+			/// <summary>
+			/// Connection description
+			/// </summary>
+			[DataMember(Order = 3)]
+			public string ConnectionDescription { get; private set; }
+
 			internal DisplayItem(
 				string deviceInstanceId,
 				string displayName,
-				bool isInternal)
+				bool isInternal,
+				string connectionDescription = null)
 			{
 				this.DeviceInstanceId = deviceInstanceId;
 				this.DisplayName = displayName;
 				this.IsInternal = isInternal;
+				this.ConnectionDescription = connectionDescription;
 			}
 		}
 
@@ -96,11 +104,13 @@ namespace UniversalSupplement
 						//Debug.WriteLine($"DeviceName: {device.Name}");
 						//Debug.WriteLine($"DisplayName: {displayMonitor.DisplayName}");
 						//Debug.WriteLine($"ConnectionKind: {displayMonitor.ConnectionKind}");
+						//Debug.WriteLine($"PhysicalConnector: {displayMonitor.PhysicalConnector}");
 
 						items.Add(new DisplayItem(
 							deviceInstanceId: deviceInstanceId,
 							displayName: displayMonitor.DisplayName,
-							isInternal: (displayMonitor.ConnectionKind == DisplayMonitorConnectionKind.Internal)));
+							isInternal: (displayMonitor.ConnectionKind == DisplayMonitorConnectionKind.Internal),
+							connectionDescription: GetConnectionDescription(displayMonitor.ConnectionKind, displayMonitor.PhysicalConnector)));
 					}
 					return items.ToArray();
 				}
@@ -112,6 +122,36 @@ namespace UniversalSupplement
 			{
 			}
 			return Array.Empty<DisplayItem>();
+		}
+
+		private static string GetConnectionDescription(DisplayMonitorConnectionKind connectionKind, DisplayMonitorPhysicalConnectorKind connectorKind)
+		{
+			switch (connectionKind)
+			{
+				case DisplayMonitorConnectionKind.Internal:
+				case DisplayMonitorConnectionKind.Virtual:
+				case DisplayMonitorConnectionKind.Wireless:
+					return connectionKind.ToString();
+
+				case DisplayMonitorConnectionKind.Wired:
+					switch (connectorKind)
+					{
+						case DisplayMonitorPhysicalConnectorKind.AnalogTV:
+						case DisplayMonitorPhysicalConnectorKind.DisplayPort:
+							return connectorKind.ToString();
+
+						case DisplayMonitorPhysicalConnectorKind.Dvi:
+						case DisplayMonitorPhysicalConnectorKind.Hdmi:
+						case DisplayMonitorPhysicalConnectorKind.Lvds:
+						case DisplayMonitorPhysicalConnectorKind.Sdi:
+							return connectorKind.ToString().ToUpper();
+
+						case DisplayMonitorPhysicalConnectorKind.HD15:
+							return "VGA";
+					}
+					break;
+			}
+			return null;
 		}
 	}
 }

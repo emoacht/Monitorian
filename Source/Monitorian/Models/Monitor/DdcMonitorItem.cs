@@ -13,7 +13,7 @@ namespace Monitorian.Models.Monitor
 	internal class DdcMonitorItem : MonitorItem
 	{
 		private readonly SafePhysicalMonitorHandle _handle;
-		private readonly bool _isLowLevel;
+		private readonly bool _useLowLevel;
 
 		public DdcMonitorItem(
 			string deviceInstanceId,
@@ -21,7 +21,7 @@ namespace Monitorian.Models.Monitor
 			byte displayIndex,
 			byte monitorIndex,
 			SafePhysicalMonitorHandle handle,
-			bool isLowLevel = false) : base(
+			bool useLowLevel = false) : base(
 				deviceInstanceId: deviceInstanceId,
 				description: description,
 				displayIndex: displayIndex,
@@ -29,7 +29,7 @@ namespace Monitorian.Models.Monitor
 				isAccessible: true)
 		{
 			this._handle = handle ?? throw new ArgumentNullException(nameof(handle));
-			this._isLowLevel = isLowLevel;
+			this._useLowLevel = useLowLevel;
 		}
 
 		private readonly object _lock = new object();
@@ -38,7 +38,7 @@ namespace Monitorian.Models.Monitor
 		{
 			lock (_lock)
 			{
-				this.Brightness = MonitorConfiguration.GetBrightness(_handle, _isLowLevel);
+				this.Brightness = MonitorConfiguration.GetBrightness(_handle, _useLowLevel);
 				return (0 <= this.Brightness);
 			}
 		}
@@ -50,7 +50,7 @@ namespace Monitorian.Models.Monitor
 
 			lock (_lock)
 			{
-				if (MonitorConfiguration.SetBrightness(_handle, brightness, _isLowLevel))
+				if (MonitorConfiguration.SetBrightness(_handle, brightness, _useLowLevel))
 				{
 					this.Brightness = brightness;
 					return true;

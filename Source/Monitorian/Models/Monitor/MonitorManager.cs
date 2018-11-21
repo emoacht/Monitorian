@@ -85,7 +85,7 @@ namespace Monitorian.Models.Monitor
 				foreach (var physicalItem in MonitorConfiguration.EnumeratePhysicalMonitors(handleItem.MonitorHandle))
 				{
 					int index = -1;
-					if (physicalItem.IsBrightnessSupported)
+					if (physicalItem.IsSupported)
 					{
 						index = deviceItems.FindIndex(x =>
 							(x.DisplayIndex == handleItem.DisplayIndex) &&
@@ -105,7 +105,7 @@ namespace Monitorian.Models.Monitor
 						displayIndex: deviceItem.DisplayIndex,
 						monitorIndex: deviceItem.MonitorIndex,
 						handle: physicalItem.Handle,
-						isLowLevel: physicalItem.IsLowLevel);
+						useLowLevel: physicalItem.IsLowLevelSupported);
 
 					deviceItems.RemoveAt(index);
 					if (deviceItems.Count == 0)
@@ -196,7 +196,7 @@ namespace Monitorian.Models.Monitor
 
 				PhysicalItems = DeviceContext.GetMonitorHandles().ToDictionary(
 					x => x,
-					x => MonitorConfiguration.EnumeratePhysicalMonitors(x.MonitorHandle).ToArray());
+					x => MonitorConfiguration.EnumeratePhysicalMonitors(x.MonitorHandle, true).ToArray());
 
 				InstalledItems = DeviceInstallation.EnumerateInstalledMonitors().ToArray();
 				DesktopItems = MSMonitor.EnumerateDesktopMonitors().ToArray();

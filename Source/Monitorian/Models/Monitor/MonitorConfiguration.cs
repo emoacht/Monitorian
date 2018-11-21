@@ -149,38 +149,45 @@ namespace Monitorian.Models.Monitor
 		[DataContract]
 		public class PhysicalItem
 		{
-			[DataMember]
+			[DataMember(Order = 0)]
 			public string Description { get; private set; }
 
-			[DataMember]
+			[DataMember(Order = 1)]
 			public int MonitorIndex { get; private set; }
 
 			public SafePhysicalMonitorHandle Handle { get; }
 
-			[DataMember]
-			public bool IsBrightnessSupported { get; private set; }
+			public bool IsSupported => IsHighLevelSupported || IsLowLevelSupported;
 
-			[DataMember]
-			public bool IsLowLevel { get; private set; }
+			[DataMember(Order = 2)]
+			public bool IsHighLevelSupported { get; private set; }
+
+			[DataMember(Order = 3)]
+			public bool IsLowLevelSupported { get; private set; }
+
+			[DataMember(Order = 4)]
+			public string Capabilities { get; private set; }
 
 			public PhysicalItem(
 				string description,
 				int monitorIndex,
 				SafePhysicalMonitorHandle handle,
-				bool isBrightnessSupported,
-				bool isLowLevel = false)
+				bool isHighLevelSupported,
+				bool isLowLevelSupported = false,
+				string capabilities = null)
 			{
 				this.Description = description;
 				this.MonitorIndex = monitorIndex;
 				this.Handle = handle;
-				this.IsBrightnessSupported = isBrightnessSupported;
-				this.IsLowLevel = isLowLevel;
+				this.IsHighLevelSupported = isHighLevelSupported;
+				this.IsLowLevelSupported = isLowLevelSupported;
+				this.Capabilities = capabilities;
 			}
 		}
 
 		#endregion
 
-		public static IEnumerable<PhysicalItem> EnumeratePhysicalMonitors(IntPtr monitorHandle)
+		public static IEnumerable<PhysicalItem> EnumeratePhysicalMonitors(IntPtr monitorHandle, bool verbose = false)
 		{
 			if (!GetNumberOfPhysicalMonitorsFromHMONITOR(
 				monitorHandle,
@@ -213,15 +220,16 @@ namespace Monitorian.Models.Monitor
 				{
 					var handle = new SafePhysicalMonitorHandle(physicalMonitor.hPhysicalMonitor);
 
-					bool isBrightnessSupported = GetMonitorCapabilities(
+					bool isHighLevelSupported = GetMonitorCapabilities(
 						handle,
 						out MC_CAPS caps,
 						out MC_SUPPORTED_COLOR_TEMPERATURE _)
 						&& caps.HasFlag(MC_CAPS.MC_CAPS_BRIGHTNESS);
 
-					bool isLowLevel = false;
+					bool isLowLevelSupported = false;
+					string capabilities = null;
 
-					if (!isBrightnessSupported)
+					if (!isHighLevelSupported || verbose)
 					{
 						if (GetCapabilitiesStringLength(
 							handle,
@@ -229,25 +237,30 @@ namespace Monitorian.Models.Monitor
 						{
 							var capabilitiesString = new StringBuilder((int)capabilitiesStringLength);
 
-							isLowLevel = isBrightnessSupported = CapabilitiesRequestAndCapabilitiesReply(
+							if (CapabilitiesRequestAndCapabilitiesReply(
 								handle,
 								capabilitiesString,
-								capabilitiesStringLength)
-								&& IsLowLevelBrightnessSupported(capabilitiesString.ToString());
+								capabilitiesStringLength))
+							{
+								capabilities = capabilitiesString.ToString();
+								isLowLevelSupported = IsLowLevelSupported(capabilities);
+							}
 						}
 					}
 
 					//Debug.WriteLine($"Description: {physicalMonitor.szPhysicalMonitorDescription}");
 					//Debug.WriteLine($"Handle: {physicalMonitor.hPhysicalMonitor}");
-					//Debug.WriteLine($"IsBrighnessSupported: {isBrightnessSupported}");
-					//Debug.WriteLine($"IsLowLevel: {isLowLevel}");
+					//Debug.WriteLine($"IsHighLevelSupported: {isHighLevelSupported}");
+					//Debug.WriteLine($"IsLowLevelSupported: {isLowLevelSupported}");
+					//Debug.WriteLine($"Capabilities: {capabilities}");
 
 					yield return new PhysicalItem(
 						description: physicalMonitor.szPhysicalMonitorDescription,
 						monitorIndex: monitorIndex,
 						handle: handle,
-						isBrightnessSupported: isBrightnessSupported,
-						isLowLevel: isLowLevel);
+						isHighLevelSupported: isHighLevelSupported,
+						isLowLevelSupported: isLowLevelSupported,
+						capabilities: verbose ? capabilities : null);
 
 					monitorIndex++;
 				}
@@ -258,7 +271,7 @@ namespace Monitorian.Models.Monitor
 			}
 		}
 
-		private static bool IsLowLevelBrightnessSupported(string source)
+		private static bool IsLowLevelSupported(string source)
 		{
 			if (string.IsNullOrWhiteSpace(source))
 				return false;

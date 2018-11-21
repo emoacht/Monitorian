@@ -295,15 +295,20 @@ namespace Monitorian.Models.Monitor
 						default:
 							if (depth == 1)
 							{
-								if (!Char.IsWhiteSpace(c))
+								if (char.IsWhiteSpace(c))
+								{
+									if (buffer.Length < 1)
+										continue;
+								}
+								else
 								{
 									buffer.Append(c);
+									if (buffer.Length < 2)
+										continue;
 								}
-								else if (0 < buffer.Length)
-								{
-									yield return buffer.ToString();
-									buffer.Clear();
-								}
+
+								yield return buffer.ToString();
+								buffer.Clear();
 							}
 							break;
 					}

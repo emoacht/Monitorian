@@ -133,7 +133,10 @@
     <value>Probe into monitors</value>
   </data>
   <data name="RecordException" xml:space="preserve">
-    <value>An unexpected problem occurred. Save exception log to Desktop?</value>
+    <value>An unexpected problem happened. Save exception log to Desktop?</value>
+  </data>
+  <data name="RecordProbe" xml:space="preserve">
+    <value>Save probe log to Desktop?</value>
   </data>
   <data name="ShowsAdjusted" xml:space="preserve">
     <value>Show adjusted brightness</value>

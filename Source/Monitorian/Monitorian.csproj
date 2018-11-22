@@ -93,6 +93,7 @@
     <Compile Include="Models\LogService.cs" />
     <Compile Include="Models\ProductInfo.cs" />
     <Compile Include="Models\Settings.cs" />
+    <Compile Include="Models\TrapService.cs" />
     <Compile Include="Models\Watcher\BrightnessWatcher.cs" />
     <Compile Include="Models\Watcher\PowerWatcher.cs" />
     <Compile Include="Models\Watcher\SettingsWatcher.cs" />

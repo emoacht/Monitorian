@@ -106,11 +106,20 @@ namespace Monitorian.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to An unexpected problem occurred. Save exception log to Desktop?.
+        ///   Looks up a localized string similar to An unexpected problem happened. Save exception log to Desktop?.
         /// </summary>
         public static string RecordException {
             get {
                 return ResourceManager.GetString("RecordException", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save probe log to Desktop?.
+        /// </summary>
+        public static string RecordProbe {
+            get {
+                return ResourceManager.GetString("RecordProbe", resourceCulture);
             }
         }
         

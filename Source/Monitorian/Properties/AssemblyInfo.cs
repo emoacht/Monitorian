@@ -55,3 +55,5 @@ using System.Windows;
 [assembly: AssemblyFileVersion("1.7.4.0")]
 [assembly: Guid("9e001d5b-6d18-48ba-a1d9-f1e2410a52d3")]
 
+// For unit test
+[assembly: InternalsVisibleTo("Monitorian.Test")]

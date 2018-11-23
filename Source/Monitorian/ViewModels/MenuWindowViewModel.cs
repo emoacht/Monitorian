@@ -60,9 +60,9 @@ namespace Monitorian.ViewModels
 		{
 			CanProbe = false;
 
-			Task.Run(() =>
+			Task.Run(async () =>
 			{
-				var log = MonitorManager.ProbeMonitors();
+				var log = await MonitorManager.ProbeMonitorsAsync();
 				LogService.RecordProbe(log);
 			});
 		}

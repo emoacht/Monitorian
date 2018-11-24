@@ -56,22 +56,14 @@ namespace Monitorian.ViewModels
 		}
 		private bool _canProbe;
 
-		private const string ProbeFileName = "probe.log";
-
 		public void PerformProbe()
 		{
 			CanProbe = false;
 
-			var probeFilePath = Path.Combine(
-				Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory),
-				ProbeFileName);
-
-			Task.Run(() =>
+			Task.Run(async () =>
 			{
-				var log = $"[Date: {DateTime.Now}]" + Environment.NewLine
-					+ MonitorManager.ProbeMonitors();
-
-				File.WriteAllText(probeFilePath, log, Encoding.UTF8);
+				var log = await MonitorManager.ProbeMonitorsAsync();
+				LogService.RecordProbe(log);
 			});
 		}
 

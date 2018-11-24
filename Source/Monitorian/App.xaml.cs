@@ -20,7 +20,7 @@ namespace Monitorian
 		{
 			base.OnStartup(e);
 
-			LogService.Start();
+			TrapService.Start();
 
 			_agent = new StartupAgent();
 			if (!_agent.Start(ProductInfo.StartupTaskId))
@@ -43,7 +43,7 @@ namespace Monitorian
 			_controller?.End();
 			_agent.Dispose();
 
-			LogService.End();
+			TrapService.End();
 
 			base.OnExit(e);
 		}

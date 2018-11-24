@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -61,7 +62,13 @@ namespace Monitorian.Models.Monitor
 					{
 						var displayItem = displayItems.FirstOrDefault(y => string.Equals(x.DeviceInstanceId, y.DeviceInstanceId, StringComparison.OrdinalIgnoreCase));
 						if (!string.IsNullOrWhiteSpace(displayItem?.DisplayName))
+						{
 							alternateDescription = displayItem.DisplayName;
+						}
+						else if (!string.IsNullOrEmpty(displayItem?.ConnectionDescription))
+						{
+							alternateDescription = $"{x.Description} ({displayItem.ConnectionDescription})";
+						}
 					}
 					return new DeviceItemPlus(x, alternateDescription);
 				})
@@ -79,7 +86,7 @@ namespace Monitorian.Models.Monitor
 				foreach (var physicalItem in MonitorConfiguration.EnumeratePhysicalMonitors(handleItem.MonitorHandle))
 				{
 					int index = -1;
-					if (physicalItem.IsBrightnessSupported)
+					if (physicalItem.IsSupported)
 					{
 						index = deviceItems.FindIndex(x =>
 							(x.DisplayIndex == handleItem.DisplayIndex) &&
@@ -99,7 +106,7 @@ namespace Monitorian.Models.Monitor
 						displayIndex: deviceItem.DisplayIndex,
 						monitorIndex: deviceItem.MonitorIndex,
 						handle: physicalItem.Handle,
-						isLowLevel: physicalItem.IsLowLevel);
+						useLowLevel: physicalItem.IsLowLevelSupported);
 
 					deviceItems.RemoveAt(index);
 					if (deviceItems.Count == 0)
@@ -152,9 +159,10 @@ namespace Monitorian.Models.Monitor
 
 		#region Probe
 
-		public static string ProbeMonitors()
+		public static async Task<string> ProbeMonitorsAsync()
 		{
 			var data = new MonitorData();
+			await data.PopulateAsync();
 
 			using (var ms = new MemoryStream())
 			using (var jw = JsonReaderWriterFactory.CreateJsonWriter(ms, Encoding.UTF8, true, true))
@@ -184,19 +192,53 @@ namespace Monitorian.Models.Monitor
 			[DataMember(Order = 4, Name = "DisplayMonitor - DisplayItems")]
 			public DisplayInformation.DisplayItem[] DisplayItems { get; private set; }
 
+			[DataMember(Order = 5)]
+			public string[] ElapsedTime { get; private set; }
+
 			public MonitorData()
+			{ }
+
+			public async Task PopulateAsync()
 			{
-				DeviceItems = DeviceContext.EnumerateMonitorDevices().ToArray();
+				var sw = new Stopwatch();
 
-				PhysicalItems = DeviceContext.GetMonitorHandles().ToDictionary(
-					x => x,
-					x => MonitorConfiguration.EnumeratePhysicalMonitors(x.MonitorHandle).ToArray());
+				var actions = new[]
+				{
+					GetAction(nameof(DeviceItems), () =>
+						DeviceItems = DeviceContext.EnumerateMonitorDevices().ToArray()),
 
-				InstalledItems = DeviceInstallation.EnumerateInstalledMonitors().ToArray();
-				DesktopItems = MSMonitor.EnumerateDesktopMonitors().ToArray();
+					GetAction(nameof(PhysicalItems), () =>
+						PhysicalItems = DeviceContext.GetMonitorHandles().ToDictionary(
+							x => x,
+							x => MonitorConfiguration.EnumeratePhysicalMonitors(x.MonitorHandle, true).ToArray())),
 
-				if (OsVersion.Is10Redstone4OrNewer)
-					DisplayItems = DisplayInformation.GetDisplayMonitorsAsync().Result;
+					GetAction(nameof(InstalledItems), () =>
+						InstalledItems = DeviceInstallation.EnumerateInstalledMonitors().ToArray()),
+
+					GetAction(nameof(DesktopItems), () =>
+						DesktopItems = MSMonitor.EnumerateDesktopMonitors().ToArray()),
+
+					GetAction(nameof(DisplayItems), async () =>
+					{
+						if (OsVersion.Is10Redstone4OrNewer)
+							DisplayItems = await DisplayInformation.GetDisplayMonitorsAsync();
+					})
+				};
+
+				ElapsedTime = new string[actions.Length];
+
+				sw.Start();
+
+				await Task.WhenAll(actions.Select((x, index) => Task.Run(() => x.Invoke(index))));
+
+				sw.Stop();
+
+				Action<int> GetAction(string name, Action action) =>
+					new Action<int>((index) =>
+					{
+						action.Invoke();
+						ElapsedTime[index] = $"{name} -> {sw.ElapsedMilliseconds}";
+					});
 			}
 		}
 

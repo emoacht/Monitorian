@@ -18,7 +18,7 @@ Monitorian is a Windows desktop tool to adjust the brightness of multiple monito
 [Monitorian](https://www.microsoft.com/store/apps/9nw33j738bl0) (Windows Store)
 
  * Other:<br>
-:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/1.7.4-Installer/MonitorianInstaller174.zip) | :floppy_disk: [Executables](https://github.com/emoacht/Monitorian/releases/download/1.7.4-Executables/Monitorian174.zip)
+:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/1.8.0-Installer/MonitorianInstaller180.zip) | :floppy_disk: [Executables](https://github.com/emoacht/Monitorian/releases/download/1.8.0-Executables/Monitorian180.zip)
 
 ## Install/Uninstall
 
@@ -29,16 +29,24 @@ When you use only executables, please note the following:
 
 ## Remarks
 
- - To rename the monitor in this app, press and hold its name until it turns to be editable.
+ - The monitor name shown in main window can be changed for easier identification of monitors. To change the name, press and hold it until it turns to be editable.
  - The number of monitors shown at a time is currently up to 4.
 
 ## Development
 
 This app is a WPF app developed and tested with Surface Pro 4.
 
-To know the capabilities of monitors, click the app title in menu window 3 times and then hit the appeared button. It will create a log file on the desktop.
+The log will be an useful source to look into an issue.
+
+ - __exception.log__ - Information on exceptions when an unexpected problem happened.
+
+ - __probe.log__ - Information on capabilities of each monitor obtained from various APIs and used to find accessible monitors. To get this log, click the app title in menu window 3 times and then tap the button appeared beneath.
 
 ## History
+
+Ver 1.8.0 2018-11-24
+
+ - Supplement generic monitor name with connection type
 
 Ver 1.7.4 2018-11-14
 

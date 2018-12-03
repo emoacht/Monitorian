@@ -10,33 +10,37 @@ namespace Monitorian.Models.Watcher
 	internal abstract class TimerWatcher
 	{
 		private readonly DispatcherTimer _timer;
+		private readonly TimeSpan[] _intervals;
 
-		protected TimeSpan TimerInterval { get; set; } = TimeSpan.FromSeconds(3);
-
-		private int _count = 0;
-		private readonly int _countLimit = 1;
-
-		protected TimerWatcher(int countLimit = 1)
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="intervals">Sequence of timer intervals in seconds</param>
+		protected TimerWatcher(params int[] intervals)
 		{
-			if (countLimit <= 0)
-				throw new ArgumentOutOfRangeException(nameof(countLimit), "The count must be greater than 0.");
+			if (!(intervals?.Length > 0))
+				throw new ArgumentNullException(nameof(intervals));
+			if (intervals.Any(x => x <= 0))
+				throw new ArgumentOutOfRangeException(nameof(intervals));
 
-			this._countLimit = countLimit;
+			this._intervals = intervals.Select(x => TimeSpan.FromSeconds(x)).ToArray();
 
 			_timer = new DispatcherTimer();
 			_timer.Tick += OnTick;
 		}
 
-		protected void TimerReset()
-		{
-			_timer.Stop();
-			_count = 0;
-		}
+		private int _count = 0;
 
 		protected void TimerStart()
 		{
-			_timer.Interval += TimerInterval;
+			_count = 0;
+			_timer.Interval = _intervals[_count];
 			_timer.Start();
+		}
+
+		protected void TimerStop()
+		{
+			_timer.Stop();
 		}
 
 		private async void OnTick(object sender, EventArgs e)
@@ -46,8 +50,9 @@ namespace Monitorian.Models.Watcher
 			await TimerTick();
 
 			_count++;
-			if (_count < _countLimit)
+			if (_count < _intervals.Length)
 			{
+				_timer.Interval = _intervals[_count];
 				_timer.Start();
 			}
 		}

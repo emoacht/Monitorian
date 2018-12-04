@@ -11,7 +11,7 @@ namespace Monitorian.Models.Watcher
 	{
 		private Func<Task> _onChanged;
 
-		public SettingsWatcher() : base(countLimit: 3)
+		public SettingsWatcher() : base(3, 3, 6)
 		{ }
 
 		public void Subscribe(Func<Task> onChanged)
@@ -22,7 +22,7 @@ namespace Monitorian.Models.Watcher
 
 		private async void OnDisplaySettingsChanged(object sender, EventArgs e)
 		{
-			TimerReset();
+			TimerStop();
 
 			await _onChanged?.Invoke();
 

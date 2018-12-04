@@ -11,7 +11,7 @@ namespace Monitorian.Models.Watcher
 	{
 		private Func<Task> _onChanged;
 
-		public PowerWatcher() : base(countLimit: 2)
+		public PowerWatcher() : base(5, 5, 10, 20, 40, 80)
 		{ }
 
 		public void Subscribe(Func<Task> onChanged)
@@ -22,7 +22,7 @@ namespace Monitorian.Models.Watcher
 
 		private async void OnPowerModeChanged(object sender, PowerModeChangedEventArgs e)
 		{
-			TimerReset();
+			TimerStop();
 
 			switch (e.Mode)
 			{

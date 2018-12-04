@@ -18,7 +18,7 @@ Monitorian is a Windows desktop tool to adjust the brightness of multiple monito
 [Monitorian](https://www.microsoft.com/store/apps/9nw33j738bl0) (Windows Store)
 
  * Other:<br>
-:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/1.8.0-Installer/MonitorianInstaller180.zip) | :floppy_disk: [Executables](https://github.com/emoacht/Monitorian/releases/download/1.8.0-Executables/Monitorian180.zip)
+:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/1.9.0-Installer/MonitorianInstaller190.zip) | :floppy_disk: [Executables](https://github.com/emoacht/Monitorian/releases/download/1.9.0-Executables/Monitorian190.zip)
 
 ## Install/Uninstall
 
@@ -43,6 +43,10 @@ The log will be an useful source to look into an issue.
  - __probe.log__ - Information on capabilities of each monitor obtained from various APIs and used to find accessible monitors. To get this log, click the app title in menu window 3 times and then tap the button appeared beneath.
 
 ## History
+
+Ver 1.9.0 2018-12-5
+
+ - Change scan timings after resume
 
 Ver 1.8.0 2018-11-24
 

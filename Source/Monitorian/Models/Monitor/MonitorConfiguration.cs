@@ -331,7 +331,7 @@ namespace Monitorian.Models.Monitor
 
 		public static int GetBrightness(SafePhysicalMonitorHandle physicalMonitorHandle, bool useLowLevel = false)
 		{
-			if (physicalMonitorHandle == null)
+			if (physicalMonitorHandle is null)
 				throw new ArgumentNullException(nameof(physicalMonitorHandle));
 
 			if (physicalMonitorHandle.IsClosed)
@@ -371,7 +371,7 @@ namespace Monitorian.Models.Monitor
 
 		public static bool SetBrightness(SafePhysicalMonitorHandle physicalMonitorHandle, int brightness, bool useLowLevel = false)
 		{
-			if (physicalMonitorHandle == null)
+			if (physicalMonitorHandle is null)
 				throw new ArgumentNullException(nameof(physicalMonitorHandle));
 			if ((brightness < 0) || (100 < brightness))
 				throw new ArgumentOutOfRangeException(nameof(brightness), $"{nameof(brightness)} must be in the range of 0 to 100.");

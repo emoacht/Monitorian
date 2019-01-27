@@ -104,7 +104,7 @@ namespace Monitorian.Models.Monitor
 					{
 						var instanceName = (string)instance.GetPropertyValue("InstanceName");
 						var monitor = monitors.FirstOrDefault(x => instanceName.StartsWith(x.DeviceInstanceId, StringComparison.OrdinalIgnoreCase));
-						if (monitor == null)
+						if (monitor is null)
 							continue;
 
 						var level = (byte[])instance.GetPropertyValue("Level");
@@ -163,7 +163,7 @@ namespace Monitorian.Models.Monitor
 						{
 							object result = instance.InvokeMethod("WmiSetBrightness", new object[] { (uint)timeout, (byte)brightness });
 
-							var isSuccess = (result == null); // Return value will be null if succeeded.
+							var isSuccess = (result is null); // Return value will be null if succeeded.
 							if (!isSuccess)
 							{
 								var errorCode = (uint)result;

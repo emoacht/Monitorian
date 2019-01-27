@@ -104,7 +104,7 @@ namespace StartupAgency
 		/// </remarks>
 		public void RaiseShowRequested()
 		{
-			ShowRequested?.Invoke(this, null);
+			ShowRequested?.Invoke(this, EventArgs.Empty);
 		}
 	}
 }

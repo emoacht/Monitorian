@@ -113,7 +113,7 @@ namespace ScreenFrame
 			NotifyIcon.Icon = GetIcon(this._icon, _dpi);
 			NotifyIcon.Visible = true;
 
-			if (_listener == null)
+			if (_listener is null)
 			{
 				_listener = NotifyIconWindowListener.Create(this);
 			}
@@ -202,13 +202,13 @@ namespace ScreenFrame
 			}
 			else
 			{
-				MouseLeftButtonClick?.Invoke(this, null);
+				MouseLeftButtonClick?.Invoke(this, EventArgs.Empty);
 			}
 		}
 
 		private void OnMouseDoubleClick(object sender, MouseEventArgs e)
 		{
-			MouseLeftButtonClick?.Invoke(this, null);
+			MouseLeftButtonClick?.Invoke(this, EventArgs.Empty);
 		}
 
 		#endregion

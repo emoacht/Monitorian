@@ -27,7 +27,7 @@ namespace Monitorian.Models
 		/// <returns>True if successfully switched the culture</returns>
 		public static bool Switch(IEnumerable<string> args)
 		{
-			if (args == null)
+			if (args is null)
 				throw new ArgumentNullException(nameof(args));
 
 			var supportedCultureNames = new HashSet<string>(CultureInfo.GetCultures(CultureTypes.AllCultures).Select(x => x.Name));
@@ -55,7 +55,7 @@ namespace Monitorian.Models
 		/// <returns>True if successfully switched the culture</returns>
 		public static bool Switch()
 		{
-			if (_culture == null)
+			if (_culture is null)
 				return false;
 
 			Thread.CurrentThread.CurrentCulture = _culture;

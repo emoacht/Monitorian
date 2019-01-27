@@ -30,7 +30,7 @@ namespace Monitorian.Views.Controls
 
 		private void ReflectShadowValue()
 		{
-			if ((_shadowCenter == null) || (_shadowLeft == null) || (_shadowRight == null))
+			if ((_shadowCenter is null) || (_shadowLeft is null) || (_shadowRight is null))
 				return;
 
 			if ((ShadowVisibility != Visibility.Visible) || (ShadowValue < 0) || (ShadowValue == this.Value))

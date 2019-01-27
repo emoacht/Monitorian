@@ -1,34 +1,12 @@
 ﻿<Application x:Class="Monitorian.App"
 			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-			 xmlns:converters="clr-namespace:Monitorian.Views.Converters">
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 	<Application.Resources>
-		<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverterKey"/>
-		<converters:VisibilityToBooleanFilterConverter x:Key="VisibilityToBooleanFilterConverterKey"/>
-		<converters:BooleanInverseConverter x:Key="BooleanInverseConverterKey"/>
-		<converters:VisibilityInverseConverter x:Key="VisibilityInverseConverterKey"/>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="/Views/Generic.xaml"/>
+			</ResourceDictionary.MergedDictionaries>
 
-		<Color x:Key="App.ForegroundColor">White</Color>
-		<Color x:Key="App.ShadowColor">LightGray</Color>
-
-		<SolidColorBrush x:Key="App.Background.Plain" Color="#FF1F1F1F"/>
-		<SolidColorBrush x:Key="App.Background.Translucent" Color="#CC171717"/>
-		<SolidColorBrush x:Key="App.Foreground" Color="{StaticResource App.ForegroundColor}"/>
-		<SolidColorBrush x:Key="App.Foreground.Shadow" Color="{StaticResource App.ShadowColor}"/>
-
-		<SolidColorBrush x:Key="Text.Writable.Border" Color="{StaticResource App.ForegroundColor}"/>
-		<SolidColorBrush x:Key="Text.Writable.Background" Color="#FF5F5F5F"/>
-
-		<Color x:Key="Access.Normal.BackgroundColor">#33FFFFFF</Color>
-		<Color x:Key="Access.Normal.BorderColor">Transparent</Color>
-		<Color x:Key="Access.MouseOver.BorderColor">#FF868686</Color>
-		<Color x:Key="Access.Pressed.BackgroundColor">#FF868686</Color>
-
-		<SolidColorBrush x:Key="Unison.Checked.Border" Color="#FFECECEC"/>
-
-		<SolidColorBrush x:Key="Menu.Item.Normal.Backgound" Color="Transparent"/>
-		<SolidColorBrush x:Key="Menu.Item.MouseOver.Background" Color="#FF5F5F5F"/>
-		<SolidColorBrush x:Key="Menu.Separator" Color="#FF808080"/>
-
+		</ResourceDictionary>
 	</Application.Resources>
 </Application>

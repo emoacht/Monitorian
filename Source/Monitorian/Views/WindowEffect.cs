@@ -7,6 +7,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Interop;
+using System.Windows.Media;
+using Microsoft.Win32;
 
 using Monitorian.Helper;
 
@@ -43,6 +45,8 @@ namespace Monitorian.Views
 			DWMWA_LAST
 		}
 
+		private const int S_OK = 0x0;
+
 		#endregion
 
 		#region Win32 (for Win7)
@@ -76,8 +80,6 @@ namespace Monitorian.Views
 			DWM_BB_BLURREGION = 0x00000002,
 			DWM_BB_TRANSITIONONMAXIMIZED = 0x00000004
 		}
-
-		private const int S_OK = 0x0;
 
 		#endregion
 
@@ -129,7 +131,8 @@ namespace Monitorian.Views
 			ACCENT_ENABLE_GRADIENT = 1,
 			ACCENT_ENABLE_TRANSPARENTGRADIENT = 2,
 			ACCENT_ENABLE_BLURBEHIND = 3,
-			ACCENT_INVALID_STATE = 4
+			ACCENT_ENABLE_ACRYLICBLURBEHIND = 4,
+			ACCENT_INVALID_STATE = 5
 		}
 
 		#endregion
@@ -146,37 +149,51 @@ namespace Monitorian.Views
 				(uint)Marshal.SizeOf<bool>()) == S_OK);
 		}
 
-		public static bool EnableBackgroundBlur(Window window)
+		public static bool EnableBackgroundTranslucency(Window window)
 		{
-			if (!OsVersion.IsVistaOrNewer)
+			if (OsVersion.Is10Threshold1OrNewer)
+			{
+				// For Windows 10
+				if (!IsTransparencyEnabledForWin10.Value)
+					return false;
+
+				ChangeBackgroundTranslucent(window);
+
+				return EnableBackgroundBlurForWin10(window);
+			}
+
+			if (OsVersion.Is8OrNewer)
+			{
+				// For Windows 8 and 8.1, no blur effect is available.
 				return false;
+			}
 
-			if (!OsVersion.Is8OrNewer)
+			if (OsVersion.IsVistaOrNewer)
+			{
+				// For Windows 7
+				if (!IsTransparencyEnabledForWin7.Value)
+					return false;
+
+				ChangeBackgroundTranslucent(window);
+
 				return EnableBackgroundBlurForWin7(window);
+			}
 
-			if (!OsVersion.Is10Threshold1OrNewer)
-				return false; // For Windows 8 and 8.1, no blur effect is available.
-
-			return EnableBackgroundBlurForWin10(window);
+			return false;
 		}
 
-		private static bool EnableBackgroundBlurForWin7(Window window)
+		private static Lazy<bool> IsTransparencyEnabledForWin10 = new Lazy<bool>(() => IsEnableTransparencyOn());
+		private static Lazy<bool> IsTransparencyEnabledForWin7 = new Lazy<bool>(() => IsColorizationOpaqueBlendOn());
+
+		private const string TranslucentBrushKey = "App.Background.Translucent";
+		private static SolidColorBrush TranslucentBrush;
+
+		private static void ChangeBackgroundTranslucent(Window window)
 		{
-			if ((DwmIsCompositionEnabled(out bool isEnabled) != S_OK) || !isEnabled)
-				return false;
+			if (TranslucentBrush is null)
+				TranslucentBrush = (SolidColorBrush)window.FindResource(TranslucentBrushKey);
 
-			var windowHandle = new WindowInteropHelper(window).Handle;
-
-			var bb = new DWM_BLURBEHIND
-			{
-				dwFlags = DWM_BB.DWM_BB_ENABLE,
-				fEnable = true,
-				hRgnBlur = IntPtr.Zero
-			};
-
-			return (DwmEnableBlurBehindWindow(
-				windowHandle,
-				ref bb) == S_OK);
+			window.Background = TranslucentBrush;
 		}
 
 		private static bool EnableBackgroundBlurForWin10(Window window)
@@ -214,5 +231,66 @@ namespace Monitorian.Views
 				Marshal.FreeHGlobal(accentPointer);
 			}
 		}
+
+		private static bool EnableBackgroundBlurForWin7(Window window)
+		{
+			if ((DwmIsCompositionEnabled(out bool isEnabled) != S_OK) || !isEnabled)
+				return false;
+
+			var windowHandle = new WindowInteropHelper(window).Handle;
+
+			var bb = new DWM_BLURBEHIND
+			{
+				dwFlags = DWM_BB.DWM_BB_ENABLE,
+				fEnable = true,
+				hRgnBlur = IntPtr.Zero
+			};
+
+			return (DwmEnableBlurBehindWindow(
+				windowHandle,
+				ref bb) == S_OK);
+		}
+
+		#region Registry
+
+		private static bool IsEnableTransparencyOn()
+		{
+			const string keyName = @"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize";
+			const string valueName = "EnableTransparency";
+
+			using (var key = Registry.CurrentUser.OpenSubKey(keyName))
+			{
+				switch (key?.GetValue(valueName))
+				{
+					case 0: // Off
+						return false;
+					case 1: // On
+						return true;
+					default:
+						return false;
+				}
+			}
+		}
+
+		private static bool IsColorizationOpaqueBlendOn()
+		{
+			const string keyName = @"Software\Microsoft\Windows\DWM";
+			const string valueName = "ColorizationOpaqueBlend";
+
+			using (var key = Registry.CurrentUser.OpenSubKey(keyName))
+			{
+				switch (key?.GetValue(valueName))
+				{
+					case 0: // On
+						return true;
+					case 1: // Off
+						return false;
+					default:
+						return false;
+				}
+			}
+		}
+
+		#endregion
 	}
 }

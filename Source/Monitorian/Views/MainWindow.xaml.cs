@@ -39,7 +39,7 @@ namespace Monitorian.Views
 			base.OnSourceInitialized(e);
 
 			WindowEffect.DisableTransitions(this);
-			WindowEffect.EnableBackgroundBlur(this);
+			WindowEffect.EnableBackgroundTranslucency(this);
 		}
 
 		public override void OnApplyTemplate()

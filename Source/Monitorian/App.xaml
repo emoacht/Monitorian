@@ -8,11 +8,11 @@
 		<converters:BooleanInverseConverter x:Key="BooleanInverseConverterKey"/>
 		<converters:VisibilityInverseConverter x:Key="VisibilityInverseConverterKey"/>
 
-		<Color x:Key="App.BackgroundColor">#CC171717</Color>
 		<Color x:Key="App.ForegroundColor">White</Color>
 		<Color x:Key="App.ShadowColor">LightGray</Color>
 
-		<SolidColorBrush x:Key="App.Background" Color="{StaticResource App.BackgroundColor}"/>
+		<SolidColorBrush x:Key="App.Background.Plain" Color="#FF1F1F1F"/>
+		<SolidColorBrush x:Key="App.Background.Translucent" Color="#CC171717"/>
 		<SolidColorBrush x:Key="App.Foreground" Color="{StaticResource App.ForegroundColor}"/>
 		<SolidColorBrush x:Key="App.Foreground.Shadow" Color="{StaticResource App.ShadowColor}"/>
 

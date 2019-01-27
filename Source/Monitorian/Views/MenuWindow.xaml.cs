@@ -38,7 +38,7 @@ namespace Monitorian.Views
 		{
 			base.OnSourceInitialized(e);
 
-			WindowEffect.EnableBackgroundBlur(this);
+			WindowEffect.EnableBackgroundTranslucency(this);
 		}
 
 		#region Close

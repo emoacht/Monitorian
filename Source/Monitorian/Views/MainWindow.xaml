@@ -10,7 +10,8 @@
 		Width="360" Height="200"
 		ResizeMode="NoResize" SizeToContent="WidthAndHeight"
 		ShowInTaskbar="False"
-		Background="{StaticResource App.Background}" AllowsTransparency="True" WindowStyle="None">
+		AllowsTransparency="True" WindowStyle="None"
+		Background="{StaticResource App.Background.Plain}">
 	<Window.Resources>
 		<sys:Double x:Key="ButtonHeight">60</sys:Double>
 		<sys:Double x:Key="ThumbHeight">40</sys:Double>

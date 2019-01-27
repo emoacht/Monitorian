@@ -8,7 +8,8 @@
 		Width="200"
 		ResizeMode="NoResize" SizeToContent="WidthAndHeight"
 		ShowInTaskbar="False" Topmost="True"
-		Background="{StaticResource App.Background}" AllowsTransparency="True" WindowStyle="None">
+		AllowsTransparency="True" WindowStyle="None"
+		Background="{StaticResource App.Background.Plain}">
 	<Window.Resources>
 		<!-- Menu separator -->
 		<Style x:Key="MenuSeparatorStyle" TargetType="{x:Type Separator}">

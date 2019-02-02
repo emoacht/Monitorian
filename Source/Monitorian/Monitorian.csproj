@@ -101,6 +101,7 @@
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\MonitorViewModel.cs" />
     <Compile Include="ViewModels\MenuWindowViewModel.cs" />
+    <Compile Include="ViewModels\ProbeViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
     <Compile Include="Views\Controls\PulseLabel.cs" />
     <Compile Include="Views\Controls\QuickShadowSlider.cs" />
@@ -129,6 +130,13 @@
     </Page>
     <Compile Include="Views\MenuWindow.xaml.cs">
       <DependentUpon>MenuWindow.xaml</DependentUpon>
+    </Compile>
+    <Page Include="Views\Probe.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Compile Include="Views\Probe.xaml.cs">
+      <DependentUpon>Probe.xaml</DependentUpon>
     </Compile>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>

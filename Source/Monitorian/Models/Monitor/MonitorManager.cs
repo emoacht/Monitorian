@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Monitorian.Helper;
-using UniversalSupplement;
+using Monitorian.Supplement;
 
 namespace Monitorian.Models.Monitor
 {

@@ -7,8 +7,8 @@
     <ProjectGuid>{6E338214-E33C-4014-9BDD-6D914E6C536D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>UniversalSupplement</RootNamespace>
-    <AssemblyName>UniversalSupplement</AssemblyName>
+    <RootNamespace>Monitorian.Supplement</RootNamespace>
+    <AssemblyName>Monitorian.Supplement</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <TargetPlatformVersion>10.0.17134.0</TargetPlatformVersion>
     <FileAlignment>512</FileAlignment>
@@ -22,7 +22,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\UniversalSupplement.xml</DocumentationFile>
+    <DocumentationFile>bin\Debug\Monitorian.Supplement.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>bin\Release\</OutputPath>
@@ -31,7 +31,7 @@
     <Optimize>true</Optimize>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\UniversalSupplement.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\Monitorian.Supplement.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Unlimited|AnyCPU'">
     <OutputPath>bin\Unlimited\</OutputPath>

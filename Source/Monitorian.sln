@@ -19,7 +19,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StartupAgency", "StartupAge
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StartupBridge", "StartupBridge\StartupBridge.csproj", "{735EEF09-EA89-4022-828C-575B73981165}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniversalSupplement", "UniversalSupplement\UniversalSupplement.csproj", "{6E338214-E33C-4014-9BDD-6D914E6C536D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Monitorian.Supplement", "Monitorian.Supplement\Monitorian.Supplement.csproj", "{6E338214-E33C-4014-9BDD-6D914E6C536D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Monitorian.Test", "Monitorian.Test\Monitorian.Test.csproj", "{338B3627-9128-45CF-92C2-86B04318C24B}"
 	ProjectSection(ProjectDependencies) = postProject

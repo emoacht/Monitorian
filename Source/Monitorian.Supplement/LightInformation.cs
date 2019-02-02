@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Devices.Sensors;
 
-namespace UniversalSupplement
+namespace Monitorian.Supplement
 {
 	/// <summary>
 	/// LightSensor functions

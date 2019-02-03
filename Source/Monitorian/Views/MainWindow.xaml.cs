@@ -39,7 +39,7 @@ namespace Monitorian.Views
 			base.OnSourceInitialized(e);
 
 			WindowEffect.DisableTransitions(this);
-			WindowEffect.EnableBackgroundBlur(this);
+			WindowEffect.EnableBackgroundTranslucency(this);
 		}
 
 		public override void OnApplyTemplate()
@@ -99,7 +99,7 @@ namespace Monitorian.Views
 						// Setting the same value will not trigger calling this method.					
 
 						var window = (MainWindow)d;
-						if (window._defaultHeights == null)
+						if (window._defaultHeights is null)
 							return;
 
 						var factor = (bool)e.NewValue ? 1D : ShrinkFactor;

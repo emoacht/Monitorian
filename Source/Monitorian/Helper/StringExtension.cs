@@ -13,7 +13,7 @@ namespace Monitorian.Helper
 	{
 		public static bool IsAscii(this string source)
 		{
-			if (source == null)
+			if (source is null)
 				return true;
 
 			return source.Select(x => (int)x).All(x => x < 0x80);

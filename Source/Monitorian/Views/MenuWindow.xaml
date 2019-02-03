@@ -8,143 +8,15 @@
 		Width="200"
 		ResizeMode="NoResize" SizeToContent="WidthAndHeight"
 		ShowInTaskbar="False" Topmost="True"
-		Background="{StaticResource App.Background}" AllowsTransparency="True" WindowStyle="None">
-	<Window.Resources>
-		<!-- Menu separator -->
-		<Style x:Key="MenuSeparatorStyle" TargetType="{x:Type Separator}">
-			<Setter Property="Margin" Value="8,4"/>
-			<Setter Property="Background" Value="{StaticResource Menu.Separator}"/>
-		</Style>
-
-		<!-- Menu item -->
-		<Style x:Key="MenuItemStyle" TargetType="{x:Type ContentControl}">
-			<Setter Property="Template">
-				<Setter.Value>
-					<ControlTemplate TargetType="{x:Type ContentControl}">
-						<Grid x:Name="body"
-							  Background="{StaticResource Menu.Item.Normal.Backgound}">
-							<ContentPresenter Margin="{TemplateBinding Padding}"
-											  Content="{TemplateBinding Content}"
-											  ContentTemplate="{TemplateBinding ContentTemplate}"/>
-						</Grid>
-						<ControlTemplate.Triggers>
-							<Trigger Property="IsMouseOver" Value="True">
-								<Setter Property="Background" TargetName="body" Value="{StaticResource Menu.Item.MouseOver.Background}"/>
-							</Trigger>
-						</ControlTemplate.Triggers>
-					</ControlTemplate>
-				</Setter.Value>
-			</Setter>
-		</Style>
-
-		<!-- CheckBox -->
-		<Style x:Key="CheckBoxItemStyle" TargetType="{x:Type CheckBox}">
-			<Setter Property="Template">
-				<Setter.Value>
-					<ControlTemplate TargetType="{x:Type CheckBox}">
-						<Grid Background="Transparent"
-							  Margin="{TemplateBinding Padding}"
-							  SnapsToDevicePixels="True" UseLayoutRounding="True">
-							<Grid.ColumnDefinitions>
-								<ColumnDefinition Width="Auto"/>
-								<ColumnDefinition Width="*"/>
-							</Grid.ColumnDefinitions>
-							<Grid Grid.Column="0"
-								  Width="{Binding RelativeSource={RelativeSource Self}, Path=ActualHeight}">
-								<Polyline x:Name="checkMark"
-										  Margin="3"
-										  Points="0,5 4,9 12,0" Stretch="Uniform"
-										  Stroke="{TemplateBinding Foreground}" StrokeThickness="1"
-										  Opacity="0"/>
-							</Grid>
-							<ContentPresenter Grid.Column="1"
-											  Margin="3" HorizontalAlignment="Left" VerticalAlignment="Center"
-											  Focusable="False"/>
-						</Grid>
-						<ControlTemplate.Triggers>
-							<Trigger Property="IsChecked" Value="True">
-								<Setter Property="Opacity" TargetName="checkMark" Value="1"/>
-							</Trigger>
-							<Trigger Property="IsChecked" Value="{x:Null}">
-								<Setter Property="Opacity" TargetName="checkMark" Value="0"/>
-							</Trigger>
-						</ControlTemplate.Triggers>
-					</ControlTemplate>
-				</Setter.Value>
-			</Setter>
-		</Style>
-
-		<!-- Plain Button -->
-		<Style x:Key="PlainButtonItemStyle" TargetType="{x:Type Button}">
-			<Setter Property="Template">
-				<Setter.Value>
-					<ControlTemplate TargetType="{x:Type Button}">
-						<Grid Background="Transparent"
-							  Margin="{TemplateBinding Padding}"
-							  SnapsToDevicePixels="True" UseLayoutRounding="True">
-							<Grid.ColumnDefinitions>
-								<ColumnDefinition Width="Auto"/>
-								<ColumnDefinition Width="*"/>
-							</Grid.ColumnDefinitions>
-							<Grid Grid.Column="0"
-								  Width="{Binding RelativeSource={RelativeSource Self}, Path=ActualHeight}">
-							</Grid>
-							<ContentPresenter Grid.Column="1"
-											  Margin="3" HorizontalAlignment="Left" VerticalAlignment="Center"
-											  Focusable="False"/>
-						</Grid>
-					</ControlTemplate>
-				</Setter.Value>
-			</Setter>
-		</Style>
-
-		<!-- Close Button -->
-		<Style x:Key="CloseButtonItemStyle" TargetType="{x:Type Button}">
-			<Setter Property="Template">
-				<Setter.Value>
-					<ControlTemplate TargetType="{x:Type Button}">
-						<Grid Background="Transparent"
-							  Margin="{TemplateBinding Padding}"
-							  SnapsToDevicePixels="True" UseLayoutRounding="True">
-							<Grid.ColumnDefinitions>
-								<ColumnDefinition Width="Auto"/>
-								<ColumnDefinition Width="*"/>
-							</Grid.ColumnDefinitions>
-							<Grid Grid.Column="0"
-								  Width="{Binding RelativeSource={RelativeSource Self}, Path=ActualHeight}">
-								<Path Margin="3"
-									  Stretch="Uniform"
-									  Stroke="{TemplateBinding Foreground}" StrokeThickness="1">
-									<Path.Data>
-										<GeometryGroup>
-											<LineGeometry StartPoint="0,0" EndPoint="1,1"/>
-											<LineGeometry StartPoint="0,1" EndPoint="1,0"/>
-										</GeometryGroup>
-									</Path.Data>
-								</Path>
-							</Grid>
-							<ContentPresenter Grid.Column="1"
-											  Margin="3" HorizontalAlignment="Left" VerticalAlignment="Center"
-											  Focusable="False"/>
-						</Grid>
-					</ControlTemplate>
-				</Setter.Value>
-			</Setter>
-		</Style>
-	</Window.Resources>
+		AllowsTransparency="True" WindowStyle="None"
+		Background="{StaticResource App.Background.Plain}">
 
 	<StackPanel Margin="0,4,0,4">
-		<TextBlock HorizontalAlignment="Left"
+		<TextBlock x:Name="AppTitle"
+				   HorizontalAlignment="Left"
 				   Padding="8,2,8,2"
 				   Foreground="{StaticResource App.Foreground}"
-				   Text="{Binding Source={x:Static models:ProductInfo.Title}, Mode=OneTime}">
-			<i:Interaction.Triggers>
-				<i:EventTrigger EventName="MouseDown">
-					<ei:CallMethodAction TargetObject="{Binding}"
-										 MethodName="EnableProbe"/>
-				</i:EventTrigger>
-			</i:Interaction.Triggers>
-		</TextBlock>
+				   Text="{Binding Source={x:Static models:ProductInfo.Title}, Mode=OneTime}"/>
 		<TextBlock Width="140" HorizontalAlignment="Left"
 				   Padding="8,0,8,6"
 				   Foreground="{StaticResource App.Foreground}">
@@ -174,21 +46,7 @@
 
 		<Separator Style="{StaticResource MenuSeparatorStyle}"/>
 
-		<ContentControl Style="{StaticResource MenuItemStyle}">
-			<Button Padding="8,4"
-					Style="{StaticResource PlainButtonItemStyle}"
-					Foreground="{StaticResource App.Foreground}"
-					FontSize="13"
-					Content="{x:Static properties:Resources.Probe}"
-					Visibility="{Binding CanProbe, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverterKey}}">
-				<i:Interaction.Triggers>
-					<i:EventTrigger EventName="Click">
-						<ei:CallMethodAction TargetObject="{Binding}"
-											 MethodName="PerformProbe"/>
-					</i:EventTrigger>
-				</i:Interaction.Triggers>
-			</Button>
-		</ContentControl>
+		<StackPanel x:Name="MenuItems"/>
 
 		<ContentControl Style="{StaticResource MenuItemStyle}">
 			<CheckBox Padding="8,4"

@@ -21,7 +21,7 @@ namespace IconImage
 		/// <param name="height">Height of saved image (optional)</param>
 		public static void SaveImage(FrameworkElement source, string filePath, double width = 0D, double height = 0D)
 		{
-			if (source == null)
+			if (source is null)
 				throw new ArgumentNullException(nameof(source));
 			if (string.IsNullOrWhiteSpace(filePath))
 				throw new ArgumentNullException(nameof(filePath));

@@ -26,7 +26,7 @@ namespace Monitorian.ViewModels
 		{
 			get
 			{
-				if (_monitorsView == null)
+				if (_monitorsView is null)
 				{
 					_monitorsView = new ListCollectionView(_controller.Monitors);
 					_monitorsView.SortDescriptions.Add(new SortDescription(nameof(MonitorViewModel.DisplayIndex), ListSortDirection.Ascending));

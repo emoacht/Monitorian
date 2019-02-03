@@ -135,7 +135,7 @@ namespace ScreenFrame
 		/// <returns>DPI information</returns>
 		public static DpiScale GetDpi(Visual visual)
 		{
-			if (visual == null)
+			if (visual is null)
 				throw new ArgumentNullException(nameof(visual));
 
 			if (!OsVersion.Is81OrNewer)
@@ -145,7 +145,7 @@ namespace ScreenFrame
 				return VisualTreeHelper.GetDpi(visual);
 
 			var source = PresentationSource.FromVisual(visual) as HwndSource;
-			if (source == null)
+			if (source is null)
 				return SystemDpi;
 
 			var monitorHandle = MonitorFromWindow(

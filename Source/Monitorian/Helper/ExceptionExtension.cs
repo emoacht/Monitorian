@@ -42,8 +42,8 @@ namespace Monitorian.Helper
 				buffer.Append($"   {EndOfInnerExceptionStack.Value}");
 			}
 
-			string stackTrace = ex.StackTrace;
-			if (stackTrace != null)
+			var stackTrace = ex.StackTrace;
+			if (!string.IsNullOrEmpty(stackTrace))
 			{
 				buffer.AppendLine();
 				buffer.Append(stackTrace);

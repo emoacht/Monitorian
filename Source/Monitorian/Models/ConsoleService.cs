@@ -44,7 +44,7 @@ namespace Monitorian.Models
 		[Conditional("DEBUG")]
 		public static void EndConsole()
 		{
-			if (_listener == null)
+			if (_listener is null)
 				return;
 
 			Trace.Listeners.Remove(_listener);

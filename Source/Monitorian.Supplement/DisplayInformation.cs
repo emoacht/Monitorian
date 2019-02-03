@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Windows.Devices.Display;
 using Windows.Devices.Enumeration;
 
-namespace UniversalSupplement
+namespace Monitorian.Supplement
 {
 	/// <summary>
 	/// DisplayMonitor functions

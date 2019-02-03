@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Devices.Sensors;
 
-namespace UniversalSupplement
+namespace Monitorian.Supplement
 {
 	/// <summary>
 	/// LightSensor functions
@@ -34,7 +34,7 @@ namespace UniversalSupplement
 		public static bool TryGetAmbientLight(out float illuminance)
 		{
 			var reading = LightSensor.GetDefault()?.GetCurrentReading();
-			if (reading == null)
+			if (reading is null)
 			{
 				illuminance = default(float);
 				return false;
@@ -66,7 +66,7 @@ namespace UniversalSupplement
 						}
 					}
 
-					if (_sensor == null)
+					if (_sensor is null)
 						return;
 
 					_sensor.ReportInterval = _reportInterval; // Setting zero requests the sensor to use its default interval.
@@ -85,10 +85,10 @@ namespace UniversalSupplement
 			{
 				lock (_lock)
 				{
-					if (_sensor == null)
+					if (_sensor is null)
 					{
 						_sensor = LightSensor.GetDefault();
-						if (_sensor == null)
+						if (_sensor is null)
 							return;
 					}
 
@@ -104,7 +104,7 @@ namespace UniversalSupplement
 			{
 				lock (_lock)
 				{
-					if (_sensor == null)
+					if (_sensor is null)
 						return;
 
 					_ambientLightChanged -= value;

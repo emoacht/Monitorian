@@ -101,6 +101,7 @@
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\MonitorViewModel.cs" />
     <Compile Include="ViewModels\MenuWindowViewModel.cs" />
+    <Compile Include="ViewModels\ProbeViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
     <Compile Include="Views\Controls\PulseLabel.cs" />
     <Compile Include="Views\Controls\QuickShadowSlider.cs" />
@@ -110,18 +111,15 @@
     <Compile Include="Views\Converters\BooleanInverseConverter.cs" />
     <Compile Include="Views\Converters\VisibilityInverseConverter.cs" />
     <Compile Include="Views\Converters\VisibilityToBooleanFilterConverter.cs" />
-    <Compile Include="Views\MenuWindow.xaml.cs">
-      <DependentUpon>MenuWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\WindowEffect.cs" />
+    <Page Include="Views\Generic.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Compile Include="App.xaml.cs">
-      <DependentUpon>App.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -130,6 +128,20 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Compile Include="Views\MenuWindow.xaml.cs">
+      <DependentUpon>MenuWindow.xaml</DependentUpon>
+    </Compile>
+    <Page Include="Views\Probe.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Compile Include="Views\Probe.xaml.cs">
+      <DependentUpon>Probe.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\Monitor\DeviceContext.cs" />
@@ -192,9 +204,9 @@
       <Project>{f44ea754-e653-4696-8a12-c86224292908}</Project>
       <Name>StartupAgency</Name>
     </ProjectReference>
-    <ProjectReference Include="..\UniversalSupplement\UniversalSupplement.csproj">
+    <ProjectReference Include="..\Monitorian.Supplement\Monitorian.Supplement.csproj">
       <Project>{6e338214-e33c-4014-9bdd-6d914e6c536d}</Project>
-      <Name>UniversalSupplement</Name>
+      <Name>Monitorian.Supplement</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

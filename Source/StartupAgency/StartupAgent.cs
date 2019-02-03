@@ -30,7 +30,7 @@ namespace StartupAgency
 			if (string.IsNullOrWhiteSpace(startupTaskId))
 				throw new ArgumentNullException(nameof(startupTaskId));
 
-			if (caller == null)
+			if (caller is null)
 				caller = Assembly.GetCallingAssembly();
 
 			var title = caller.GetTitle();
@@ -142,7 +142,7 @@ namespace StartupAgency
 
 		private void CheckWorker()
 		{
-			if (_worker == null)
+			if (_worker is null)
 				throw new InvalidOperationException("Functions have not started yet or failed to start.");
 		}
 	}

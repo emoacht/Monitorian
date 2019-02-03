@@ -177,6 +177,9 @@ namespace Monitorian.Models.Monitor
 		[DataContract]
 		private class MonitorData
 		{
+			// When Name property of DataMemberAttribute contains a space or specific character 
+			// (e.g. !, ?), DataContractJsonSerializer.WriteObject method will internally throw 
+			// a System.Xml.XmlException while it will work fine.
 			[DataMember(Order = 0, Name = "Device Context - DeviceItems")]
 			public DeviceContext.DeviceItem[] DeviceItems { get; private set; }
 

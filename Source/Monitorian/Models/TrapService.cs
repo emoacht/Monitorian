@@ -12,7 +12,9 @@ namespace Monitorian.Models
 	{
 		public static void Start()
 		{
-			ConsoleService.StartConsole();
+#if DEBUG
+			ConsoleService.TryStartWrite();
+#endif
 
 			App.Current.DispatcherUnhandledException += OnDispatcherUnhandledException;
 			TaskScheduler.UnobservedTaskException += OnUnobservedTaskException;
@@ -21,11 +23,11 @@ namespace Monitorian.Models
 
 		public static void End()
 		{
-			ConsoleService.EndConsole();
-
 			App.Current.DispatcherUnhandledException -= OnDispatcherUnhandledException;
 			TaskScheduler.UnobservedTaskException -= OnUnobservedTaskException;
 			AppDomain.CurrentDomain.UnhandledException -= OnUnhandledException;
+
+			ConsoleService.EndWrite();
 		}
 
 		private static void OnDispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
@@ -47,7 +49,7 @@ namespace Monitorian.Models
 
 		private static void OnException(object sender, Exception exception, string exceptionName)
 		{
-			if (ConsoleService.WriteConsole(exception, exceptionName))
+			if (ConsoleService.Write(exception, exceptionName))
 				return;
 
 			LogService.RecordException(exception);

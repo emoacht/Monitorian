@@ -24,7 +24,7 @@ namespace Monitorian.Models
 		/// Switches this application's culture depending on given arguments.  
 		/// </summary>
 		/// <param name="args">Arguments</param>
-		/// <returns>True if successfully switched the culture</returns>
+		/// <returns>True if successfully switches the culture</returns>
 		public static bool Switch(IEnumerable<string> args)
 		{
 			if (args is null)
@@ -52,7 +52,7 @@ namespace Monitorian.Models
 		/// <summary>
 		/// Switches current thread's culture.
 		/// </summary>
-		/// <returns>True if successfully switched the culture</returns>
+		/// <returns>True if successfully switches the culture</returns>
 		public static bool Switch()
 		{
 			if (_culture is null)

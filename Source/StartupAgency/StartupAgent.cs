@@ -112,9 +112,9 @@ namespace StartupAgency
 		}
 
 		/// <summary>
-		/// Whether caller instance is registered in startup
+		/// Whether caller instance has been registered in startup
 		/// </summary>
-		/// <returns>True if already registered</returns>
+		/// <returns>True if has been already registered</returns>
 		public bool IsRegistered()
 		{
 			CheckWorker();
@@ -124,7 +124,7 @@ namespace StartupAgency
 		/// <summary>
 		/// Registers caller instance to startup.
 		/// </summary>
-		/// <returns>True if successfully registered</returns>
+		/// <returns>True if successfully registers</returns>
 		public bool Register()
 		{
 			CheckWorker();

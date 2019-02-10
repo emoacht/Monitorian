@@ -68,22 +68,22 @@ namespace ScreenFrame.Movers
 		{ }
 
 		/// <summary>
-		/// Tries to get the adjacent location using specified window width and height.
+		/// Attempts to get the adjacent location using specified window width and height.
 		/// </summary>
 		/// <param name="windowWidth">Window width</param>
 		/// <param name="windowHeight">Window height</param>
 		/// <param name="location">Location of window</param>
-		/// <returns>True if succeeded</returns>
+		/// <returns>True if successfully gets</returns>
 		protected abstract bool TryGetAdjacentLocation(double windowWidth, double windowHeight, out Point location);
 
 		/// <summary>
-		/// Tries to get the adjusted position contained in the monitor using specified window location.
+		/// Attempts to get the adjusted position contained in the monitor using specified window location.
 		/// </summary>
 		/// <param name="windowWidth">Window width</param>
 		/// <param name="windowHeight">Window height</param>
 		/// <param name="location">Location of window</param>
 		/// <param name="position">Position of window</param>
-		/// <returns>True if succeeded</returns>
+		/// <returns>True if successfully gets</returns>
 		protected virtual bool TryGetAdjustedPosition(double windowWidth, double windowHeight, Point location, out Rect position)
 		{
 			position = new Rect(location, new Size(windowWidth, windowHeight));

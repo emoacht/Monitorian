@@ -12,7 +12,7 @@ namespace StartupBridge.Helper
 	/// Accessor to LocalSettings
 	/// </summary>
 	/// <remarks>
-	/// Usable value types are almost identical to types shown in:	
+	/// Usable value types are almost identical to types shown in:
 	/// https://msdn.microsoft.com/en-us/library/br205768.aspx
 	/// excluding Uri and void but including byte[] and Enum.
 	/// </remarks>

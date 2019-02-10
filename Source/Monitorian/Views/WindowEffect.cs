@@ -90,7 +90,7 @@ namespace Monitorian.Views
 		/// </summary>
 		/// <param name="hwnd">Window handle</param>
 		/// <param name="data">Attribute data</param>
-		/// <returns>True if succeeded</returns>
+		/// <returns>True if successfully sets</returns>
 		/// <remarks>
 		/// This API and relevant parameters are derived from:
 		/// https://github.com/riverar/sample-win10-aeroglass 

@@ -335,7 +335,7 @@ namespace Monitorian.Models.Monitor
 		/// <param name="physicalMonitorHandle">Physical monitor handle</param>
 		/// <param name="useLowLevel">Whether to use low level function</param>
 		/// <returns>
-		/// <para>success: True if successfully got</para>
+		/// <para>success: True if successfully gets</para>
 		/// <para>minimum: Raw minimum brightness (not always 0)</para>
 		/// <para>current: Raw current brightness (not always 0 to 100)</para>
 		/// <para>maximum: Raw maximum brightness (not always 100)</para>
@@ -398,7 +398,7 @@ namespace Monitorian.Models.Monitor
 		/// <param name="physicalMonitorHandle">Physical monitor handle</param>
 		/// <param name="brightness">Raw brightness (not always 0 to 100)</param>
 		/// <param name="useLowLevel">Whether to use low level function</param>
-		/// <returns>True if successfully set</returns>
+		/// <returns>True if successfully sets</returns>
 		public static bool SetBrightness(SafePhysicalMonitorHandle physicalMonitorHandle, uint brightness, bool useLowLevel = false)
 		{
 			if (physicalMonitorHandle is null)

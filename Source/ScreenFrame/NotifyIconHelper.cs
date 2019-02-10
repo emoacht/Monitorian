@@ -44,7 +44,7 @@ namespace ScreenFrame
 		/// Sets the window of a specified NotifyIcon into foreground.
 		/// </summary>
 		/// <param name="notifyIcon">NotifyIcon</param>
-		/// <returns>True if succeeded</returns>
+		/// <returns>True if successfully sets</returns>
 		public static bool SetNotifyIconWindowForeground(NotifyIcon notifyIcon)
 		{
 			if (!TryGetNotifyIconWindow(notifyIcon, out NativeWindow window))
@@ -54,11 +54,11 @@ namespace ScreenFrame
 		}
 
 		/// <summary>
-		///  Tries to get the point where a specified NotifyIcon is clicked.
+		/// Attempts to get the point where a specified NotifyIcon is clicked.
 		/// </summary>
 		/// <param name="notifyIcon">NotifyIcon</param>
 		/// <param name="point">Clicked point</param>
-		/// <returns>True if succeeded</returns>
+		/// <returns>True if successfully gets</returns>
 		/// <remarks>MouseEventArgs.Location property of MouseClick event does not contain data.</remarks>
 		public static bool TryGetNotifyIconClickedPoint(NotifyIcon notifyIcon, out Point point)
 		{
@@ -78,11 +78,11 @@ namespace ScreenFrame
 		}
 
 		/// <summary>
-		/// Tries to get the rectangle of a specified NotifyIcon.
+		/// Attempts to get the rectangle of a specified NotifyIcon.
 		/// </summary>
 		/// <param name="notifyIcon">NotifyIcon</param>
 		/// <param name="iconRect">Rectangle of the NotifyIcon</param>
-		/// <returns>True if succeeded</returns>
+		/// <returns>True if successfully gets</returns>
 		/// <remarks>
 		/// The idea to get the rectangle of a NotifyIcon is derived from:
 		/// https://github.com/rzhw/SuperNotifyIcon

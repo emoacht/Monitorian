@@ -18,7 +18,7 @@ namespace Monitorian.Supplement
 	public class LightInformation
 	{
 		/// <summary>
-		/// Checks whether an integrated ambient light sensor exists.
+		/// Whether an integrated ambient light sensor exists.
 		/// </summary>
 		/// <returns>True if exists</returns>
 		public static bool AmbientLightSensorExists()
@@ -30,7 +30,7 @@ namespace Monitorian.Supplement
 		/// Attempts to get ambient light illuminance.
 		/// </summary>
 		/// <param name="illuminance">Illuminance in lux</param>
-		/// <returns>True if successfully got</returns>
+		/// <returns>True if successfully gets</returns>
 		public static bool TryGetAmbientLight(out float illuminance)
 		{
 			var reading = LightSensor.GetDefault()?.GetCurrentReading();

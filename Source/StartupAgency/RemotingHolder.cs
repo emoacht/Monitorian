@@ -20,7 +20,7 @@ namespace StartupAgency
 		/// <summary>
 		/// Creates semaphore to start remoting.
 		/// </summary>
-		/// <returns>True if no other instance there and this instance instantiated remoting server</returns>
+		/// <returns>True if no other instance exists and this instance instantiated remoting server</returns>
 		public bool Create(string title)
 		{
 			if (string.IsNullOrWhiteSpace(title))

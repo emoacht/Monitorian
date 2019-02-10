@@ -131,12 +131,12 @@ namespace ScreenFrame.Movers
 		}
 
 		/// <summary>
-		/// Tries to get the adjacent location using specified window width and height.
+		/// Attempts to get the adjacent location using specified window width and height.
 		/// </summary>
 		/// <param name="windowWidth">Window width</param>
 		/// <param name="windowHeight">Window height</param>
 		/// <param name="location">Location of window</param>
-		/// <returns>True if succeeded</returns>
+		/// <returns>True if successfully gets</returns>
 		protected override bool TryGetAdjacentLocation(double windowWidth, double windowHeight, out Point location)
 		{
 			if (IsDeparted)

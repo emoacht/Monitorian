@@ -20,8 +20,13 @@ namespace StartupAgency
 		/// <summary>
 		/// Creates semaphore to start remoting.
 		/// </summary>
-		/// <returns>True if no other instance exists and this instance instantiated remoting server</returns>
-		public bool Create(string title)
+		/// <param name="title">Title for semaphore and remoting</param>
+		/// <param name="args">Arguments to another instance</param>
+		/// <returns>
+		/// <para>success: True if no other instance exists and this instance successfully creates</para>
+		/// <para>response: Response from another instance if that instance exists and returns an response</para>
+		/// </returns>
+		public (bool success, object response) Create(string title, string[] args)
 		{
 			if (string.IsNullOrWhiteSpace(title))
 				throw new ArgumentNullException(nameof(title));
@@ -46,32 +51,34 @@ namespace StartupAgency
 				}
 				catch (RemotingException ex)
 				{
-					Debug.WriteLine("Failed to start remoting." + Environment.NewLine
+					Debug.WriteLine("Failed to start remoting as server." + Environment.NewLine
 						+ ex);
 				}
-				return true;
+				return (success: true, null);
 			}
 			else
 			{
+				object response = null;
 				try
 				{
 					// Instantiate a client channel and register it.
 					var client = new IpcClientChannel();
 					ChannelServices.RegisterChannel(client, true);
 
-					// Set a proxy for remote object.
+					// Set a proxy for a remoting object instantiated by another instance.
 					var ipcPath = $"ipc://{ipcPortName}/{ipcUri}";
 					_space = Activator.GetObject(typeof(RemotingSpace), ipcPath) as RemotingSpace;
 
-					// Raise event.
-					_space?.RaiseShowRequested();
+					// Request that instance to take an action. If it is older version, RemotingException
+					// will be thrown because the remoting object has no such method.
+					response = _space?.Request(args);
 				}
 				catch (RemotingException ex)
 				{
-					Debug.WriteLine("Failed to start remoting." + Environment.NewLine
+					Debug.WriteLine("Failed to start remoting as client." + Environment.NewLine
 						+ ex);
 				}
-				return false;
+				return (success: false, response);
 			}
 		}
 
@@ -83,10 +90,10 @@ namespace StartupAgency
 			_semaphore?.Dispose();
 		}
 
-		public event EventHandler ShowRequested
+		public event EventHandler<StartupRequestEventArgs> Requested
 		{
-			add { if (_space != null) { _space.ShowRequested += value; } }
-			remove { if (_space != null) { _space.ShowRequested -= value; } }
+			add { if (_space != null) { _space.Requested += value; } }
+			remove { if (_space != null) { _space.Requested -= value; } }
 		}
 	}
 
@@ -94,17 +101,22 @@ namespace StartupAgency
 	{
 		public override object InitializeLifetimeService() => null;
 
-		public event EventHandler ShowRequested;
+		public event EventHandler<StartupRequestEventArgs> Requested;
 
 		/// <summary>
-		/// Raise event.
+		/// Requests the instance which instantiated this object to take an action.
 		/// </summary>
-		/// <remarks>
-		/// This method is intended to be called by an instance other than that instantiated this object.
-		/// </remarks>
-		public void RaiseShowRequested()
+		/// <param name="args">Arguments to that instance</param>
+		/// <returns>Response from that instance</returns>
+		/// <remarks>This method is to be called by an instance other than that instance.</remarks>
+		public object Request(string[] args)
 		{
-			ShowRequested?.Invoke(this, EventArgs.Empty);
+			var e = new StartupRequestEventArgs(args);
+			Requested?.Invoke(this, e);
+			return e.Response;
 		}
+
+		[Obsolete]
+		public void RaiseShowRequested() => Request(null);
 	}
 }

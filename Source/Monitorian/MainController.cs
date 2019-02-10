@@ -70,7 +70,7 @@ namespace Monitorian
 			if (!StartupAgent.IsStartedOnSignIn())
 				_current.MainWindow.Show();
 
-			StartupAgent.ShowRequested += OnMainWindowShowRequestedByOther;
+			StartupAgent.Requested += OnMainWindowShowRequestedByOther;
 
 			await ScanAsync();
 

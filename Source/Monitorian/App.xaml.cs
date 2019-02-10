@@ -23,8 +23,10 @@ namespace Monitorian
 			TrapService.Start();
 
 			_agent = new StartupAgent();
-			if (!_agent.Start(ProductInfo.StartupTaskId))
+			var (result, response) = _agent.Start(ProductInfo.StartupTaskId, e.Args);
+			if (!result)
 			{
+				ConsoleService.Write(response?.ToString());
 				this.Shutdown(0); // This shutdown is expected behavior.
 				return;
 			}

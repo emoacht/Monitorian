@@ -16,23 +16,19 @@ namespace Monitorian.Models
 			{ "/ja", "ja-JP" }
 		};
 
-		public static IReadOnlyList<string> Arguments => PreparedCulturePairs.Keys.ToArray();
+		public static IReadOnlyCollection<string> Options => PreparedCulturePairs.Keys.ToArray();
 
 		private static CultureInfo _culture = null;
 
 		/// <summary>
-		/// Switches this application's culture depending on given arguments.  
+		/// Switches default and current threads' culture.
 		/// </summary>
-		/// <param name="args">Arguments</param>
 		/// <returns>True if successfully switches the culture</returns>
-		public static bool Switch(IEnumerable<string> args)
+		public static bool SwitchDefault()
 		{
-			if (args is null)
-				throw new ArgumentNullException(nameof(args));
-
 			var supportedCultureNames = new HashSet<string>(CultureInfo.GetCultures(CultureTypes.AllCultures).Select(x => x.Name));
 
-			foreach (var arg in args
+			foreach (var arg in Environment.GetCommandLineArgs().Skip(1)
 				.Where(x => !string.IsNullOrWhiteSpace(x))
 				.Select(x => x.ToLower()))
 			{

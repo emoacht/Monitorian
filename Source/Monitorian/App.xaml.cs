@@ -29,8 +29,6 @@ namespace Monitorian
 				return;
 			}
 
-			LanguageService.Switch(e.Args);
-
 			_controller = new MainController(_agent);
 			await _controller.InitiateAsync();
 

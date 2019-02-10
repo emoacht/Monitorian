@@ -43,6 +43,8 @@ namespace Monitorian
 			Settings = new Settings();
 			StartupAgent = agent ?? throw new ArgumentNullException(nameof(agent));
 
+			LanguageService.SwitchDefault();
+
 			Monitors = new ObservableCollection<MonitorViewModel>();
 			BindingOperations.EnableCollectionSynchronization(Monitors, _monitorsLock);
 

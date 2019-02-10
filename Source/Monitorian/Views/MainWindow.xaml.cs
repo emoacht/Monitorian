@@ -23,7 +23,7 @@ namespace Monitorian.Views
 	{
 		private readonly StickWindowMover _mover;
 
-		public MainWindow(MainController controller)
+		public MainWindow(AppController controller)
 		{
 			LanguageService.Switch();
 

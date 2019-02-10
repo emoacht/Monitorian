@@ -6,32 +6,25 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 
-using Monitorian.Models;
-using StartupAgency;
-
 namespace Monitorian
 {
 	public partial class App : Application
 	{
-		private StartupAgent _agent;
-		private MainController _controller;
+		private AppKeeper _keeper;
+		private AppController _controller;
 
 		protected override async void OnStartup(StartupEventArgs e)
 		{
 			base.OnStartup(e);
 
-			TrapService.Start();
-
-			_agent = new StartupAgent();
-			var (result, response) = _agent.Start(ProductInfo.StartupTaskId, e.Args);
-			if (!result)
+			_keeper = new AppKeeper(e);
+			if (!_keeper.Start())
 			{
-				ConsoleService.Write(response?.ToString());
 				this.Shutdown(0); // This shutdown is expected behavior.
 				return;
 			}
 
-			_controller = new MainController(_agent);
+			_controller = new AppController(_keeper);
 			await _controller.InitiateAsync();
 
 			//this.MainWindow = new MainWindow();
@@ -41,9 +34,7 @@ namespace Monitorian
 		protected override void OnExit(ExitEventArgs e)
 		{
 			_controller?.End();
-			_agent.Dispose();
-
-			TrapService.End();
+			_keeper.End();
 
 			base.OnExit(e);
 		}

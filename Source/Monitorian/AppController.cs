@@ -22,12 +22,14 @@ using StartupAgency;
 
 namespace Monitorian
 {
-	public class MainController
+	public class AppController
 	{
-		private readonly Application _current = App.Current;
+		private readonly Application _current = Application.Current;
+
+		private readonly AppKeeper _keeper;
+		internal StartupAgent StartupAgent => _keeper.StartupAgent;
 
 		public Settings Settings { get; }
-		internal StartupAgent StartupAgent { get; }
 
 		public ObservableCollection<MonitorViewModel> Monitors { get; }
 		private readonly object _monitorsLock = new object();
@@ -38,10 +40,10 @@ namespace Monitorian
 		private readonly PowerWatcher _powerWatcher;
 		private readonly BrightnessWatcher _brightnessWatcher;
 
-		public MainController(StartupAgent agent)
+		public AppController(AppKeeper keeper)
 		{
+			_keeper = keeper ?? throw new ArgumentNullException(nameof(keeper));
 			Settings = new Settings();
-			StartupAgent = agent ?? throw new ArgumentNullException(nameof(agent));
 
 			LanguageService.SwitchDefault();
 
@@ -70,7 +72,7 @@ namespace Monitorian
 			if (!StartupAgent.IsStartedOnSignIn())
 				_current.MainWindow.Show();
 
-			StartupAgent.Requested += OnMainWindowShowRequestedByOther;
+			StartupAgent.Requested += OnRequested;
 
 			await ScanAsync();
 
@@ -87,6 +89,12 @@ namespace Monitorian
 			_settingsWatcher.Dispose();
 			_powerWatcher.Dispose();
 			_brightnessWatcher.Dispose();
+		}
+
+		private void OnRequested(object sender, StartupRequestEventArgs e)
+		{
+			OnMainWindowShowRequestedByOther(sender, EventArgs.Empty);
+			e.Response = "Handled";
 		}
 
 		private async void OnMainWindowShowRequestedBySelf(object sender, EventArgs e)

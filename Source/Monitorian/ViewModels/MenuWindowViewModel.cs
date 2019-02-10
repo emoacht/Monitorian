@@ -11,10 +11,10 @@ namespace Monitorian.ViewModels
 {
 	public class MenuWindowViewModel : ViewModelBase
 	{
-		private readonly MainController _controller;
+		private readonly AppController _controller;
 		public Settings Settings => _controller.Settings;
 
-		public MenuWindowViewModel(MainController controller)
+		public MenuWindowViewModel(AppController controller)
 		{
 			this._controller = controller ?? throw new ArgumentNullException(nameof(controller));
 		}

@@ -23,7 +23,7 @@ namespace Monitorian.Views
 		private readonly FloatWindowMover _mover;
 		internal MenuWindowViewModel ViewModel => (MenuWindowViewModel)this.DataContext;
 
-		public MenuWindow(MainController controller, Point pivot)
+		public MenuWindow(AppController controller, Point pivot)
 		{
 			LanguageService.Switch();
 

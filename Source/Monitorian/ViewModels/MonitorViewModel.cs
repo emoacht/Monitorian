@@ -10,10 +10,10 @@ namespace Monitorian.ViewModels
 {
 	public class MonitorViewModel : ViewModelBase
 	{
-		private readonly MainController _controller;
+		private readonly AppController _controller;
 		private readonly IMonitor _monitor;
 
-		public MonitorViewModel(MainController controller, IMonitor monitor)
+		public MonitorViewModel(AppController controller, IMonitor monitor)
 		{
 			this._controller = controller ?? throw new ArgumentNullException(nameof(controller));
 			this._monitor = monitor ?? throw new ArgumentNullException(nameof(monitor));

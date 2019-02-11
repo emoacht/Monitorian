@@ -105,11 +105,22 @@ namespace Monitorian.Core.ViewModels
 			}
 		}
 
-		public void IncrementBrightness()
+		public void IncrementBrightness() => IncrementBrightness(10);
+
+		public void IncrementBrightness(int tickSize, bool isCycle = true)
 		{
-			int brightness = (int)Math.Floor(Brightness / 10D) * 10 + 10;
+			int brightness = (Brightness / tickSize) * tickSize + tickSize;
 			if (100 < brightness)
-				brightness = 0;
+				brightness = isCycle ? 0 : 100;
+
+			SetBrightness(brightness);
+		}
+
+		public void DecrementBrightness(int tickSize, bool isCycle = true)
+		{
+			int brightness = (Brightness / tickSize) * tickSize - tickSize;
+			if (brightness < 0)
+				brightness = isCycle ? 100 : 0;
 
 			SetBrightness(brightness);
 		}

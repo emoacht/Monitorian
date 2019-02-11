@@ -6,6 +6,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 
+using Monitorian.Core;
+
 namespace Monitorian
 {
 	public partial class App : Application

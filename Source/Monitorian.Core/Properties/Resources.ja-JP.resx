@@ -117,4 +117,25 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Close" xml:space="preserve">
+    <value>閉じる</value>
+  </data>
+  <data name="EnablesUnison" xml:space="preserve">
+    <value>一緒に動かせるようにする</value>
+  </data>
+  <data name="NotControllable" xml:space="preserve">
+    <value>このモニターはコントロールできません。必要条件を参照。</value>
+  </data>
+  <data name="Probe" xml:space="preserve">
+    <value>モニターを調査する</value>
+  </data>
+  <data name="ShowsAdjusted" xml:space="preserve">
+    <value>調整後の明るさを表示する</value>
+  </data>
+  <data name="StartSignIn" xml:space="preserve">
+    <value>サインイン時に起動する</value>
+  </data>
+  <data name="UsesLargeElements" xml:space="preserve">
+    <value>大きいボタンを使う</value>
+  </data>
 </root>

@@ -4,7 +4,7 @@
 	<Application.Resources>
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
-				<ResourceDictionary Source="/Views/Generic.xaml"/>
+				<ResourceDictionary Source="pack://application:,,,/Monitorian.Core;component/Views/Generic.xaml"/>
 			</ResourceDictionary.MergedDictionaries>
 
 		</ResourceDictionary>

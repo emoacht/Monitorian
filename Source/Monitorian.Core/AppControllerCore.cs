@@ -22,17 +22,17 @@ using StartupAgency;
 
 namespace Monitorian.Core
 {
-	public class AppController
+	public class AppControllerCore
 	{
-		private readonly Application _current = Application.Current;
+		protected readonly Application _current = Application.Current;
 
-		private readonly AppKeeper _keeper;
-		internal StartupAgent StartupAgent => _keeper.StartupAgent;
+		protected readonly AppKeeper _keeper;
+		protected internal StartupAgent StartupAgent => _keeper.StartupAgent;
 
-		public Settings Settings { get; }
+		protected internal SettingsCore Settings { get; }
 
 		public ObservableCollection<MonitorViewModel> Monitors { get; }
-		private readonly object _monitorsLock = new object();
+		protected readonly object _monitorsLock = new object();
 
 		public NotifyIconContainer NotifyIconContainer { get; }
 
@@ -40,10 +40,10 @@ namespace Monitorian.Core
 		private readonly PowerWatcher _powerWatcher;
 		private readonly BrightnessWatcher _brightnessWatcher;
 
-		public AppController(AppKeeper keeper)
+		public AppControllerCore(AppKeeper keeper, SettingsCore settings)
 		{
-			_keeper = keeper ?? throw new ArgumentNullException(nameof(keeper));
-			Settings = new Settings();
+			this._keeper = keeper ?? throw new ArgumentNullException(nameof(keeper));
+			this.Settings = settings ?? throw new ArgumentNullException(nameof(settings));
 
 			LanguageService.SwitchDefault();
 
@@ -59,10 +59,10 @@ namespace Monitorian.Core
 			_brightnessWatcher = new BrightnessWatcher();
 		}
 
-		public async Task InitiateAsync()
+		public virtual async Task InitiateAsync()
 		{
 			Settings.Initiate();
-			Settings.KnownMonitors.AbsoluteCapacity = _maxNameCount.Value;
+			Settings.KnownMonitors.AbsoluteCapacity = MaxNameCount;
 			Settings.PropertyChanged += OnSettingsChanged;
 
 			NotifyIconContainer.ShowIcon("pack://application:,,,/Monitorian.Core;component/Resources/Icons/TrayIcon.ico", ProductInfo.Title);
@@ -72,7 +72,7 @@ namespace Monitorian.Core
 			if (!StartupAgent.IsStartedOnSignIn())
 				_current.MainWindow.Show();
 
-			StartupAgent.Requested += OnRequested;
+			StartupAgent.Requested += (sender, e) => e.Response = OnRequested(sender, e.Args);
 
 			await ScanAsync();
 
@@ -81,7 +81,7 @@ namespace Monitorian.Core
 			_brightnessWatcher.Subscribe((instanceName, brightness) => Update(instanceName, brightness));
 		}
 
-		public void End()
+		public virtual void End()
 		{
 			MonitorsDispose();
 			NotifyIconContainer.Dispose();
@@ -91,30 +91,30 @@ namespace Monitorian.Core
 			_brightnessWatcher.Dispose();
 		}
 
-		private void OnRequested(object sender, StartupRequestEventArgs e)
+		protected virtual object OnRequested(object sender, IReadOnlyCollection<string> args)
 		{
 			OnMainWindowShowRequestedByOther(sender, EventArgs.Empty);
-			e.Response = "Handled";
+			return null;
 		}
 
-		private async void OnMainWindowShowRequestedBySelf(object sender, EventArgs e)
+		protected async void OnMainWindowShowRequestedBySelf(object sender, EventArgs e)
 		{
 			ShowMainWindow();
 			await UpdateAsync();
 		}
 
-		private async void OnMainWindowShowRequestedByOther(object sender, EventArgs e)
+		protected async void OnMainWindowShowRequestedByOther(object sender, EventArgs e)
 		{
 			_current.Dispatcher.Invoke(() => ShowMainWindow());
 			await ScanAsync();
 		}
 
-		private void OnMenuWindowShowRequested(object sender, Point e)
+		protected void OnMenuWindowShowRequested(object sender, Point e)
 		{
 			ShowMenuWindow(e);
 		}
 
-		private void ShowMainWindow()
+		protected virtual void ShowMainWindow()
 		{
 			var window = (MainWindow)_current.MainWindow;
 			if (!window.CanBeShown)
@@ -127,7 +127,7 @@ namespace Monitorian.Core
 			window.Activate();
 		}
 
-		private void ShowMenuWindow(Point pivot)
+		protected virtual void ShowMenuWindow(Point pivot)
 		{
 			var window = new MenuWindow(this, pivot);
 			window.ViewModel.CloseAppRequested += (sender, e) => _current.Shutdown();
@@ -135,7 +135,7 @@ namespace Monitorian.Core
 			window.Show();
 		}
 
-		private void OnSettingsChanged(object sender, PropertyChangedEventArgs e)
+		protected virtual void OnSettingsChanged(object sender, PropertyChangedEventArgs e)
 		{
 			if (e.PropertyName == nameof(Settings.EnablesUnison))
 				OnSettingsEnablesUnisonChanged();
@@ -145,8 +145,8 @@ namespace Monitorian.Core
 
 		internal event EventHandler<bool> ScanningChanged;
 
-		private static readonly Lazy<int> _maxMonitorCount = new Lazy<int>(() => 4);
-		private static readonly Lazy<int> _maxNameCount = new Lazy<int>(() => _maxMonitorCount.Value * 4);
+		protected int MaxMonitorCount { get; set; } = 4;
+		protected int MaxNameCount => MaxMonitorCount * 4;
 
 		private int _scanCount = 0;
 		private int _updateCount = 0;
@@ -221,7 +221,7 @@ namespace Monitorian.Core
 						{
 							controllableMonitorExists = true;
 
-							if (index < _maxMonitorCount.Value)
+							if (index < MaxMonitorCount)
 							{
 								return Task.Run(() =>
 								{
@@ -292,20 +292,18 @@ namespace Monitorian.Core
 
 		#endregion
 
-		#region Name & Unison
+		#region Name/Unison
 
 		private void OnSettingsEnablesUnisonChanged()
 		{
 			if (Settings.EnablesUnison)
 				return;
 
-			Monitors
-				.Where(x => x.IsUnison)
-				.ToList()
-				.ForEach(x => x.IsUnison = false);
+			foreach (var monitor in Monitors)
+				monitor.IsUnison = false;
 		}
 
-		internal bool TryLoadNameUnison(string deviceInstanceId, ref string name, ref bool isUnison)
+		protected internal virtual bool TryLoadNameUnison(string deviceInstanceId, ref string name, ref bool isUnison)
 		{
 			if (Settings.KnownMonitors.TryGetValue(deviceInstanceId, out MonitorValuePack value))
 			{
@@ -313,13 +311,10 @@ namespace Monitorian.Core
 				isUnison = value.IsUnison;
 				return true;
 			}
-			else
-			{
-				return false;
-			}
+			return false;
 		}
 
-		internal void SaveNameUnison(string deviceInstanceId, string name, bool isUnison)
+		protected internal virtual void SaveNameUnison(string deviceInstanceId, string name, bool isUnison)
 		{
 			if ((name != null) || isUnison)
 			{

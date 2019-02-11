@@ -10,10 +10,10 @@ namespace Monitorian.Core.ViewModels
 {
 	public class MonitorViewModel : ViewModelBase
 	{
-		private readonly AppController _controller;
+		private readonly AppControllerCore _controller;
 		private readonly IMonitor _monitor;
 
-		public MonitorViewModel(AppController controller, IMonitor monitor)
+		public MonitorViewModel(AppControllerCore controller, IMonitor monitor)
 		{
 			this._controller = controller ?? throw new ArgumentNullException(nameof(controller));
 			this._monitor = monitor ?? throw new ArgumentNullException(nameof(monitor));
@@ -34,7 +34,7 @@ namespace Monitorian.Core.ViewModels
 		}
 		private bool _isControllable = true;
 
-		#region Name & Unison
+		#region Name/Unison
 
 		public string Name
 		{

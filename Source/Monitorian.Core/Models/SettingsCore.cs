@@ -18,7 +18,7 @@ namespace Monitorian.Core.Models
 	/// Persistent settings
 	/// </summary>
 	[DataContract]
-	public class Settings : BindableBase
+	public class SettingsCore : BindableBase
 	{
 		#region Settings
 
@@ -62,46 +62,59 @@ namespace Monitorian.Core.Models
 		public ObservableKeyedList<string, MonitorValuePack> KnownMonitors
 		{
 			get => _knownMonitors ?? (_knownMonitors = new ObservableKeyedList<string, MonitorValuePack>());
-			private set => _knownMonitors = value;
+			protected set => _knownMonitors = value;
 		}
 		private ObservableKeyedList<string, MonitorValuePack> _knownMonitors;
 
 		#endregion
 
-		private Throttle _throttle;
+		private const string SettingsFileName = "settings.xml";
+		private readonly string _settingsFilePath;
 
-		internal void Initiate()
+		public SettingsCore() : this(null)
+		{ }
+
+		protected SettingsCore(string fileName)
 		{
-			Load(this);
+			if (string.IsNullOrWhiteSpace(fileName))
+				fileName = SettingsFileName;
 
-			_throttle = new Throttle(
+			_settingsFilePath = Path.Combine(FolderService.AppDataFolderPath, fileName);
+		}
+
+		private Throttle _save;
+
+		protected internal virtual void Initiate()
+		{
+			Load(this, _settingsFilePath);
+
+			_save = new Throttle(
 				TimeSpan.FromMilliseconds(100),
-				() => Save(this));
+				() => Save(this, _settingsFilePath));
 
 			KnownMonitors.CollectionChanged += (sender, e) => RaisePropertyChanged(nameof(KnownMonitors));
-			PropertyChanged += async (sender, e) => await _throttle.PushAsync();
+			PropertyChanged += async (sender, e) => await _save.PushAsync();
 		}
 
 		#region Load/Save
 
-		private const string SettingsFileName = "settings.xml";
-		private static readonly string _settingsFilePath = Path.Combine(FolderService.AppDataFolderPath, SettingsFileName);
-
-		private static void Load<T>(T instance) where T : class
+		private static void Load<T>(T instance, string filePath) where T : class
 		{
-			var fileInfo = new FileInfo(_settingsFilePath);
+			var fileInfo = new FileInfo(filePath);
 			if (!fileInfo.Exists || (fileInfo.Length == 0))
 				return;
 
+			var type = instance.GetType(); // GetType method works in derived class.
+
 			try
 			{
-				using (var sr = new StreamReader(_settingsFilePath, Encoding.UTF8))
+				using (var sr = new StreamReader(filePath, Encoding.UTF8))
 				using (var xr = XmlReader.Create(sr))
 				{
-					var serializer = new DataContractSerializer(typeof(T));
+					var serializer = new DataContractSerializer(type);
 					var loaded = (T)serializer.ReadObject(xr);
 
-					typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)
+					type.GetProperties(BindingFlags.Public | BindingFlags.Instance)
 						.Where(x => x.CanWrite)
 						.ToList()
 						.ForEach(x => x.SetValue(instance, x.GetValue(loaded)));
@@ -120,16 +133,18 @@ namespace Monitorian.Core.Models
 			}
 		}
 
-		private static void Save<T>(T instance) where T : class
+		private static void Save<T>(T instance, string filePath) where T : class
 		{
+			var type = instance.GetType(); // GetType method works in derived class.
+
 			try
 			{
 				FolderService.AssureAppDataFolder();
 
-				using (var sw = new StreamWriter(_settingsFilePath, false, Encoding.UTF8)) // BOM will be emitted.
+				using (var sw = new StreamWriter(filePath, false, Encoding.UTF8)) // BOM will be emitted.
 				using (var xw = XmlWriter.Create(sw, new XmlWriterSettings { Indent = true }))
 				{
-					var serializer = new DataContractSerializer(typeof(T));
+					var serializer = new DataContractSerializer(type);
 					serializer.WriteObject(xw, instance);
 					xw.Flush();
 				}

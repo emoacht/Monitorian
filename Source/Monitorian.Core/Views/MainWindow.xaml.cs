@@ -23,7 +23,7 @@ namespace Monitorian.Core.Views
 	{
 		private readonly StickWindowMover _mover;
 
-		public MainWindow(AppController controller)
+		public MainWindow(AppControllerCore controller)
 		{
 			LanguageService.Switch();
 
@@ -51,7 +51,7 @@ namespace Monitorian.Core.Views
 			BindingOperations.SetBinding(
 				this,
 				UsesLargeElementsProperty,
-				new Binding(nameof(Settings.UsesLargeElements))
+				new Binding(nameof(SettingsCore.UsesLargeElements))
 				{
 					Source = ((MainWindowViewModel)this.DataContext).Settings,
 					Mode = BindingMode.OneWay

@@ -145,13 +145,7 @@ namespace Monitorian.Core
 
 		internal event EventHandler<bool> ScanningChanged;
 
-		private static readonly Lazy<int> _maxMonitorCount = new Lazy<int>(() =>
-		{
-			int count = 4;
-			SetCount(ref count);
-			return count;
-		});
-
+		private static readonly Lazy<int> _maxMonitorCount = new Lazy<int>(() => 4);
 		private static readonly Lazy<int> _maxNameCount = new Lazy<int>(() => _maxMonitorCount.Value * 4);
 
 		private int _scanCount = 0;
@@ -335,16 +329,6 @@ namespace Monitorian.Core
 			{
 				Settings.KnownMonitors.Remove(deviceInstanceId);
 			}
-		}
-
-		#endregion
-
-		#region Configuration
-
-		[Conditional("UNLIMITED")]
-		private static void SetCount(ref int count)
-		{
-			count *= 8;
 		}
 
 		#endregion

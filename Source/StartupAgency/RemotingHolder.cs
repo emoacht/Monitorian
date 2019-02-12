@@ -20,20 +20,20 @@ namespace StartupAgency
 		/// <summary>
 		/// Creates semaphore to start remoting.
 		/// </summary>
-		/// <param name="title">Title for semaphore and remoting</param>
+		/// <param name="name">Name</param>
 		/// <param name="args">Arguments to another instance</param>
 		/// <returns>
 		/// <para>success: True if no other instance exists and this instance successfully creates</para>
 		/// <para>response: Response from another instance if that instance exists and returns an response</para>
 		/// </returns>
-		public (bool success, object response) Create(string title, string[] args)
+		public (bool success, object response) Create(string name, string[] args)
 		{
-			if (string.IsNullOrWhiteSpace(title))
-				throw new ArgumentNullException(nameof(title));
+			if (string.IsNullOrWhiteSpace(name))
+				throw new ArgumentNullException(nameof(name));
 
-			// Determine Semaphore name and IPC port name using assembly title.
-			var semaphoreName = $"semaphore-{title}";
-			var ipcPortName = $"port-{title}";
+			// Determine Semaphore name and IPC port name.
+			var semaphoreName = $"semaphore-{name}";
+			var ipcPortName = $"port-{name}";
 			const string ipcUri = "space";
 
 			_semaphore = new Semaphore(1, 1, semaphoreName, out bool createdNew);

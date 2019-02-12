@@ -20,7 +20,7 @@ namespace Monitorian.Core.Models
 					if (string.IsNullOrEmpty(appDataPath)) // This should not happen.
 						throw new DirectoryNotFoundException();
 
-					_appDataFolderPath = Path.Combine(appDataPath, Assembly.GetEntryAssembly().GetName().Name);
+					_appDataFolderPath = Path.Combine(appDataPath, ProductInfo.Product);
 				}
 				return _appDataFolderPath;
 			}

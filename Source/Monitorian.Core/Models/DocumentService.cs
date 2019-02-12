@@ -14,10 +14,13 @@ namespace Monitorian.Core.Models
 		public static string ReadEmbeddedFile(string fileName)
 		{
 			var assembly = Assembly.GetEntryAssembly();
-			var resourceName = $"{assembly.GetName().Name}.{fileName}";
 
 			try
 			{
+				var resourceName = assembly.GetManifestResourceNames().FirstOrDefault(x => x.EndsWith(fileName));
+				if (resourceName is null)
+					return null;
+
 				using (var s = assembly.GetManifestResourceStream(resourceName))
 				using (var sr = new StreamReader(s))
 					return sr.ReadToEnd();

@@ -27,7 +27,7 @@ namespace Monitorian.Core.ViewModels
 		{
 			Task.Run(() =>
 			{
-				var licenseFileContent = DocumentService.ReadEmbeddedFile($"Resources.{LicenseFileName}");
+				var licenseFileContent = DocumentService.ReadEmbeddedFile(LicenseFileName);
 				var licenseFilePath = DocumentService.SaveAsHtml(LicenseFileName, licenseFileContent);
 
 				Process.Start(licenseFilePath);

@@ -22,6 +22,7 @@ namespace StartupAgency
 		/// <summary>
 		/// Starts.
 		/// </summary>
+		/// <param name="name">Name</param>
 		/// <param name="startupTaskId">Startup task ID</param>
 		/// <param name="args">Arguments to another instance</param>
 		/// <returns>
@@ -29,22 +30,21 @@ namespace StartupAgency
 		/// <para>response: Response from another instance if that instance exists and returns an response</para> 
 		/// </returns>
 		/// <remarks>Startup task ID must match that in AppxManifest.xml.</remarks>
-		public (bool success, object response) Start(string startupTaskId, IReadOnlyCollection<string> args)
+		public (bool success, object response) Start(string name, string startupTaskId, IReadOnlyCollection<string> args)
 		{
+			if (string.IsNullOrWhiteSpace(name))
+				throw new ArgumentNullException(nameof(name));
 			if (string.IsNullOrWhiteSpace(startupTaskId))
 				throw new ArgumentNullException(nameof(startupTaskId));
 
-			var assembly = Assembly.GetEntryAssembly();
-			var title = assembly.GetTitle();
-
 			_holder = new RemotingHolder();
-			var (success, response) = _holder.Create(title, args?.ToArray());
+			var (success, response) = _holder.Create(name, args?.ToArray());
 			if (!success)
 				return (success: false, response);
 
 			_worker = (OsVersion.Is10Redstone1OrNewer && IsPackaged)
 				? (IStartupWorker)new BridgeWorker(taskId: startupTaskId)
-				: (IStartupWorker)new RegistryWorker(title: title, path: assembly.Location);
+				: (IStartupWorker)new RegistryWorker(name: name, path: Assembly.GetEntryAssembly().Location);
 			return (success: true, null);
 		}
 

@@ -45,7 +45,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Helper\AssemblyExtension.cs" />
     <Compile Include="Helper\OsVersion.cs" />
     <Compile Include="Worker\BridgeWorker.cs" />
     <Compile Include="Worker\IStartupWorker.cs" />

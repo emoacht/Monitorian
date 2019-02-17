@@ -8,11 +8,14 @@ using System.Windows.Threading;
 
 namespace Monitorian.Core.Helper
 {
-	internal class Throttle
+	/// <summary>
+	/// Rx Throttle like operator
+	/// </summary>
+	public class Throttle
 	{
-		private readonly Action _action;
-		private readonly DispatcherTimer _timer;
-		private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
+		protected readonly Action _action;
+		protected readonly DispatcherTimer _timer;
+		protected readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
 
 		public Throttle(TimeSpan dueTime, Action action)
 		{
@@ -40,7 +43,7 @@ namespace Monitorian.Core.Helper
 			}
 		}
 
-		public async Task PushAsync()
+		public virtual async Task PushAsync()
 		{
 			try
 			{
@@ -48,6 +51,30 @@ namespace Monitorian.Core.Helper
 
 				_timer.Stop();
 				_timer.Start();
+			}
+			finally
+			{
+				_semaphore.Release();
+			}
+		}
+	}
+
+	/// <summary>
+	/// Rx Sample like operator
+	/// </summary>
+	public class Sample : Throttle
+	{
+		public Sample(TimeSpan dueTime, Action action) : base(dueTime, action)
+		{ }
+
+		public override async Task PushAsync()
+		{
+			try
+			{
+				await _semaphore.WaitAsync();
+
+				if (!_timer.IsEnabled)
+					_timer.Start();
 			}
 			finally
 			{

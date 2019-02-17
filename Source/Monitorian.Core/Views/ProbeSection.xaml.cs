@@ -15,15 +15,15 @@ using Monitorian.Core.ViewModels;
 
 namespace Monitorian.Core.Views
 {
-	public partial class Probe : UserControl
+	public partial class ProbeSection : UserControl
 	{
-		internal ProbeViewModel ViewModel => (ProbeViewModel)this.DataContext;
+		internal ProbeSectionViewModel ViewModel => (ProbeSectionViewModel)this.DataContext;
 
-		public Probe()
+		public ProbeSection()
 		{
 			InitializeComponent();
 
-			this.DataContext = new ProbeViewModel();
+			this.DataContext = new ProbeSectionViewModel();
 		}
 
 		public override void OnApplyTemplate()

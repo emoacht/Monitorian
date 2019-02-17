@@ -131,7 +131,7 @@ namespace Monitorian.Core
 		{
 			var window = new MenuWindow(this, pivot);
 			window.ViewModel.CloseAppRequested += (sender, e) => _current.Shutdown();
-			window.AddMenuItem(new Probe());
+			window.AddMenuItem(new ProbeSection());
 			window.Show();
 		}
 

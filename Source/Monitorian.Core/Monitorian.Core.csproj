@@ -95,7 +95,7 @@
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\MenuWindowViewModel.cs" />
     <Compile Include="ViewModels\MonitorViewModel.cs" />
-    <Compile Include="ViewModels\ProbeViewModel.cs" />
+    <Compile Include="ViewModels\ProbeSectionViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
     <Compile Include="Views\Controls\PulseLabel.cs" />
     <Compile Include="Views\Controls\QuickShadowSlider.cs" />
@@ -111,8 +111,8 @@
     <Compile Include="Views\MenuWindow.xaml.cs">
       <DependentUpon>MenuWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Probe.xaml.cs">
-      <DependentUpon>Probe.xaml</DependentUpon>
+    <Compile Include="Views\ProbeSection.xaml.cs">
+      <DependentUpon>ProbeSection.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\WindowEffect.cs" />
   </ItemGroup>
@@ -153,7 +153,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Probe.xaml">
+    <Page Include="Views\ProbeSection.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

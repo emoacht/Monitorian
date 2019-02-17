@@ -9,9 +9,9 @@ using Monitorian.Core.Models.Monitor;
 
 namespace Monitorian.Core.ViewModels
 {
-	public class ProbeViewModel : ViewModelBase
+	public class ProbeSectionViewModel : ViewModelBase
 	{
-		public ProbeViewModel()
+		public ProbeSectionViewModel()
 		{ }
 
 		private int _count = 0;

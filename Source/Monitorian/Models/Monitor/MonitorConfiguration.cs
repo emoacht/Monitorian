@@ -351,7 +351,7 @@ namespace Monitorian.Models.Monitor
 					Debug.WriteLine($"Failed to get brightness. {Error.CreateMessage()}");
 					return -1;
 				}
-				return (int)currentBrightness;
+				return (int)((float)(currentBrightness - minimumBrightness) / (maximumBrightness - minimumBrightness) * 100.0f + 0.5f);
 			}
 			else
 			{

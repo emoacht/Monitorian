@@ -384,9 +384,21 @@ namespace Monitorian.Models.Monitor
 
 			if (!useLowLevel)
 			{
+				if (!GetMonitorBrightness(
+					physicalMonitorHandle,
+					out uint minimumPhysicalBrightness,
+					out _,
+					out uint maximumPhysicalBrightness))
+				{
+					Debug.WriteLine($"Failed to get brightness. {Error.CreateMessage()}");
+					return false;
+				}
+
+				var brightnessFactor = (maximumPhysicalBrightness - minimumPhysicalBrightness) / 100.0f;
+				var physicalBrightness = (uint)(brightness * brightnessFactor + minimumPhysicalBrightness + 0.5f);
 				if (!SetMonitorBrightness(
 					physicalMonitorHandle,
-					(uint)brightness))
+					physicalBrightness))
 				{
 					Debug.WriteLine($"Failed to set brightness. {Error.CreateMessage()}");
 					return false;

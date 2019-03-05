@@ -329,7 +329,7 @@ namespace Monitorian.Models.Monitor
 			}
 		}
 
-		public static int GetBrightness(SafePhysicalMonitorHandle physicalMonitorHandle, bool useLowLevel = false)
+		public static (bool success, uint minimum, uint current, uint maximum) GetBrightness(SafePhysicalMonitorHandle physicalMonitorHandle, bool useLowLevel = false)
 		{
 			if (physicalMonitorHandle is null)
 				throw new ArgumentNullException(nameof(physicalMonitorHandle));
@@ -337,7 +337,7 @@ namespace Monitorian.Models.Monitor
 			if (physicalMonitorHandle.IsClosed)
 			{
 				Debug.WriteLine("Failed to get brightness. The physical monitor handle has been closed.");
-				return -1;
+				return (success: false, 0, 0, 0);
 			}
 
 			if (!useLowLevel)
@@ -349,23 +349,29 @@ namespace Monitorian.Models.Monitor
 					out uint maximumBrightness))
 				{
 					Debug.WriteLine($"Failed to get brightness. {Error.CreateMessage()}");
-					return -1;
+					return (success: false, 0, 0, 0);
 				}
-				return (int)((float)(currentBrightness - minimumBrightness) / (maximumBrightness - minimumBrightness) * 100.0f + 0.5f);
+				return (success: true,
+					minimum: minimumBrightness,
+					current: currentBrightness,
+					maximum: maximumBrightness);
 			}
 			else
 			{
 				if (!GetVCPFeatureAndVCPFeatureReply(
 					physicalMonitorHandle,
 					LuminanceCode,
-					out LPMC_VCP_CODE_TYPE _,
+					out _,
 					out uint currentValue,
 					out uint maximumValue))
 				{
 					Debug.WriteLine($"Failed to get brightness (Low level). {Error.CreateMessage()}");
-					return -1;
+					return (success: false, 0, 0, 0);
 				}
-				return (int)currentValue;
+				return (success: true,
+					minimum: 0,
+					current: currentValue,
+					maximum: maximumValue);
 			}
 		}
 

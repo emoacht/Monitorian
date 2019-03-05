@@ -34,12 +34,24 @@ namespace Monitorian.Models.Monitor
 
 		private readonly object _lock = new object();
 
+		private uint _minimum = 0; // Raw minimum brightness (not always 0)
+		private uint _maximum = 100; // Raw maximum brightness (not always 100)
+
 		public override bool UpdateBrightness(int brightness = -1)
 		{
 			lock (_lock)
 			{
-				this.Brightness = MonitorConfiguration.GetBrightness(_handle, _useLowLevel);
-				return (0 <= this.Brightness);
+				var (success, minimum, current, maximum) = MonitorConfiguration.GetBrightness(_handle, _useLowLevel);
+
+				if (!success || !(minimum < maximum) || !(minimum <= current) || !(current <= maximum))
+				{
+					this.Brightness = -1;
+					return false;
+				}
+				this.Brightness = (int)Math.Round((double)(current - minimum) / (maximum - minimum) * 100D, MidpointRounding.AwayFromZero);
+				this._minimum = minimum;
+				this._maximum = maximum;
+				return true;
 			}
 		}
 
@@ -50,6 +62,8 @@ namespace Monitorian.Models.Monitor
 
 			lock (_lock)
 			{
+				brightness = (int)Math.Round(brightness / 100D * (_maximum - _minimum) + _minimum, MidpointRounding.AwayFromZero);
+
 				if (MonitorConfiguration.SetBrightness(_handle, brightness, _useLowLevel))
 				{
 					this.Brightness = brightness;

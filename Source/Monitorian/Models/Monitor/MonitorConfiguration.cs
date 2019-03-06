@@ -379,8 +379,6 @@ namespace Monitorian.Models.Monitor
 		{
 			if (physicalMonitorHandle is null)
 				throw new ArgumentNullException(nameof(physicalMonitorHandle));
-			if ((brightness < 0) || (100 < brightness))
-				throw new ArgumentOutOfRangeException(nameof(brightness), $"{nameof(brightness)} must be in the range of 0 to 100.");
 
 			if (physicalMonitorHandle.IsClosed)
 			{

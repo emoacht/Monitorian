@@ -8,7 +8,7 @@ Monitorian is a Windows desktop tool to adjust the brightness of multiple monito
 ## Requirements
 
  * Windows 7 or newer
- * .NET Framework 4.6.2
+ * .NET Framework __4.7.2__
  * An external monitor must be DDC/CI enabled.
 ![OSD](Images/Dell-ddcci.jpg)
 
@@ -18,7 +18,7 @@ Monitorian is a Windows desktop tool to adjust the brightness of multiple monito
 [Monitorian](https://www.microsoft.com/store/apps/9nw33j738bl0) (Windows Store)
 
  * Other:<br>
-:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/1.11.0-Installer/MonitorianInstaller1110.zip) | :floppy_disk: [Executables](https://github.com/emoacht/Monitorian/releases/download/1.11.0-Executables/Monitorian1110.zip)
+:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/1.12.0-Installer/MonitorianInstaller1120.zip) | :floppy_disk: [Executables](https://github.com/emoacht/Monitorian/releases/download/1.12.0-Executables/Monitorian1120.zip)
 
 ## Install/Uninstall
 
@@ -43,6 +43,11 @@ The log will be an useful source to look into an issue.
  - __probe.log__ - Information on capabilities of each monitor obtained from various APIs and used to find accessible monitors. To get this log, click the app title in menu window 3 times and then tap the button appeared beneath.
 
 ## History
+
+Ver 1.12.0 2019-3-9
+
+ - Modify to handle raw brightnesses correctly when raw minimum and maximum brightnesses are not standard values. Thanks to @reflecat!
+ - Change target framework to .NET Framework 4.7.2
 
 Ver 1.11.0 2019-2-7
 

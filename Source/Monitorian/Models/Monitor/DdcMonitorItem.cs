@@ -62,9 +62,9 @@ namespace Monitorian.Models.Monitor
 
 			lock (_lock)
 			{
-				brightness = (int)Math.Round(brightness / 100D * (_maximum - _minimum) + _minimum, MidpointRounding.AwayFromZero);
+				var buffer = (uint)Math.Round(brightness / 100D * (_maximum - _minimum) + _minimum, MidpointRounding.AwayFromZero);
 
-				if (MonitorConfiguration.SetBrightness(_handle, brightness, _useLowLevel))
+				if (MonitorConfiguration.SetBrightness(_handle, buffer, _useLowLevel))
 				{
 					this.Brightness = brightness;
 					return true;

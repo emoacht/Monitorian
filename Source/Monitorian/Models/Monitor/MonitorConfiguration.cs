@@ -329,6 +329,23 @@ namespace Monitorian.Models.Monitor
 			}
 		}
 
+		/// <summary>
+		/// Gets raw brightnesses not represented in percentage.
+		/// </summary>
+		/// <param name="physicalMonitorHandle">Physical monitor handle</param>
+		/// <param name="useLowLevel">Whether to use low level function</param>
+		/// <returns>
+		/// <para>success: True if successfully got</para>
+		/// <para>minimum: Raw minimum brightness (not always 0)</para>
+		/// <para>current: Raw current brightness (not always 0 to 100)</para>
+		/// <para>maximum: Raw maximum brightness (not always 100)</para>
+		/// </returns>
+		/// <remarks>
+		/// Raw minimum and maximum brightnesses will become meaningful when they are not standard
+		/// values (0 and 100) and so raw current brightness needs to be converted to brightness
+		/// in percentage using those values. They are used to convert brightness in percentage
+		/// back to raw brightness when settings brightness as well.
+		/// </remarks>
 		public static (bool success, uint minimum, uint current, uint maximum) GetBrightness(SafePhysicalMonitorHandle physicalMonitorHandle, bool useLowLevel = false)
 		{
 			if (physicalMonitorHandle is null)
@@ -336,7 +353,7 @@ namespace Monitorian.Models.Monitor
 
 			if (physicalMonitorHandle.IsClosed)
 			{
-				Debug.WriteLine("Failed to get brightness. The physical monitor handle has been closed.");
+				Debug.WriteLine("Failed to get brightnesses. The physical monitor handle has been closed.");
 				return (success: false, 0, 0, 0);
 			}
 
@@ -348,7 +365,7 @@ namespace Monitorian.Models.Monitor
 					out uint currentBrightness,
 					out uint maximumBrightness))
 				{
-					Debug.WriteLine($"Failed to get brightness. {Error.CreateMessage()}");
+					Debug.WriteLine($"Failed to get brightnesses. {Error.CreateMessage()}");
 					return (success: false, 0, 0, 0);
 				}
 				return (success: true,
@@ -365,7 +382,7 @@ namespace Monitorian.Models.Monitor
 					out uint currentValue,
 					out uint maximumValue))
 				{
-					Debug.WriteLine($"Failed to get brightness (Low level). {Error.CreateMessage()}");
+					Debug.WriteLine($"Failed to get brightnesses (Low level). {Error.CreateMessage()}");
 					return (success: false, 0, 0, 0);
 				}
 				return (success: true,
@@ -375,7 +392,14 @@ namespace Monitorian.Models.Monitor
 			}
 		}
 
-		public static bool SetBrightness(SafePhysicalMonitorHandle physicalMonitorHandle, int brightness, bool useLowLevel = false)
+		/// <summary>
+		/// Sets raw brightness not represented in percentage.
+		/// </summary>
+		/// <param name="physicalMonitorHandle">Physical monitor handle</param>
+		/// <param name="brightness">Raw brightness (not always 0 to 100)</param>
+		/// <param name="useLowLevel">Whether to use low level function</param>
+		/// <returns>True if successfully set</returns>
+		public static bool SetBrightness(SafePhysicalMonitorHandle physicalMonitorHandle, uint brightness, bool useLowLevel = false)
 		{
 			if (physicalMonitorHandle is null)
 				throw new ArgumentNullException(nameof(physicalMonitorHandle));
@@ -390,7 +414,7 @@ namespace Monitorian.Models.Monitor
 			{
 				if (!SetMonitorBrightness(
 					physicalMonitorHandle,
-					(uint)brightness))
+					brightness))
 				{
 					Debug.WriteLine($"Failed to set brightness. {Error.CreateMessage()}");
 					return false;
@@ -401,7 +425,7 @@ namespace Monitorian.Models.Monitor
 				if (!SetVCPFeature(
 					physicalMonitorHandle,
 					LuminanceCode,
-					(uint)brightness))
+					brightness))
 				{
 					Debug.WriteLine($"Failed to set brightness (Low level). {Error.CreateMessage()}");
 					return false;

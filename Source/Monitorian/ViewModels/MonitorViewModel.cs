@@ -114,6 +114,22 @@ namespace Monitorian.ViewModels
 			SetBrightness(brightness);
 		}
 
+		public void IncrementBrightnessPercentage(int percentagePoint)
+		{
+			var newBrightnessPercentage = Brightness + percentagePoint;
+			if (newBrightnessPercentage == Brightness)
+			{
+				// No brightness changed
+				return;
+			}
+			if (newBrightnessPercentage > 100)
+				newBrightnessPercentage = 100;
+			if (newBrightnessPercentage < 0)
+				newBrightnessPercentage = 0;
+
+			SetBrightness(newBrightnessPercentage);
+		}
+
 		private void SetBrightness(int brightness)
 		{
 			if (_monitor.SetBrightness(brightness))

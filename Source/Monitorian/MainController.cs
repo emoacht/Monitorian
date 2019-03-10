@@ -17,6 +17,7 @@ using Monitorian.Models.Monitor;
 using Monitorian.Models.Watcher;
 using Monitorian.ViewModels;
 using Monitorian.Views;
+using Monitorian.Helper;
 using ScreenFrame;
 using StartupAgency;
 
@@ -38,6 +39,8 @@ namespace Monitorian
 		private readonly PowerWatcher _powerWatcher;
 		private readonly BrightnessWatcher _brightnessWatcher;
 
+		private readonly HotKeyListener _hotKeyListener;
+
 		public MainController(StartupAgent agent)
 		{
 			Settings = new Settings();
@@ -53,6 +56,9 @@ namespace Monitorian
 			_settingsWatcher = new SettingsWatcher();
 			_powerWatcher = new PowerWatcher();
 			_brightnessWatcher = new BrightnessWatcher();
+
+			_hotKeyListener = new HotKeyListener();
+			_hotKeyListener.HotKeyDown += OnHotKeyPressed;
 		}
 
 		internal async Task InitiateAsync()
@@ -85,6 +91,8 @@ namespace Monitorian
 			_settingsWatcher.Dispose();
 			_powerWatcher.Dispose();
 			_brightnessWatcher.Dispose();
+
+			_hotKeyListener.Dispose();
 		}
 
 		private async void OnMainWindowShowRequestedBySelf(object sender, EventArgs e)
@@ -129,6 +137,23 @@ namespace Monitorian
 		{
 			if (e.PropertyName == nameof(Settings.EnablesUnison))
 				OnSettingsEnablesUnisonChanged();
+		}
+
+		private void OnHotKeyPressed(object sender, HotKeyEventArgs e)
+		{
+			foreach (var monitor in Monitors)
+			{
+				switch (e.Id)
+				{
+					case (int)HotKeyListener.HotKeyId.IncrementBrightness:
+						monitor.IncrementBrightnessPercentage(1);
+						break;
+
+					case (int)HotKeyListener.HotKeyId.DecrementBrightness:
+						monitor.IncrementBrightnessPercentage(-1);
+						break;
+				}
+			}
 		}
 
 		#region Monitors

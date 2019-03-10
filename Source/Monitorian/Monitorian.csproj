@@ -81,10 +81,12 @@
     <Compile Include="Common\ObservableDictionary.cs" />
     <Compile Include="Common\ObservableKeyedList.cs" />
     <Compile Include="Helper\ExceptionExtension.cs" />
+    <Compile Include="Helper\HotKeyHelper.cs" />
     <Compile Include="Helper\OsVersion.cs" />
     <Compile Include="Helper\ArraySearch.cs" />
     <Compile Include="Helper\StringExtension.cs" />
     <Compile Include="Helper\Throttle.cs" />
+    <Compile Include="HotKeyListener.cs" />
     <Compile Include="MainController.cs" />
     <Compile Include="Models\ConsoleService.cs" />
     <Compile Include="Models\DocumentService.cs" />

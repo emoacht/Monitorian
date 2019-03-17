@@ -41,6 +41,9 @@ namespace Monitorian.Core.Views
 			WindowEffect.EnableBackgroundTranslucency(this);
 		}
 
+		public void AddHeadItem(Control item) => this.HeadItems.Children.Add(item);
+		public void RemoveHeadItem(Control item) => this.HeadItems.Children.Remove(item);
+
 		public void AddMenuItem(Control item) => this.MenuItems.Children.Insert(0, item);
 		public void RemoveMenuItem(Control item) => this.MenuItems.Children.Remove(item);
 

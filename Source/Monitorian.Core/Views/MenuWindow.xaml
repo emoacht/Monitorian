@@ -11,38 +11,41 @@
 		AllowsTransparency="True" WindowStyle="None"
 		Background="{StaticResource App.Background.Plain}">
 
-	<StackPanel Margin="0,4,0,4">
+	<StackPanel Margin="0,4">
 		<TextBlock x:Name="AppTitle"
 				   HorizontalAlignment="Left"
-				   Padding="8,2,8,2"
+				   Padding="8,2"
 				   Foreground="{StaticResource App.Foreground}"
 				   Text="{Binding Source={x:Static models:ProductInfo.Title}, Mode=OneTime}"/>
-		<TextBlock Width="140" HorizontalAlignment="Left"
-				   Padding="8,0,8,6"
-				   Foreground="{StaticResource App.Foreground}">
-			<Run Text="{Binding Source={x:Static models:ProductInfo.Version}, Mode=OneTime}"/>
-			<Run Text="|"/>
-			<Run Foreground="{StaticResource App.Foreground.Shadow}"
-				 TextDecorations="Underline" Cursor="Hand"
-				 Text="{x:Static properties:Resources.Site}">
-				<i:Interaction.Triggers>
-					<i:EventTrigger EventName="MouseDown">
-						<ei:LaunchUriOrFileAction Path="{x:Static properties:Resources.SiteUrl}"/>
-					</i:EventTrigger>
-				</i:Interaction.Triggers>
-			</Run>
-			<Run Text="|"/>
-			<Run Foreground="{StaticResource App.Foreground.Shadow}"
-				 TextDecorations="Underline" Cursor="Hand"
-				 Text="{x:Static properties:Resources.License}">
-				<i:Interaction.Triggers>
-					<i:EventTrigger EventName="MouseDown">
-						<ei:CallMethodAction TargetObject="{Binding}"
-											 MethodName="OpenLicense"/>
-					</i:EventTrigger>
-				</i:Interaction.Triggers>
-			</Run>
-		</TextBlock>
+
+		<StackPanel x:Name="HeadItems"
+					Margin="0,0,0,6">
+			<TextBlock Margin="8,0"
+					   Foreground="{StaticResource App.Foreground}">
+				<Run Text="{Binding Source={x:Static models:ProductInfo.Version}, Mode=OneTime}"/>
+				<Run Text="|"/>
+				<Run Foreground="{StaticResource App.Foreground.Shadow}"
+					 TextDecorations="Underline" Cursor="Hand"
+					 Text="{x:Static properties:Resources.Site}">
+					<i:Interaction.Triggers>
+						<i:EventTrigger EventName="MouseDown">
+							<ei:LaunchUriOrFileAction Path="{x:Static properties:Resources.SiteUrl}"/>
+						</i:EventTrigger>
+					</i:Interaction.Triggers>
+				</Run>
+				<Run Text="|"/>
+				<Run Foreground="{StaticResource App.Foreground.Shadow}"
+					 TextDecorations="Underline" Cursor="Hand"
+					 Text="{x:Static properties:Resources.License}">
+					<i:Interaction.Triggers>
+						<i:EventTrigger EventName="MouseDown">
+							<ei:CallMethodAction TargetObject="{Binding}"
+												 MethodName="OpenLicense"/>
+						</i:EventTrigger>
+					</i:Interaction.Triggers>
+				</Run>
+			</TextBlock>
+		</StackPanel>
 
 		<Separator Style="{StaticResource MenuSeparatorStyle}"/>
 

@@ -15,7 +15,7 @@ namespace Monitorian.Core.Models.Monitor
 		bool IsAccessible { get; }
 
 		int Brightness { get; }
-		int BrightnessAdjusted { get; }
+		int BrightnessSystemAdjusted { get; }
 
 		bool UpdateBrightness(int brightness = -1);
 		bool SetBrightness(int brightness);

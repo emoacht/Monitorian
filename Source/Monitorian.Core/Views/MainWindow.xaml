@@ -421,10 +421,10 @@
 														AutoToolTipPlacement="TopLeft"
 														Minimum="0" Maximum="100"
 														Value="{Binding BrightnessInteractive, Mode=TwoWay, Delay=50}"
-														ShadowValue="{Binding BrightnessAdjusted, Mode=OneWay}"
+														ShadowValue="{Binding BrightnessSystemAdjusted, Mode=OneWay}"
 														ShadowVisibility="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Path=DataContext.Settings.ShowsAdjusted, Converter={StaticResource BooleanToVisibilityConverterKey}}"
 														IsUnison="{Binding IsUnison, Mode=TwoWay}"
-														ValueUnison="{Binding BrightnessUnison, Mode=OneWay}"/>
+														ValueUnison="{Binding BrightnessSystemChanged, Mode=OneWay}"/>
 
 							<ToggleButton Grid.Column="2"
 										  Width="16" Height="{DynamicResource ButtonHeight}" Margin="0,2,2,2"

@@ -15,7 +15,7 @@ namespace Monitorian.Core.Models.Monitor
 		public bool IsAccessible { get; }
 
 		public int Brightness { get; protected set; } = -1;
-		public int BrightnessAdjusted { get; protected set; } = -1;
+		public int BrightnessSystemAdjusted { get; protected set; } = -1;
 
 		public MonitorItem(
 			string deviceInstanceId,

@@ -51,7 +51,7 @@ namespace Monitorian.Core.Models.Monitor
 
 					if (LightSensor.AmbientLightSensorExists)
 					{
-						this.BrightnessAdjusted = (0 <= brightness)
+						this.BrightnessSystemAdjusted = (0 <= brightness)
 							? brightness
 							: MSMonitor.GetBrightness(DeviceInstanceId);
 					}

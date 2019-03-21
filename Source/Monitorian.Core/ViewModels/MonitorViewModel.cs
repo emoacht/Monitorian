@@ -78,9 +78,9 @@ namespace Monitorian.Core.ViewModels
 			}
 		}
 
-		public int BrightnessAdjusted => _monitor.BrightnessAdjusted;
+		public int BrightnessSystemAdjusted => _monitor.BrightnessSystemAdjusted;
 
-		public int BrightnessUnison => Brightness;
+		public int BrightnessSystemChanged => Brightness;
 
 		public DateTimeOffset UpdateTime { get; private set; }
 
@@ -93,11 +93,11 @@ namespace Monitorian.Core.ViewModels
 				OnSuccess();
 
 				if (IsUnison && (0 <= brightness))
-					RaisePropertyChanged(nameof(BrightnessUnison));
+					RaisePropertyChanged(nameof(BrightnessSystemChanged));
 
 				RaisePropertyChanged(nameof(Brightness));
 				RaisePropertyChanged(nameof(BrightnessInteractive));
-				RaisePropertyChanged(nameof(BrightnessAdjusted));
+				RaisePropertyChanged(nameof(BrightnessSystemAdjusted));
 			}
 			else
 			{

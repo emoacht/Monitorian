@@ -420,8 +420,8 @@
 													 AutoToolTipPlacement="TopLeft"
 													 Minimum="0" Maximum="100"
 													 Value="{Binding BrightnessInteractive, Mode=TwoWay, Delay=50}"
-													 ShadowValue="{Binding BrightnessSystemAdjusted, Mode=OneWay}"
-													 ShadowVisibility="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Path=DataContext.Settings.ShowsAdjusted, Converter={StaticResource BooleanToVisibilityConverterKey}}"
+													 IsShadowVisible="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Path=DataContext.Settings.ShowsAdjusted}"
+													 ValueShadow="{Binding BrightnessSystemAdjusted, Mode=OneWay}"
 													 IsUnison="{Binding IsUnison, Mode=TwoWay}"
 													 ValueUnison="{Binding BrightnessSystemChanged, Mode=OneWay}"/>
 

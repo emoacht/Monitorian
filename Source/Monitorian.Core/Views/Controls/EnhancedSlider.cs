@@ -22,7 +22,6 @@ namespace Monitorian.Core.Views.Controls
 
 		private Track _track;
 		private Thumb _thumb;
-		private bool _canDrag;
 
 		public override void OnApplyTemplate()
 		{
@@ -30,100 +29,25 @@ namespace Monitorian.Core.Views.Controls
 
 			_track = this.GetTemplateChild("PART_Track") as Track;
 			_thumb = _track?.Thumb;
-			_canDrag = (_thumb != null) && _canUseNonPublicMembers.Value;
-			if (!_canDrag)
+			CheckCanDrag();
+		}
+
+		#region Drag
+
+		protected bool CanDrag { get; private set; }
+		protected bool IsDragStarting { get; private set; }
+		protected bool IsDragging => (_thumb?.IsDragging == true);
+
+		private void CheckCanDrag()
+		{
+			CanDrag = (_thumb != null) && FindNonPublicMembers();
+			if (!CanDrag)
 			{
 				// Fallback
 				this.IsMoveToPointEnabled = true;
 				this.IsManipulationEnabled = true;
 			}
 		}
-
-		#region Unison
-
-		private static event EventHandler<double> Moved; // Static event
-
-		public bool IsUnison
-		{
-			get { return (bool)GetValue(IsUnisonProperty); }
-			set { SetValue(IsUnisonProperty, value); }
-		}
-		public static readonly DependencyProperty IsUnisonProperty =
-			DependencyProperty.Register(
-				"IsUnison",
-				typeof(bool),
-				typeof(EnhancedSlider),
-				new PropertyMetadata(
-					false,
-					(d, e) =>
-					{
-						var instance = (EnhancedSlider)d;
-
-						if ((bool)e.NewValue)
-						{
-							Moved += instance.OnMoved;
-						}
-						else
-						{
-							Moved -= instance.OnMoved;
-						}
-					}));
-
-		public int ValueUnison
-		{
-			get { return (int)GetValue(ValueUnisonProperty); }
-			set { SetValue(ValueUnisonProperty, value); }
-		}
-		public static readonly DependencyProperty ValueUnisonProperty =
-			DependencyProperty.Register(
-				"ValueUnison",
-				typeof(int),
-				typeof(EnhancedSlider),
-				new PropertyMetadata(
-					0,
-					(d, e) =>
-					{
-						var instance = (EnhancedSlider)d;
-
-						Moved?.Invoke(instance, (int)e.NewValue - instance.Value);
-					}));
-
-		protected override void OnValueChanged(double oldValue, double newValue)
-		{
-			base.OnValueChanged(oldValue, newValue);
-
-			if (IsUnison && _canDrag && (_isDragStarting || _thumb.IsDragging))
-			{
-				Moved?.Invoke(this, newValue - oldValue);
-			}
-		}
-
-		private void OnMoved(object sender, double e)
-		{
-			if (ReferenceEquals(this, sender))
-				return;
-
-			var brightness = this.Value + e;
-			if (brightness < this.Minimum)
-			{
-				brightness = this.Minimum;
-				IsUnison = false;
-			}
-			else if (this.Maximum < brightness)
-			{
-				brightness = this.Maximum;
-				IsUnison = false;
-			}
-			this.Value = brightness;
-		}
-
-		#endregion
-
-		#region Drag
-
-		private bool _isDragStarting;
-
-		private static Lazy<bool> _canUseNonPublicMembers = new Lazy<bool>(() => FindNonPublicMembers());
 
 		private static MethodInfo _updateValue;
 		private static PropertyInfo _thumbIsDragging;
@@ -205,12 +129,12 @@ namespace Monitorian.Core.Views.Controls
 			Func<IInputElement, Point> getPosition,
 			Action<UIElement> captureDevice)
 		{
-			if (!_canDrag)
+			if (!CanDrag)
 				return false;
 
 			try
 			{
-				_isDragStarting = true;
+				IsDragStarting = true;
 
 				var originTrackPoint = getPosition(_track);
 				var newValue = _track.ValueFromPoint(originTrackPoint);
@@ -224,7 +148,7 @@ namespace Monitorian.Core.Views.Controls
 			}
 			finally
 			{
-				_isDragStarting = false;
+				IsDragStarting = false;
 			}
 
 			// Reproduce Thumb.OnMouseLeftButtonDown method.
@@ -261,11 +185,21 @@ namespace Monitorian.Core.Views.Controls
 
 		private double _originValue;
 
+		protected bool IsManipulationUnderway { get; private set; }
+
 		protected override void OnManipulationStarted(ManipulationStartedEventArgs e)
 		{
 			base.OnManipulationStarted(e);
 
 			_originValue = _track.ValueFromPoint(e.ManipulationOrigin);
+			IsManipulationUnderway = true;
+		}
+
+		protected override void OnManipulationCompleted(ManipulationCompletedEventArgs e)
+		{
+			base.OnManipulationCompleted(e);
+
+			IsManipulationUnderway = false;
 		}
 
 		protected override void OnManipulationDelta(ManipulationDeltaEventArgs e)

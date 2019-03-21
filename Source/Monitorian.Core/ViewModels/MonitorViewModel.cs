@@ -79,15 +79,10 @@ namespace Monitorian.Core.ViewModels
 		}
 
 		public int BrightnessSystemAdjusted => _monitor.BrightnessSystemAdjusted;
-
 		public int BrightnessSystemChanged => Brightness;
-
-		public DateTimeOffset UpdateTime { get; private set; }
 
 		public void UpdateBrightness(int brightness = -1)
 		{
-			UpdateTime = DateTimeOffset.Now;
-
 			if (_monitor.UpdateBrightness(brightness))
 			{
 				OnSuccess();
@@ -129,6 +124,9 @@ namespace Monitorian.Core.ViewModels
 		{
 			if (_monitor.SetBrightness(brightness))
 			{
+				if (IsUnison)
+					RaisePropertyChanged(nameof(BrightnessSystemChanged));
+
 				OnSuccess();
 				RaisePropertyChanged(nameof(Brightness));
 				RaisePropertyChanged(nameof(BrightnessInteractive));

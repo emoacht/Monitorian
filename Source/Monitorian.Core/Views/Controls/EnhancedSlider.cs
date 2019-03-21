@@ -11,7 +11,7 @@ using System.Windows.Input;
 
 namespace Monitorian.Core.Views.Controls
 {
-	public class QuickSlider : Slider
+	public class EnhancedSlider : Slider
 	{
 		protected override void OnInitialized(EventArgs e)
 		{
@@ -52,12 +52,12 @@ namespace Monitorian.Core.Views.Controls
 			DependencyProperty.Register(
 				"IsUnison",
 				typeof(bool),
-				typeof(QuickSlider),
+				typeof(EnhancedSlider),
 				new PropertyMetadata(
 					false,
 					(d, e) =>
 					{
-						var instance = (QuickSlider)d;
+						var instance = (EnhancedSlider)d;
 
 						if ((bool)e.NewValue)
 						{
@@ -78,12 +78,12 @@ namespace Monitorian.Core.Views.Controls
 			DependencyProperty.Register(
 				"ValueUnison",
 				typeof(int),
-				typeof(QuickSlider),
+				typeof(EnhancedSlider),
 				new PropertyMetadata(
 					0,
 					(d, e) =>
 					{
-						var instance = (QuickSlider)d;
+						var instance = (EnhancedSlider)d;
 
 						Moved?.Invoke(instance, (int)e.NewValue - instance.Value);
 					}));

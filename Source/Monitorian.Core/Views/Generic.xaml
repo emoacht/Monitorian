@@ -23,8 +23,6 @@
 	<Color x:Key="Access.MouseOver.BorderColor">#FF868686</Color>
 	<Color x:Key="Access.Pressed.BackgroundColor">#FF868686</Color>
 
-	<SolidColorBrush x:Key="Unison.Checked.Border" Color="#FFECECEC"/>
-
 	<SolidColorBrush x:Key="Menu.Separator" Color="#FF808080"/>
 	<SolidColorBrush x:Key="Menu.Item.Normal.Backgound" Color="Transparent"/>
 	<SolidColorBrush x:Key="Menu.Item.MouseOver.Background" Color="#FF5F5F5F"/>
@@ -41,7 +39,8 @@
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type ContentControl}">
 					<Grid x:Name="body"
-						  Background="{StaticResource Menu.Item.Normal.Backgound}">
+						  Background="{StaticResource Menu.Item.Normal.Backgound}"
+						  SnapsToDevicePixels="True" UseLayoutRounding="True">
 						<ContentPresenter Margin="{TemplateBinding Padding}"
 										  Content="{TemplateBinding Content}"
 										  ContentTemplate="{TemplateBinding ContentTemplate}"/>

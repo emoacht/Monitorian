@@ -14,8 +14,8 @@
 		Background="{StaticResource App.Background.Plain}">
 	<Window.Resources>
 		<sys:Double x:Key="ButtonHeight">60</sys:Double>
-		<sys:Double x:Key="ThumbHeight">40</sys:Double>
-		<sys:Double x:Key="ShadowHeight">30</sys:Double>
+		<sys:Double x:Key="ThumbHeight">44</sys:Double>
+		<sys:Double x:Key="BracketHeight">8</sys:Double>
 
 		<!-- Slider -->
 		<Color x:Key="Slider.Filled.Static.BackgroundColor">#FF2982CC</Color>
@@ -30,88 +30,82 @@
 		<SolidColorBrush x:Key="Slider.Disabled.Background" Color="{StaticResource Slider.Disabled.BackgroundColor}"/>
 		<SolidColorBrush x:Key="Slider.Vacant.Background" Color="{StaticResource Slider.Vacant.BackgroundColor}"/>
 
-		<Style x:Key="SliderButtonHorizontal" TargetType="{x:Type RepeatButton}">
-			<Setter Property="OverridesDefaultStyle" Value="True"/>
-			<Setter Property="Focusable" Value="False"/>
-			<Setter Property="IsTabStop" Value="False"/>
-			<Setter Property="Template">
-				<Setter.Value>
-					<ControlTemplate TargetType="{x:Type RepeatButton}">
-						<Border Background="Transparent">
-							<Rectangle Width="{TemplateBinding Width}"
-									   Height="3"
-									   Margin="{TemplateBinding Padding}"
-									   Fill="{TemplateBinding Foreground}"/>
-						</Border>
-					</ControlTemplate>
-				</Setter.Value>
-			</Setter>
-		</Style>
-
-		<Style x:Key="SliderThumbHorizontal" TargetType="{x:Type Thumb}">
-			<Setter Property="OverridesDefaultStyle" Value="True"/>
-			<Setter Property="Focusable" Value="False"/>
-			<Setter Property="Template">
-				<Setter.Value>
-					<ControlTemplate TargetType="{x:Type Thumb}">
-						<Grid HorizontalAlignment="Center" VerticalAlignment="Center">
-							<Rectangle x:Name="grip"
-									   Width="{TemplateBinding Width}"
-									   Height="{TemplateBinding Height}"
-									   SnapsToDevicePixels="True" UseLayoutRounding="True">
-								<Rectangle.Fill>
-									<SolidColorBrush Color="{StaticResource Slider.Filled.Static.BackgroundColor}"/>
-								</Rectangle.Fill>
-							</Rectangle>
-
-							<VisualStateManager.VisualStateGroups>
-								<VisualStateGroup x:Name="CommonStates">
-									<VisualState x:Name="Normal"/>
-									<VisualState x:Name="MouseOver">
-										<Storyboard>
-											<ColorAnimation	Storyboard.TargetName="grip"
-															Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)"
-															Duration="0:0:0.1"
-															To="{StaticResource Slider.Filled.MouseOver.BackgroundColor}"/>
-										</Storyboard>
-									</VisualState>
-									<VisualState x:Name="Pressed">
-										<Storyboard>
-											<ColorAnimation	Storyboard.TargetName="grip"
-															Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)"
-															Duration="0:0:0.1"
-															To="{StaticResource Slider.Filled.Pressed.BackgroundColor}"/>
-										</Storyboard>
-									</VisualState>
-									<VisualState x:Name="Disabled">
-										<Storyboard>
-											<ColorAnimation Storyboard.TargetName="grip"
-															Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)"
-															Duration="0:0:0.1"
-															To="{StaticResource Slider.Disabled.BackgroundColor}"/>
-										</Storyboard>
-									</VisualState>
-								</VisualStateGroup>
-							</VisualStateManager.VisualStateGroups>
-						</Grid>
-					</ControlTemplate>
-				</Setter.Value>
-			</Setter>
-		</Style>
-
-		<Style x:Key="SliderHorizontal" TargetType="{x:Type Slider}">
+		<Style x:Key="SliderHorizontal" TargetType="{x:Type controls:CompoundSlider}">
 			<Setter Property="Stylus.IsPressAndHoldEnabled" Value="False"/>
 			<Setter Property="Background" Value="Transparent"/>
 			<Setter Property="Template">
 				<Setter.Value>
-					<ControlTemplate TargetType="{x:Type Slider}">
+					<ControlTemplate TargetType="{x:Type controls:CompoundSlider}">
+						<ControlTemplate.Resources>
+							<Style x:Key="SliderButtonHorizontal" TargetType="{x:Type RepeatButton}">
+								<Setter Property="OverridesDefaultStyle" Value="True"/>
+								<Setter Property="Focusable" Value="False"/>
+								<Setter Property="IsTabStop" Value="False"/>
+							</Style>
+
+							<Style x:Key="SliderThumbHorizontal" TargetType="{x:Type Thumb}">
+								<Setter Property="OverridesDefaultStyle" Value="True"/>
+								<Setter Property="Focusable" Value="False"/>
+								<Setter Property="Background" Value="Transparent"/>
+								<Setter Property="Template">
+									<Setter.Value>
+										<ControlTemplate TargetType="{x:Type Thumb}">
+											<Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+												<Rectangle Height="{DynamicResource BracketHeight}"
+														   VerticalAlignment="Top"
+														   Fill="{TemplateBinding Background}"/>
+												<Rectangle Height="{DynamicResource BracketHeight}"
+														   VerticalAlignment="Bottom"
+														   Fill="{TemplateBinding Background}"/>
+
+												<Rectangle x:Name="grip"
+														   Width="{TemplateBinding Width}" Height="{TemplateBinding Height}"
+														   Margin="2">
+													<Rectangle.Fill>
+														<SolidColorBrush Color="{StaticResource Slider.Filled.Static.BackgroundColor}"/>
+													</Rectangle.Fill>
+												</Rectangle>
+
+												<VisualStateManager.VisualStateGroups>
+													<VisualStateGroup x:Name="CommonStates">
+														<VisualState x:Name="Normal"/>
+														<VisualState x:Name="MouseOver">
+															<Storyboard>
+																<ColorAnimation	Storyboard.TargetName="grip"
+																				Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)"
+																				Duration="0:0:0.1"
+																				To="{StaticResource Slider.Filled.MouseOver.BackgroundColor}"/>
+															</Storyboard>
+														</VisualState>
+														<VisualState x:Name="Pressed">
+															<Storyboard>
+																<ColorAnimation	Storyboard.TargetName="grip"
+																				Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)"
+																				Duration="0:0:0.1"
+																				To="{StaticResource Slider.Filled.Pressed.BackgroundColor}"/>
+															</Storyboard>
+														</VisualState>
+														<VisualState x:Name="Disabled">
+															<Storyboard>
+																<ColorAnimation Storyboard.TargetName="grip"
+																				Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)"
+																				Duration="0:0:0.1"
+																				To="{StaticResource Slider.Disabled.BackgroundColor}"/>
+															</Storyboard>
+														</VisualState>
+													</VisualStateGroup>
+												</VisualStateManager.VisualStateGroups>
+											</Grid>
+										</ControlTemplate>
+									</Setter.Value>
+								</Setter>
+							</Style>
+						</ControlTemplate.Resources>
+
 						<Border x:Name="border"
 								Background="{TemplateBinding Background}"
-								SnapsToDevicePixels="True">
+								SnapsToDevicePixels="True" UseLayoutRounding="True">
 							<Grid>
-								<Border Height="3" Margin="5,0" VerticalAlignment="Center"
-										Background="{StaticResource Slider.Vacant.Background}"/>
-
 								<Grid>
 									<Grid.ColumnDefinitions>
 										<ColumnDefinition x:Name="PART_ShadowLeft" Width="*"/>
@@ -120,36 +114,41 @@
 									</Grid.ColumnDefinitions>
 
 									<Rectangle Grid.Column="1"
-											   x:Name="PART_ShadowCenter"
-											   Width="8" Height="{DynamicResource ShadowHeight}"
+											   x:Name="PART_ShadowThumb"
+											   Width="8"
+											   controls:FrameworkElementMargin.Vertical="{DynamicResource BracketHeight}"
 											   Fill="{StaticResource Slider.Vacant.Background}"
 											   IsHitTestVisible="False"/>
 								</Grid>
 
+								<Rectangle Height="3" Margin="5,0" VerticalAlignment="Center"
+										   Fill="{StaticResource Slider.Vacant.Background}"/>
+								<Rectangle Width="{Binding ElementName=TrackLeft, Path=ActualWidth}"
+										   Height="3" Margin="5,0" HorizontalAlignment="Left" VerticalAlignment="Center"
+										   Fill="{StaticResource Slider.Filled.Static.Background}"/>
+
 								<Track x:Name="PART_Track">
 									<Track.DecreaseRepeatButton>
-										<RepeatButton Padding="5,0,0,0"
+										<RepeatButton x:Name="TrackLeft"
 													  Style="{StaticResource SliderButtonHorizontal}"
-													  Foreground="{StaticResource Slider.Filled.Static.Background}"
 													  Command="{x:Static Slider.DecreaseLarge}"/>
 									</Track.DecreaseRepeatButton>
 									<Track.IncreaseRepeatButton>
-										<RepeatButton Padding="0,0,5,0"
+										<RepeatButton x:Name="TrackRight"
 													  Style="{StaticResource SliderButtonHorizontal}"
-													  Foreground="Transparent"
 													  Command="{x:Static Slider.IncreaseLarge}"/>
 									</Track.IncreaseRepeatButton>
 									<Track.Thumb>
 										<Thumb x:Name="thumb"
-											   Width="11" Height="{DynamicResource ThumbHeight}"
+											   Width="15" Height="{DynamicResource ThumbHeight}"
 											   Style="{StaticResource SliderThumbHorizontal}"/>
 									</Track.Thumb>
 								</Track>
 							</Grid>
 						</Border>
 						<ControlTemplate.Triggers>
-							<Trigger Property="IsKeyboardFocused" Value="True">
-								<Setter Property="Foreground" TargetName="thumb" Value="{StaticResource Slider.Filled.MouseOver.Background}"/>
+							<Trigger Property="IsUnison" Value="True">
+								<Setter Property="Background" TargetName="thumb" Value="{StaticResource App.Foreground.Shadow}"/>
 							</Trigger>
 						</ControlTemplate.Triggers>
 					</ControlTemplate>
@@ -415,16 +414,16 @@
 								</i:Interaction.Triggers>
 							</Button>
 
-							<controls:QuickShadowSlider Grid.Column="1"
-														Margin="10,0,6,0" VerticalAlignment="Center"
-														Style="{StaticResource SliderHorizontal}"
-														AutoToolTipPlacement="TopLeft"
-														Minimum="0" Maximum="100"
-														Value="{Binding BrightnessInteractive, Mode=TwoWay, Delay=50}"
-														ShadowValue="{Binding BrightnessSystemAdjusted, Mode=OneWay}"
-														ShadowVisibility="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Path=DataContext.Settings.ShowsAdjusted, Converter={StaticResource BooleanToVisibilityConverterKey}}"
-														IsUnison="{Binding IsUnison, Mode=TwoWay}"
-														ValueUnison="{Binding BrightnessSystemChanged, Mode=OneWay}"/>
+							<controls:CompoundSlider Grid.Column="1"
+													 Margin="10,0,6,0" VerticalAlignment="Center"
+													 Style="{StaticResource SliderHorizontal}"
+													 AutoToolTipPlacement="TopLeft"
+													 Minimum="0" Maximum="100"
+													 Value="{Binding BrightnessInteractive, Mode=TwoWay, Delay=50}"
+													 ShadowValue="{Binding BrightnessSystemAdjusted, Mode=OneWay}"
+													 ShadowVisibility="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Path=DataContext.Settings.ShowsAdjusted, Converter={StaticResource BooleanToVisibilityConverterKey}}"
+													 IsUnison="{Binding IsUnison, Mode=TwoWay}"
+													 ValueUnison="{Binding BrightnessSystemChanged, Mode=OneWay}"/>
 
 							<ToggleButton Grid.Column="2"
 										  Width="16" Height="{DynamicResource ButtonHeight}" Margin="0,2,2,2"
@@ -433,11 +432,6 @@
 										  VerticalContentAlignment="Bottom"
 										  IsChecked="{Binding IsUnison, Mode=TwoWay}"
 										  Visibility="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Path=DataContext.Settings.EnablesUnison, Converter={StaticResource BooleanToVisibilityConverterKey}}"/>
-
-							<Border Grid.ColumnSpan="3"
-									BorderBrush="{StaticResource Unison.Checked.Border}" BorderThickness="2"
-									IsHitTestVisible="False"
-									Visibility="{Binding IsUnison, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverterKey}}"/>
 						</Grid>
 
 						<!-- Alternative -->

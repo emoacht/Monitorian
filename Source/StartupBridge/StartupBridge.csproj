@@ -54,7 +54,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Helper\LocalSettingsAccessor.cs" />
+    <Compile Include="Helper\SettingsAccessor.cs" />
     <Compile Include="PlatformInfo.cs" />
     <Compile Include="StartupData.cs" />
     <Compile Include="StartupTaskBroker.cs" />

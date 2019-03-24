@@ -23,8 +23,8 @@ namespace StartupBridge
 			{
 				if (!_lastStartTime.HasValue)
 				{
-					_lastStartTime = LocalSettingsAccessor.GetValue<DateTimeOffset>();
-					LocalSettingsAccessor.SetValue(DateTimeOffset.Now);
+					_lastStartTime = SettingsAccessor.Local.GetValue<DateTimeOffset>();
+					SettingsAccessor.Local.SetValue(DateTimeOffset.Now);
 				}
 				return _lastStartTime.Value;
 			}

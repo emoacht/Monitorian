@@ -62,7 +62,7 @@ namespace Monitorian.Core
 		public virtual async Task InitiateAsync()
 		{
 			Settings.Initiate();
-			Settings.KnownMonitors.AbsoluteCapacity = MaxNameCount;
+			Settings.KnownMonitors.AbsoluteCapacity = MaxKnownMonitorsCount;
 			Settings.PropertyChanged += OnSettingsChanged;
 
 			NotifyIconContainer.ShowIcon("pack://application:,,,/Monitorian.Core;component/Resources/Icons/TrayIcon.ico", ProductInfo.Title);
@@ -145,8 +145,11 @@ namespace Monitorian.Core
 
 		internal event EventHandler<bool> ScanningChanged;
 
-		protected int MaxMonitorCount { get; set; } = 4;
-		protected int MaxNameCount => MaxMonitorCount * 4;
+		protected virtual Task<byte> GetMaxMonitorsCountAsync() => Task.FromResult<byte>(4);
+		protected const int MaxKnownMonitorsCount = 64;
+
+		protected virtual MonitorViewModel GetMonitor(IMonitor monitorItem) => new MonitorViewModel(this, monitorItem);
+		protected virtual void DisposeMonitor(MonitorViewModel monitor) => monitor?.Dispose();
 
 		private int _scanCount = 0;
 		private int _updateCount = 0;
@@ -192,7 +195,7 @@ namespace Monitorian.Core
 							oldMonitorIndices.Reverse(); // Reverse indices to start removing from the tail.
 							foreach (var index in oldMonitorIndices)
 							{
-								Monitors[index].Dispose();
+								DisposeMonitor(Monitors[index]);
 								lock (_monitorsLock)
 								{
 									Monitors.RemoveAt(index);
@@ -204,7 +207,7 @@ namespace Monitorian.Core
 						{
 							foreach (var item in newMonitorItems)
 							{
-								var newMonitor = new MonitorViewModel(this, item);
+								var newMonitor = GetMonitor(item);
 								lock (_monitorsLock)
 								{
 									Monitors.Add(newMonitor);
@@ -213,28 +216,28 @@ namespace Monitorian.Core
 						}
 					});
 
-					var controllableMonitorExists = false;
+					var maxMonitorsCount = await GetMaxMonitorsCountAsync();
 
-					await Task.WhenAll(Monitors
+					var updateResults = await Task.WhenAll(Monitors
 						.Where(x => x.IsControllable)
 						.Select((x, index) =>
 						{
-							controllableMonitorExists = true;
-
-							if (index < MaxMonitorCount)
+							if (index < maxMonitorsCount)
 							{
 								return Task.Run(() =>
 								{
-									x.UpdateBrightness();
-									x.IsTarget = true;
+									if (x.UpdateBrightness())
+									{
+										x.IsTarget = true;
+									}
+									return x.IsControllable;
 								});
 							}
-							else
-							{
-								x.IsTarget = false;
-								return Task.CompletedTask;
-							}
+							x.IsTarget = false;
+							return Task.FromResult(false);
 						}));
+
+					var controllableMonitorExists = updateResults.Any(x => x);
 
 					Monitors
 						.Where(x => !x.IsControllable)

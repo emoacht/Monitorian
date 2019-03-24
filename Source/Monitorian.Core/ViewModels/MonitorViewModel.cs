@@ -81,23 +81,21 @@ namespace Monitorian.Core.ViewModels
 		public int BrightnessSystemAdjusted => _monitor.BrightnessSystemAdjusted;
 		public int BrightnessSystemChanged => Brightness;
 
-		public void UpdateBrightness(int brightness = -1)
+		public bool UpdateBrightness(int brightness = -1)
 		{
 			if (_monitor.UpdateBrightness(brightness))
 			{
-				OnSuccess();
-
 				if (IsUnison && (0 <= brightness))
 					RaisePropertyChanged(nameof(BrightnessSystemChanged));
 
 				RaisePropertyChanged(nameof(Brightness));
 				RaisePropertyChanged(nameof(BrightnessInteractive));
 				RaisePropertyChanged(nameof(BrightnessSystemAdjusted));
+				OnSuccess();
+				return true;
 			}
-			else
-			{
-				OnFailure();
-			}
+			OnFailure();
+			return false;
 		}
 
 		public void IncrementBrightness() => IncrementBrightness(10);
@@ -120,21 +118,20 @@ namespace Monitorian.Core.ViewModels
 			SetBrightness(brightness);
 		}
 
-		private void SetBrightness(int brightness)
+		private bool SetBrightness(int brightness)
 		{
 			if (_monitor.SetBrightness(brightness))
 			{
 				if (IsUnison)
 					RaisePropertyChanged(nameof(BrightnessSystemChanged));
 
-				OnSuccess();
 				RaisePropertyChanged(nameof(Brightness));
 				RaisePropertyChanged(nameof(BrightnessInteractive));
+				OnSuccess();
+				return true;
 			}
-			else
-			{
-				OnFailure();
-			}
+			OnFailure();
+			return false;
 		}
 
 		private byte _failureCount = 0;
@@ -146,7 +143,7 @@ namespace Monitorian.Core.ViewModels
 
 		private void OnFailure()
 		{
-			if (_failureCount++ > 0)
+			if (++_failureCount > 2)
 				IsControllable = false;
 		}
 

@@ -149,12 +149,42 @@ namespace Monitorian.Core.ViewModels
 
 		#endregion
 
+		#region Focus
+
+		public bool IsByKey
+		{
+			get => _isByKey;
+			set
+			{
+				_isByKeySync = value;
+				if (SetPropertyValue(ref _isByKey, value))
+					RaisePropertyChanged(nameof(IsSelectedByKey));
+			}
+		}
+		private bool _isByKey;
+		private static bool _isByKeySync; // Static field
+
+		public bool IsSelected
+		{
+			get => _isSelected;
+			set
+			{
+				if (SetPropertyValue(ref _isSelected, value))
+					RaisePropertyChanged(nameof(IsSelectedByKey));
+			}
+		}
+		private bool _isSelected = false;
+
+		public bool IsSelectedByKey => IsSelected && _isByKeySync;
+
+		#endregion
+
 		public bool IsTarget
 		{
 			get => _isTarget;
 			set => SetPropertyValue(ref _isTarget, value);
 		}
-		private bool _isTarget = false;
+		private bool _isTarget;
 
 		#region IDisposable
 

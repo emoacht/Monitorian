@@ -35,7 +35,6 @@ namespace Monitorian.Core.Views.Controls
 		#region Drag
 
 		protected bool CanDrag { get; private set; }
-		protected bool IsDragStarting { get; private set; }
 		protected bool IsDragging => (_thumb?.IsDragging == true);
 
 		private void CheckCanDrag()
@@ -132,24 +131,18 @@ namespace Monitorian.Core.Views.Controls
 			if (!CanDrag)
 				return false;
 
-			try
-			{
-				IsDragStarting = true;
+			if (!this.IsFocused)
+				this.Focus();
 
-				var originTrackPoint = getPosition(_track);
-				var newValue = _track.ValueFromPoint(originTrackPoint);
-				newValue = Math.Min(this.Maximum, Math.Max(this.Minimum, Math.Round(newValue)));
+			var originTrackPoint = getPosition(_track);
+			var newValue = _track.ValueFromPoint(originTrackPoint);
+			newValue = Math.Min(this.Maximum, Math.Max(this.Minimum, Math.Round(newValue)));
 
-				if (newValue == this.Value)
-					return false;
+			if (newValue == this.Value)
+				return false;
 
-				// Set new value.
-				_updateValue.Invoke(this, new object[] { newValue });
-			}
-			finally
-			{
-				IsDragStarting = false;
-			}
+			// Set new value.
+			_updateValue.Invoke(this, new object[] { newValue });
 
 			// Reproduce Thumb.OnMouseLeftButtonDown method.
 			if (!_thumb.IsDragging)
@@ -185,21 +178,19 @@ namespace Monitorian.Core.Views.Controls
 
 		private double _originValue;
 
-		protected bool IsManipulationUnderway { get; private set; }
-
 		protected override void OnManipulationStarted(ManipulationStartedEventArgs e)
 		{
 			base.OnManipulationStarted(e);
 
+			if (!this.IsFocused)
+				this.Focus();
+
 			_originValue = _track.ValueFromPoint(e.ManipulationOrigin);
-			IsManipulationUnderway = true;
 		}
 
 		protected override void OnManipulationCompleted(ManipulationCompletedEventArgs e)
 		{
 			base.OnManipulationCompleted(e);
-
-			IsManipulationUnderway = false;
 		}
 
 		protected override void OnManipulationDelta(ManipulationDeltaEventArgs e)
@@ -226,6 +217,9 @@ namespace Monitorian.Core.Views.Controls
 		protected override void OnMouseWheel(MouseWheelEventArgs e)
 		{
 			base.OnMouseWheel(e);
+
+			if (!this.IsFocused)
+				this.Focus();
 
 			if (e.Delta == 0)
 				return;

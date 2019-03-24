@@ -5,6 +5,7 @@
 		xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
 		xmlns:sys="clr-namespace:System;assembly=mscorlib"
 		xmlns:models="clr-namespace:Monitorian.Core.Models"
+		xmlns:behaviors="clr-namespace:Monitorian.Core.Views.Behaviors"
 		xmlns:controls="clr-namespace:Monitorian.Core.Views.Controls"
 		xmlns:properties="clr-namespace:Monitorian.Core.Properties"
 		Width="360" Height="200"
@@ -237,6 +238,7 @@
 
 		<!-- Brightness Button -->
 		<Style x:Key="BrightnessButtonStyle" TargetType="{x:Type Button}">
+			<Setter Property="Focusable" Value="False"/>
 			<Setter Property="Template">
 				<Setter.Value>
 					<ControlTemplate TargetType="{x:Type Button}">
@@ -284,6 +286,7 @@
 
 		<!-- Unison Button -->
 		<Style x:Key="UnisonButtonStyle" TargetType="{x:Type ToggleButton}">
+			<Setter Property="Focusable" Value="False"/>
 			<Setter Property="Template">
 				<Setter.Value>
 					<ControlTemplate TargetType="{x:Type ToggleButton}">
@@ -361,7 +364,8 @@
 
 		<!-- Monitors-->
 		<ListView ItemsSource="{Binding MonitorsView}"
-				  SelectionMode="Single">
+				  SelectionMode="Single"
+				  SelectedIndex="0">
 			<ListView.Template>
 				<ControlTemplate TargetType="{x:Type ListView}">
 					<Border BorderThickness="0">
@@ -375,7 +379,7 @@
 			</ListView.Template>
 			<ListView.ItemTemplate>
 				<DataTemplate>
-					<Grid Margin="4,0,4,4">
+					<Grid Background="Transparent">
 						<Grid.RowDefinitions>
 							<RowDefinition Height="Auto"/>
 							<RowDefinition Height="Auto"/>
@@ -383,7 +387,7 @@
 
 						<!-- Name -->
 						<controls:SwitchTextBox Grid.Row="0"
-												Margin="2,5" HorizontalAlignment="Left" VerticalAlignment="Center"
+												Margin="6,5,2,5" HorizontalAlignment="Left" VerticalAlignment="Center"
 												Style="{StaticResource NameTextBoxStyle}"
 												Foreground="{StaticResource App.Foreground}"
 												FontSize="12"
@@ -393,15 +397,22 @@
 						<!-- Brightness -->
 						<Grid Grid.Row="1"
 							  x:Name="BrightnessBox"
+							  Margin="0,0,0,6"
 							  Visibility="{Binding IsControllable, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverterKey}}">
 							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="3"/>
 								<ColumnDefinition Width="Auto"/>
 								<ColumnDefinition Width="*"/>
 								<ColumnDefinition Width="Auto"/>
+								<ColumnDefinition Width="4"/>
 							</Grid.ColumnDefinitions>
 
-							<Button Grid.Column="0"
-									Width="80" Height="{DynamicResource ButtonHeight}" Margin="2,2,0,2"
+							<Rectangle Grid.Column="0"
+									   Fill="{StaticResource App.Background.Accent}"
+									   Visibility="{Binding IsSelectedByKey, Converter={StaticResource BooleanToVisibilityConverterKey}}"/>
+
+							<Button Grid.Column="1"
+									Width="80" Height="{DynamicResource ButtonHeight}" Margin="3,0,0,0"
 									Style="{StaticResource BrightnessButtonStyle}">
 								<TextBlock Margin="2" HorizontalAlignment="Left" VerticalAlignment="Bottom"
 										   Foreground="{StaticResource App.Foreground}"
@@ -410,23 +421,25 @@
 									<i:EventTrigger EventName="Click">
 										<ei:CallMethodAction TargetObject="{Binding}"
 															 MethodName="IncrementBrightness"/>
+										<behaviors:MouseDownParentAction/>
 									</i:EventTrigger>
 								</i:Interaction.Triggers>
 							</Button>
 
-							<controls:CompoundSlider Grid.Column="1"
-													 Margin="10,0,6,0" VerticalAlignment="Center"
-													 Style="{StaticResource SliderHorizontal}"
-													 AutoToolTipPlacement="TopLeft"
-													 Minimum="0" Maximum="100"
-													 Value="{Binding BrightnessInteractive, Mode=TwoWay, Delay=50}"
-													 IsShadowVisible="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Path=DataContext.Settings.ShowsAdjusted}"
-													 ValueShadow="{Binding BrightnessSystemAdjusted, Mode=OneWay}"
-													 IsUnison="{Binding IsUnison, Mode=TwoWay}"
-													 ValueUnison="{Binding BrightnessSystemChanged, Mode=OneWay}"/>
+							<controls:ItemSlider Grid.Column="2"
+												 Margin="8,0,6,0" VerticalAlignment="Center"
+												 Style="{StaticResource SliderHorizontal}"
+												 AutoToolTipPlacement="TopLeft"
+												 Minimum="0" Maximum="100"
+												 Value="{Binding BrightnessInteractive, Mode=TwoWay, Delay=50}"
+												 IsShadowVisible="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Path=DataContext.Settings.ShowsAdjusted}"
+												 ValueShadow="{Binding BrightnessSystemAdjusted, Mode=OneWay}"
+												 IsUnison="{Binding IsUnison, Mode=TwoWay}"
+												 ValueUnison="{Binding BrightnessSystemChanged, Mode=OneWay}"
+												 IsByKey="{Binding IsByKey, Mode=TwoWay}"/>
 
-							<ToggleButton Grid.Column="2"
-										  Width="16" Height="{DynamicResource ButtonHeight}" Margin="0,2,2,2"
+							<ToggleButton Grid.Column="3"
+										  Width="16" Height="{DynamicResource ButtonHeight}" Margin="0,0,2,0"
 										  Style="{StaticResource UnisonButtonStyle}"
 										  Foreground="{StaticResource App.Foreground}"
 										  VerticalContentAlignment="Bottom"
@@ -447,6 +460,7 @@
 			<ListView.ItemContainerStyle>
 				<Style TargetType="{x:Type ListViewItem}">
 					<Setter Property="Margin" Value="0"/>
+					<Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>
 					<Setter Property="OverridesDefaultStyle" Value="True"/>
 					<Setter Property="Template">
 						<Setter.Value>

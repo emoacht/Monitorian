@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -68,6 +67,7 @@ namespace Monitorian.Core
 			NotifyIconContainer.ShowIcon("pack://application:,,,/Monitorian.Core;component/Resources/Icons/TrayIcon.ico", ProductInfo.Title);
 
 			_current.MainWindow = new MainWindow(this);
+			_current.MainWindow.Deactivated += (sender, e) => MonitorsResetByKey();
 
 			if (!StartupAgent.IsStartedOnSignIn())
 				_current.MainWindow.Show();
@@ -291,6 +291,12 @@ namespace Monitorian.Core
 		{
 			foreach (var monitor in Monitors)
 				monitor.Dispose();
+		}
+
+		private void MonitorsResetByKey()
+		{
+			foreach (var monitor in Monitors)
+				monitor.IsByKey = false;
 		}
 
 		#endregion

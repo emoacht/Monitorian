@@ -9,11 +9,13 @@
 
 	<Color x:Key="App.ForegroundColor">White</Color>
 	<Color x:Key="App.ShadowColor">LightGray</Color>
+	<Color x:Key="App.AccentColor">#FF2982CC</Color>
 
-	<SolidColorBrush x:Key="App.Background.Plain" Color="#FF1F1F1F"/>
-	<SolidColorBrush x:Key="App.Background.Translucent" Color="#CC171717"/>
 	<SolidColorBrush x:Key="App.Foreground" Color="{StaticResource App.ForegroundColor}"/>
 	<SolidColorBrush x:Key="App.Foreground.Shadow" Color="{StaticResource App.ShadowColor}"/>
+	<SolidColorBrush x:Key="App.Background.Accent" Color="{StaticResource App.AccentColor}"/>
+	<SolidColorBrush x:Key="App.Background.Plain" Color="#FF1F1F1F"/>
+	<SolidColorBrush x:Key="App.Background.Translucent" Color="#CC171717"/>
 
 	<SolidColorBrush x:Key="Text.Writable.Border" Color="{StaticResource App.ForegroundColor}"/>
 	<SolidColorBrush x:Key="Text.Writable.Background" Color="#FF5F5F5F"/>

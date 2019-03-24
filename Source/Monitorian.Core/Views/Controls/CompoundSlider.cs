@@ -149,12 +149,9 @@ namespace Monitorian.Core.Views.Controls
 		{
 			base.OnValueChanged(oldValue, newValue);
 
-			if ((CanDrag && (IsDragStarting || IsDragging)) ||
-				IsManipulationUnderway ||
-				IsMouseOver)
+			if (this.IsFocused && IsUnison)
 			{
-				if (IsUnison)
-					Moved?.Invoke(this, newValue - oldValue);
+				Moved?.Invoke(this, newValue - oldValue);
 			}
 		}
 

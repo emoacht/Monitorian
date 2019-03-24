@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 
+using Monitorian.Core.Helper;
 using Monitorian.Core.Models;
 using Monitorian.Core.ViewModels;
 using ScreenFrame.Movers;
@@ -104,9 +105,9 @@ namespace Monitorian.Core.Views
 
 						var factor = (bool)e.NewValue ? 1D : ShrinkFactor;
 
-						foreach (var pair in window._defaultHeights)
+						foreach (var (key, value) in window._defaultHeights)
 						{
-							window.Resources[pair.Key] = pair.Value * factor;
+							window.Resources[key] = value * factor;
 						}
 					}));
 

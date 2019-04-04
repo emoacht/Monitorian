@@ -3,8 +3,9 @@
 					xmlns:converters="clr-namespace:Monitorian.Core.Views.Converters">
 
 	<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverterKey"/>
-	<converters:VisibilityToBooleanFilterConverter x:Key="VisibilityToBooleanFilterConverterKey"/>
+	<converters:BooleanInverseToVisibilityConverter x:Key="BooleanInverseToVisibilityConverterKey"/>
 	<converters:BooleanInverseConverter x:Key="BooleanInverseConverterKey"/>
+	<converters:VisibilityToBooleanFilterConverter x:Key="VisibilityToBooleanFilterConverterKey"/>
 	<converters:VisibilityInverseConverter x:Key="VisibilityInverseConverterKey"/>
 
 	<Color x:Key="App.ForegroundColor">White</Color>

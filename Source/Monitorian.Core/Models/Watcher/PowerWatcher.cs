@@ -9,25 +9,25 @@ namespace Monitorian.Core.Models.Watcher
 {
 	internal class PowerWatcher : TimerWatcher, IDisposable
 	{
-		private Func<Task> _onChanged;
+		private Action _onChanged;
 
 		public PowerWatcher() : base(5, 5, 10, 20, 40, 80)
 		{ }
 
-		public void Subscribe(Func<Task> onChanged)
+		public void Subscribe(Action onChanged)
 		{
 			this._onChanged = onChanged ?? throw new ArgumentNullException(nameof(onChanged));
 			SystemEvents.PowerModeChanged += OnPowerModeChanged;
 		}
 
-		private async void OnPowerModeChanged(object sender, PowerModeChangedEventArgs e)
+		private void OnPowerModeChanged(object sender, PowerModeChangedEventArgs e)
 		{
 			TimerStop();
 
 			switch (e.Mode)
 			{
 				default:
-					await _onChanged?.Invoke();
+					_onChanged?.Invoke();
 					break;
 				case PowerModes.Suspend:
 					// Do nothing.
@@ -38,9 +38,9 @@ namespace Monitorian.Core.Models.Watcher
 			}
 		}
 
-		protected override Task TimerTick()
+		protected override void TimerTick()
 		{
-			return _onChanged?.Invoke();
+			_onChanged?.Invoke();
 		}
 
 		#region IDisposable

@@ -9,29 +9,29 @@ namespace Monitorian.Core.Models.Watcher
 {
 	internal class SettingsWatcher : TimerWatcher, IDisposable
 	{
-		private Func<Task> _onChanged;
+		private Action _onChanged;
 
 		public SettingsWatcher() : base(3, 3, 6)
 		{ }
 
-		public void Subscribe(Func<Task> onChanged)
+		public void Subscribe(Action onChanged)
 		{
 			this._onChanged = onChanged ?? throw new ArgumentNullException(nameof(onChanged));
 			SystemEvents.DisplaySettingsChanged += OnDisplaySettingsChanged;
 		}
 
-		private async void OnDisplaySettingsChanged(object sender, EventArgs e)
+		private void OnDisplaySettingsChanged(object sender, EventArgs e)
 		{
 			TimerStop();
 
-			await _onChanged?.Invoke();
+			_onChanged?.Invoke();
 
 			TimerStart();
 		}
 
-		protected override Task TimerTick()
+		protected override void TimerTick()
 		{
-			return _onChanged?.Invoke();
+			_onChanged?.Invoke();
 		}
 
 		#region IDisposable

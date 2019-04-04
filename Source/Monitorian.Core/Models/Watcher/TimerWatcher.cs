@@ -43,11 +43,11 @@ namespace Monitorian.Core.Models.Watcher
 			_timer.Stop();
 		}
 
-		private async void OnTick(object sender, EventArgs e)
+		private void OnTick(object sender, EventArgs e)
 		{
 			_timer.Stop();
 
-			await TimerTick();
+			TimerTick();
 
 			_count++;
 			if (_count < _intervals.Length)
@@ -57,6 +57,6 @@ namespace Monitorian.Core.Models.Watcher
 			}
 		}
 
-		protected abstract Task TimerTick();
+		protected abstract void TimerTick();
 	}
 }

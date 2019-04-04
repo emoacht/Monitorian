@@ -76,8 +76,8 @@ namespace Monitorian.Core
 
 			await ScanAsync();
 
-			_settingsWatcher.Subscribe(() => ScanAsync());
-			_powerWatcher.Subscribe(() => ScanAsync());
+			_settingsWatcher.Subscribe(() => OnMonitorsChangeInferred());
+			_powerWatcher.Subscribe(() => OnMonitorsChangeInferred());
 			_brightnessWatcher.Subscribe((instanceName, brightness) => Update(instanceName, brightness));
 		}
 
@@ -103,10 +103,10 @@ namespace Monitorian.Core
 			await UpdateAsync();
 		}
 
-		protected async void OnMainWindowShowRequestedByOther(object sender, EventArgs e)
+		protected void OnMainWindowShowRequestedByOther(object sender, EventArgs e)
 		{
 			_current.Dispatcher.Invoke(() => ShowMainWindow());
-			await ScanAsync();
+			OnMonitorsChangeInferred();
 		}
 
 		protected void OnMenuWindowShowRequested(object sender, Point e)
@@ -142,6 +142,8 @@ namespace Monitorian.Core
 		}
 
 		#region Monitors
+
+		protected virtual async void OnMonitorsChangeInferred() => await ScanAsync();
 
 		internal event EventHandler<bool> ScanningChanged;
 

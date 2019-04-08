@@ -42,14 +42,14 @@ namespace Monitorian.Core.Views.Controls
 					string.Empty,
 					(d, e) => ((UIElement)d).InvalidateVisual()));
 
-		public double Radius
+		public double CornerRadius
 		{
-			get { return (double)GetValue(RadiusProperty); }
-			set { SetValue(RadiusProperty, value); }
+			get { return (double)GetValue(CornerRadiusProperty); }
+			set { SetValue(CornerRadiusProperty, value); }
 		}
-		public static readonly DependencyProperty RadiusProperty =
+		public static readonly DependencyProperty CornerRadiusProperty =
 			DependencyProperty.Register(
-				"Radius",
+				"CornerRadius",
 				typeof(double),
 				typeof(ReversalLabel),
 				new PropertyMetadata(
@@ -60,25 +60,25 @@ namespace Monitorian.Core.Views.Controls
 
 		protected override Size ArrangeOverride(Size arrangeBounds)
 		{
-			CreateFormattedText(out _, out _, out Size size);
+			var (_, labelSize) = CreateFormattedText();
 
-			this.Width = size.Width;
-			this.Height = size.Height;
+			this.Width = labelSize.Width;
+			this.Height = labelSize.Height;
 
-			return size;
+			return labelSize;
 		}
 
 		protected override void OnRender(DrawingContext drawingContext)
 		{
 			try
 			{
-				CreateFormattedText(out FormattedText formattedText, out double padding, out Size size);
+				var (formattedText, labelSize) = CreateFormattedText();
 
-				var textGeometry = formattedText.BuildGeometry(new Point(padding, 0));
-				var backgroundGeometry = new RectangleGeometry(new Rect(size), this.Radius, this.Radius);
+				var textGeometry = formattedText.BuildGeometry(new Point(this.Padding.Left, this.Padding.Top));
+				var backgroundGeometry = new RectangleGeometry(new Rect(labelSize), this.CornerRadius, this.CornerRadius);
 				var combinedGeometry = new CombinedGeometry(GeometryCombineMode.Xor, textGeometry, backgroundGeometry);
 
-				drawingContext.DrawGeometry(this.Foreground ?? Brushes.Black, null, combinedGeometry);
+				drawingContext.DrawGeometry(this.Background ?? Brushes.Black, null, combinedGeometry);
 			}
 			finally
 			{
@@ -87,20 +87,33 @@ namespace Monitorian.Core.Views.Controls
 		}
 
 		private FormattedText _formattedText;
+		private Size _labelSize;
 
-		private void CreateFormattedText(out FormattedText formattedText, out double padding, out Size size)
+		private (FormattedText formattedText, Size labelSize) CreateFormattedText()
 		{
-			formattedText = _formattedText ?? (_formattedText = new FormattedText(
+			FormattedText GetFormattedText() => new FormattedText(
 				this.Text ?? string.Empty,
 				CultureInfo.InvariantCulture,
 				FlowDirection.LeftToRight,
 				new Typeface(this.FontFamily, this.FontStyle, this.FontWeight, this.FontStretch),
 				this.FontSize,
 				Brushes.Black, // Not to be used
-				(0 < _dpi.PixelsPerDip ? _dpi.PixelsPerDip : 1D)));
+				(0 < _dpi.PixelsPerDip ? _dpi.PixelsPerDip : 1D));
 
-			padding = (formattedText.Height - formattedText.Extent) / 2D;
-			size = new Size(formattedText.Width + padding * 2, formattedText.Height);
+			Size GetLabelSize(FormattedText formattedText)
+			{
+				var width = this.Padding.Left + formattedText.Width + this.Padding.Right;
+				var height = this.Padding.Top + formattedText.Height + this.Padding.Bottom;
+
+				if (this.SnapsToDevicePixels)
+					(width, height) = (Math.Round(width, MidpointRounding.AwayFromZero), Math.Round(height, MidpointRounding.AwayFromZero));
+
+				return new Size(width, height);
+			}
+
+			return (_formattedText is null)
+				? (_formattedText = GetFormattedText(), _labelSize = GetLabelSize(_formattedText))
+				: (_formattedText, _labelSize);
 		}
 
 		private void ClearFormattedText() => _formattedText = null;

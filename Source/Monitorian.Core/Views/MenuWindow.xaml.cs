@@ -21,7 +21,7 @@ namespace Monitorian.Core.Views
 	public partial class MenuWindow : Window
 	{
 		private readonly FloatWindowMover _mover;
-		internal MenuWindowViewModel ViewModel => (MenuWindowViewModel)this.DataContext;
+		public MenuWindowViewModel ViewModel => (MenuWindowViewModel)this.DataContext;
 
 		public MenuWindow(AppControllerCore controller, Point pivot)
 		{
@@ -47,6 +47,29 @@ namespace Monitorian.Core.Views
 		public void AddMenuItem(Control item) => this.MenuItems.Children.Insert(0, item);
 		public void RemoveMenuItem(Control item) => this.MenuItems.Children.Remove(item);
 
+		#region Foreground
+
+		public void DepartFromForegrond()
+		{
+			this.Topmost = false;
+		}
+
+		public async void ReturnToForegroud()
+		{
+			if (!this.IsActive)
+			{
+				// Wait for this window to be able to be activated.
+				await Task.Delay(TimeSpan.FromMilliseconds(100));
+			}
+
+			// Activate this window. This is necessary to assure this window is foreground.
+			this.Activate();
+
+			this.Topmost = true;
+		}
+
+		#endregion
+
 		#region Close
 
 		private bool _isClosing = false;
@@ -54,6 +77,9 @@ namespace Monitorian.Core.Views
 		protected override void OnDeactivated(EventArgs e)
 		{
 			base.OnDeactivated(e);
+
+			if (!this.Topmost)
+				return;
 
 			if (!_isClosing)
 				this.Close();

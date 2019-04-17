@@ -50,8 +50,6 @@ namespace Monitorian.Core
 			BindingOperations.EnableCollectionSynchronization(Monitors, _monitorsLock);
 
 			NotifyIconContainer = new NotifyIconContainer();
-			NotifyIconContainer.MouseLeftButtonClick += OnMainWindowShowRequestedBySelf;
-			NotifyIconContainer.MouseRightButtonClick += OnMenuWindowShowRequested;
 
 			_settingsWatcher = new SettingsWatcher();
 			_powerWatcher = new PowerWatcher();
@@ -72,9 +70,12 @@ namespace Monitorian.Core
 			if (!StartupAgent.IsStartedOnSignIn())
 				_current.MainWindow.Show();
 
+			await ScanAsync();
+
 			StartupAgent.Requested += (sender, e) => e.Response = OnRequested(sender, e.Args);
 
-			await ScanAsync();
+			NotifyIconContainer.MouseLeftButtonClick += OnMainWindowShowRequestedBySelf;
+			NotifyIconContainer.MouseRightButtonClick += OnMenuWindowShowRequested;
 
 			_settingsWatcher.Subscribe(() => OnMonitorsChangeInferred());
 			_powerWatcher.Subscribe(() => OnMonitorsChangeInferred());

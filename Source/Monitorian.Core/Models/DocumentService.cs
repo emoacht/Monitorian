@@ -33,27 +33,29 @@ namespace Monitorian.Core.Models
 			}
 		}
 
-		public static string SaveAsHtml(string inputFileName, string inputFileContent)
+		public static string SaveTempFileAsHtml(string fileName, string title, string body)
 		{
-			var outputFilePath = Path.Combine(Path.GetTempPath(), $"{Path.GetFileNameWithoutExtension(inputFileName)}.html");
-
-			SaveAsHtml(inputFileName, inputFileContent, outputFilePath);
-
-			return outputFilePath;
+			var filePath = Path.Combine(Path.GetTempPath(), $"{Path.GetFileNameWithoutExtension(fileName)}.html");
+			SaveFileAsHtml(filePath, title, body);
+			return filePath;
 		}
 
-		public static void SaveAsHtml(string inputFileName, string inputFileContent, string outputFilePath)
+		public static void SaveFileAsHtml(string filePath, string title, string body)
 		{
-			if (string.IsNullOrWhiteSpace(inputFileName))
-				throw new ArgumentNullException(nameof(inputFileName));
-			if (string.IsNullOrWhiteSpace(outputFilePath))
-				throw new ArgumentNullException(nameof(outputFilePath));
+			if (string.IsNullOrWhiteSpace(filePath))
+				throw new ArgumentNullException(nameof(filePath));
 
-			var title = Path.GetFileNameWithoutExtension(inputFileName);
-			var body = inputFileContent.Replace("\r\n", "<br>\r\n");
+			if (string.IsNullOrWhiteSpace(title))
+				title = Path.GetFileNameWithoutExtension(filePath);
+
+			body = body?
+				.Split(new[] { "\r\n\r\n" }, StringSplitOptions.None)
+				.Select(x => $"<p>{x}</p>")
+				.Aggregate((w, n) => $"{w}\r\n{n}");
+
 			var content = BuildHtml(title, body);
 
-			using (var sw = new StreamWriter(outputFilePath, false, Encoding.UTF8)) // BOM will be emitted.
+			using (var sw = new StreamWriter(filePath, false, Encoding.UTF8)) // BOM will be emitted.
 				sw.Write(content);
 		}
 
@@ -65,10 +67,11 @@ namespace Monitorian.Core.Models
 <meta charset=""utf-8""/>
 <title>{title}</title>
 <style type=""text/css"">
-<!-- body {{ font-family: monospace; }} -->
+<!-- body {{ margin: 0 30px; font-family: Consolas, monospace; }} -->
 </style>
 </head>
 <body>
+<h1>{title}</h1>
 {body}
 </body>
 </html>";

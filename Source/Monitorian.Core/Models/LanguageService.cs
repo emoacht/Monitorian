@@ -18,7 +18,18 @@ namespace Monitorian.Core.Models
 
 		public static IReadOnlyCollection<string> Options => PreparedCulturePairs.Keys.ToArray();
 
-		private static CultureInfo _culture = null;
+		private static readonly Lazy<CultureInfo> _culture = new Lazy<CultureInfo>(() =>
+		{
+			var preparedCulturePairs = PreparedCulturePairs;
+			var supportedCultureNames = new HashSet<string>(CultureInfo.GetCultures(CultureTypes.AllCultures).Select(x => x.Name));
+
+			return Environment.GetCommandLineArgs().Skip(1)
+				.Where(x => !string.IsNullOrWhiteSpace(x))
+				.Select(x => (Success: preparedCulturePairs.TryGetValue(x.ToLower(), out string value) && supportedCultureNames.Contains(value), CultureName: value))
+				.Where(x => x.Success)
+				.Select(x => new CultureInfo(x.CultureName))
+				.FirstOrDefault();
+		});
 
 		/// <summary>
 		/// Switches default and current threads' culture.
@@ -26,22 +37,12 @@ namespace Monitorian.Core.Models
 		/// <returns>True if successfully switches the culture</returns>
 		public static bool SwitchDefault()
 		{
-			var supportedCultureNames = new HashSet<string>(CultureInfo.GetCultures(CultureTypes.AllCultures).Select(x => x.Name));
+			var culture = _culture.Value;
+			if (culture is null)
+				return false;
 
-			foreach (var arg in Environment.GetCommandLineArgs().Skip(1)
-				.Where(x => !string.IsNullOrWhiteSpace(x))
-				.Select(x => x.ToLower()))
-			{
-				if (PreparedCulturePairs.TryGetValue(arg, out string cultureName) && supportedCultureNames.Contains(cultureName))
-				{
-					_culture = new CultureInfo(cultureName);
-
-					CultureInfo.DefaultThreadCurrentCulture = _culture;
-					CultureInfo.DefaultThreadCurrentUICulture = _culture;
-					break;
-				}
-			}
-
+			CultureInfo.DefaultThreadCurrentCulture = culture;
+			CultureInfo.DefaultThreadCurrentUICulture = culture;
 			return Switch();
 		}
 
@@ -51,11 +52,12 @@ namespace Monitorian.Core.Models
 		/// <returns>True if successfully switches the culture</returns>
 		public static bool Switch()
 		{
-			if (_culture is null)
+			var culture = _culture.Value;
+			if (culture is null)
 				return false;
 
-			Thread.CurrentThread.CurrentCulture = _culture;
-			Thread.CurrentThread.CurrentUICulture = _culture;
+			Thread.CurrentThread.CurrentCulture = culture;
+			Thread.CurrentThread.CurrentUICulture = culture;
 			return true;
 		}
 	}

@@ -67,7 +67,7 @@ namespace Monitorian.Core
 			_current.MainWindow = new MainWindow(this);
 			_current.MainWindow.Deactivated += (sender, e) => MonitorsResetByKey();
 
-			if (!StartupAgent.IsStartedOnSignIn())
+			if (StartupAgent.IsWindowShowExpected())
 				_current.MainWindow.Show();
 
 			await ScanAsync();

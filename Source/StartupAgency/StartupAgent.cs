@@ -99,6 +99,23 @@ namespace StartupAgency
 			remove { if (_holder != null) { _holder.Requested -= value; } }
 		}
 
+		private const string HideOption = "/hide";
+
+		/// <summary>
+		/// Options
+		/// </summary>
+		public static IReadOnlyCollection<string> Options => new string[] { HideOption };
+
+		/// <summary>
+		/// Whether caller instance is expected to show its window
+		/// </summary>
+		/// <returns>True if expected to be show its window</returns>
+		public bool IsWindowShowExpected()
+		{
+			return !IsStartedOnSignIn()
+				&& !Environment.GetCommandLineArgs().Skip(1).Contains(HideOption);
+		}
+
 		#region Register/Unregister
 
 		/// <summary>

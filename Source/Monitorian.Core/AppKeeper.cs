@@ -16,7 +16,7 @@ namespace Monitorian.Core
 		public IReadOnlyCollection<string> FilteredArguments { get; }
 		public StartupAgent StartupAgent { get; }
 
-		public AppKeeper(StartupEventArgs e) : this(e, LanguageService.Options)
+		public AppKeeper(StartupEventArgs e) : this(e, StartupAgent.Options, LanguageService.Options)
 		{ }
 
 		public AppKeeper(StartupEventArgs e, params IEnumerable<string>[] ignorableOptions)
@@ -30,11 +30,14 @@ namespace Monitorian.Core
 			if (!(e?.Args?.Any() == true))
 				return Array.Empty<string>();
 
+			const char optionMark = '/';
+			var isUnignorable = true;
+
 			// First element of StartupEventArgs.Args is not executing assembly's path unlike
 			// that of arguments provided by Environment.GetCommandLineArgs method.
 			return e.Args
 				.Where(x => !string.IsNullOrWhiteSpace(x))
-				.Where(x => !ignorableOptions.Contains(x.ToLower()))
+				.Where(x => (x[0] == optionMark) ? (isUnignorable = !ignorableOptions.Contains(x.ToLower())) : isUnignorable)
 				.ToArray();
 		}
 

@@ -137,10 +137,93 @@ namespace Monitorian.Core.Views
 
 		#endregion
 
+		/// <summary>
+		/// Color elements of window
+		/// </summary>
+		/// <remarks>The order matters.</remarks>
+		private enum ColorElement
+		{
+			None = 0,
+			MainBorder,
+			MainBackground,
+			MenuBorder,
+			MenuBackground
+		}
+
+		private static IReadOnlyDictionary<string, ColorElement> ColorPairs => new Dictionary<string, ColorElement>
+		{
+			{ "/main_border", ColorElement.MainBorder },
+			{ "/main_background", ColorElement.MainBackground },
+			{ "/menu_border", ColorElement.MenuBorder },
+			{ "/menu_background", ColorElement.MenuBackground }
+		};
+
+		public static IReadOnlyCollection<string> Options => ColorPairs.Keys.ToArray();
+
+		private static readonly Lazy<KeyValuePair<ColorElement, Brush>[]> _colors = new Lazy<KeyValuePair<ColorElement, Brush>[]>(() =>
+		{
+			var converter = new BrushConverter();
+			bool TryParse(string source, out Brush brush)
+			{
+				try
+				{
+					brush = (Brush)converter.ConvertFromString(source);
+					return true;
+				}
+				catch
+				{
+					brush = null;
+					return false;
+				}
+			}
+
+			var colorPairs = ColorPairs;
+			var colors = new Dictionary<ColorElement, Brush>();
+			var args = Environment.GetCommandLineArgs();
+
+			int i = 1; // Skip 0.
+			while (i < args.Length - 1)
+			{
+				if (colorPairs.TryGetValue(args[i], out ColorElement key) && TryParse(args[i + 1], out Brush value))
+				{
+					colors[key] = value;
+					i++;
+				}
+				i++;
+			}
+			return colors.Any() ? colors.OrderBy(x => x.Key).ToArray() : null;
+		});
+
+		private static bool ChangeColors(Window window)
+		{
+			if (_colors.Value is null)
+				return false;
+
+			var isMainWindow = window is MainWindow;
+
+			foreach (var (key, value) in _colors.Value)
+			{
+				switch (key)
+				{
+					case ColorElement.MainBorder when isMainWindow:
+					case ColorElement.MenuBorder when !isMainWindow:
+						window.BorderBrush = value;
+						window.BorderThickness = new Thickness(1);
+						break;
+
+					case ColorElement.MainBackground when isMainWindow:
+					case ColorElement.MenuBackground when !isMainWindow:
+						window.Background = value;
+						return true;
+				}
+			}
+			return false;
+		}
+
 		public static bool DisableTransitions(Window window)
 		{
 			var windowHandle = new WindowInteropHelper(window).Handle;
-			bool value = true;
+			var value = true;
 
 			return (DwmSetWindowAttribute(
 				windowHandle,
@@ -151,6 +234,9 @@ namespace Monitorian.Core.Views
 
 		public static bool EnableBackgroundTranslucency(Window window)
 		{
+			if (ChangeColors(window))
+				return false;
+
 			if (OsVersion.Is10Threshold1OrNewer)
 			{
 				// For Windows 10

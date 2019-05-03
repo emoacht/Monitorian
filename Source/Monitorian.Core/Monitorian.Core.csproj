@@ -58,6 +58,7 @@
     <Compile Include="Common\ObservableDictionary.cs" />
     <Compile Include="Common\ObservableKeyedList.cs" />
     <Compile Include="Helper\ArraySearch.cs" />
+    <Compile Include="Helper\EnumerableExtension.cs" />
     <Compile Include="Helper\ExceptionExtension.cs" />
     <Compile Include="Helper\KeyValuePairExtension.cs" />
     <Compile Include="Helper\OsVersion.cs" />

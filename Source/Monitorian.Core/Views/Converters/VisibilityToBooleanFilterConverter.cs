@@ -38,10 +38,10 @@ namespace Monitorian.Core.Views.Converters
 
 		private static bool IsFilteredOut(bool targetValue, object parameter)
 		{
-			if (!(parameter is bool expectedValue) && !bool.TryParse(parameter as string, out expectedValue))
-				return false;
+			if ((parameter is bool expectedValue) || bool.TryParse(parameter as string, out expectedValue))
+				return (targetValue != expectedValue);
 
-			return (targetValue != expectedValue);
+			return false;
 		}
 	}
 }

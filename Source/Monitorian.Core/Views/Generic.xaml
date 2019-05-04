@@ -3,7 +3,7 @@
 					xmlns:converters="clr-namespace:Monitorian.Core.Views.Converters">
 
 	<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverterKey"/>
-	<converters:BooleanInverseToVisibilityConverter x:Key="BooleanInverseToVisibilityConverterKey"/>
+	<converters:BooleanToVisibilityTurnConverter x:Key="BooleanToVisibilityTurnConverterKey"/>
 	<converters:BooleanInverseConverter x:Key="BooleanInverseConverterKey"/>
 	<converters:VisibilityToBooleanFilterConverter x:Key="VisibilityToBooleanFilterConverterKey"/>
 	<converters:VisibilityInverseConverter x:Key="VisibilityInverseConverterKey"/>

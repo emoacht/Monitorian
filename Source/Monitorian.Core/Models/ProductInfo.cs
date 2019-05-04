@@ -37,6 +37,16 @@ namespace Monitorian.Core.Models
 		private static string _title;
 
 		/// <summary>
+		/// Version of core library (from executing assembly)
+		/// </summary>
+		public static Version CoreVersion => Assembly.GetExecutingAssembly().GetName().Version;
+
+		/// <summary>
+		/// Product of core library (from executing assembly)
+		/// </summary>
+		public static string CoreProduct => Assembly.GetExecutingAssembly().GetAttribute<AssemblyProductAttribute>().Product;
+
+		/// <summary>
 		/// Startup task ID
 		/// </summary>
 		public static string StartupTaskId => GetAppSettings();

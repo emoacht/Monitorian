@@ -45,6 +45,13 @@ namespace ScreenFrame
 			public void Close() => this.ReleaseHandle();
 		}
 
+		/// <summary>
+		/// Encapsulates a method that has a single ref parameter and does not return a value.
+		/// </summary>
+		/// <typeparam name="T">The parameter of the method that this delegate encapsulates</typeparam>
+		/// <param name="obj">The method that this delegate encapsulates</param>
+		public delegate void RefAction<T>(ref T obj);
+
 		#endregion
 
 		/// <summary>
@@ -55,6 +62,20 @@ namespace ScreenFrame
 		private NotifyIconWindowListener _listener;
 
 		/// <summary>
+		/// NotifyIcon window handle (available only after ShowIcon method is called)
+		/// </summary>
+		public IntPtr NotifyIconHandle => _listener?.Handle ?? IntPtr.Zero;
+
+		/// <summary>
+		/// Windows message handlers
+		/// </summary>
+		/// <remarks>
+		/// Key: ID number for windows message
+		/// Value: Action to be called when the specified windows message is sent to NotifyIcon
+		/// </remarks>
+		public IDictionary<int, RefAction<Message>> Handlers { get; } = new Dictionary<int, RefAction<Message>>();
+
+		/// <summary>
 		/// Constructor
 		/// </summary>
 		public NotifyIconContainer()
@@ -62,6 +83,8 @@ namespace ScreenFrame
 			NotifyIcon = new NotifyIcon();
 			NotifyIcon.MouseClick += OnMouseClick;
 			NotifyIcon.MouseDoubleClick += OnMouseDoubleClick;
+
+			Handlers[WM_DPICHANGED] = HandleDpiChanged;
 		}
 
 		/// <summary>
@@ -114,31 +137,30 @@ namespace ScreenFrame
 			NotifyIcon.Visible = true;
 
 			if (_listener is null)
-			{
 				_listener = NotifyIconWindowListener.Create(this);
-			}
 		}
-
-		private const int WM_DPICHANGED = 0x02E0;
 
 		/// <summary>
 		/// Processes windows message sent to NotifyIcon.
 		/// </summary>
-		/// <param name="m">Message</param>
+		/// <param name="m">Windows message</param>
 		protected virtual void WndProc(ref Message m)
 		{
-			switch (m.Msg)
+			if (Handlers.TryGetValue(m.Msg, out RefAction<Message> action))
+				action.Invoke(ref m);
+		}
+
+		private const int WM_DPICHANGED = 0x02E0;
+
+		private void HandleDpiChanged(ref Message m)
+		{
+			var oldDpi = _dpi;
+			_dpi = VisualTreeHelperAddition.ConvertToDpiScale(m.WParam);
+			if (!oldDpi.Equals(_dpi))
 			{
-				case WM_DPICHANGED:
-					var oldDpi = _dpi;
-					_dpi = VisualTreeHelperAddition.ConvertToDpiScale(m.WParam);
-					if (!oldDpi.Equals(_dpi))
-					{
-						OnDpiChanged(oldDpi, _dpi);
-					}
-					m.Result = IntPtr.Zero;
-					break;
+				OnDpiChanged(oldDpi, _dpi);
 			}
+			m.Result = IntPtr.Zero;
 		}
 
 		/// <summary>

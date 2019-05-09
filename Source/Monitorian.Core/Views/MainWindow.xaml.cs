@@ -118,6 +118,8 @@ namespace Monitorian.Core.Views
 		public bool CanBeShown => (_preventionTime < DateTimeOffset.Now);
 		private DateTimeOffset _preventionTime;
 
+		public bool IsForeground => _mover.IsForeground();
+
 		protected override async void OnDeactivated(EventArgs e)
 		{
 			base.OnDeactivated(e);

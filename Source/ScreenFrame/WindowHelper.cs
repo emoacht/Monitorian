@@ -170,6 +170,9 @@ namespace ScreenFrame
 			ABE_BOTTOM = 3
 		}
 
+		[DllImport("User32.dll", SetLastError = true)]
+		private static extern IntPtr GetForegroundWindow();
+
 		[StructLayout(LayoutKind.Sequential)]
 		public struct POINT
 		{
@@ -340,6 +343,12 @@ namespace ScreenFrame
 				(uint)DWMWA.DWMWA_TRANSITIONS_FORCEDISABLED,
 				ref value,
 				(uint)Marshal.SizeOf<bool>()) == S_OK);
+		}
+
+		public static bool IsForegroundWindow(Window window)
+		{
+			var windowHandle = new WindowInteropHelper(window).Handle;
+			return windowHandle == GetForegroundWindow();
 		}
 
 		public static IEnumerable<SWP> EnumerateFlags(SWP flags) =>

@@ -32,6 +32,7 @@ namespace Monitorian.Core.Views
 			this.DataContext = new MenuWindowViewModel(controller);
 
 			_mover = new FloatWindowMover(this, pivot);
+			_mover.AppDeactivated += OnAppDeactivated;
 		}
 
 		protected override void OnSourceInitialized(EventArgs e)
@@ -47,7 +48,7 @@ namespace Monitorian.Core.Views
 		public void AddMenuItem(Control item) => this.MenuItems.Children.Insert(0, item);
 		public void RemoveMenuItem(Control item) => this.MenuItems.Children.Remove(item);
 
-		#region Foreground
+		#region Close
 
 		public void DepartFromForegrond()
 		{
@@ -56,11 +57,11 @@ namespace Monitorian.Core.Views
 
 		public async void ReturnToForegroud()
 		{
-			if (!this.IsActive)
-			{
-				// Wait for this window to be able to be activated.
-				await Task.Delay(TimeSpan.FromMilliseconds(100));
-			}
+			// Wait for this window to be able to be activated.
+			await Task.Delay(TimeSpan.FromMilliseconds(100));
+
+			if (_isClosing)
+				return;
 
 			// Activate this window. This is necessary to assure this window is foreground.
 			this.Activate();
@@ -68,11 +69,13 @@ namespace Monitorian.Core.Views
 			this.Topmost = true;
 		}
 
-		#endregion
-
-		#region Close
-
 		private bool _isClosing = false;
+
+		private void OnAppDeactivated(object sender, EventArgs e)
+		{
+			if (!_isClosing && this.IsLoaded)
+				this.Close();
+		}
 
 		protected override void OnDeactivated(EventArgs e)
 		{

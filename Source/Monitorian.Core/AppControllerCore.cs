@@ -124,7 +124,7 @@ namespace Monitorian.Core
 			if ((window.Visibility == Visibility.Visible) && window.IsForeground)
 				return;
 
-			window.Show();
+			window.ShowForeground();
 			window.Activate();
 		}
 

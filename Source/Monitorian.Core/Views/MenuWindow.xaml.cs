@@ -49,7 +49,7 @@ namespace Monitorian.Core.Views
 		public void AddMenuItem(Control item) => this.MenuItems.Children.Insert(0, item);
 		public void RemoveMenuItem(Control item) => this.MenuItems.Children.Remove(item);
 
-		#region Close
+		#region Show/Close
 
 		public void DepartFromForegrond()
 		{

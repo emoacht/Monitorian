@@ -115,10 +115,24 @@ namespace Monitorian.Core.Views
 
 		#region Show/Hide
 
+		public bool IsForeground => _mover.IsForeground();
+
+		public void ShowForeground()
+		{
+			try
+			{
+				this.Topmost = true;
+
+				base.Show();
+			}
+			finally
+			{
+				this.Topmost = false;
+			}
+		}
+
 		public bool CanBeShown => (_preventionTime < DateTimeOffset.Now);
 		private DateTimeOffset _preventionTime;
-
-		public bool IsForeground => _mover.IsForeground();
 
 		protected override async void OnDeactivated(EventArgs e)
 		{

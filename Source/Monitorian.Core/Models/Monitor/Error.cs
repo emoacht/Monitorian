@@ -25,26 +25,24 @@ namespace Monitorian.Core.Models.Monitor
 
 		#endregion
 
-		public static string CreateMessage() =>
-			 CreateMessage(Marshal.GetLastWin32Error());
+		public static string GetMessage() => GetMessage(Marshal.GetLastWin32Error());
 
-		public static string CreateMessage(int errorCode)
+		public static string GetMessage(int errorCode)
 		{
 			var message = new StringBuilder($"Code: {errorCode}");
 
 			var buffer = new StringBuilder(512); // This 512 capacity is arbitrary.
-
-			var messageLength = FormatMessage(
-			  FORMAT_MESSAGE_FROM_SYSTEM,
-			  IntPtr.Zero,
-			  (uint)errorCode,
-			  0x0409, // US (English)
-			  buffer,
-			  buffer.Capacity,
-			  IntPtr.Zero);
-
-			if (0 < messageLength)
+			if (FormatMessage(
+				FORMAT_MESSAGE_FROM_SYSTEM,
+				IntPtr.Zero,
+				(uint)errorCode,
+				0x0409, // US (English)
+				buffer,
+				buffer.Capacity,
+				IntPtr.Zero) > 0)
+			{
 				message.Append($", Message: {buffer}");
+			}
 
 			return message.ToString();
 		}

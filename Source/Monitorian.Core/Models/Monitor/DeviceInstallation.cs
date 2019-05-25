@@ -201,7 +201,7 @@ namespace Monitorian.Core.Models.Monitor
 					DIGCF.DIGCF_DEVICEINTERFACE | DIGCF.DIGCF_PRESENT);
 				if (deviceInfoSet == IntPtr.Zero)
 				{
-					Debug.WriteLine($"Failed to get device information list. {Error.CreateMessage()}");
+					Debug.WriteLine($"Failed to get device information list. {Error.GetMessage()}");
 					yield break;
 				}
 
@@ -238,7 +238,7 @@ namespace Monitorian.Core.Models.Monitor
 						if (errorCode == ERROR_NO_MORE_ITEMS)
 							yield break;
 
-						Debug.WriteLine($"Failed to enumerate device information structures. {Error.CreateMessage(errorCode)}");
+						Debug.WriteLine($"Failed to enumerate device information structures. {Error.GetMessage(errorCode)}");
 					}
 					memberIndex++;
 				}

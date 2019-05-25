@@ -93,17 +93,14 @@ namespace ScreenFrame.Movers
 			switch (msg)
 			{
 				case WM_WINDOWPOSCHANGING:
-					//Debug.WriteLine(nameof(WM_WINDOWPOSCHANGING));
 					HandleWindowPosChanging(hwnd, msg, wParam, lParam, ref handled);
 					break;
 
 				case WM_WINDOWPOSCHANGED:
-					//Debug.WriteLine(nameof(WM_WINDOWPOSCHANGED));
 					HandleWindowPosChanged(hwnd, msg, wParam, lParam, ref handled);
 					break;
 
 				case WM_DPICHANGED:
-					//Debug.WriteLine(nameof(WM_DPICHANGED));
 					HandleDpiChanged(hwnd, msg, wParam, lParam, ref handled);
 					break;
 

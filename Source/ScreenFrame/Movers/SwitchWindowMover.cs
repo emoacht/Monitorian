@@ -88,20 +88,17 @@ namespace ScreenFrame.Movers
 			switch (msg)
 			{
 				case WM_ENTERSIZEMOVE:
-					//Debug.WriteLine(nameof(WM_ENTERSIZEMOVE));
 					_departureTimer.Interval = DepartureInterval;
 					_departureTimer.Start();
 					break;
 
 				case WM_EXITSIZEMOVE:
-					//Debug.WriteLine(nameof(WM_EXITSIZEMOVE));
 					_departureTimer.Stop();
 					CheckDeparture();
 					break;
 
 				case WM_MOVE:
 				case WM_SIZE:
-					//Debug.WriteLine($"{nameof(WM_MOVE)}/{nameof(WM_SIZE)}");
 					CheckDeparture();
 					break;
 			}

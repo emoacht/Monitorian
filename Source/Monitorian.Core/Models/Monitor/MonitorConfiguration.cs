@@ -193,7 +193,7 @@ namespace Monitorian.Core.Models.Monitor
 				monitorHandle,
 				out uint count))
 			{
-				Debug.WriteLine($"Failed to get the number of physical monitors. {Error.CreateMessage()}");
+				Debug.WriteLine($"Failed to get the number of physical monitors. {Error.GetMessage()}");
 				yield break;
 			}
 			if (count == 0)
@@ -210,7 +210,7 @@ namespace Monitorian.Core.Models.Monitor
 					count,
 					physicalMonitors))
 				{
-					Debug.WriteLine($"Failed to get an array of physical monitors. {Error.CreateMessage()}");
+					Debug.WriteLine($"Failed to get an array of physical monitors. {Error.GetMessage()}");
 					yield break;
 				}
 
@@ -276,7 +276,7 @@ namespace Monitorian.Core.Models.Monitor
 			if (string.IsNullOrWhiteSpace(source))
 				return false;
 
-			var index = source.IndexOf("vcp", StringComparison.OrdinalIgnoreCase);
+			int index = source.IndexOf("vcp", StringComparison.OrdinalIgnoreCase);
 			if (index < 0)
 				return false;
 
@@ -365,7 +365,7 @@ namespace Monitorian.Core.Models.Monitor
 					out uint currentBrightness,
 					out uint maximumBrightness))
 				{
-					Debug.WriteLine($"Failed to get brightnesses. {Error.CreateMessage()}");
+					Debug.WriteLine($"Failed to get brightnesses. {Error.GetMessage()}");
 					return (success: false, 0, 0, 0);
 				}
 				return (success: true,
@@ -382,7 +382,7 @@ namespace Monitorian.Core.Models.Monitor
 					out uint currentValue,
 					out uint maximumValue))
 				{
-					Debug.WriteLine($"Failed to get brightnesses (Low level). {Error.CreateMessage()}");
+					Debug.WriteLine($"Failed to get brightnesses (Low level). {Error.GetMessage()}");
 					return (success: false, 0, 0, 0);
 				}
 				return (success: true,
@@ -416,7 +416,7 @@ namespace Monitorian.Core.Models.Monitor
 					physicalMonitorHandle,
 					brightness))
 				{
-					Debug.WriteLine($"Failed to set brightness. {Error.CreateMessage()}");
+					Debug.WriteLine($"Failed to set brightness. {Error.GetMessage()}");
 					return false;
 				}
 			}
@@ -427,7 +427,7 @@ namespace Monitorian.Core.Models.Monitor
 					LuminanceCode,
 					brightness))
 				{
-					Debug.WriteLine($"Failed to set brightness (Low level). {Error.CreateMessage()}");
+					Debug.WriteLine($"Failed to set brightness (Low level). {Error.GetMessage()}");
 					return false;
 				}
 			}

@@ -257,17 +257,17 @@ namespace ScreenFrame
 
 		#region Window
 
-		public static bool SetWindowPosition(Window window, Rect Position)
+		public static bool SetWindowPosition(Window window, Rect position)
 		{
 			var windowHandle = new WindowInteropHelper(window).Handle;
 
 			return SetWindowPos(
 				windowHandle,
 				new IntPtr(-1), // HWND_TOPMOST
-				(int)Position.X,
-				(int)Position.Y,
-				(int)Position.Width,
-				(int)Position.Height,
+				(int)position.X,
+				(int)position.Y,
+				(int)position.Width,
+				(int)position.Height,
 				SWP.SWP_NOZORDER);
 		}
 

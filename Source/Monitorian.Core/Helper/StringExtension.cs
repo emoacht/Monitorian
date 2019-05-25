@@ -16,7 +16,7 @@ namespace Monitorian.Core.Helper
 		public static bool IsAscii(this string source)
 		{
 			if (source is null)
-				return true;
+				throw new ArgumentNullException(nameof(source));
 
 			return source.Select(x => (int)x).All(x => x < 0x80);
 		}
@@ -30,10 +30,13 @@ namespace Monitorian.Core.Helper
 		/// <returns>Replaced string</returns>
 		public static string Replace(this string source, char value, int repeatCount)
 		{
+			if (source is null)
+				throw new ArgumentNullException(nameof(source));
+
 			var buffer = new StringBuilder();
 			var isFound = false;
 
-			foreach (var c in source)
+			foreach (char c in source)
 			{
 				if (char.Equals(value, c))
 				{

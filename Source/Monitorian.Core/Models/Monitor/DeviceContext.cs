@@ -193,11 +193,11 @@ namespace Monitorian.Core.Models.Monitor
 			}
 		}
 
-		private static readonly Regex _displayPattern = new Regex(@"DISPLAY(?<index>\d{1,2})$", RegexOptions.Compiled);
-
 		private static bool TryGetDisplayIndex(string device, out byte index)
 		{
-			var match = _displayPattern.Match(device.Trim());
+			const string displayPattern = @"DISPLAY(?<index>\d{1,2})\s*$";
+
+			var match = Regex.Match(device, displayPattern);
 			if (!match.Success)
 			{
 				index = 0;
@@ -216,7 +216,7 @@ namespace Monitorian.Core.Models.Monitor
 			// DISPLAY indicates display device.
 			// {e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} means GUID_DEVINTERFACE_MONITOR.
 
-			var index = deviceId.IndexOf("DISPLAY", StringComparison.Ordinal);
+			int index = deviceId.IndexOf("DISPLAY", StringComparison.Ordinal);
 			if (index < 0)
 				return null;
 

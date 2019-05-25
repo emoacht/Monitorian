@@ -54,7 +54,7 @@ namespace Monitorian.Core
 			SubscribeExceptions();
 
 			var (success, response) = StartupAgent.Start(ProductInfo.Product, ProductInfo.StartupTaskId, FilteredArguments);
-			if (!success && !(response is null))
+			if (!success && (response != null))
 			{
 				ConsoleService.Write(response.ToString());
 			}

@@ -196,7 +196,7 @@ namespace Monitorian.Core
 						if (oldMonitorIndices.Count > 0)
 						{
 							oldMonitorIndices.Reverse(); // Reverse indices to start removing from the tail.
-							foreach (var index in oldMonitorIndices)
+							foreach (int index in oldMonitorIndices)
 							{
 								DisposeMonitor(Monitors[index]);
 								lock (_monitorsLock)
@@ -242,10 +242,8 @@ namespace Monitorian.Core
 
 					var controllableMonitorExists = updateResults.Any(x => x);
 
-					Monitors
-						.Where(x => !x.IsControllable)
-						.ToList()
-						.ForEach(x => x.IsTarget = !controllableMonitorExists);
+					foreach (var m in Monitors.Where(x => !x.IsControllable))
+						m.IsTarget = !controllableMonitorExists;
 				}
 			}
 			finally
@@ -292,8 +290,8 @@ namespace Monitorian.Core
 
 		private void MonitorsDispose()
 		{
-			foreach (var monitor in Monitors)
-				monitor.Dispose();
+			foreach (var m in Monitors)
+				m.Dispose();
 		}
 
 		private void MonitorsResetByKey()
@@ -324,8 +322,8 @@ namespace Monitorian.Core
 			if (Settings.EnablesUnison)
 				return;
 
-			foreach (var monitor in Monitors)
-				monitor.IsUnison = false;
+			foreach (var m in Monitors)
+				m.IsUnison = false;
 		}
 
 		protected internal virtual bool TryLoadNameUnison(string deviceInstanceId, ref string name, ref bool isUnison)

@@ -66,6 +66,17 @@ namespace Monitorian.Core.Models
 		}
 		private ObservableKeyedList<string, MonitorValuePack> _knownMonitors;
 
+		/// <summary>
+		/// Device Instance ID of selected monitor
+		/// </summary>
+		[DataMember]
+		public string SelectedDeviceInstanceId
+		{
+			get => _selectedDeviceInstanceId;
+			set => SetPropertyValue(ref _selectedDeviceInstanceId, value);
+		}
+		private string _selectedDeviceInstanceId;
+
 		#endregion
 
 		private const string SettingsFileName = "settings.xml";

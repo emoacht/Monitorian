@@ -75,6 +75,9 @@ namespace Monitorian.Core.ViewModels
 					return;
 
 				SetBrightness(value);
+
+				if (IsSelected)
+					_controller.SaveSelectedMonitor(this);
 			}
 		}
 
@@ -98,7 +101,13 @@ namespace Monitorian.Core.ViewModels
 			return false;
 		}
 
-		public void IncrementBrightness() => IncrementBrightness(10);
+		public void IncrementBrightness()
+		{
+			IncrementBrightness(10);
+
+			if (IsSelected)
+				_controller.SaveSelectedMonitor(this);
+		}
 
 		public void IncrementBrightness(int tickSize, bool isCycle = true)
 		{

@@ -302,6 +302,18 @@ namespace Monitorian.Core
 				monitor.IsByKey = false;
 		}
 
+		protected MonitorViewModel SelectedMonitor { get; private set; }
+
+		protected internal virtual bool SaveSelectedMonitor(MonitorViewModel monitor)
+		{
+			if ((monitor is null) || ReferenceEquals(SelectedMonitor, monitor))
+				return false;
+
+			SelectedMonitor = monitor;
+			Settings.SelectedDeviceInstanceId = monitor.DeviceInstanceId;
+			return true;
+		}
+
 		#endregion
 
 		#region Name/Unison

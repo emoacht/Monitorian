@@ -23,6 +23,7 @@ namespace Monitorian.Core.Views
 	public partial class MainWindow : Window
 	{
 		private readonly StickWindowMover _mover;
+		public MainWindowViewModel ViewModel => (MainWindowViewModel)this.DataContext;
 
 		public MainWindow(AppControllerCore controller)
 		{
@@ -123,7 +124,25 @@ namespace Monitorian.Core.Views
 			{
 				this.Topmost = true;
 
+				// When window is deactivated, a focused element will lose focus and usually,
+				// no element has focus until window is activated again and the last focused element
+				// will automatically get focus back. Therefore, in usual case, no focused element
+				// exists before Window.Show method. However, during window is not active, it is
+				// possible to set focus on an element and such focused element is found here.
+				// The issue is that such focused element will lose focus because the element which
+				// had focus before window was deactivated will restore focus even though any other
+				// element has focus. To prevent this unintended change of focus, it is necessary
+				// to set focus back on the element which had focus before Window.Show method.
+				var currentFocusedElement = FocusManager.GetFocusedElement(this);
+
 				base.Show();
+
+				if (currentFocusedElement != null)
+				{
+					var restoredFocusedElement = FocusManager.GetFocusedElement(this);
+					if (restoredFocusedElement != currentFocusedElement)
+						FocusManager.SetFocusedElement(this, currentFocusedElement);
+				}
 			}
 			finally
 			{

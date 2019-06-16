@@ -165,13 +165,11 @@ namespace Monitorian.Core.ViewModels
 			get => _isByKey;
 			set
 			{
-				_isByKeySync = value;
 				if (SetPropertyValue(ref _isByKey, value))
 					RaisePropertyChanged(nameof(IsSelectedByKey));
 			}
 		}
 		private bool _isByKey;
-		private static bool _isByKeySync; // Static field
 
 		public bool IsSelected
 		{
@@ -182,9 +180,9 @@ namespace Monitorian.Core.ViewModels
 					RaisePropertyChanged(nameof(IsSelectedByKey));
 			}
 		}
-		private bool _isSelected = false;
+		private bool _isSelected;
 
-		public bool IsSelectedByKey => IsSelected && _isByKeySync;
+		public bool IsSelectedByKey => IsSelected && IsByKey;
 
 		#endregion
 

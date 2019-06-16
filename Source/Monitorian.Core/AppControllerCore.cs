@@ -298,7 +298,8 @@ namespace Monitorian.Core
 
 		private void MonitorsResetByKey()
 		{
-			foreach (var monitor in Monitors)
+			var monitor = Monitors.FirstOrDefault(x => x.IsSelectedByKey);
+			if (monitor != null)
 				monitor.IsByKey = false;
 		}
 

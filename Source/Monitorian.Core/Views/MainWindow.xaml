@@ -364,8 +364,7 @@
 
 		<!-- Monitors-->
 		<ListView ItemsSource="{Binding MonitorsView}"
-				  SelectionMode="Single"
-				  SelectedIndex="0">
+				  SelectionMode="Single">
 			<ListView.Template>
 				<ControlTemplate TargetType="{x:Type ListView}">
 					<Border BorderThickness="0">
@@ -426,17 +425,21 @@
 								</i:Interaction.Triggers>
 							</Button>
 
-							<controls:ItemSlider Grid.Column="2"
-												 Margin="8,0,6,0" VerticalAlignment="Center"
-												 Style="{StaticResource SliderHorizontal}"
-												 AutoToolTipPlacement="TopLeft"
-												 Minimum="0" Maximum="100"
-												 Value="{Binding BrightnessInteractive, Mode=TwoWay, Delay=50}"
-												 IsShadowVisible="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Path=DataContext.Settings.ShowsAdjusted}"
-												 ValueShadow="{Binding BrightnessSystemAdjusted, Mode=OneWay}"
-												 IsUnison="{Binding IsUnison, Mode=TwoWay}"
-												 ValueUnison="{Binding BrightnessSystemChanged, Mode=OneWay}"
-												 IsByKey="{Binding IsByKey, Mode=TwoWay}"/>
+							<controls:CompoundSlider Grid.Column="2"
+													 Margin="8,0,6,0" VerticalAlignment="Center"
+													 Style="{StaticResource SliderHorizontal}"
+													 AutoToolTipPlacement="TopLeft"
+													 Minimum="0" Maximum="100"
+													 Value="{Binding BrightnessInteractive, Mode=TwoWay, Delay=50}"
+													 IsShadowVisible="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Path=DataContext.Settings.ShowsAdjusted}"
+													 ValueShadow="{Binding BrightnessSystemAdjusted, Mode=OneWay}"
+													 IsUnison="{Binding IsUnison, Mode=TwoWay}"
+													 ValueUnison="{Binding BrightnessSystemChanged, Mode=OneWay}">
+								<i:Interaction.Behaviors>
+									<behaviors:ItemSliderBehavior IsSelected="{Binding IsSelected, Mode=OneWay}"
+																  IsByKey="{Binding IsByKey, Mode=TwoWay}"/>
+								</i:Interaction.Behaviors>
+							</controls:CompoundSlider>
 
 							<ToggleButton Grid.Column="3"
 										  Width="16" Height="{DynamicResource ButtonHeight}" Margin="0,0,2,0"
@@ -471,6 +474,10 @@
 					</Setter>
 				</Style>
 			</ListView.ItemContainerStyle>
+
+			<i:Interaction.Behaviors>
+				<behaviors:ItemSelectorBehavior/>
+			</i:Interaction.Behaviors>
 		</ListView>
 	</Grid>
 </Window>

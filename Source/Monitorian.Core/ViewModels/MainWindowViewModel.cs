@@ -50,6 +50,20 @@ namespace Monitorian.Core.ViewModels
 				case NotifyCollectionChangedAction.Add:
 				case NotifyCollectionChangedAction.Remove:
 					RaisePropertyChanged(nameof(IsMonitorsEmpty));
+
+					if (MonitorsView.CurrentItem is null)
+					{
+						// CollectionView.CurrentItem is automatically synchronized with SelectedItem
+						// when the target is an ItemsControl. However, this synchronization is not
+						// always fast enough to check if any item is currently selected.
+						if (!MonitorsView.Cast<MonitorViewModel>().Any(x => x.IsSelected))
+						{
+							var monitor = MonitorsView.Cast<MonitorViewModel>()
+								.FirstOrDefault(x => string.Equals(x.DeviceInstanceId, Settings.SelectedDeviceInstanceId));
+							if (monitor != null)
+								monitor.IsSelected = true;
+						}
+					}
 					break;
 			}
 		}

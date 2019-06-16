@@ -98,6 +98,8 @@ namespace Monitorian.Supplement
 
 						var displayMonitor = await DisplayMonitor.FromInterfaceIdAsync(device.Id);
 						//var displayMonitor = await DisplayMonitor.FromIdAsync(deviceInstanceId);
+						if (displayMonitor is null)
+							continue;
 
 						//Debug.WriteLine($"DeviceInstanceId: {deviceInstanceId}");
 						//Debug.WriteLine($"DeviceName: {device.Name}");

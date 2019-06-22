@@ -10,7 +10,7 @@ using System.Windows.Threading;
 namespace ScreenFrame.Movers
 {
 	/// <summary>
-	/// Window mover which implements functions for switch window
+	/// Mover of <see cref="System.Windows.Window"/> which implements functions for switch window
 	/// </summary>
 	public class SwitchWindowMover : StickWindowMover
 	{

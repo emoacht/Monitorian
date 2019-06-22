@@ -11,7 +11,7 @@ using Windows.Storage;
 namespace StartupBridge.Helper
 {
 	/// <summary>
-	/// Accessor to <see cref="ApplicationData.LocalSettings"/> or <see cref="ApplicationData.RoamingSettings"/>
+	/// Accessor to <see cref="Windows.Storage.ApplicationData.LocalSettings"/> or <see cref="Windows.Storage.ApplicationData.RoamingSettings"/>
 	/// </summary>
 	/// <remarks>
 	/// Usable data types are shown at:

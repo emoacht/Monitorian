@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Monitorian.Core.Helper
 {
 	/// <summary>
-	/// Array search methods
+	/// Search methods for <see cref="System.Array"/>
 	/// </summary>
 	/// <remarks>The array must be sorted beforehand.</remarks>
 	public static class ArraySearch

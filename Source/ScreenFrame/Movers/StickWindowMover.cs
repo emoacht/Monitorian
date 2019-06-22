@@ -9,7 +9,7 @@ using System.Windows.Forms;
 namespace ScreenFrame.Movers
 {
 	/// <summary>
-	/// Window mover which implements functions for stick window
+	/// Mover of <see cref="System.Windows.Window"/> which implements functions for stick window
 	/// </summary>
 	public class StickWindowMover : BasicWindowMover
 	{

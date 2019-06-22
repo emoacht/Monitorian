@@ -14,7 +14,7 @@ using static ScreenFrame.WindowHelper;
 namespace ScreenFrame
 {
 	/// <summary>
-	/// Additional methods for <see cref="VisualTreeHelper"/>
+	/// Additional methods for <see cref="System.Windows.Media.VisualTreeHelper"/>
 	/// </summary>
 	public static class VisualTreeHelperAddition
 	{

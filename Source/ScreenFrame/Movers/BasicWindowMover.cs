@@ -9,7 +9,7 @@ using System.Windows;
 namespace ScreenFrame.Movers
 {
 	/// <summary>
-	/// Window mover which implements basic functions
+	/// Mover of <see cref="System.Windows.Window"/> which implements basic functions
 	/// </summary>
 	public abstract class BasicWindowMover : WindowMover
 	{

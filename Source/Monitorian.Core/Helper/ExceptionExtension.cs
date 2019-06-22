@@ -7,9 +7,6 @@ using System.Threading.Tasks;
 
 namespace Monitorian.Core.Helper
 {
-	/// <summary>
-	/// Extension methods for <see cref="System.Exception"/> and derived exceptions
-	/// </summary>
 	public static class ExceptionExtension
 	{
 		public static string ToDetailedString(this Exception ex)

@@ -9,7 +9,7 @@ using System.Windows.Forms;
 namespace ScreenFrame
 {
 	/// <summary>
-	/// Container of NotifyIcon
+	/// Container of <see cref="System.Windows.Forms.NotifyIcon"/>
 	/// </summary>
 	public class NotifyIconContainer : IDisposable
 	{

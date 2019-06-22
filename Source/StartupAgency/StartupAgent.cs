@@ -190,8 +190,8 @@ namespace StartupAgency
 		/// Response (mutable)
 		/// </summary>
 		/// <remarks>
-		/// This property is mutable so that an instance which responds to this event can store an response
-		/// and then the instance which raises this event can utilize the response.
+		/// This property is mutable so that an instance which responds to this event can store its response
+		/// and then another instance which raises this event can make use of the response.
 		/// </remarks>
 		public object Response { get; set; }
 

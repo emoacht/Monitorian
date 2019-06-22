@@ -8,7 +8,7 @@ using System.Windows;
 namespace ScreenFrame.Movers
 {
 	/// <summary>
-	/// Window mover which implements functions for float window
+	/// Mover of <see cref="System.Windows.Window"/> which implements functions for float window
 	/// </summary>
 	public class FloatWindowMover : BasicWindowMover
 	{

@@ -12,7 +12,7 @@ using ScreenFrame.Helper;
 namespace ScreenFrame.Movers
 {
 	/// <summary>
-	/// Window mover
+	/// Mover of <see cref="System.Windows.Window"/>
 	/// </summary>
 	public abstract class WindowMover
 	{

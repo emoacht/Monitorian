@@ -54,7 +54,7 @@ namespace Monitorian.Core.Models
 		/// </summary>
 		/// <returns>True if output is redirected</returns>
 		/// <remarks>
-		/// This method substitutes <see cref="Console.IsOutputRedirected"/> property which cannot
+		/// This method substitutes <see cref="System.Console.IsOutputRedirected"/> property which cannot
 		/// correctly handle a case where output handle cannot be obtained. It happens when output
 		/// has not been redirected.
 		/// </remarks>

@@ -6,9 +6,6 @@ using System.Threading.Tasks;
 
 namespace Monitorian.Core.Helper
 {
-	/// <summary>
-	/// Extension methods for <see cref="String"/>
-	/// </summary>
 	public static class StringExtension
 	{
 		/// <summary>

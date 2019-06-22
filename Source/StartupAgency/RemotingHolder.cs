@@ -18,7 +18,7 @@ namespace StartupAgency
 		private RemotingSpace _space;
 
 		/// <summary>
-		/// Creates semaphore to start remoting.
+		/// Creates <see cref="System.Threading.Semaphore"/> to start remoting.
 		/// </summary>
 		/// <param name="name">Name</param>
 		/// <param name="args">Arguments to another instance</param>
@@ -83,7 +83,7 @@ namespace StartupAgency
 		}
 
 		/// <summary>
-		/// Releases semaphore to end remoting.
+		/// Releases <see cref="System.Threading.Semaphore"/> to end remoting.
 		/// </summary>
 		public void Release()
 		{

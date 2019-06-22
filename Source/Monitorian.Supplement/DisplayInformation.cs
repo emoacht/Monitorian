@@ -11,10 +11,10 @@ using Windows.Devices.Enumeration;
 namespace Monitorian.Supplement
 {
 	/// <summary>
-	/// DisplayMonitor functions
+	/// A wrapper class of <see cref="Windows.Devices.Display.DisplayMonitor"/>
 	/// </summary>
 	/// <remarks>
-	/// This class wraps <see cref="Windows.Devices.Display.DisplayMonitor"/> class which is only available
+	/// <see cref="Windows.Devices.Display.DisplayMonitor"/> is only available
 	/// on Windows 10 (Redstone 4, 1803 = version 10.0.17134.0) or newer.
 	/// </remarks>
 	public class DisplayInformation

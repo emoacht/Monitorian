@@ -16,7 +16,10 @@ namespace StartupBridge
 		/// <summary>
 		/// Last start time of application
 		/// </summary>
-		/// <remarks>The underlying value of this property will be updated when accessed the first time.</remarks>
+		/// <remarks>
+		/// The underlying value of this property will be updated when accessed the first time after
+		/// system boot.
+		/// </remarks>
 		public static DateTimeOffset LastStartTime
 		{
 			get

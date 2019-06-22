@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace Monitorian.Core.Common
 {
 	/// <summary>
-	/// A wrapper class of <see cref="IEnumerable{KeyValuePair{TKey, TValue}}"/> which implements INotifyCollectionChanged
+	/// A wrapper class of <see cref="System.Collections.Generic.IEnumerable{KeyValuePair{TKey, TValue}}"/> which implements INotifyCollectionChanged
 	/// </summary>
 	/// <typeparam name="TKey">Type of keys</typeparam>
 	/// <typeparam name="TValue">Type of values</typeparam>

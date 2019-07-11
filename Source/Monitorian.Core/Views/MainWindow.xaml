@@ -33,6 +33,7 @@
 
 		<Style x:Key="SliderHorizontal" TargetType="{x:Type controls:CompoundSlider}">
 			<Setter Property="Stylus.IsPressAndHoldEnabled" Value="False"/>
+			<Setter Property="FocusVisualStyle" Value="{x:Null}"/>
 			<Setter Property="Background" Value="Transparent"/>
 			<Setter Property="Template">
 				<Setter.Value>
@@ -213,7 +214,8 @@
 
 		<!-- Name TextBox -->
 		<Style x:Key="NameTextBoxStyle" TargetType="{x:Type TextBox}" BasedOn="{StaticResource {x:Type TextBox}}">
-			<Setter Property="CaretBrush" Value="{Binding RelativeSource={RelativeSource Self}, Path=Foreground}"/>
+			<Setter Property="Foreground" Value="{StaticResource App.Foreground}"/>
+			<Setter Property="CaretBrush" Value="{StaticResource App.Foreground}"/>
 			<Setter Property="Template">
 				<Setter.Value>
 					<ControlTemplate TargetType="{x:Type TextBox}">
@@ -227,8 +229,8 @@
 						</Border>
 						<ControlTemplate.Triggers>
 							<Trigger Property="IsReadOnly" Value="False">
-								<Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Text.Writable.Border}"/>
-								<Setter Property="Background" TargetName="border" Value="{StaticResource Text.Writable.Background}"/>
+								<Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Text.Border.Writable}"/>
+								<Setter Property="Background" TargetName="border" Value="{StaticResource Text.Background.Writable}"/>
 							</Trigger>
 						</ControlTemplate.Triggers>
 					</ControlTemplate>
@@ -239,18 +241,19 @@
 		<!-- Brightness Button -->
 		<Style x:Key="BrightnessButtonStyle" TargetType="{x:Type Button}">
 			<Setter Property="Focusable" Value="False"/>
+			<Setter Property="Foreground" Value="{StaticResource App.Foreground}"/>
 			<Setter Property="Template">
 				<Setter.Value>
 					<ControlTemplate TargetType="{x:Type Button}">
 						<Grid>
 							<Grid x:Name="base">
 								<Grid.Background>
-									<SolidColorBrush Color="{StaticResource Access.Normal.BackgroundColor}"/>
+									<SolidColorBrush Color="{StaticResource Access.Background.NormalColor}"/>
 								</Grid.Background>
 								<Border x:Name="border"
 										BorderThickness="2">
 									<Border.BorderBrush>
-										<SolidColorBrush Color="{StaticResource Access.Normal.BorderColor}"/>
+										<SolidColorBrush Color="{StaticResource Access.Border.NormalColor}"/>
 									</Border.BorderBrush>
 									<ContentPresenter Content="{TemplateBinding Content}"/>
 								</Border>
@@ -264,7 +267,7 @@
 											<ColorAnimation Storyboard.TargetName="border"
 															Storyboard.TargetProperty="(Border.BorderBrush).(SolidColorBrush.Color)"
 															Duration="0"
-															To="{StaticResource Access.MouseOver.BorderColor}"/>
+															To="{StaticResource Access.Border.MouseOverColor}"/>
 										</Storyboard>
 									</VisualState>
 									<VisualState x:Name="Pressed">
@@ -272,7 +275,7 @@
 											<ColorAnimation Storyboard.TargetName="base"
 															Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)"
 															Duration="0"
-															To="{StaticResource Access.Pressed.BackgroundColor}"/>
+															To="{StaticResource Access.Background.PressedColor}"/>
 										</Storyboard>
 									</VisualState>
 									<VisualState x:Name="Disabled"/>
@@ -287,18 +290,19 @@
 		<!-- Unison Button -->
 		<Style x:Key="UnisonButtonStyle" TargetType="{x:Type ToggleButton}">
 			<Setter Property="Focusable" Value="False"/>
+			<Setter Property="Foreground" Value="{StaticResource App.Foreground}"/>
 			<Setter Property="Template">
 				<Setter.Value>
 					<ControlTemplate TargetType="{x:Type ToggleButton}">
 						<Grid>
 							<Grid x:Name="base">
 								<Grid.Background>
-									<SolidColorBrush Color="{StaticResource Access.Normal.BackgroundColor}"/>
+									<SolidColorBrush Color="{StaticResource Access.Background.NormalColor}"/>
 								</Grid.Background>
 								<Border x:Name="border"
 										BorderThickness="2">
 									<Border.BorderBrush>
-										<SolidColorBrush Color="{StaticResource Access.Normal.BorderColor}"/>
+										<SolidColorBrush Color="{StaticResource Access.Border.NormalColor}"/>
 									</Border.BorderBrush>
 									<Grid Height="{Binding RelativeSource={RelativeSource Self}, Path=ActualWidth}"
 										  Margin="2" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
@@ -322,7 +326,7 @@
 											<ColorAnimation Storyboard.TargetName="border"
 															Storyboard.TargetProperty="(Border.BorderBrush).(SolidColorBrush.Color)"
 															Duration="0"
-															To="{StaticResource Access.MouseOver.BorderColor}"/>
+															To="{StaticResource Access.Border.MouseOverColor}"/>
 										</Storyboard>
 									</VisualState>
 									<VisualState x:Name="Pressed">
@@ -330,7 +334,7 @@
 											<ColorAnimation Storyboard.TargetName="base"
 															Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)"
 															Duration="0"
-															To="{StaticResource Access.Pressed.BackgroundColor}"/>
+															To="{StaticResource Access.Background.PressedColor}"/>
 										</Storyboard>
 									</VisualState>
 									<VisualState x:Name="Disabled"/>
@@ -388,8 +392,6 @@
 						<controls:SwitchTextBox Grid.Row="0"
 												Margin="6,5,2,5" HorizontalAlignment="Left" VerticalAlignment="Center"
 												Style="{StaticResource NameTextBoxStyle}"
-												Foreground="{StaticResource App.Foreground}"
-												FontSize="12"
 												TextWrapping="Wrap" MaxLength="96"
 												Text="{Binding Name, Mode=TwoWay}"/>
 
@@ -414,7 +416,6 @@
 									Width="80" Height="{DynamicResource ButtonHeight}" Margin="3,0,0,0"
 									Style="{StaticResource BrightnessButtonStyle}">
 								<TextBlock Margin="2" HorizontalAlignment="Left" VerticalAlignment="Bottom"
-										   Foreground="{StaticResource App.Foreground}"
 										   Text="{Binding Brightness, Mode=OneWay, StringFormat={}{0}%}"/>
 								<i:Interaction.Triggers>
 									<i:EventTrigger EventName="Click">
@@ -444,7 +445,6 @@
 							<ToggleButton Grid.Column="3"
 										  Width="16" Height="{DynamicResource ButtonHeight}" Margin="0,0,2,0"
 										  Style="{StaticResource UnisonButtonStyle}"
-										  Foreground="{StaticResource App.Foreground}"
 										  VerticalContentAlignment="Bottom"
 										  IsChecked="{Binding IsUnison, Mode=TwoWay}"
 										  Visibility="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Path=DataContext.Settings.EnablesUnison, Converter={StaticResource BooleanToVisibilityConverterKey}}"/>
@@ -453,18 +453,22 @@
 						<!-- Alternative -->
 						<Grid Grid.Row="1"
 							  Visibility="{Binding ElementName=BrightnessBox, Path=Visibility, Mode=OneWay, Converter={StaticResource VisibilityInverseConverterKey}}">
-							<TextBlock Margin="6,4"
-									   Foreground="{StaticResource App.Foreground}"
-									   Text="{x:Static properties:Resources.NotControllable}"/>
+							<Border Margin="6,4"
+									Padding="3"
+									BorderThickness="1"
+									BorderBrush="{StaticResource App.Foreground.Invalid}">
+								<TextBlock Foreground="{StaticResource App.Foreground.Invalid}"
+										   Text="{x:Static properties:Resources.NotControllable}"/>
+							</Border>
 						</Grid>
 					</Grid>
 				</DataTemplate>
 			</ListView.ItemTemplate>
 			<ListView.ItemContainerStyle>
 				<Style TargetType="{x:Type ListViewItem}">
+					<Setter Property="OverridesDefaultStyle" Value="True"/>
 					<Setter Property="Margin" Value="0"/>
 					<Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>
-					<Setter Property="OverridesDefaultStyle" Value="True"/>
 					<Setter Property="Template">
 						<Setter.Value>
 							<ControlTemplate TargetType="{x:Type ContentControl}">

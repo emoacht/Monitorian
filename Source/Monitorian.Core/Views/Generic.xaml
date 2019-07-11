@@ -11,24 +11,26 @@
 	<Color x:Key="App.ForegroundColor">White</Color>
 	<Color x:Key="App.ShadowColor">LightGray</Color>
 	<Color x:Key="App.AccentColor">#FF2982CC</Color>
+	<Color x:Key="App.InvalidColor">Red</Color>
 
 	<SolidColorBrush x:Key="App.Foreground" Color="{StaticResource App.ForegroundColor}"/>
 	<SolidColorBrush x:Key="App.Foreground.Shadow" Color="{StaticResource App.ShadowColor}"/>
+	<SolidColorBrush x:Key="App.Foreground.Invalid" Color="{StaticResource App.InvalidColor}"/>
 	<SolidColorBrush x:Key="App.Background.Accent" Color="{StaticResource App.AccentColor}"/>
 	<SolidColorBrush x:Key="App.Background.Plain" Color="#FF1F1F1F"/>
 	<SolidColorBrush x:Key="App.Background.Translucent" Color="#CC171717"/>
 
-	<SolidColorBrush x:Key="Text.Writable.Border" Color="{StaticResource App.ForegroundColor}"/>
-	<SolidColorBrush x:Key="Text.Writable.Background" Color="#FF5F5F5F"/>
+	<SolidColorBrush x:Key="Text.Border.Writable" Color="{StaticResource App.ForegroundColor}"/>
+	<SolidColorBrush x:Key="Text.Background.Writable" Color="#FF5F5F5F"/>
 
-	<Color x:Key="Access.Normal.BackgroundColor">#33FFFFFF</Color>
-	<Color x:Key="Access.Normal.BorderColor">Transparent</Color>
-	<Color x:Key="Access.MouseOver.BorderColor">#FF868686</Color>
-	<Color x:Key="Access.Pressed.BackgroundColor">#FF868686</Color>
+	<Color x:Key="Access.Border.NormalColor">Transparent</Color>
+	<Color x:Key="Access.Border.MouseOverColor">#FF868686</Color>
+	<Color x:Key="Access.Background.NormalColor">#33FFFFFF</Color>
+	<Color x:Key="Access.Background.PressedColor">#FF868686</Color>
 
 	<SolidColorBrush x:Key="Menu.Separator" Color="#FF808080"/>
-	<SolidColorBrush x:Key="Menu.Item.Normal.Backgound" Color="Transparent"/>
-	<SolidColorBrush x:Key="Menu.Item.MouseOver.Background" Color="#FF5F5F5F"/>
+	<SolidColorBrush x:Key="Menu.Item.Background.Normal" Color="Transparent"/>
+	<SolidColorBrush x:Key="Menu.Item.Background.MouseOver" Color="#FF5F5F5F"/>
 
 	<!-- Menu separator -->
 	<Style x:Key="MenuSeparatorStyle" TargetType="{x:Type Separator}">
@@ -38,11 +40,12 @@
 
 	<!-- Menu item -->
 	<Style x:Key="MenuItemStyle" TargetType="{x:Type ContentControl}">
+		<Setter Property="Focusable" Value="False"/>
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type ContentControl}">
 					<Grid x:Name="body"
-						  Background="{StaticResource Menu.Item.Normal.Backgound}"
+						  Background="{StaticResource Menu.Item.Background.Normal}"
 						  SnapsToDevicePixels="True" UseLayoutRounding="True">
 						<ContentPresenter x:Name="presenter"
 										  Margin="{TemplateBinding Padding}"
@@ -54,7 +57,7 @@
 							<Setter Property="FocusManager.FocusedElement" TargetName="presenter" Value="{Binding ElementName=presenter, Path=Content}"/>
 						</Trigger>
 						<Trigger Property="IsKeyboardFocusWithin" Value="True">
-							<Setter Property="Background" TargetName="body" Value="{StaticResource Menu.Item.MouseOver.Background}"/>
+							<Setter Property="Background" TargetName="body" Value="{StaticResource Menu.Item.Background.MouseOver}"/>
 						</Trigger>
 					</ControlTemplate.Triggers>
 				</ControlTemplate>
@@ -62,12 +65,15 @@
 		</Setter>
 	</Style>
 
-	<!-- CheckBox -->
-	<Style x:Key="CheckBoxItemStyle" TargetType="{x:Type CheckBox}">
+	<!-- Check Button -->
+	<Style x:Key="CheckButtonItemStyle" TargetType="{x:Type ToggleButton}">
+		<Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+		<Setter Property="Background" Value="Transparent"/>
+		<Setter Property="Foreground" Value="{StaticResource App.Foreground}"/>
 		<Setter Property="Template">
 			<Setter.Value>
-				<ControlTemplate TargetType="{x:Type CheckBox}">
-					<Grid Background="Transparent"
+				<ControlTemplate TargetType="{x:Type ToggleButton}">
+					<Grid Background="{TemplateBinding Background}"
 						  Margin="{TemplateBinding Padding}"
 						  SnapsToDevicePixels="True" UseLayoutRounding="True">
 						<Grid.ColumnDefinitions>
@@ -100,11 +106,14 @@
 	</Style>
 
 	<!-- Plain Button -->
-	<Style x:Key="PlainButtonItemStyle" TargetType="{x:Type Button}">
+	<Style x:Key="PlainButtonItemStyle" TargetType="{x:Type ContentControl}">
+		<Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+		<Setter Property="Background" Value="Transparent"/>
+		<Setter Property="Foreground" Value="{StaticResource App.Foreground}"/>
 		<Setter Property="Template">
 			<Setter.Value>
-				<ControlTemplate TargetType="{x:Type Button}">
-					<Grid Background="Transparent"
+				<ControlTemplate TargetType="{x:Type ContentControl}">
+					<Grid Background="{TemplateBinding Background}"
 						  Margin="{TemplateBinding Padding}"
 						  SnapsToDevicePixels="True" UseLayoutRounding="True">
 						<Grid.ColumnDefinitions>
@@ -124,11 +133,14 @@
 	</Style>
 
 	<!-- Close Button -->
-	<Style x:Key="CloseButtonItemStyle" TargetType="{x:Type Button}">
+	<Style x:Key="CloseButtonItemStyle" TargetType="{x:Type ContentControl}">
+		<Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+		<Setter Property="Background" Value="Transparent"/>
+		<Setter Property="Foreground" Value="{StaticResource App.Foreground}"/>
 		<Setter Property="Template">
 			<Setter.Value>
-				<ControlTemplate TargetType="{x:Type Button}">
-					<Grid Background="Transparent"
+				<ControlTemplate TargetType="{x:Type ContentControl}">
+					<Grid Background="{TemplateBinding Background}"
 						  Margin="{TemplateBinding Padding}"
 						  SnapsToDevicePixels="True" UseLayoutRounding="True">
 						<Grid.ColumnDefinitions>

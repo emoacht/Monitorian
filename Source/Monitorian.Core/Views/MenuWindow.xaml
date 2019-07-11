@@ -53,40 +53,36 @@
 		<StackPanel x:Name="MenuItems"/>
 
 		<ContentControl Style="{StaticResource MenuItemStyle}">
-			<CheckBox Padding="8,4"
-					  Style="{StaticResource CheckBoxItemStyle}"
-					  Foreground="{StaticResource App.Foreground}"
-					  FontSize="13"
-					  Content="{x:Static properties:Resources.StartSignIn}"
-					  IsChecked="{Binding IsRegistered}"
-					  Visibility="{Binding CanRegister, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverterKey}}"/>
+			<ToggleButton Padding="8,4"
+						  Style="{StaticResource CheckButtonItemStyle}"
+						  FontSize="13"
+						  Content="{x:Static properties:Resources.StartSignIn}"
+						  IsChecked="{Binding IsRegistered}"
+						  Visibility="{Binding CanRegister, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverterKey}}"/>
 		</ContentControl>
 
 		<ContentControl Style="{StaticResource MenuItemStyle}">
-			<CheckBox Padding="8,4"
-					  Style="{StaticResource CheckBoxItemStyle}"
-					  Foreground="{StaticResource App.Foreground}"
-					  FontSize="13"
-					  Content="{x:Static properties:Resources.UsesLargeElements}"
-					  IsChecked="{Binding Settings.UsesLargeElements}"/>
+			<ToggleButton Padding="8,4"
+						  Style="{StaticResource CheckButtonItemStyle}"
+						  FontSize="13"
+						  Content="{x:Static properties:Resources.UsesLargeElements}"
+						  IsChecked="{Binding Settings.UsesLargeElements}"/>
 		</ContentControl>
 
 		<ContentControl Style="{StaticResource MenuItemStyle}">
-			<CheckBox Padding="8,4"
-					  Style="{StaticResource CheckBoxItemStyle}"
-					  Foreground="{StaticResource App.Foreground}"
-					  FontSize="13"
-					  Content="{x:Static properties:Resources.ShowsAdjusted}"
-					  IsChecked="{Binding Settings.ShowsAdjusted}"/>
+			<ToggleButton Padding="8,4"
+						  Style="{StaticResource CheckButtonItemStyle}"
+						  FontSize="13"
+						  Content="{x:Static properties:Resources.ShowsAdjusted}"
+						  IsChecked="{Binding Settings.ShowsAdjusted}"/>
 		</ContentControl>
 
 		<ContentControl Style="{StaticResource MenuItemStyle}">
-			<CheckBox Padding="8,4"
-					  Style="{StaticResource CheckBoxItemStyle}"
-					  Foreground="{StaticResource App.Foreground}"
-					  FontSize="13"
-					  Content="{x:Static properties:Resources.EnablesUnison}"
-					  IsChecked="{Binding Settings.EnablesUnison}"/>
+			<ToggleButton Padding="8,4"
+						  Style="{StaticResource CheckButtonItemStyle}"
+						  FontSize="13"
+						  Content="{x:Static properties:Resources.EnablesUnison}"
+						  IsChecked="{Binding Settings.EnablesUnison}"/>
 		</ContentControl>
 
 		<Separator Style="{StaticResource MenuSeparatorStyle}"/>
@@ -95,7 +91,6 @@
 		<ContentControl Style="{StaticResource MenuItemStyle}">
 			<Button Padding="8,4"
 					Style="{StaticResource CloseButtonItemStyle}"
-					Foreground="{StaticResource App.Foreground}"
 					FontSize="14"
 					Content="{x:Static properties:Resources.Close}">
 				<i:Interaction.Triggers>

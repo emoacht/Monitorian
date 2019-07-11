@@ -8,7 +8,6 @@
 	<ContentControl Style="{StaticResource MenuItemStyle}">
 		<Button Padding="8,4"
 				Style="{StaticResource PlainButtonItemStyle}"
-				Foreground="{StaticResource App.Foreground}"
 				FontSize="13"
 				Content="{x:Static properties:Resources.Probe}"
 				Visibility="{Binding CanProbe, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverterKey}}">

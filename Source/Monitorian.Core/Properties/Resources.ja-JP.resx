@@ -124,7 +124,7 @@
     <value>一緒に動かせるようにする</value>
   </data>
   <data name="NotControllable" xml:space="preserve">
-    <value>このモニターはコントロールできません。必要条件を参照。</value>
+    <value>このモニターはコントロールできません。</value>
   </data>
   <data name="Probe" xml:space="preserve">
     <value>モニターを調査する</value>

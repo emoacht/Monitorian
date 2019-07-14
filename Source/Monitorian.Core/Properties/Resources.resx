@@ -127,7 +127,7 @@
     <value>License</value>
   </data>
   <data name="NotControllable" xml:space="preserve">
-    <value>This monitor is not controllable. See requirements.</value>
+    <value>This monitor is not controllable.</value>
   </data>
   <data name="Probe" xml:space="preserve">
     <value>Probe into monitors</value>

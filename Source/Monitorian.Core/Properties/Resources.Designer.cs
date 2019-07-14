@@ -88,7 +88,7 @@ namespace Monitorian.Core.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This monitor is not controllable. See requirements..
+        ///   Looks up a localized string similar to This monitor is not controllable..
         /// </summary>
         public static string NotControllable {
             get {

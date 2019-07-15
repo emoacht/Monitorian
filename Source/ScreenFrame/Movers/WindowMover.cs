@@ -83,6 +83,7 @@ namespace ScreenFrame.Movers
 		private const int WM_WINDOWPOSCHANGED = 0x0047;
 		private const int WM_DPICHANGED = 0x02E0;
 		private const int WM_ACTIVATEAPP = 0x001C;
+		private const int WM_KEYDOWN = 0x0100;
 
 		/// <summary>
 		/// Handles window messages.
@@ -108,6 +109,10 @@ namespace ScreenFrame.Movers
 
 				case WM_ACTIVATEAPP:
 					HandleActivateApp(hwnd, msg, wParam, lParam, ref handled);
+					break;
+
+				case WM_KEYDOWN:
+					HandleKeyDown(hwnd, msg, wParam, lParam, ref handled);
 					break;
 			}
 			return IntPtr.Zero;
@@ -165,6 +170,26 @@ namespace ScreenFrame.Movers
 			else
 			{
 				AppDeactivated?.Invoke(_window, EventArgs.Empty);
+			}
+		}
+
+		/// <summary>
+		/// Occurs when the escape key is pressed.
+		/// </summary>
+		public event EventHandler EscapeKeyDown;
+
+		private const int VK_ESCAPE = 0x1B;
+
+		/// <summary>
+		/// Handles key pressed event.
+		/// </summary>
+		protected virtual void HandleKeyDown(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+		{
+			switch (wParam.ToInt32())
+			{
+				case VK_ESCAPE:
+					EscapeKeyDown?.Invoke(_window, EventArgs.Empty);
+					break;
 			}
 		}
 

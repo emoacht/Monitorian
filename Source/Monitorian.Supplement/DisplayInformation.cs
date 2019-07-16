@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Devices.Display;
 using Windows.Devices.Enumeration;
+using Windows.Foundation;
 
 namespace Monitorian.Supplement
 {
@@ -50,16 +51,24 @@ namespace Monitorian.Supplement
 			[DataMember(Order = 3)]
 			public string ConnectionDescription { get; private set; }
 
+			/// <summary>
+			/// Physical size (diagonal) in inches
+			/// </summary>
+			[DataMember(Order = 4)]
+			public float PhysicalSize { get; private set; }
+
 			internal DisplayItem(
 				string deviceInstanceId,
 				string displayName,
 				bool isInternal,
-				string connectionDescription = null)
+				string connectionDescription = null,
+				float physicalSize = 0F)
 			{
 				this.DeviceInstanceId = deviceInstanceId;
 				this.DisplayName = displayName;
 				this.IsInternal = isInternal;
 				this.ConnectionDescription = connectionDescription;
+				this.PhysicalSize = physicalSize;
 			}
 		}
 
@@ -106,12 +115,14 @@ namespace Monitorian.Supplement
 						//Debug.WriteLine($"DisplayName: {displayMonitor.DisplayName}");
 						//Debug.WriteLine($"ConnectionKind: {displayMonitor.ConnectionKind}");
 						//Debug.WriteLine($"PhysicalConnector: {displayMonitor.PhysicalConnector}");
+						//Debug.WriteLine($"PhysicalSize: {GetDiagonal(displayMonitor.PhysicalSizeInInches):F1}");
 
 						items.Add(new DisplayItem(
 							deviceInstanceId: deviceInstanceId,
 							displayName: displayMonitor.DisplayName,
 							isInternal: (displayMonitor.ConnectionKind == DisplayMonitorConnectionKind.Internal),
-							connectionDescription: GetConnectionDescription(displayMonitor.ConnectionKind, displayMonitor.PhysicalConnector)));
+							connectionDescription: GetConnectionDescription(displayMonitor.ConnectionKind, displayMonitor.PhysicalConnector),
+							physicalSize: GetDiagonal(displayMonitor.PhysicalSizeInInches)));
 					}
 					return items.ToArray();
 				}
@@ -154,5 +165,9 @@ namespace Monitorian.Supplement
 			}
 			return null;
 		}
+
+		private static float GetDiagonal(Size? source) => source.HasValue
+			? (float)Math.Sqrt(Math.Pow(source.Value.Width, 2) + Math.Pow(source.Value.Height, 2))
+			: 0F;
 	}
 }

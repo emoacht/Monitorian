@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 using Monitorian.Core.Helper;
@@ -50,15 +51,15 @@ namespace Monitorian.Core.Models.Monitor
 			if (!OsVersion.Is10Redstone4OrNewer)
 				return DeviceContext.EnumerateMonitorDevices().Select(x => new DeviceItemPlus(x)).ToList();
 
-			const string genericDescription = "Generic PnP Monitor";
-
 			var displayItems = await DisplayInformation.GetDisplayMonitorsAsync();
+
+			const string genericPattern = "^Generic (?:PnP|Non-PnP) Monitor$";
 
 			return DeviceContext.EnumerateMonitorDevices()
 				.Select(x =>
 				{
 					string alternateDescription = null;
-					if (string.Equals(x.Description, genericDescription, StringComparison.OrdinalIgnoreCase))
+					if (Regex.IsMatch(x.Description, genericPattern, RegexOptions.IgnoreCase))
 					{
 						var displayItem = displayItems.FirstOrDefault(y => string.Equals(x.DeviceInstanceId, y.DeviceInstanceId, StringComparison.OrdinalIgnoreCase));
 						if (!string.IsNullOrWhiteSpace(displayItem?.DisplayName))

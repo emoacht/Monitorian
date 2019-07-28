@@ -44,12 +44,16 @@
 					<Grid x:Name="body"
 						  Background="{StaticResource Menu.Item.Normal.Backgound}"
 						  SnapsToDevicePixels="True" UseLayoutRounding="True">
-						<ContentPresenter Margin="{TemplateBinding Padding}"
+						<ContentPresenter x:Name="presenter"
+										  Margin="{TemplateBinding Padding}"
 										  Content="{TemplateBinding Content}"
 										  ContentTemplate="{TemplateBinding ContentTemplate}"/>
 					</Grid>
 					<ControlTemplate.Triggers>
 						<Trigger Property="IsMouseOver" Value="True">
+							<Setter Property="FocusManager.FocusedElement" TargetName="presenter" Value="{Binding ElementName=presenter, Path=Content}"/>
+						</Trigger>
+						<Trigger Property="IsKeyboardFocusWithin" Value="True">
 							<Setter Property="Background" TargetName="body" Value="{StaticResource Menu.Item.MouseOver.Background}"/>
 						</Trigger>
 					</ControlTemplate.Triggers>

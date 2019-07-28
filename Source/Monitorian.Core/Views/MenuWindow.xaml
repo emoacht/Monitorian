@@ -3,6 +3,7 @@
 		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 		xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
 		xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+		xmlns:behaviors="clr-namespace:Monitorian.Core.Views.Behaviors"
 		xmlns:models="clr-namespace:Monitorian.Core.Models"
 		xmlns:properties="clr-namespace:Monitorian.Core.Properties"
 		Width="200"
@@ -106,4 +107,8 @@
 			</Button>
 		</ContentControl>
 	</StackPanel>
+
+	<i:Interaction.Behaviors>
+		<behaviors:FocusMenuBehavior/>
+	</i:Interaction.Behaviors>
 </Window>

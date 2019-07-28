@@ -99,6 +99,8 @@
 	<Compile Include="ViewModels\MonitorViewModel.cs" />
 	<Compile Include="ViewModels\ProbeSectionViewModel.cs" />
 	<Compile Include="ViewModels\ViewModelBase.cs" />
+	<Compile Include="Views\Behaviors\FocusElementAction.cs" />
+	<Compile Include="Views\Behaviors\FocusMenuBehavior.cs" />
 	<Compile Include="Views\Behaviors\ItemBehavior.cs" />
 	<Compile Include="Views\Behaviors\ItemSelectorBehavior.cs" />
 	<Compile Include="Views\Behaviors\ItemSliderBehavior.cs" />

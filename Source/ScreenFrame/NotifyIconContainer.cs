@@ -141,6 +141,16 @@ namespace ScreenFrame
 		}
 
 		/// <summary>
+		/// Gets the rectangle of NotifyIcon.
+		/// </summary>
+		/// <returns>Rectangle of NotifyIcon</returns>
+		public Rect GetIconRect()
+		{
+			NotifyIconHelper.TryGetNotifyIconRect(NotifyIcon, out Rect iconRect);
+			return iconRect;
+		}
+
+		/// <summary>
 		/// Processes windows message sent to NotifyIcon.
 		/// </summary>
 		/// <param name="m">Windows message</param>

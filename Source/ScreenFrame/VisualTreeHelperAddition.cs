@@ -14,7 +14,7 @@ using static ScreenFrame.WindowHelper;
 namespace ScreenFrame
 {
 	/// <summary>
-	/// Additional methods for <see cref="VisualTreeHelper"/>
+	/// Additional methods for <see cref="System.Windows.Media.VisualTreeHelper"/>
 	/// </summary>
 	public static class VisualTreeHelperAddition
 	{
@@ -225,6 +225,64 @@ namespace ScreenFrame
 		public static Rect ConvertToRect(IntPtr lParam)
 		{
 			return Marshal.PtrToStructure<RECT>(lParam);
+		}
+
+		/// <summary>
+		/// Attempts to get the first ancestor visual of a specified visual.
+		/// </summary>
+		/// <typeparam name="T">Type of ancestor visual</typeparam>
+		/// <param name="reference">Descendant visual</param>
+		/// <param name="ancestor">Ancestor visual</param>
+		/// <returns>True if successfully gets</returns>
+		public static bool TryGetAncestor<T>(DependencyObject reference, out T ancestor) where T : DependencyObject
+		{
+			var parent = reference;
+
+			while (parent != null)
+			{
+				parent = VisualTreeHelper.GetParent(parent);
+				if (parent is T buffer)
+				{
+					ancestor = buffer;
+					return true;
+				}
+			}
+
+			ancestor = default(T);
+			return false;
+		}
+
+		/// <summary>
+		/// Attempts to get the first descendant visual of a specified visual.
+		/// </summary>
+		/// <typeparam name="T">Type of descendant visual</typeparam>
+		/// <param name="reference">Ancestor visual</param>
+		/// <param name="descendant">Descendant visual</param>
+		/// <returns>True if successfully gets</returns>
+		public static bool TryGetDescendant<T>(DependencyObject reference, out T descendant) where T : DependencyObject
+		{
+			var queue = new Queue<DependencyObject>();
+			var parent = reference;
+
+			while (parent != null)
+			{
+				var count = VisualTreeHelper.GetChildrenCount(parent);
+				for (int i = 0; i < count; i++)
+				{
+					var child = VisualTreeHelper.GetChild(parent, i);
+					if (child is T buffer)
+					{
+						descendant = buffer;
+						return true;
+					}
+					queue.Enqueue(child);
+				}
+
+				parent = (0 < queue.Count) ? queue.Dequeue() : null;
+			}
+
+			descendant = default(T);
+			return false;
 		}
 	}
 }

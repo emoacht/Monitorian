@@ -56,9 +56,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Monitorian\Monitorian.csproj">
-      <Project>{a4cc5362-9b08-465b-ad64-5cfabc72a4c7}</Project>
-      <Name>Monitorian</Name>
+    <ProjectReference Include="..\Monitorian.Core\Monitorian.Core.csproj">
+      <Project>{0c509b78-ff37-4f5d-9582-189ee5316c27}</Project>
+      <Name>Monitorian.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />

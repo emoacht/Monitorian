@@ -12,7 +12,7 @@ using ScreenFrame.Helper;
 namespace ScreenFrame.Movers
 {
 	/// <summary>
-	/// Window mover
+	/// Mover of <see cref="System.Windows.Window"/>
 	/// </summary>
 	public abstract class WindowMover
 	{
@@ -82,6 +82,8 @@ namespace ScreenFrame.Movers
 		private const int WM_WINDOWPOSCHANGING = 0x0046;
 		private const int WM_WINDOWPOSCHANGED = 0x0047;
 		private const int WM_DPICHANGED = 0x02E0;
+		private const int WM_ACTIVATEAPP = 0x001C;
+		private const int WM_KEYDOWN = 0x0100;
 
 		/// <summary>
 		/// Handles window messages.
@@ -91,18 +93,23 @@ namespace ScreenFrame.Movers
 			switch (msg)
 			{
 				case WM_WINDOWPOSCHANGING:
-					//Debug.WriteLine(nameof(WM_WINDOWPOSCHANGING));
 					HandleWindowPosChanging(hwnd, msg, wParam, lParam, ref handled);
 					break;
 
 				case WM_WINDOWPOSCHANGED:
-					//Debug.WriteLine(nameof(WM_WINDOWPOSCHANGED));
 					HandleWindowPosChanged(hwnd, msg, wParam, lParam, ref handled);
 					break;
 
 				case WM_DPICHANGED:
-					//Debug.WriteLine(nameof(WM_DPICHANGED));
 					HandleDpiChanged(hwnd, msg, wParam, lParam, ref handled);
+					break;
+
+				case WM_ACTIVATEAPP:
+					HandleActivateApp(hwnd, msg, wParam, lParam, ref handled);
+					break;
+
+				case WM_KEYDOWN:
+					HandleKeyDown(hwnd, msg, wParam, lParam, ref handled);
 					break;
 			}
 			return IntPtr.Zero;
@@ -136,5 +143,57 @@ namespace ScreenFrame.Movers
 			VisualTreeHelper.SetRootDpi(_window, dpi);
 			handled = true;
 		}
+
+		/// <summary>
+		/// Occurs when the application to which the window belongs is activated.
+		/// </summary>
+		public event EventHandler AppActivated;
+
+		/// <summary>
+		/// Occurs when the application to which the window belongs is deactivated. 
+		/// </summary>
+		public event EventHandler AppDeactivated;
+
+		/// <summary>
+		/// Handles application activated/deactivated event.
+		/// </summary>
+		protected virtual void HandleActivateApp(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+		{
+			var isActivated = Convert.ToBoolean(wParam.ToInt32());
+			if (isActivated)
+			{
+				AppActivated?.Invoke(_window, EventArgs.Empty);
+			}
+			else
+			{
+				AppDeactivated?.Invoke(_window, EventArgs.Empty);
+			}
+		}
+
+		/// <summary>
+		/// Occurs when the escape key is pressed.
+		/// </summary>
+		public event EventHandler EscapeKeyDown;
+
+		private const int VK_ESCAPE = 0x1B;
+
+		/// <summary>
+		/// Handles key pressed event.
+		/// </summary>
+		protected virtual void HandleKeyDown(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+		{
+			switch (wParam.ToInt32())
+			{
+				case VK_ESCAPE:
+					EscapeKeyDown?.Invoke(_window, EventArgs.Empty);
+					break;
+			}
+		}
+
+		/// <summary>
+		/// Whether the window is foreground window
+		/// </summary>
+		/// <returns>True if foreground</returns>
+		public bool IsForeground() => WindowHelper.IsForegroundWindow(_window);
 	}
 }

@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-using Monitorian.Models.Monitor;
+using Monitorian.Core.Models.Monitor;
 
 namespace Monitorian.Test
 {

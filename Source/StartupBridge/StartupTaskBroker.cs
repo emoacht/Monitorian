@@ -31,10 +31,10 @@ namespace StartupBridge
 		}
 
 		/// <summary>
-		/// Whether the startup task for a specified AppX package is enabled
+		/// Whether the startup task for a specified AppX package has been enabled
 		/// </summary>
 		/// <param name="taskId">Startup task ID</param>
-		/// <returns>True if the startup task is enabled</returns>
+		/// <returns>True if the startup task has been enabled</returns>
 		public static bool IsEnabled(string taskId)
 		{
 			if (!PlatformInfo.IsPackaged)

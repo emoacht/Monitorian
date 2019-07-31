@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,16 +8,16 @@ using Windows.Devices.Sensors;
 namespace Monitorian.Supplement
 {
 	/// <summary>
-	/// LightSensor functions
+	/// A wrapper class of <see cref="Windows.Devices.Sensors.LightSensor"/>
 	/// </summary>
 	/// <remarks>
-	/// This class wraps <see cref="Windows.Devices.Sensors.LightSensor"/> class which has been available
+	/// <see cref="Windows.Devices.Sensors.LightSensor"/> has been available
 	/// since Windows 8.1 but is officially supported on Windows 10 (version 10.0.10240.0) or newer.
 	/// </remarks>
 	public class LightInformation
 	{
 		/// <summary>
-		/// Checks whether an integrated ambient light sensor exists.
+		/// Whether an integrated ambient light sensor exists.
 		/// </summary>
 		/// <returns>True if exists</returns>
 		public static bool AmbientLightSensorExists()
@@ -30,7 +29,7 @@ namespace Monitorian.Supplement
 		/// Attempts to get ambient light illuminance.
 		/// </summary>
 		/// <param name="illuminance">Illuminance in lux</param>
-		/// <returns>True if successfully got</returns>
+		/// <returns>True if successfully gets</returns>
 		public static bool TryGetAmbientLight(out float illuminance)
 		{
 			var reading = LightSensor.GetDefault()?.GetCurrentReading();
@@ -121,7 +120,7 @@ namespace Monitorian.Supplement
 
 		private static void OnReadingChanged(LightSensor sender, LightSensorReadingChangedEventArgs args)
 		{
-			_ambientLightChanged?.Invoke(null, args.Reading.IlluminanceInLux);
+			_ambientLightChanged?.Invoke(sender, args.Reading.IlluminanceInLux);
 		}
 	}
 }

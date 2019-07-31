@@ -20,29 +20,32 @@ namespace StartupAgency
 		private RemotingHolder _holder;
 
 		/// <summary>
-		/// Starts functions.
+		/// Starts.
 		/// </summary>
+		/// <param name="name">Name</param>
 		/// <param name="startupTaskId">Startup task ID</param>
-		/// <param name="caller">Caller assembly</param>
+		/// <param name="args">Arguments to another instance</param>
+		/// <returns>
+		/// <para>success: True if no other instance exists and this instance successfully starts</para>
+		/// <para>response: Response from another instance if that instance exists and returns an response</para> 
+		/// </returns>
 		/// <remarks>Startup task ID must match that in AppxManifest.xml.</remarks>
-		public bool Start(string startupTaskId, Assembly caller = null)
+		public (bool success, object response) Start(string name, string startupTaskId, IReadOnlyCollection<string> args)
 		{
+			if (string.IsNullOrWhiteSpace(name))
+				throw new ArgumentNullException(nameof(name));
 			if (string.IsNullOrWhiteSpace(startupTaskId))
 				throw new ArgumentNullException(nameof(startupTaskId));
 
-			if (caller is null)
-				caller = Assembly.GetCallingAssembly();
-
-			var title = caller.GetTitle();
-
 			_holder = new RemotingHolder();
-			if (!_holder.Create(title))
-				return false;
+			var (success, response) = _holder.Create(name, args?.ToArray());
+			if (!success)
+				return (success: false, response);
 
-			_worker = (OsVersion.Is10Redstone1OrNewer && PlatformInfo.IsPackaged)
+			_worker = (OsVersion.Is10Redstone1OrNewer && IsPackaged)
 				? (IStartupWorker)new BridgeWorker(taskId: startupTaskId)
-				: (IStartupWorker)new RegistryWorker(title: title, path: caller.Location);
-			return true;
+				: (IStartupWorker)new RegistryWorker(name: name, path: Assembly.GetEntryAssembly().Location);
+			return (success: true, null);
 		}
 
 		#region IDisposable
@@ -79,17 +82,41 @@ namespace StartupAgency
 		#endregion
 
 		/// <summary>
-		/// Occurs when caller instance is requested to show its existence by another instance.
+		/// Whether this assembly is packaged in AppX package
+		/// </summary>
+		public bool IsPackaged => PlatformInfo.IsPackaged;
+
+		/// <summary>
+		/// Occurs when this instance is requested to take an action by another instance.
 		/// </summary>
 		/// <remarks>
 		/// This event will be raised by a thread other than that instantiated this object.
 		/// Accordingly, the appropriate use of dispatcher is required.
 		/// </remarks>
-		public event EventHandler ShowRequested
+		public event EventHandler<StartupRequestEventArgs> Requested
 		{
-			add { if (_holder != null) { _holder.ShowRequested += value; } }
-			remove { if (_holder != null) { _holder.ShowRequested -= value; } }
+			add { if (_holder != null) { _holder.Requested += value; } }
+			remove { if (_holder != null) { _holder.Requested -= value; } }
 		}
+
+		private const string HideOption = "/hide";
+
+		/// <summary>
+		/// Options
+		/// </summary>
+		public static IReadOnlyCollection<string> Options => new string[] { HideOption };
+
+		/// <summary>
+		/// Whether caller instance is expected to show its window
+		/// </summary>
+		/// <returns>True if expected to be show its window</returns>
+		public bool IsWindowShowExpected()
+		{
+			return !IsStartedOnSignIn()
+				&& !Environment.GetCommandLineArgs().Skip(1).Contains(HideOption);
+		}
+
+		#region Register/Unregister
 
 		/// <summary>
 		/// Whether caller instance is presumed to have started on sign in
@@ -112,9 +139,9 @@ namespace StartupAgency
 		}
 
 		/// <summary>
-		/// Whether caller instance is registered in startup
+		/// Whether caller instance has been registered in startup
 		/// </summary>
-		/// <returns>True if already registered</returns>
+		/// <returns>True if has been already registered</returns>
 		public bool IsRegistered()
 		{
 			CheckWorker();
@@ -124,7 +151,7 @@ namespace StartupAgency
 		/// <summary>
 		/// Registers caller instance to startup.
 		/// </summary>
-		/// <returns>True if successfully registered</returns>
+		/// <returns>True if successfully registers</returns>
 		public bool Register()
 		{
 			CheckWorker();
@@ -144,6 +171,37 @@ namespace StartupAgency
 		{
 			if (_worker is null)
 				throw new InvalidOperationException("Functions have not started yet or failed to start.");
+		}
+
+		#endregion
+	}
+
+	/// <summary>
+	/// Startup event data
+	/// </summary>
+	public class StartupRequestEventArgs : EventArgs
+	{
+		/// <summary>
+		/// Arguments (immutable)
+		/// </summary>
+		public IReadOnlyCollection<string> Args { get; }
+
+		/// <summary>
+		/// Response (mutable)
+		/// </summary>
+		/// <remarks>
+		/// This property is mutable so that an instance which responds to this event can store its response
+		/// and then another instance which raises this event can make use of the response.
+		/// </remarks>
+		public object Response { get; set; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="args">Arguments</param>
+		public StartupRequestEventArgs(string[] args)
+		{
+			this.Args = Array.AsReadOnly(args?.ToArray() ?? Array.Empty<string>());
 		}
 	}
 }

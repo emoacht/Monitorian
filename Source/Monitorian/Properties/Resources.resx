@@ -117,40 +117,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Close" xml:space="preserve">
-    <value>Close</value>
-  </data>
-  <data name="EnablesUnison" xml:space="preserve">
-    <value>Enable moving together</value>
-  </data>
-  <data name="License" xml:space="preserve">
-    <value>License</value>
-  </data>
-  <data name="NotControllable" xml:space="preserve">
-    <value>This monitor is not controllable. See requirements.</value>
-  </data>
-  <data name="Probe" xml:space="preserve">
-    <value>Probe into monitors</value>
-  </data>
-  <data name="RecordException" xml:space="preserve">
-    <value>An unexpected problem happened. Save exception log to Desktop?</value>
-  </data>
-  <data name="RecordProbe" xml:space="preserve">
-    <value>Save probe log to Desktop?</value>
-  </data>
-  <data name="ShowsAdjusted" xml:space="preserve">
-    <value>Show adjusted brightness</value>
-  </data>
-  <data name="Site" xml:space="preserve">
-    <value>Site</value>
-  </data>
-  <data name="SiteUrl" xml:space="preserve">
-    <value>https://github.com/emoacht/Monitorian</value>
-  </data>
-  <data name="StartSignIn" xml:space="preserve">
-    <value>Start on sign in</value>
-  </data>
-  <data name="UsesLargeElements" xml:space="preserve">
-    <value>Use large buttons</value>
-  </data>
 </root>

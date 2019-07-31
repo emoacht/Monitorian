@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <Product Id="*" Name="Monitorian" Manufacturer="emoacht" Version="1.12.0"
+  <Product Id="*" Name="Monitorian" Manufacturer="emoacht" Version="2.0.0"
            Language="1033" Codepage="1252" UpgradeCode="{81A4D148-75D3-462E-938D-8C208FB48E3C}">
     <Package Id="*" InstallerVersion="500" Compressed="yes"
              InstallScope="perMachine" InstallPrivileges="elevated"
@@ -29,54 +29,62 @@
 
     <DirectoryRef Id="INSTALLDIR">
       <Component Id="MainExecutable" Guid="{54E27434-B1A7-4EB7-9F97-847E0B336BAF}">
-        <File Id="MainExecutableEXE"
+        <File Id="MainExecutable"
               Source="$(var.Monitorian.TargetPath)" Name="$(var.Monitorian.TargetFileName)" KeyPath="yes"/>
       </Component>
 
       <Component Id="MainExecutableConfig" Guid="{B5CD9CA1-8E4C-41AC-A7BA-1291CB40A916}">
-        <File Id="MainExecutableCONFIG"
+        <File Id="MainExecutableConfig"
               Source="$(var.Monitorian.TargetDir)" Name="$(var.Monitorian.TargetFileName).config" KeyPath="yes"/>
       </Component>
 
       <Component Id="InteractionsLibrary" Guid="{CC7D480D-A83A-4066-9390-0E2871893809}">
-        <File Id="InteractionsDLL"
+        <File Id="InteractionsLibrary"
               Source="$(var.Monitorian.TargetDir)" Name="Microsoft.Expression.Interactions.dll"	KeyPath="yes"/>
       </Component>
       <Component Id="InteractivityLibrary" Guid="{CDD5E0E6-FF0A-47DA-AE3E-66D6F6FAB3E8}">
-        <File Id="InteractivityDLL"
+        <File Id="InteractivityLibrary"
               Source="$(var.Monitorian.TargetDir)" Name="System.Windows.Interactivity.dll" KeyPath="yes"/>
       </Component>
 
-      <Component Id="SupplementLibrary" Guid="{E2329FC3-7343-4072-AEDD-EC020397080C}">
-        <File Id="SupplementDLL"
-              Source="$(var.Monitorian.TargetDir)" Name="Monitorian.Supplement.dll" KeyPath="yes"/>
+      <Component Id="CoreLibrary" Guid="{1E9CB31F-C53B-4E83-B593-F30ADC7468CB}">
+        <File Id="CoreLibrary"
+              Source="$(var.Monitorian.TargetDir)" Name="$(var.Monitorian.TargetName).Core.dll" KeyPath="yes"/>
       </Component>
-      
+
+      <Component Id="SupplementLibrary" Guid="{E2329FC3-7343-4072-AEDD-EC020397080C}">
+        <File Id="SupplementLibrary"
+              Source="$(var.Monitorian.TargetDir)" Name="$(var.Monitorian.TargetName).Supplement.dll" KeyPath="yes"/>
+      </Component>
+
       <Component Id="FrameLibrary" Guid="{9BAED8CA-C9C3-4ECD-8D28-289758577A8E}">
-        <File Id="FrameDLL"
+        <File Id="FrameLibrary"
               Source="$(var.Monitorian.TargetDir)" Name="ScreenFrame.dll" KeyPath="yes"/>
       </Component>
 
       <Component Id="AgencyLibrary" Guid="{BF5542A0-B74B-4CBA-9945-C001342759A6}">
-        <File Id="AgencyDLL"
+        <File Id="AgencyLibrary"
               Source="$(var.Monitorian.TargetDir)" Name="StartupAgency.dll" KeyPath="yes"/>
       </Component>
       <Component Id="BridgeLibrary" Guid="{6B9D6399-5B5A-4AFF-99B0-9892B8C237B8}">
-        <File Id="BridgeDLL"
+        <File Id="BridgeLibrary"
               Source="$(var.Monitorian.TargetDir)" Name="StartupBridge.dll" KeyPath="yes"/>
       </Component>
 
       <Component Id="VisualManifest" Guid="{69BD7D13-0EA9-46F3-9575-EBEEF24A839D}">
         <Condition><![CDATA[VEM = "yes"]]></Condition>
-        <File Id="VisualManifestXML"
+        <File Id="VisualManifest"
               Source="$(var.Monitorian.TargetDir)" Name="$(var.Monitorian.TargetName).VisualElementsManifest.xml" KeyPath="yes"/>
       </Component>
 
       <Directory Id="ResourcesFolder_jaJP" Name="ja-JP"
                  FileSource="$(var.Monitorian.TargetDir)ja-JP">
-        <Component Id="ResourcesLibrary_jaJP" Guid="{9CEFCEF0-E3EF-4455-AD16-EBC8256A67C5}">
-          <File Id="ResourcesDLL_jaJP"
-                Name="$(var.Monitorian.TargetName).resources.dll"	KeyPath="yes"/>
+        <Component Id="MainResourcesLibrary_jaJP" Guid="{9CEFCEF0-E3EF-4455-AD16-EBC8256A67C5}">
+          <File Id="MainResourcesLibrary_jaJP" Name="$(var.Monitorian.TargetName).resources.dll" KeyPath="yes"/>
+        </Component>
+
+        <Component Id="CoreResourcesLibrary_jaJP" Guid="{AFE32597-13D8-40D0-887E-9C2B5AB0F9B6}">
+          <File Id="CoreResourcesLibrary_jaJP" Name="$(var.Monitorian.TargetName).Core.resources.dll" KeyPath="yes"/>
         </Component>
       </Directory>
     </DirectoryRef>
@@ -85,7 +93,7 @@
     <DirectoryRef Id="ProgramMenuFolder">
       <Component Id="ApplicationShortcut" Guid="{FEE3D455-9968-475E-9B57-44826C4BF63F}">
         <Shortcut Id="ApplicationProgramMenuShortcut" Name="$(var.Monitorian.ProjectName)"
-                  Target="[#MainExecutableEXE]" WorkingDirectory="INSTALLDIR"
+                  Target="[#MainExecutable]" WorkingDirectory="INSTALLDIR"
                   Icon="AppIcon.exe" IconIndex="0">
           <ShortcutProperty Key="System.AppUserModel.ID" Value="[ProductName]"/>
         </Shortcut>
@@ -112,12 +120,14 @@
       <ComponentRef Id="MainExecutableConfig"/>
       <ComponentRef Id="InteractionsLibrary"/>
       <ComponentRef Id="InteractivityLibrary"/>
+      <ComponentRef Id="CoreLibrary"/>
       <ComponentRef Id="SupplementLibrary"/>
       <ComponentRef Id="FrameLibrary"/>
       <ComponentRef Id="AgencyLibrary"/>
       <ComponentRef Id="BridgeLibrary"/>
       <ComponentRef Id="VisualManifest"/>
-      <ComponentRef Id="ResourcesLibrary_jaJP"/>
+      <ComponentRef Id="MainResourcesLibrary_jaJP"/>
+      <ComponentRef Id="CoreResourcesLibrary_jaJP"/>
       <ComponentRef Id="ApplicationShortcut"/>
       <ComponentRef Id="ApplicationWorkingFolder"/>
     </Feature>

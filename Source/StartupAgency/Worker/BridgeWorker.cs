@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Management;
 using System.Text;
@@ -59,22 +60,32 @@ namespace StartupAgency.Worker
 		private static bool TryGetLogonSessionStartTime(out DateTimeOffset startTime)
 		{
 			var query = new SelectQuery("Win32_LogonSession", "LogonType = 2");
-			using (var searcher = new ManagementObjectSearcher(query))
-			using (var sessions = searcher.Get())
-			{
-				foreach (ManagementObject session in sessions)
-				{
-					using (session)
-					{
-						var startTimeString = (string)session.GetPropertyValue("StartTime");
-						if (string.IsNullOrEmpty(startTimeString))
-							continue;
 
-						startTime = new DateTimeOffset(ManagementDateTimeConverter.ToDateTime(startTimeString));
-						return true;
+			try
+			{
+				using (var searcher = new ManagementObjectSearcher(query))
+				using (var sessions = searcher.Get())
+				{
+					foreach (ManagementObject session in sessions)
+					{
+						using (session)
+						{
+							var startTimeString = (string)session.GetPropertyValue("StartTime");
+							if (string.IsNullOrEmpty(startTimeString))
+								continue;
+
+							startTime = new DateTimeOffset(ManagementDateTimeConverter.ToDateTime(startTimeString));
+							return true;
+						}
 					}
 				}
 			}
+			catch (ManagementException me)
+			{
+				Debug.WriteLine($"Failed to get logon session start time. HResult: {me.HResult} ErrorCode: {me.ErrorCode}" + Environment.NewLine
+					+ me);
+			}
+
 			startTime = default(DateTimeOffset);
 			return false;
 		}

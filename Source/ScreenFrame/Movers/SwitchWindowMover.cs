@@ -10,7 +10,7 @@ using System.Windows.Threading;
 namespace ScreenFrame.Movers
 {
 	/// <summary>
-	/// Window mover which implements functions for switch window
+	/// Mover of <see cref="System.Windows.Window"/> which implements functions for switch window
 	/// </summary>
 	public class SwitchWindowMover : StickWindowMover
 	{
@@ -88,20 +88,17 @@ namespace ScreenFrame.Movers
 			switch (msg)
 			{
 				case WM_ENTERSIZEMOVE:
-					//Debug.WriteLine(nameof(WM_ENTERSIZEMOVE));
 					_departureTimer.Interval = DepartureInterval;
 					_departureTimer.Start();
 					break;
 
 				case WM_EXITSIZEMOVE:
-					//Debug.WriteLine(nameof(WM_EXITSIZEMOVE));
 					_departureTimer.Stop();
 					CheckDeparture();
 					break;
 
 				case WM_MOVE:
 				case WM_SIZE:
-					//Debug.WriteLine($"{nameof(WM_MOVE)}/{nameof(WM_SIZE)}");
 					CheckDeparture();
 					break;
 			}
@@ -131,12 +128,12 @@ namespace ScreenFrame.Movers
 		}
 
 		/// <summary>
-		/// Tries to get the adjacent location using specified window width and height.
+		/// Attempts to get the adjacent location using specified window width and height.
 		/// </summary>
 		/// <param name="windowWidth">Window width</param>
 		/// <param name="windowHeight">Window height</param>
 		/// <param name="location">Location of window</param>
-		/// <returns>True if succeeded</returns>
+		/// <returns>True if successfully gets</returns>
 		protected override bool TryGetAdjacentLocation(double windowWidth, double windowHeight, out Point location)
 		{
 			if (IsDeparted)

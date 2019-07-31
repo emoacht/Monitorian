@@ -9,7 +9,7 @@ using System.Windows.Forms;
 namespace ScreenFrame.Movers
 {
 	/// <summary>
-	/// Window mover which implements functions for stick window
+	/// Mover of <see cref="System.Windows.Window"/> which implements functions for stick window
 	/// </summary>
 	public class StickWindowMover : BasicWindowMover
 	{
@@ -31,22 +31,22 @@ namespace ScreenFrame.Movers
 		public override PivotAlignment PivotAlignment { get; protected set; }
 
 		/// <summary>
-		/// Tries to get the adjacent location using specified window width and height.
+		/// Attempts to get the adjacent location using specified window width and height.
 		/// </summary>
 		/// <param name="windowWidth">Window width</param>
 		/// <param name="windowHeight">Window height</param>
 		/// <param name="location">Location of window</param>
-		/// <returns>True if succeeded</returns>
+		/// <returns>True if successfully gets</returns>
 		protected override bool TryGetAdjacentLocation(double windowWidth, double windowHeight, out Point location) =>
 			TryGetAdjacentLocationToTaskbar(windowWidth, windowHeight, out location);
 
 		/// <summary>
-		/// Tries to get the adjacent location to NotifyIcon using specified window width and height.
+		/// Attempts to get the adjacent location to NotifyIcon using specified window width and height.
 		/// </summary>
 		/// <param name="windowWidth">Window width</param>
 		/// <param name="windowHeight">Window height</param>
 		/// <param name="location">Location of window</param>
-		/// <returns>True if succeeded</returns>
+		/// <returns>True if successfully gets</returns>
 		protected bool TryGetAdjacentLocationToTaskbar(double windowWidth, double windowHeight, out Point location)
 		{
 			if (!WindowHelper.TryGetTaskbar(out Rect taskbarRect, out TaskbarAlignment taskbarAlignment))

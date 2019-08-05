@@ -121,7 +121,7 @@
     <value>閉じる</value>
   </data>
   <data name="EnablesUnison" xml:space="preserve">
-    <value>一緒に動かせるようにする</value>
+    <value>一斉に動かせるようにする</value>
   </data>
   <data name="NotControllable" xml:space="preserve">
     <value>このモニターはコントロールできません。</value>

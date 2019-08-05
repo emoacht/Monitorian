@@ -70,7 +70,7 @@ namespace Monitorian.Core.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enable moving together.
+        ///   Looks up a localized string similar to Enable moving in unison.
         /// </summary>
         public static string EnablesUnison {
             get {

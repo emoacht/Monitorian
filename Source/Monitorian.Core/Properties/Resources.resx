@@ -121,7 +121,7 @@
     <value>Close</value>
   </data>
   <data name="EnablesUnison" xml:space="preserve">
-    <value>Enable moving together</value>
+    <value>Enable moving in unison</value>
   </data>
   <data name="License" xml:space="preserve">
     <value>License</value>

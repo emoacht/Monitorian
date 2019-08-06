@@ -75,11 +75,6 @@
     </Compile>
     <Compile Include="AppController.cs" />
     <Compile Include="Models\Settings.cs" />
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -107,11 +102,6 @@
   <ItemGroup>
     <EmbeddedResource Include="..\..\LICENSE.txt">
       <Link>Resources\LICENSE.txt</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.ja-JP.resx" />
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

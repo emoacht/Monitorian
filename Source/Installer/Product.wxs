@@ -79,9 +79,9 @@
 
       <Directory Id="ResourcesFolder_jaJP" Name="ja-JP"
                  FileSource="$(var.Monitorian.TargetDir)ja-JP">
-        <Component Id="MainResourcesLibrary_jaJP" Guid="{9CEFCEF0-E3EF-4455-AD16-EBC8256A67C5}">
+        <!--<Component Id="MainResourcesLibrary_jaJP" Guid="{9CEFCEF0-E3EF-4455-AD16-EBC8256A67C5}">
           <File Id="MainResourcesLibrary_jaJP" Name="$(var.Monitorian.TargetName).resources.dll" KeyPath="yes"/>
-        </Component>
+        </Component>-->
 
         <Component Id="CoreResourcesLibrary_jaJP" Guid="{AFE32597-13D8-40D0-887E-9C2B5AB0F9B6}">
           <File Id="CoreResourcesLibrary_jaJP" Name="$(var.Monitorian.TargetName).Core.resources.dll" KeyPath="yes"/>
@@ -126,7 +126,7 @@
       <ComponentRef Id="AgencyLibrary"/>
       <ComponentRef Id="BridgeLibrary"/>
       <ComponentRef Id="VisualManifest"/>
-      <ComponentRef Id="MainResourcesLibrary_jaJP"/>
+      <!--<ComponentRef Id="MainResourcesLibrary_jaJP"/>-->
       <ComponentRef Id="CoreResourcesLibrary_jaJP"/>
       <ComponentRef Id="ApplicationShortcut"/>
       <ComponentRef Id="ApplicationWorkingFolder"/>

@@ -2,8 +2,13 @@
 
 Monitorian is a Windows desktop tool to adjust the brightness of multiple monitors with ease.
 
-![Screenshot](Images/Screenshot2.png)<br>
+![Screenshot](Images/Screenshot_main.png)<br>
 (DPI: 200%)
+
+The user can change the brightness of monitors, including external ones, either individually or in unison. For the system with an ambient light sensor, the adjusted brightness can be shown along with configured one.
+
+![Screenshot](Images/Screenshot_unison.png)<br>
+(DPI: 100%)
 
 ## Requirements
 
@@ -18,7 +23,7 @@ Monitorian is a Windows desktop tool to adjust the brightness of multiple monito
 [Monitorian](https://www.microsoft.com/store/apps/9nw33j738bl0) (Windows Store)
 
  * Other:<br>
-:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/1.12.0-Installer/MonitorianInstaller1120.zip) | :floppy_disk: [Executables](https://github.com/emoacht/Monitorian/releases/download/1.12.0-Executables/Monitorian1120.zip)
+:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/2.0.0-Installer/MonitorianInstaller200.zip) | :floppy_disk: [Executables](https://github.com/emoacht/Monitorian/releases/download/2.0.0-Executables/Monitorian200.zip)
 
 ## Install/Uninstall
 
@@ -30,7 +35,15 @@ When you use only executables, please note the following:
 ## Remarks
 
  - The monitor name shown in main window can be changed for easier identification of monitors. To change the name, press and hold it until it turns to be editable.
- - The number of monitors shown at a time is currently up to 4.
+ - The number of monitors shown at a time is up to 4.
+
+## Add-on Features
+
+Add-on features are available for Microsoft Store version on a subscription basis.
+
+![Screenshot](Images/Screenshot_keys_en.png)
+
+The code for add-on features is not included in this repository.
 
 ## Development
 
@@ -43,6 +56,11 @@ The log will be an useful source to look into an issue.
  - __probe.log__ - Information on capabilities of each monitor obtained from various APIs and used to find accessible monitors. To get this log, click the app title in menu window 3 times and then tap the button appeared beneath.
 
 ## History
+
+Ver 2.0.0 2019-8-6
+
+ - Enable operation by arrow keys
+ - Redesign slider
 
 Ver 1.12.0 2019-3-9
 

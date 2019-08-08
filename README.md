@@ -20,7 +20,7 @@ The user can change the brightness of monitors, including external ones, either 
 ## Download
 
  * Windows 10 Anniversary Update (1607) or newer:<br>
-[Monitorian](https://www.microsoft.com/store/apps/9nw33j738bl0) (Windows Store)
+[Monitorian](https://www.microsoft.com/store/apps/9nw33j738bl0) (Microsoft Store)
 
  * Other:<br>
 :floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/2.0.0-Installer/MonitorianInstaller200.zip) | :floppy_disk: [Executables](https://github.com/emoacht/Monitorian/releases/download/2.0.0-Executables/Monitorian200.zip)
@@ -49,11 +49,22 @@ The code for add-on features is not included in this repository.
 
 This app is a WPF app developed and tested with Surface Pro 4.
 
-The log will be an useful source to look into an issue.
+### Log
+
+The logs will be useful when looking into an issue.
 
  - __exception.log__ - Information on exceptions when an unexpected problem happened.
 
  - __probe.log__ - Information on capabilities of each monitor obtained from various APIs and used to find accessible monitors. To get this log, click the app title in menu window 3 times and then tap the button appeared beneath.
+
+### Globalization
+
+An alternative language can be shown by adding a Resources (.resx) file which stores name/value pairs under `/Source/Monitorian.Core/Properties` folder. The system will automatically select the file which matches the user's environment.
+
+ - The file name must be in `Resources.[language-culture].resx` format.
+ - The name of a name/value pair must correspond to that in the default `Resources.resx` file to override it.
+
+`Resources.ja-JP.resx` (for Japanese) would be a good example for this purpose.
 
 ## History
 

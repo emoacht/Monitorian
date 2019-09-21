@@ -49,6 +49,21 @@ The code for add-on features is not included in this repository.
 
 This app is a WPF app developed and tested with Surface Pro 4.
 
+### Setup
+
+The following information can be interpreted from `.csproj` files, but for convenience the following info is included to facilitate the process
+
+Dev Dependencies:
+ - [Visual Studio](https://visualstudio.microsoft.com/)
+
+Once Visual Studio is installed, acquire the following if they were not installed by default.
+This can be done via Visual Studio Installer. (Choose *more* -> *modify* -> *Individual components tab*)
+
+ - .NET Framework 4.7.2 SDK
+ - .NET Framework 4.7.2 target pack
+ - Blend for Visual Studio SDK for .NET
+ - Windows 10 SDK (anywhere from `10.0.14393.0` to `10.0.17134.0`)
+
 ### Log
 
 The logs will be useful when looking into an issue.

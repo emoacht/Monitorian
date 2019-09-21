@@ -65,7 +65,7 @@ This can be done via Visual Studio Installer. (Choose **more** -> **modify** -> 
  - Windows 10 SDK (choose one from `10.0.14393.0` to `10.0.17134.0`)
  
  
- Then boot up `/Source/Monitorian.sln` with Visual Studio, and click **&#9654; Start** see if the build process completes without error. If so, congratulations! You can begin to develop new features.
+ Then boot up `/Source/Monitorian.sln` with Visual Studio, and click **&#9654; Start**. See if the build process completes without error. If so, congratulations! You can begin to develop new features.
 
 ### Log
 

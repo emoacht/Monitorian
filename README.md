@@ -51,18 +51,21 @@ This app is a WPF app developed and tested with Surface Pro 4.
 
 ### Setup
 
-The following information can be interpreted from `.csproj` files, but for convenience the following info is included to facilitate the process
+The following information can be interpreted from `.csproj` files, but is included for convenience.
 
 Dev Dependencies:
  - [Visual Studio](https://visualstudio.microsoft.com/)
 
 Once Visual Studio is installed, acquire the following if they were not installed by default.
-This can be done via Visual Studio Installer. (Choose *more* -> *modify* -> *Individual components tab*)
+This can be done via Visual Studio Installer. (Choose **more** -> **modify** -> **Individual components tab**)
 
  - .NET Framework 4.7.2 SDK
  - .NET Framework 4.7.2 target pack
  - Blend for Visual Studio SDK for .NET
- - Windows 10 SDK (anywhere from `10.0.14393.0` to `10.0.17134.0`)
+ - Windows 10 SDK (choose one from `10.0.14393.0` to `10.0.17134.0`)
+ 
+ 
+ Then boot up `/Source/Monitorian.sln` with Visual Studio, and click **&#9654; Start** see if the build process completes without error. If so, congratulations! You can begin to develop new features.
 
 ### Log
 

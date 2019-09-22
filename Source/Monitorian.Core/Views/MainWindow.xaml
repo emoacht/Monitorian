@@ -10,7 +10,7 @@
 		xmlns:properties="clr-namespace:Monitorian.Core.Properties"
 		Width="360" Height="200"
 		ResizeMode="NoResize" SizeToContent="WidthAndHeight"
-		ShowInTaskbar="False"
+		ShowInTaskbar="False" Topmost="True"
 		AllowsTransparency="True" WindowStyle="None"
 		Background="{StaticResource App.Background.Plain}">
 	<Window.Resources>

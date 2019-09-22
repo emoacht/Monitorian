@@ -124,8 +124,12 @@ namespace Monitorian.Core
 			if ((window.Visibility == Visibility.Visible) && window.IsForeground)
 				return;
 
+			// Only Window.Show() works when Topmost in MainWindow.xaml is set to True.
+			window.Show();
+			/*
 			window.ShowForeground();
 			window.Activate();
+			*/
 		}
 
 		protected virtual void ShowMenuWindow(Point pivot)

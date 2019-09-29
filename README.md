@@ -49,24 +49,6 @@ The code for add-on features is not included in this repository.
 
 This app is a WPF app developed and tested with Surface Pro 4.
 
-### Setup
-
-The following information can be interpreted from `.csproj` files, but is included for convenience.
-
-Dev Dependencies:
- - [Visual Studio](https://visualstudio.microsoft.com/)
-
-Once Visual Studio is installed, acquire the following if they were not installed by default.
-This can be done via Visual Studio Installer. (Choose **more** -> **modify** -> **Individual components tab**)
-
- - .NET Framework 4.7.2 SDK
- - .NET Framework 4.7.2 target pack
- - Blend for Visual Studio SDK for .NET
- - Windows 10 SDK (choose one from `10.0.14393.0` to `10.0.17134.0`)
- 
- 
- Then boot up `/Source/Monitorian.sln` with Visual Studio, and click **&#9654; Start**. See if the build process completes without error. If so, congratulations! You can begin to develop new features.
-
 ### Log
 
 The logs will be useful when looking into an issue.
@@ -74,6 +56,18 @@ The logs will be useful when looking into an issue.
  - __exception.log__ - Information on exceptions when an unexpected problem happened.
 
  - __probe.log__ - Information on capabilities of each monitor obtained from various APIs and used to find accessible monitors. To get this log, click the app title in menu window 3 times and then tap the button appeared beneath.
+
+### Setup
+
+1. [Install Visual Studio](https://docs.microsoft.com/en-us/visualstudio/install/install-visual-studio).
+2. In Visual Studio Installer, go to the **Individual components** tab and make sure the following components are checked and installed. The version must match the corresponding field of a project's `.csproj` file.
+
+| Components                                                      | Fields                 |
+|-----------------------------------------------------------------|------------------------|
+| .NET Framework 4.7.2 SDK<br>.NET Framework 4.7.2 targeting pack | TargetFrameworkVersion |
+| Windows 10 SDK (10.0.18362.0)                                   | TargetPlatformVersion  |
+
+3. Load the solution by specifying `/Source/Monitorian.sln`. Then right click the solution name in solution explorer and execute `Restore NuGet Packages`.
 
 ### Globalization
 

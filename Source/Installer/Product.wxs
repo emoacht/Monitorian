@@ -38,13 +38,9 @@
               Source="$(var.Monitorian.TargetDir)" Name="$(var.Monitorian.TargetFileName).config" KeyPath="yes"/>
       </Component>
 
-      <Component Id="InteractionsLibrary" Guid="{CC7D480D-A83A-4066-9390-0E2871893809}">
-        <File Id="InteractionsLibrary"
-              Source="$(var.Monitorian.TargetDir)" Name="Microsoft.Expression.Interactions.dll"	KeyPath="yes"/>
-      </Component>
-      <Component Id="InteractivityLibrary" Guid="{CDD5E0E6-FF0A-47DA-AE3E-66D6F6FAB3E8}">
-        <File Id="InteractivityLibrary"
-              Source="$(var.Monitorian.TargetDir)" Name="System.Windows.Interactivity.dll" KeyPath="yes"/>
+      <Component Id="BehaviorsLibrary" Guid="{CDD5E0E6-FF0A-47DA-AE3E-66D6F6FAB3E8}">
+        <File Id="BehaviorsLibrary"
+              Source="$(var.Monitorian.TargetDir)" Name="Microsoft.Xaml.Behaviors.dll" KeyPath="yes"/>
       </Component>
 
       <Component Id="CoreLibrary" Guid="{1E9CB31F-C53B-4E83-B593-F30ADC7468CB}">
@@ -118,8 +114,7 @@
     <Feature Id="ProductFeature" Level="1">
       <ComponentRef Id="MainExecutable"/>
       <ComponentRef Id="MainExecutableConfig"/>
-      <ComponentRef Id="InteractionsLibrary"/>
-      <ComponentRef Id="InteractivityLibrary"/>
+      <ComponentRef Id="BehaviorsLibrary"/>
       <ComponentRef Id="CoreLibrary"/>
       <ComponentRef Id="SupplementLibrary"/>
       <ComponentRef Id="FrameLibrary"/>

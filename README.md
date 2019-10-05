@@ -60,7 +60,7 @@ The logs will be useful when looking into an issue.
 ### Setup
 
 1. [Install Visual Studio](https://docs.microsoft.com/en-us/visualstudio/install/install-visual-studio).
-2. In Visual Studio Installer, go to the **Individual components** tab and make sure the following components are checked and installed. The version must match the corresponding field of a project's `.csproj` file.
+2. In Visual Studio Installer, go to the **Individual components** tab and make sure the following components are checked and installed. The version must match the corresponding field of project (.csproj) file of each project.
 
 | Components                                                      | Fields                 |
 |-----------------------------------------------------------------|------------------------|
@@ -166,6 +166,10 @@ Ver 1.0.0 2017-2-22
 ## License
 
  - MIT License
+
+## Libraries
+
+ - [XamlBehaviors for WPF](https://github.com/microsoft/XamlBehaviorsWpf)
 
 ## Developer
 

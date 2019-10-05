@@ -346,15 +346,12 @@ namespace Monitorian.Core.Views
 
 			using (var key = Registry.CurrentUser.OpenSubKey(keyName))
 			{
-				switch (key?.GetValue(valueName))
+				return key?.GetValue(valueName) switch
 				{
-					case 0: // Off
-						return false;
-					case 1: // On
-						return true;
-					default:
-						return false;
-				}
+					0 => false, // Off
+					1 => true,  // On
+					_ => false
+				};
 			}
 		}
 
@@ -365,15 +362,12 @@ namespace Monitorian.Core.Views
 
 			using (var key = Registry.CurrentUser.OpenSubKey(keyName))
 			{
-				switch (key?.GetValue(valueName))
+				return key?.GetValue(valueName) switch
 				{
-					case 0: // On
-						return true;
-					case 1: // Off
-						return false;
-					default:
-						return false;
-				}
+					0 => true,  // On
+					1 => false, // Off
+					_ => false
+				};
 			}
 		}
 

@@ -392,19 +392,14 @@ namespace ScreenFrame
 
 		private static TaskbarAlignment ConvertToTaskbarAlignment(ABE value)
 		{
-			switch (value)
+			return value switch
 			{
-				case ABE.ABE_LEFT:
-					return TaskbarAlignment.Left;
-				case ABE.ABE_TOP:
-					return TaskbarAlignment.Top;
-				case ABE.ABE_RIGHT:
-					return TaskbarAlignment.Right;
-				case ABE.ABE_BOTTOM:
-					return TaskbarAlignment.Bottom;
-				default:
-					throw new NotSupportedException("The value is unknown.");
-			}
+				ABE.ABE_LEFT => TaskbarAlignment.Left,
+				ABE.ABE_TOP => TaskbarAlignment.Top,
+				ABE.ABE_RIGHT => TaskbarAlignment.Right,
+				ABE.ABE_BOTTOM => TaskbarAlignment.Bottom,
+				_ => throw new NotSupportedException("The value is unknown."),
+			};
 		}
 
 		public static bool TryGetTaskbarRect(out Rect taskbarRect)

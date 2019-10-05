@@ -109,7 +109,7 @@ namespace Monitorian.Core.Common
 			{
 				if (!TryFindIndex(key, out int index))
 				{
-					value = default(TValue);
+					value = default;
 					return false;
 				}
 

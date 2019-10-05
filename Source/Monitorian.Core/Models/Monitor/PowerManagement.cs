@@ -89,7 +89,7 @@ namespace Monitorian.Core.Models.Monitor
 				out Guid activePolicyGuid) != ERROR_SUCCESS)
 			{
 				Debug.WriteLine("Failed to get active scheme.");
-				return default(Guid);
+				return default;
 			}
 			return activePolicyGuid;
 		}

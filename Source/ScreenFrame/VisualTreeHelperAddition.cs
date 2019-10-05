@@ -248,7 +248,7 @@ namespace ScreenFrame
 				}
 			}
 
-			ancestor = default(T);
+			ancestor = default;
 			return false;
 		}
 
@@ -281,7 +281,7 @@ namespace ScreenFrame
 				parent = (0 < queue.Count) ? queue.Dequeue() : null;
 			}
 
-			descendant = default(T);
+			descendant = default;
 			return false;
 		}
 	}

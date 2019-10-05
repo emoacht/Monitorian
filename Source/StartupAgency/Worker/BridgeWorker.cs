@@ -86,7 +86,7 @@ namespace StartupAgency.Worker
 					+ me);
 			}
 
-			startTime = default(DateTimeOffset);
+			startTime = default;
 			return false;
 		}
 

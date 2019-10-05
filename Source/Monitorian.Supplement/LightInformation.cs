@@ -35,7 +35,7 @@ namespace Monitorian.Supplement
 			var reading = LightSensor.GetDefault()?.GetCurrentReading();
 			if (reading is null)
 			{
-				illuminance = default(float);
+				illuminance = default;
 				return false;
 			}
 			illuminance = reading.IlluminanceInLux;

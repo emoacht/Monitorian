@@ -43,7 +43,7 @@ namespace StartupBridge.Helper
 		{
 			return TryGetValue(out T propertyValue, propertyName)
 				? propertyValue
-				: default(T);
+				: default;
 		}
 
 		public T GetValue<T>(T defaultValue, [CallerMemberName] string propertyName = null)
@@ -62,7 +62,7 @@ namespace StartupBridge.Helper
 					propertyValue = (T)value;
 					return true;
 				}
-				propertyValue = default(T);
+				propertyValue = default;
 				return false;
 			}
 		}
@@ -78,7 +78,7 @@ namespace StartupBridge.Helper
 					itemValue = (T)value;
 					return true;
 				}
-				itemValue = default(T);
+				itemValue = default;
 				return false;
 			}
 		}

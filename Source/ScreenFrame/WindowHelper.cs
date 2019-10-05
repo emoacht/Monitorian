@@ -311,7 +311,7 @@ namespace ScreenFrame
 				windowHandle,
 				out RECT baseRect))
 			{
-				windowMargin = default(Thickness);
+				windowMargin = default;
 				return false;
 			}
 
@@ -321,7 +321,7 @@ namespace ScreenFrame
 				out RECT dwmRect,
 				(uint)Marshal.SizeOf<RECT>()) != S_OK)
 			{
-				windowMargin = default(Thickness);
+				windowMargin = default;
 				return false;
 			}
 

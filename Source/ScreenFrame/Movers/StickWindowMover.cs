@@ -51,7 +51,7 @@ namespace ScreenFrame.Movers
 		{
 			if (!WindowHelper.TryGetTaskbar(out Rect taskbarRect, out TaskbarAlignment taskbarAlignment))
 			{
-				location = default(Point);
+				location = default;
 				return false;
 			}
 

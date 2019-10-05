@@ -138,7 +138,7 @@ namespace ScreenFrame.Movers
 		{
 			if (IsDeparted)
 			{
-				location = default(Point);
+				location = default;
 				return false;
 			}
 			return base.TryGetAdjacentLocation(windowWidth, windowHeight, out location);

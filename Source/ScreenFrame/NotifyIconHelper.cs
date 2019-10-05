@@ -73,7 +73,7 @@ namespace ScreenFrame
 				point = new Point(iconRect.X, iconRect.Y); // Fallback
 				return true;
 			}
-			point = default(Point);
+			point = default;
 			return false;
 		}
 
@@ -132,8 +132,7 @@ namespace ScreenFrame
 				fieldValue = value;
 				return true;
 			}
-
-			fieldValue = default(TValue);
+			fieldValue = default;
 			return false;
 		}
 	}

@@ -21,7 +21,7 @@ namespace Monitorian.Core.Helper
 					return true;
 				}
 			}
-			key = default(TKey);
+			key = default;
 			return false;
 		}
 

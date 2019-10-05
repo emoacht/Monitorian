@@ -77,7 +77,7 @@ namespace ScreenFrame.Movers
 					break;
 
 				default:
-					location = default(Point);
+					location = default;
 					return false;
 			}
 			location = new Point(x, y);

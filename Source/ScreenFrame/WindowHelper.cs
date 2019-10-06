@@ -426,6 +426,30 @@ namespace ScreenFrame
 			return true;
 		}
 
+		public static bool TryGetOverflowAreaRect(out Rect overflowAreaRect)
+		{
+			var overflowAreaHandle = FindWindowEx(
+				IntPtr.Zero,
+				IntPtr.Zero,
+				"NotifyIconOverflowWindow",
+				string.Empty);
+			if (overflowAreaHandle == IntPtr.Zero)
+			{
+				overflowAreaRect = Rect.Empty;
+				return false;
+			}
+
+			if (!GetWindowRect(
+				overflowAreaHandle,
+				out RECT rect))
+			{
+				overflowAreaRect = Rect.Empty;
+				return false;
+			}
+			overflowAreaRect = rect;
+			return true;
+		}
+
 		#endregion
 	}
 

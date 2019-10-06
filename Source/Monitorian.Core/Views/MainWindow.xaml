@@ -437,9 +437,9 @@
 										   Text="{Binding Brightness, Mode=OneWay, StringFormat={}{0}%}"/>
 								<i:Interaction.Triggers>
 									<i:EventTrigger EventName="Click">
+										<behaviors:MouseDownParentAction/>
 										<i:CallMethodAction TargetObject="{Binding}"
 															MethodName="IncrementBrightness"/>
-										<behaviors:MouseDownParentAction/>
 									</i:EventTrigger>
 								</i:Interaction.Triggers>
 							</Button>

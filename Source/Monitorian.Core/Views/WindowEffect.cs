@@ -276,9 +276,7 @@ namespace Monitorian.Core.Views
 
 		private static void ChangeBackgroundTranslucent(Window window)
 		{
-			if (TranslucentBrush is null)
-				TranslucentBrush = (SolidColorBrush)window.FindResource(TranslucentBrushKey);
-
+			TranslucentBrush ??= (SolidColorBrush)window.FindResource(TranslucentBrushKey);
 			window.Background = TranslucentBrush;
 		}
 

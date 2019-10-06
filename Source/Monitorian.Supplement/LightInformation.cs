@@ -84,12 +84,9 @@ namespace Monitorian.Supplement
 			{
 				lock (_lock)
 				{
+					_sensor ??= LightSensor.GetDefault();
 					if (_sensor is null)
-					{
-						_sensor = LightSensor.GetDefault();
-						if (_sensor is null)
-							return;
-					}
+						return;
 
 					_ambientLightChanged += value;
 					if (_ambientLightChanged.GetInvocationList().Length > 1)

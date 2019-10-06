@@ -28,10 +28,8 @@ namespace Monitorian.Core.Views.Behaviors
 
 		protected override void Invoke(object parameter)
 		{
-			if (_parent is null)
-				_parent = VisualTreeHelper.GetParent(this.AssociatedObject) as UIElement;
-
 			var args = new MouseButtonEventArgs(Mouse.PrimaryDevice, Environment.TickCount, MouseButton) { RoutedEvent = Mouse.MouseDownEvent };
+			_parent ??= VisualTreeHelper.GetParent(this.AssociatedObject) as UIElement;
 			_parent?.RaiseEvent(args);
 		}
 	}

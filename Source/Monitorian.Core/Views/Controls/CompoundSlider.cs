@@ -142,7 +142,10 @@ namespace Monitorian.Core.Views.Controls
 					{
 						var instance = (CompoundSlider)d;
 
-						Moved?.Invoke(instance, (int)e.NewValue - instance.Value);
+						if (!instance.IsFocused && instance.IsUnison)
+						{
+							Moved?.Invoke(instance, (int)e.NewValue - instance.Value);
+						}
 					}));
 
 		protected override void OnValueChanged(double oldValue, double newValue)

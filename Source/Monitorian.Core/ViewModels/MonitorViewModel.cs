@@ -64,14 +64,12 @@ namespace Monitorian.Core.ViewModels
 
 		#region Brightness
 
-		public int Brightness => _monitor.Brightness;
-
-		public int BrightnessInteractive
+		public int Brightness
 		{
-			get => Brightness;
+			get => _monitor.Brightness;
 			set
 			{
-				if (Brightness == value)
+				if (_monitor.Brightness == value)
 					return;
 
 				SetBrightness(value);
@@ -88,11 +86,8 @@ namespace Monitorian.Core.ViewModels
 		{
 			if (_monitor.UpdateBrightness(brightness))
 			{
-				if (IsUnison && (0 <= brightness))
-					RaisePropertyChanged(nameof(BrightnessSystemChanged));
-
+				RaisePropertyChanged(nameof(BrightnessSystemChanged)); // This must be prior to Brightness.
 				RaisePropertyChanged(nameof(Brightness));
-				RaisePropertyChanged(nameof(BrightnessInteractive));
 				RaisePropertyChanged(nameof(BrightnessSystemAdjusted));
 				OnSuccess();
 				return true;
@@ -131,11 +126,7 @@ namespace Monitorian.Core.ViewModels
 		{
 			if (_monitor.SetBrightness(brightness))
 			{
-				if (IsUnison)
-					RaisePropertyChanged(nameof(BrightnessSystemChanged));
-
 				RaisePropertyChanged(nameof(Brightness));
-				RaisePropertyChanged(nameof(BrightnessInteractive));
 				OnSuccess();
 				return true;
 			}

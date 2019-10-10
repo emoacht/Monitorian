@@ -27,13 +27,6 @@ namespace Monitorian.Core.ViewModels
 		public byte MonitorIndex => _monitor.MonitorIndex;
 		public bool IsAccessible => _monitor.IsAccessible;
 
-		public bool IsControllable
-		{
-			get => IsAccessible && _isControllable;
-			private set => SetPropertyValue(ref _isControllable, value);
-		}
-		private bool _isControllable = true;
-
 		#region Name/Unison
 
 		public string Name
@@ -134,17 +127,30 @@ namespace Monitorian.Core.ViewModels
 			return false;
 		}
 
-		private byte _failureCount = 0;
+		#endregion
+
+		#region Controllable
+
+		public bool IsControllable => IsAccessible && (_currentCount > 0);
+
+		private short _currentCount = NormalCount;
+		private const short NormalCount = 5;
 
 		private void OnSuccess()
 		{
-			_failureCount = 0;
+			if (_currentCount == NormalCount)
+				return;
+
+			var formerCount = _currentCount;
+			_currentCount = NormalCount;
+			if (formerCount <= 0)
+				RaisePropertyChanged(nameof(IsControllable));
 		}
 
 		private void OnFailure()
 		{
-			if (++_failureCount > 2)
-				IsControllable = false;
+			if (--_currentCount == 0)
+				RaisePropertyChanged(nameof(IsControllable));
 		}
 
 		#endregion

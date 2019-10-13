@@ -43,23 +43,36 @@ namespace ScreenFrame
 			MONITOR_DEFAULTTONEAREST = 0x00000002,
 		}
 
+		[DllImport("User32.dll")]
+		private static extern bool EnumDisplayMonitors(
+			IntPtr hdc,
+			IntPtr lprcClip,
+			MonitorEnumProc lpfnEnum,
+			IntPtr dwData);
+
+		[return: MarshalAs(UnmanagedType.Bool)]
+		private delegate bool MonitorEnumProc(
+			IntPtr hMonitor,
+			IntPtr hdcMonitor,
+			IntPtr lprcMonitor,
+			IntPtr dwData);
+
 		[DllImport("User32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
 		[return: MarshalAs(UnmanagedType.Bool)]
 		public static extern bool GetMonitorInfo(
 			IntPtr hMonitor,
-			ref MONITORINFOEX lpmi);
+			ref MONITORINFO lpmi);
 
 		[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-		public struct MONITORINFOEX
+		public struct MONITORINFO
 		{
 			public uint cbSize;
 			public RECT rcMonitor;
 			public RECT rcWork;
 			public uint dwFlags;
-
-			[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
-			public string szDevice;
 		}
+
+		private const int MONITORINFOF_PRIMARY = 0x00000001;
 
 		[DllImport("User32.dll", SetLastError = true)]
 		private static extern bool GetWindowRect(
@@ -242,7 +255,7 @@ namespace ScreenFrame
 				windowHandle,
 				MONITOR_DEFAULTTO.MONITOR_DEFAULTTONEAREST);
 
-			var monitorInfo = new MONITORINFOEX { cbSize = (uint)Marshal.SizeOf<MONITORINFOEX>() };
+			var monitorInfo = new MONITORINFO { cbSize = (uint)Marshal.SizeOf<MONITORINFO>() };
 
 			if (!GetMonitorInfo(monitorHandle, ref monitorInfo))
 			{
@@ -251,6 +264,46 @@ namespace ScreenFrame
 			}
 			monitorRect = monitorInfo.rcMonitor;
 			return true;
+		}
+
+		public static Rect[] GetMonitorRects()
+		{
+			var holder = new MonitorEnumHolder();
+
+			if (!EnumDisplayMonitors(
+				IntPtr.Zero,
+				IntPtr.Zero,
+				holder.MonitorEnum,
+				IntPtr.Zero))
+			{
+				return Array.Empty<Rect>();
+			}
+			return holder.MonitorRects.ToArray();
+		}
+
+		private class MonitorEnumHolder
+		{
+			public readonly List<Rect> MonitorRects = new List<Rect>();
+
+			public bool MonitorEnum(IntPtr hMonitor, IntPtr hdcMonitor, IntPtr lprcMonitor, IntPtr dwData)
+			{
+				var monitorInfo = new MONITORINFO { cbSize = (uint)Marshal.SizeOf<MONITORINFO>() };
+
+				if (GetMonitorInfo(hMonitor, ref monitorInfo))
+				{
+					if (Convert.ToBoolean(monitorInfo.dwFlags & MONITORINFOF_PRIMARY))
+					{
+						// Store the primary monitor at the beginning of the collection because in most cases,
+						// the primary monitor should be checked first.
+						MonitorRects.Insert(0, monitorInfo.rcMonitor);
+					}
+					else
+					{
+						MonitorRects.Add(monitorInfo.rcMonitor);
+					}
+				}
+				return true;
+			}
 		}
 
 		#endregion

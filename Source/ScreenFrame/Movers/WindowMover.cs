@@ -82,6 +82,7 @@ namespace ScreenFrame.Movers
 		private const int WM_WINDOWPOSCHANGING = 0x0046;
 		private const int WM_WINDOWPOSCHANGED = 0x0047;
 		private const int WM_DPICHANGED = 0x02E0;
+		private const int WM_DISPLAYCHANGE = 0x007E;
 		private const int WM_ACTIVATEAPP = 0x001C;
 		private const int WM_KEYDOWN = 0x0100;
 
@@ -102,6 +103,10 @@ namespace ScreenFrame.Movers
 
 				case WM_DPICHANGED:
 					HandleDpiChanged(hwnd, msg, wParam, lParam, ref handled);
+					break;
+
+				case WM_DISPLAYCHANGE:
+					HandleDisplayChange(hwnd, msg, wParam, lParam, ref handled);
 					break;
 
 				case WM_ACTIVATEAPP:
@@ -143,6 +148,11 @@ namespace ScreenFrame.Movers
 			VisualTreeHelper.SetRootDpi(_window, dpi);
 			handled = true;
 		}
+
+		/// <summary>
+		/// Handles display change event.
+		/// </summary>
+		protected abstract void HandleDisplayChange(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled);
 
 		/// <summary>
 		/// Occurs when the application to which the window belongs is activated.

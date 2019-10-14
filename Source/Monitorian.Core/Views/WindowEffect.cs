@@ -49,40 +49,6 @@ namespace Monitorian.Core.Views
 
 		#endregion
 
-		#region Win32 (for Win7)
-
-		[DllImport("Dwmapi.dll")]
-		private static extern int DwmIsCompositionEnabled(out bool pfEnabled);
-
-		[DllImport("Dwmapi.dll")]
-		private static extern int DwmEnableBlurBehindWindow(
-			IntPtr hWnd,
-			[In] ref DWM_BLURBEHIND pBlurBehind);
-
-		[StructLayout(LayoutKind.Sequential)]
-		private struct DWM_BLURBEHIND
-		{
-			public DWM_BB dwFlags;
-
-			[MarshalAs(UnmanagedType.Bool)]
-			public bool fEnable;
-
-			public IntPtr hRgnBlur;
-
-			[MarshalAs(UnmanagedType.Bool)]
-			public bool fTransitionOnMaximized;
-		}
-
-		[Flags]
-		private enum DWM_BB : uint
-		{
-			DWM_BB_ENABLE = 0x00000001,
-			DWM_BB_BLURREGION = 0x00000002,
-			DWM_BB_TRANSITIONONMAXIMIZED = 0x00000004
-		}
-
-		#endregion
-
 		#region Win32 (for Win10)
 
 		/// <summary>
@@ -137,10 +103,43 @@ namespace Monitorian.Core.Views
 
 		#endregion
 
+		#region Win32 (for Win7)
+
+		[DllImport("Dwmapi.dll")]
+		private static extern int DwmIsCompositionEnabled(out bool pfEnabled);
+
+		[DllImport("Dwmapi.dll")]
+		private static extern int DwmEnableBlurBehindWindow(
+			IntPtr hWnd,
+			[In] ref DWM_BLURBEHIND pBlurBehind);
+
+		[StructLayout(LayoutKind.Sequential)]
+		private struct DWM_BLURBEHIND
+		{
+			public DWM_BB dwFlags;
+
+			[MarshalAs(UnmanagedType.Bool)]
+			public bool fEnable;
+
+			public IntPtr hRgnBlur;
+
+			[MarshalAs(UnmanagedType.Bool)]
+			public bool fTransitionOnMaximized;
+		}
+
+		[Flags]
+		private enum DWM_BB : uint
+		{
+			DWM_BB_ENABLE = 0x00000001,
+			DWM_BB_BLURREGION = 0x00000002,
+			DWM_BB_TRANSITIONONMAXIMIZED = 0x00000004
+		}
+
+		#endregion
+
 		/// <summary>
-		/// Color elements of window
+		/// Color changeable elements of window
 		/// </summary>
-		/// <remarks>The order matters.</remarks>
 		private enum ColorElement
 		{
 			None = 0,
@@ -160,7 +159,7 @@ namespace Monitorian.Core.Views
 
 		public static IReadOnlyCollection<string> Options => ColorPairs.Keys.ToArray();
 
-		private static readonly Lazy<KeyValuePair<ColorElement, Brush>[]> _colors = new Lazy<KeyValuePair<ColorElement, Brush>[]>(() =>
+		private static readonly Lazy<Dictionary<ColorElement, Brush>> _colors = new Lazy<Dictionary<ColorElement, Brush>>(() =>
 		{
 			var converter = new BrushConverter();
 			bool TryParse(string source, out Brush brush)
@@ -191,7 +190,7 @@ namespace Monitorian.Core.Views
 				}
 				i++;
 			}
-			return colors.Any() ? colors.OrderBy(x => x.Key).ToArray() : null;
+			return colors.Any() ? colors : null;
 		});
 
 		private static bool ChangeColors(Window window)
@@ -200,6 +199,7 @@ namespace Monitorian.Core.Views
 				return false;
 
 			var isMainWindow = window is MainWindow;
+			var isBackgroundChanged = false;
 
 			foreach (var (key, value) in _colors.Value)
 			{
@@ -214,10 +214,11 @@ namespace Monitorian.Core.Views
 					case ColorElement.MainBackground when isMainWindow:
 					case ColorElement.MenuBackground when !isMainWindow:
 						window.Background = value;
-						return true;
+						isBackgroundChanged = true;
+						break;
 				}
 			}
-			return false;
+			return isBackgroundChanged;
 		}
 
 		public static bool DisableTransitions(Window window)
@@ -268,8 +269,8 @@ namespace Monitorian.Core.Views
 			return false;
 		}
 
-		private static Lazy<bool> IsTransparencyEnabledForWin10 = new Lazy<bool>(() => IsEnableTransparencyOn());
-		private static Lazy<bool> IsTransparencyEnabledForWin7 = new Lazy<bool>(() => IsColorizationOpaqueBlendOn());
+		private static readonly Lazy<bool> IsTransparencyEnabledForWin10 = new Lazy<bool>(() => IsEnableTransparencyOn());
+		private static readonly Lazy<bool> IsTransparencyEnabledForWin7 = new Lazy<bool>(() => IsColorizationOpaqueBlendOn());
 
 		private const string TranslucentBrushKey = "App.Background.Translucent";
 		private static SolidColorBrush TranslucentBrush;

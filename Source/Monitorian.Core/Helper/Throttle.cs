@@ -20,7 +20,7 @@ namespace Monitorian.Core.Helper
 		public Throttle(TimeSpan dueTime, Action action)
 		{
 			if (dueTime <= TimeSpan.Zero)
-				throw new ArgumentOutOfRangeException(nameof(dueTime));
+				throw new ArgumentOutOfRangeException(nameof(dueTime), dueTime, "The time must be positive.");
 
 			_timer = new DispatcherTimer { Interval = dueTime };
 			_timer.Tick += OnTick;

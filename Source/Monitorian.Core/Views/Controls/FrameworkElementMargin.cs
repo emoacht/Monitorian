@@ -46,9 +46,9 @@ namespace Monitorian.Core.Views.Controls
 		private static void SetMargin(FrameworkElement element, double horizontalMargin, double verticalMargin)
 		{
 			if (horizontalMargin < 0D)
-				throw new ArgumentOutOfRangeException(nameof(horizontalMargin), horizontalMargin, "The value must not be negative.");
+				throw new ArgumentOutOfRangeException(nameof(horizontalMargin), horizontalMargin, "The margin must not be negative.");
 			if (verticalMargin < 0D)
-				throw new ArgumentOutOfRangeException(nameof(verticalMargin), verticalMargin, "The value must not be negative.");
+				throw new ArgumentOutOfRangeException(nameof(verticalMargin), verticalMargin, "The margin must not be negative.");
 
 			var margin = element.Margin;
 			if (0D < horizontalMargin)

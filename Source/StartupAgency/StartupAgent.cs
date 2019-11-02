@@ -170,7 +170,7 @@ namespace StartupAgency
 		private void CheckWorker()
 		{
 			if (_worker is null)
-				throw new InvalidOperationException("Functions have not started yet or failed to start.");
+				throw new InvalidOperationException("The functions have not started yet or have failed to start.");
 		}
 
 		#endregion

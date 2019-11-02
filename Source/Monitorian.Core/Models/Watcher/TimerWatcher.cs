@@ -21,7 +21,7 @@ namespace Monitorian.Core.Models.Watcher
 			if (!(intervals?.Length > 0))
 				throw new ArgumentNullException(nameof(intervals));
 			if (intervals.Any(x => x <= 0))
-				throw new ArgumentOutOfRangeException(nameof(intervals));
+				throw new ArgumentOutOfRangeException(nameof(intervals), intervals.First(x => x <= 0), "An interval must be positive.");
 
 			this._intervals = intervals.Select(x => TimeSpan.FromSeconds(x)).ToArray();
 

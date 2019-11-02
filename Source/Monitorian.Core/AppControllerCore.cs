@@ -303,14 +303,13 @@ namespace Monitorian.Core
 
 		protected MonitorViewModel SelectedMonitor { get; private set; }
 
-		protected internal virtual bool SaveSelectedMonitor(MonitorViewModel monitor)
+		protected internal virtual void SaveMonitorUserChanged(MonitorViewModel monitor)
 		{
 			if ((monitor is null) || ReferenceEquals(SelectedMonitor, monitor))
-				return false;
+				return;
 
 			SelectedMonitor = monitor;
 			Settings.SelectedDeviceInstanceId = monitor.DeviceInstanceId;
-			return true;
 		}
 
 		#endregion

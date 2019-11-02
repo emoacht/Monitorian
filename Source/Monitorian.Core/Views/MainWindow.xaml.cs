@@ -153,7 +153,7 @@ namespace Monitorian.Core.Views
 		public bool CanBeShown => (_preventionTime < DateTimeOffset.Now);
 		private DateTimeOffset _preventionTime;
 
-		protected override async void OnDeactivated(EventArgs e)
+		protected override void OnDeactivated(EventArgs e)
 		{
 			base.OnDeactivated(e);
 
@@ -163,6 +163,11 @@ namespace Monitorian.Core.Views
 			// Set time to prevent this window from being shown unintentionally. 
 			_preventionTime = DateTimeOffset.Now + TimeSpan.FromSeconds(0.2);
 
+			ClearHide();
+		}
+
+		public async void ClearHide()
+		{
 			// Clear focus.
 			FocusManager.SetFocusedElement(this, null);
 

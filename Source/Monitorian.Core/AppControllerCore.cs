@@ -128,6 +128,11 @@ namespace Monitorian.Core
 			window.Activate();
 		}
 
+		protected virtual void HideMainWindow()
+		{
+			((MainWindow)_current.MainWindow).ClearHide();
+		}
+
 		protected virtual void ShowMenuWindow(Point pivot)
 		{
 			var window = new MenuWindow(this, pivot);

@@ -102,9 +102,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="..\..\LICENSE.txt">
-      <Link>Resources\LICENSE.txt</Link>
-    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\License.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Monitorian.VisualElementsManifest.xml">

@@ -48,19 +48,30 @@ namespace Monitorian.Core.Models
 			if (string.IsNullOrWhiteSpace(title))
 				title = Path.GetFileNameWithoutExtension(filePath);
 
-			body = body?
-				.Split(new[] { "\r\n\r\n" }, StringSplitOptions.None)
-				.Select(x => $"<p>{x}</p>")
-				.Aggregate((w, n) => $"{w}\r\n{n}");
-
-			var content = BuildHtml(title, body);
+			var html = BuildHtml(title, body);
 
 			using (var sw = new StreamWriter(filePath, false, Encoding.UTF8)) // BOM will be emitted.
-				sw.Write(content);
+				sw.Write(html);
 		}
 
 		private static string BuildHtml(string title, string body)
 		{
+			body = body?
+				.Split(new[] { "\r\n\r\n", "\n\n" }, StringSplitOptions.RemoveEmptyEntries)
+				.Select(x =>
+				{
+					var array = x.Split(Array.Empty<char>(), 2, StringSplitOptions.RemoveEmptyEntries);
+					var (tag, content) = array.First() switch
+					{
+						"#" => ("h1", array.Last()),
+						"##" => ("h2", array.Last()),
+						"###" => ("h3", array.Last()),
+						_ => ("p", x)
+					};
+					return $"<{tag}>{content}</{tag}>";
+				})
+				.Aggregate((w, n) => $"{w}\r\n{n}");
+
 			return $@"<!DOCTYPE HTML PUBLIC "" -//W3C//DTD HTML 4.01//EN"" ""http://www.w3.org/TR/html4/strict.dtd"">
 <html>
 <head>
@@ -71,7 +82,6 @@ namespace Monitorian.Core.Models
 </style>
 </head>
 <body>
-<h1>{title}</h1>
 {body}
 </body>
 </html>";

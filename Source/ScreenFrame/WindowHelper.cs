@@ -268,24 +268,18 @@ namespace ScreenFrame
 
 		public static Rect[] GetMonitorRects()
 		{
-			var holder = new MonitorEnumHolder();
+			var monitorRects = new List<Rect>();
 
 			if (!EnumDisplayMonitors(
 				IntPtr.Zero,
 				IntPtr.Zero,
-				holder.MonitorEnum,
+				MonitorEnum,
 				IntPtr.Zero))
 			{
 				return Array.Empty<Rect>();
 			}
-			return holder.MonitorRects.ToArray();
-		}
 
-		private class MonitorEnumHolder
-		{
-			public readonly List<Rect> MonitorRects = new List<Rect>();
-
-			public bool MonitorEnum(IntPtr hMonitor, IntPtr hdcMonitor, IntPtr lprcMonitor, IntPtr dwData)
+			bool MonitorEnum(IntPtr hMonitor, IntPtr hdcMonitor, IntPtr lprcMonitor, IntPtr dwData)
 			{
 				var monitorInfo = new MONITORINFO { cbSize = (uint)Marshal.SizeOf<MONITORINFO>() };
 
@@ -295,15 +289,17 @@ namespace ScreenFrame
 					{
 						// Store the primary monitor at the beginning of the collection because in most cases,
 						// the primary monitor should be checked first.
-						MonitorRects.Insert(0, monitorInfo.rcMonitor);
+						monitorRects.Insert(0, monitorInfo.rcMonitor);
 					}
 					else
 					{
-						MonitorRects.Add(monitorInfo.rcMonitor);
+						monitorRects.Add(monitorInfo.rcMonitor);
 					}
 				}
 				return true;
 			}
+
+			return monitorRects.ToArray();
 		}
 
 		#endregion

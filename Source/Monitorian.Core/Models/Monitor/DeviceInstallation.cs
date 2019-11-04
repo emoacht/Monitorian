@@ -269,7 +269,7 @@ namespace Monitorian.Core.Models.Monitor
 				ref DeviceInfoData,
 				buffer,
 				bufferSize,
-				out requiredSize))
+				out _))
 			{
 				return string.Empty;
 			}

@@ -115,7 +115,7 @@ namespace ScreenFrame.Movers
 			if (!IsDeparted)
 				return;
 
-			if (!WindowHelper.TryGetTaskbar(out Rect taskbarRect, out TaskbarAlignment _))
+			if (!WindowHelper.TryGetTaskbar(out Rect taskbarRect, out _))
 				return;
 
 			if (!WindowHelper.TryGetDwmWindowRect(_window, out Rect windowRect))

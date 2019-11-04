@@ -83,7 +83,7 @@ namespace Monitorian.Core.Common
 		{
 			lock (Lock)
 			{
-				return TryFindIndex(key, out int _);
+				return TryFindIndex(key, out _);
 			}
 		}
 

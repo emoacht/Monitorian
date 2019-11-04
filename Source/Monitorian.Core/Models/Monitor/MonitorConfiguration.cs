@@ -223,7 +223,7 @@ namespace Monitorian.Core.Models.Monitor
 					bool isHighLevelSupported = GetMonitorCapabilities(
 						handle,
 						out MC_CAPS caps,
-						out MC_SUPPORTED_COLOR_TEMPERATURE _)
+						out _)
 						&& caps.HasFlag(MC_CAPS.MC_CAPS_BRIGHTNESS);
 
 					bool isLowLevelSupported = false;

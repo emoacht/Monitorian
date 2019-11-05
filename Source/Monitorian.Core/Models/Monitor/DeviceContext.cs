@@ -25,7 +25,7 @@ namespace Monitorian.Core.Models.Monitor
 		private delegate bool MonitorEnumProc(
 			IntPtr hMonitor,
 			IntPtr hdcMonitor,
-			ref RECT lprcMonitor,
+			IntPtr lprcMonitor,
 			IntPtr dwData);
 
 		[DllImport("User32.dll", EntryPoint = "GetMonitorInfoW")]
@@ -227,47 +227,37 @@ namespace Monitorian.Core.Models.Monitor
 			return string.Join(@"\", fields.Take(3));
 		}
 
-		private static readonly List<HandleItem> _handleItems = new List<HandleItem>();
-
 		public static HandleItem[] GetMonitorHandles()
 		{
-			try
+			var handleItems = new List<HandleItem>();
+
+			if (!EnumDisplayMonitors(
+				IntPtr.Zero,
+				IntPtr.Zero,
+				MonitorEnum,
+				IntPtr.Zero))
 			{
-				if (!EnumDisplayMonitors(
-					IntPtr.Zero,
-					IntPtr.Zero,
-					MonitorEnum,
-					IntPtr.Zero))
+				return Array.Empty<HandleItem>();
+			}
+
+			bool MonitorEnum(IntPtr hMonitor, IntPtr hdcMonitor, IntPtr lprcMonitor, IntPtr dwData)
+			{
+				var monitorInfo = new MONITORINFOEX { cbSize = (uint)Marshal.SizeOf<MONITORINFOEX>() };
+
+				if (!GetMonitorInfo(hMonitor, ref monitorInfo))
 				{
-					Debug.WriteLine("Failed to enumerate display monitors.");
+					Debug.WriteLine($"Failed to get information on a display monitor.");
 				}
-
-				return _handleItems.ToArray();
-			}
-			finally
-			{
-				_handleItems.Clear();
-			}
-		}
-
-		private static bool MonitorEnum(IntPtr hMonitor, IntPtr hdcMonitor, ref RECT lprcMonitor, IntPtr dwData)
-		{
-			var monitorInfo = new MONITORINFOEX { cbSize = (uint)Marshal.SizeOf<MONITORINFOEX>() };
-
-			if (!GetMonitorInfo(hMonitor, ref monitorInfo))
-			{
-				Debug.WriteLine($"Failed to get information on a display monitor.");
-			}
-			else
-			{
-				if (TryGetDisplayIndex(monitorInfo.szDevice, out byte displayIndex))
+				else if (TryGetDisplayIndex(monitorInfo.szDevice, out byte displayIndex))
 				{
-					_handleItems.Add(new HandleItem(
+					handleItems.Add(new HandleItem(
 						monitorHandle: hMonitor,
 						displayIndex: displayIndex));
 				}
+				return true;
 			}
-			return true;
+
+			return handleItems.ToArray();
 		}
 	}
 }

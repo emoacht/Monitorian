@@ -61,7 +61,7 @@ namespace Monitorian.Core.Models
 		[DataMember]
 		public ObservableKeyedList<string, MonitorValuePack> KnownMonitors
 		{
-			get => _knownMonitors ?? (_knownMonitors = new ObservableKeyedList<string, MonitorValuePack>());
+			get => _knownMonitors ??= new ObservableKeyedList<string, MonitorValuePack>();
 			protected set => _knownMonitors = value;
 		}
 		private ObservableKeyedList<string, MonitorValuePack> _knownMonitors;

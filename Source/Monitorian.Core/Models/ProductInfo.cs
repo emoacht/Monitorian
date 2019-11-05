@@ -31,7 +31,7 @@ namespace Monitorian.Core.Models
 		/// </summary>
 		public static string Title
 		{
-			get => _title ?? (_title = _assembly.GetAttribute<AssemblyTitleAttribute>().Title);
+			get => _title ??= _assembly.GetAttribute<AssemblyTitleAttribute>().Title;
 			set => _title = value;
 		}
 		private static string _title;

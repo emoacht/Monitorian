@@ -6,21 +6,15 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Threading;
 
 namespace Monitorian.Core.Views.Controls
 {
 	public class SwitchTextBox : TextBox
 	{
-		private readonly DispatcherTimer _timer;
-
-		public TimeSpan HoldingDuration { get; set; } = TimeSpan.FromSeconds(1.2);
-
 		public SwitchTextBox() : base()
 		{
-			_timer = new DispatcherTimer();
-			_timer.Tick += OnTick;
-
 			this.PreviewMouseLeftButtonDown += (sender, e) => OnDeviceDown(e.MouseDevice, true);
 			this.PreviewMouseRightButtonDown += (sender, e) => OnDeviceDown(e.MouseDevice, false);
 			this.PreviewStylusDown += (sender, e) => OnDeviceDown(e.StylusDevice, false);
@@ -32,19 +26,17 @@ namespace Monitorian.Core.Views.Controls
 			this.MouseLeave += (sender, e) => OnDeviceUp();
 			this.StylusLeave += (sender, e) => OnDeviceUp();
 			this.TouchLeave += (sender, e) => OnDeviceUp();
-		}
-
-		protected override void OnInitialized(EventArgs e)
-		{
-			base.OnInitialized(e);
 
 			this.IsReadOnly = true;
 		}
+
+		public TimeSpan HoldingDuration { get; set; } = TimeSpan.FromSeconds(1.2);
 
 		private const double Tolerance = 10D;
 		private InputDevice _device;
 		private Point _startPosition;
 		private bool _isContextMenuOpenable = true;
+		private DispatcherTimer _switchTimer;
 
 		private void OnDeviceDown(InputDevice device, bool isContextMenuOpenable)
 		{
@@ -57,20 +49,20 @@ namespace Monitorian.Core.Views.Controls
 
 			this._isContextMenuOpenable = isContextMenuOpenable;
 
-			_timer.Interval = HoldingDuration;
-			_timer.Start();
+			_switchTimer ??= new DispatcherTimer(HoldingDuration, DispatcherPriority.Background, OnTick, Dispatcher.CurrentDispatcher);
+			_switchTimer.Start();
 		}
 
 		private void OnDeviceUp()
 		{
-			_timer.Stop();
+			_switchTimer?.Stop();
 
 			_device = null;
 		}
 
 		private void OnTick(object sender, EventArgs e)
 		{
-			_timer.Stop();
+			_switchTimer.Stop();
 
 			if (!TryGetDevicePosition(_device, out Point endPosition))
 				return;
@@ -81,8 +73,8 @@ namespace Monitorian.Core.Views.Controls
 			this.IsReadOnly = false;
 
 			// Get focus.
-			var window = Window.GetWindow(this);
-			FocusManager.SetFocusedElement(window, this);
+			var scope = FocusManager.GetFocusScope(this);
+			FocusManager.SetFocusedElement(scope, this);
 			Keyboard.Focus(this);
 			this.SelectionStart = 0;
 		}
@@ -104,7 +96,7 @@ namespace Monitorian.Core.Views.Controls
 					return true;
 
 				default:
-					position = default(Point);
+					position = default;
 					return false;
 			}
 		}
@@ -114,9 +106,11 @@ namespace Monitorian.Core.Views.Controls
 			// If a TextBox has focus when the window is deactivated, LostFocus event will occur
 			// after Window.Deactivated event. Since a TextBox's text will be updated to source when
 			// LostFocus event occurs by default, Window.Deactivated event is not always appropriate
-			// to capture the latest text. 
+			// to capture the latest text.
 
-			_timer.Stop();
+			var window = Window.GetWindow(this);
+			if (!window.IsActive)
+				_switchTimer?.Stop();
 
 			this.IsReadOnly = true;
 
@@ -130,6 +124,22 @@ namespace Monitorian.Core.Views.Controls
 				base.OnContextMenuOpening(e);
 			}
 			_isContextMenuOpenable = true;
+		}
+
+		protected override void OnKeyDown(KeyEventArgs e)
+		{
+			base.OnKeyDown(e);
+
+			switch (e.Key)
+			{
+				case Key.Escape when this.IsFocused:
+					// Set focus on parent.
+					var scope = FocusManager.GetFocusScope(this);
+					var parent = VisualTreeHelper.GetParent(this) as UIElement;
+					FocusManager.SetFocusedElement(scope, parent);
+					Keyboard.Focus(parent);
+					break;
+			}
 		}
 	}
 }

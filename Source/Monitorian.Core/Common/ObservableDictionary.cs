@@ -22,7 +22,7 @@ namespace Monitorian.Core.Common
 		[DataMember(Name = "InnerDictionary")]
 		protected IDictionary<TKey, TValue> Dictionary
 		{
-			get => _dictionary ?? (_dictionary = new Dictionary<TKey, TValue>());
+			get => _dictionary ??= new Dictionary<TKey, TValue>();
 			private set => _dictionary = value;
 		}
 		private IDictionary<TKey, TValue> _dictionary;
@@ -38,7 +38,7 @@ namespace Monitorian.Core.Common
 		public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() => Dictionary.GetEnumerator();
 		IEnumerator IEnumerable.GetEnumerator() => Dictionary.GetEnumerator();
 
-		protected object Lock => _lock ?? (_lock = new object());
+		protected object Lock => _lock ??= new object();
 		private object _lock;
 
 		public virtual TValue this[TKey key]

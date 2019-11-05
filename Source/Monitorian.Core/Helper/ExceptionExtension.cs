@@ -12,8 +12,7 @@ namespace Monitorian.Core.Helper
 		public static string ToDetailedString(this Exception ex)
 		{
 			var buffer = new StringBuilder(ex.GetType().ToString());
-			buffer.Append($": {ex.Message}");
-			buffer.Append($" HResult: {ex.HResult}");
+			buffer.Append($": {ex.Message} HResult: {ex.HResult}");
 
 			IEnumerable<Exception> innerExceptions;
 			if (ex is AggregateException ae)

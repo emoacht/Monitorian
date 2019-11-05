@@ -148,11 +148,7 @@ namespace ScreenFrame
 			if (source is null)
 				return SystemDpi;
 
-			var monitorHandle = MonitorFromWindow(
-				source.Handle,
-				MONITOR_DEFAULTTO.MONITOR_DEFAULTTONEAREST);
-
-			return GetDpi(monitorHandle);
+			return GetDpiWindow(source.Handle);
 		}
 
 		/// <summary>
@@ -180,8 +176,13 @@ namespace ScreenFrame
 			if (notificationAreaHandle == IntPtr.Zero)
 				return SystemDpi;
 
+			return GetDpiWindow(notificationAreaHandle);
+		}
+
+		private static DpiScale GetDpiWindow(IntPtr windowHandle)
+		{
 			var monitorHandle = MonitorFromWindow(
-				notificationAreaHandle,
+				windowHandle,
 				MONITOR_DEFAULTTO.MONITOR_DEFAULTTOPRIMARY);
 
 			return GetDpi(monitorHandle);
@@ -248,7 +249,7 @@ namespace ScreenFrame
 				}
 			}
 
-			ancestor = default(T);
+			ancestor = default;
 			return false;
 		}
 
@@ -281,7 +282,7 @@ namespace ScreenFrame
 				parent = (0 < queue.Count) ? queue.Dequeue() : null;
 			}
 
-			descendant = default(T);
+			descendant = default;
 			return false;
 		}
 	}

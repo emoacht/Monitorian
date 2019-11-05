@@ -36,7 +36,7 @@ namespace ScreenFrame.Movers
 		/// <param name="windowHeight">Window height</param>
 		/// <param name="location">Location of window</param>
 		/// <returns>True if successfully gets</returns>
-		protected override bool TryGetAdjacentLocation(double windowWidth, double windowHeight, out Point location) =>
+		protected override bool TryGetAdjacentLocation(double windowWidth, double windowHeight, out Rect location) =>
 			TryGetAdjacentLocationToPivot(windowWidth, windowHeight, out location);
 
 		/// <summary>
@@ -46,7 +46,7 @@ namespace ScreenFrame.Movers
 		/// <param name="windowHeight">Window height</param>
 		/// <param name="location">Location of window</param>
 		/// <returns>True if successfully gets</returns>
-		protected bool TryGetAdjacentLocationToPivot(double windowWidth, double windowHeight, out Point location)
+		protected bool TryGetAdjacentLocationToPivot(double windowWidth, double windowHeight, out Rect location)
 		{
 			var x = _pivot.X;
 			var y = _pivot.Y;
@@ -77,10 +77,10 @@ namespace ScreenFrame.Movers
 					break;
 
 				default:
-					location = default(Point);
+					location = default;
 					return false;
 			}
-			location = new Point(x, y);
+			location = new Rect(x, y, windowWidth, windowHeight);
 			return true;
 		}
 	}

@@ -27,13 +27,6 @@ namespace Monitorian.Core.ViewModels
 		public byte MonitorIndex => _monitor.MonitorIndex;
 		public bool IsAccessible => _monitor.IsAccessible;
 
-		public bool IsControllable
-		{
-			get => IsAccessible && _isControllable;
-			private set => SetPropertyValue(ref _isControllable, value);
-		}
-		private bool _isControllable = true;
-
 		#region Name/Unison
 
 		public string Name
@@ -64,20 +57,18 @@ namespace Monitorian.Core.ViewModels
 
 		#region Brightness
 
-		public int Brightness => _monitor.Brightness;
-
-		public int BrightnessInteractive
+		public int Brightness
 		{
-			get => Brightness;
+			get => _monitor.Brightness;
 			set
 			{
-				if (Brightness == value)
+				if (_monitor.Brightness == value)
 					return;
 
 				SetBrightness(value);
 
 				if (IsSelected)
-					_controller.SaveSelectedMonitor(this);
+					_controller.SaveMonitorUserChanged(this);
 			}
 		}
 
@@ -88,11 +79,8 @@ namespace Monitorian.Core.ViewModels
 		{
 			if (_monitor.UpdateBrightness(brightness))
 			{
-				if (IsUnison && (0 <= brightness))
-					RaisePropertyChanged(nameof(BrightnessSystemChanged));
-
+				RaisePropertyChanged(nameof(BrightnessSystemChanged)); // This must be prior to Brightness.
 				RaisePropertyChanged(nameof(Brightness));
-				RaisePropertyChanged(nameof(BrightnessInteractive));
 				RaisePropertyChanged(nameof(BrightnessSystemAdjusted));
 				OnSuccess();
 				return true;
@@ -106,7 +94,7 @@ namespace Monitorian.Core.ViewModels
 			IncrementBrightness(10);
 
 			if (IsSelected)
-				_controller.SaveSelectedMonitor(this);
+				_controller.SaveMonitorUserChanged(this);
 		}
 
 		public void IncrementBrightness(int tickSize, bool isCycle = true)
@@ -131,11 +119,7 @@ namespace Monitorian.Core.ViewModels
 		{
 			if (_monitor.SetBrightness(brightness))
 			{
-				if (IsUnison)
-					RaisePropertyChanged(nameof(BrightnessSystemChanged));
-
 				RaisePropertyChanged(nameof(Brightness));
-				RaisePropertyChanged(nameof(BrightnessInteractive));
 				OnSuccess();
 				return true;
 			}
@@ -143,17 +127,30 @@ namespace Monitorian.Core.ViewModels
 			return false;
 		}
 
-		private byte _failureCount = 0;
+		#endregion
+
+		#region Controllable
+
+		public bool IsControllable => IsAccessible && (_currentCount > 0);
+
+		private short _currentCount = NormalCount;
+		private const short NormalCount = 5;
 
 		private void OnSuccess()
 		{
-			_failureCount = 0;
+			if (_currentCount == NormalCount)
+				return;
+
+			var formerCount = _currentCount;
+			_currentCount = NormalCount;
+			if (formerCount <= 0)
+				RaisePropertyChanged(nameof(IsControllable));
 		}
 
 		private void OnFailure()
 		{
-			if (++_failureCount > 2)
-				IsControllable = false;
+			if (--_currentCount == 0)
+				RaisePropertyChanged(nameof(IsControllable));
 		}
 
 		#endregion

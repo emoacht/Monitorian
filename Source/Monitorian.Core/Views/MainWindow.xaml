@@ -437,9 +437,9 @@
 										   Text="{Binding Brightness, Mode=OneWay, StringFormat={}{0}%}"/>
 								<i:Interaction.Triggers>
 									<i:EventTrigger EventName="Click">
+										<behaviors:MouseDownParentAction/>
 										<i:CallMethodAction TargetObject="{Binding}"
 															MethodName="IncrementBrightness"/>
-										<behaviors:MouseDownParentAction/>
 									</i:EventTrigger>
 								</i:Interaction.Triggers>
 							</Button>
@@ -449,7 +449,7 @@
 													 Style="{StaticResource SliderHorizontal}"
 													 AutoToolTipPlacement="TopLeft"
 													 Minimum="0" Maximum="100"
-													 Value="{Binding BrightnessInteractive, Mode=TwoWay, Delay=50}"
+													 Value="{Binding Brightness, Mode=TwoWay, Delay=50}"
 													 IsShadowVisible="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Path=DataContext.Settings.ShowsAdjusted}"
 													 ValueShadow="{Binding BrightnessSystemAdjusted, Mode=OneWay}"
 													 IsUnison="{Binding IsUnison, Mode=TwoWay}"

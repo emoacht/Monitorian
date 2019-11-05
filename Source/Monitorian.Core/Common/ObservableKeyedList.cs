@@ -23,7 +23,7 @@ namespace Monitorian.Core.Common
 		[DataMember(Name = "InnerList")]
 		protected List<KeyValuePair<TKey, TValue>> List
 		{
-			get => _list ?? (_list = new List<KeyValuePair<TKey, TValue>>());
+			get => _list ??= new List<KeyValuePair<TKey, TValue>>();
 			private set => _list = value;
 		}
 		private List<KeyValuePair<TKey, TValue>> _list;
@@ -32,7 +32,7 @@ namespace Monitorian.Core.Common
 		public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() => List.GetEnumerator();
 		IEnumerator IEnumerable.GetEnumerator() => List.GetEnumerator();
 
-		protected object Lock => _lock ?? (_lock = new object());
+		protected object Lock => _lock ??= new object();
 		private object _lock;
 
 		/// <summary>
@@ -83,7 +83,7 @@ namespace Monitorian.Core.Common
 		{
 			lock (Lock)
 			{
-				return TryFindIndex(key, out int _);
+				return TryFindIndex(key, out _);
 			}
 		}
 
@@ -109,7 +109,7 @@ namespace Monitorian.Core.Common
 			{
 				if (!TryFindIndex(key, out int index))
 				{
-					value = default(TValue);
+					value = default;
 					return false;
 				}
 

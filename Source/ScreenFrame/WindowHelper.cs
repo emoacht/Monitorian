@@ -43,23 +43,36 @@ namespace ScreenFrame
 			MONITOR_DEFAULTTONEAREST = 0x00000002,
 		}
 
+		[DllImport("User32.dll")]
+		private static extern bool EnumDisplayMonitors(
+			IntPtr hdc,
+			IntPtr lprcClip,
+			MonitorEnumProc lpfnEnum,
+			IntPtr dwData);
+
+		[return: MarshalAs(UnmanagedType.Bool)]
+		private delegate bool MonitorEnumProc(
+			IntPtr hMonitor,
+			IntPtr hdcMonitor,
+			IntPtr lprcMonitor,
+			IntPtr dwData);
+
 		[DllImport("User32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
 		[return: MarshalAs(UnmanagedType.Bool)]
 		public static extern bool GetMonitorInfo(
 			IntPtr hMonitor,
-			ref MONITORINFOEX lpmi);
+			ref MONITORINFO lpmi);
 
 		[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-		public struct MONITORINFOEX
+		public struct MONITORINFO
 		{
 			public uint cbSize;
 			public RECT rcMonitor;
 			public RECT rcWork;
 			public uint dwFlags;
-
-			[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
-			public string szDevice;
 		}
+
+		private const int MONITORINFOF_PRIMARY = 0x00000001;
 
 		[DllImport("User32.dll", SetLastError = true)]
 		private static extern bool GetWindowRect(
@@ -242,7 +255,7 @@ namespace ScreenFrame
 				windowHandle,
 				MONITOR_DEFAULTTO.MONITOR_DEFAULTTONEAREST);
 
-			var monitorInfo = new MONITORINFOEX { cbSize = (uint)Marshal.SizeOf<MONITORINFOEX>() };
+			var monitorInfo = new MONITORINFO { cbSize = (uint)Marshal.SizeOf<MONITORINFO>() };
 
 			if (!GetMonitorInfo(monitorHandle, ref monitorInfo))
 			{
@@ -251,6 +264,42 @@ namespace ScreenFrame
 			}
 			monitorRect = monitorInfo.rcMonitor;
 			return true;
+		}
+
+		public static Rect[] GetMonitorRects()
+		{
+			var monitorRects = new List<Rect>();
+
+			if (!EnumDisplayMonitors(
+				IntPtr.Zero,
+				IntPtr.Zero,
+				MonitorEnum,
+				IntPtr.Zero))
+			{
+				return Array.Empty<Rect>();
+			}
+
+			bool MonitorEnum(IntPtr hMonitor, IntPtr hdcMonitor, IntPtr lprcMonitor, IntPtr dwData)
+			{
+				var monitorInfo = new MONITORINFO { cbSize = (uint)Marshal.SizeOf<MONITORINFO>() };
+
+				if (GetMonitorInfo(hMonitor, ref monitorInfo))
+				{
+					if (Convert.ToBoolean(monitorInfo.dwFlags & MONITORINFOF_PRIMARY))
+					{
+						// Store the primary monitor at the beginning of the collection because in most cases,
+						// the primary monitor should be checked first.
+						monitorRects.Insert(0, monitorInfo.rcMonitor);
+					}
+					else
+					{
+						monitorRects.Add(monitorInfo.rcMonitor);
+					}
+				}
+				return true;
+			}
+
+			return monitorRects.ToArray();
 		}
 
 		#endregion
@@ -311,7 +360,7 @@ namespace ScreenFrame
 				windowHandle,
 				out RECT baseRect))
 			{
-				windowMargin = default(Thickness);
+				windowMargin = default;
 				return false;
 			}
 
@@ -321,7 +370,7 @@ namespace ScreenFrame
 				out RECT dwmRect,
 				(uint)Marshal.SizeOf<RECT>()) != S_OK)
 			{
-				windowMargin = default(Thickness);
+				windowMargin = default;
 				return false;
 			}
 
@@ -392,19 +441,14 @@ namespace ScreenFrame
 
 		private static TaskbarAlignment ConvertToTaskbarAlignment(ABE value)
 		{
-			switch (value)
+			return value switch
 			{
-				case ABE.ABE_LEFT:
-					return TaskbarAlignment.Left;
-				case ABE.ABE_TOP:
-					return TaskbarAlignment.Top;
-				case ABE.ABE_RIGHT:
-					return TaskbarAlignment.Right;
-				case ABE.ABE_BOTTOM:
-					return TaskbarAlignment.Bottom;
-				default:
-					throw new NotSupportedException("The value is unknown.");
-			}
+				ABE.ABE_LEFT => TaskbarAlignment.Left,
+				ABE.ABE_TOP => TaskbarAlignment.Top,
+				ABE.ABE_RIGHT => TaskbarAlignment.Right,
+				ABE.ABE_BOTTOM => TaskbarAlignment.Bottom,
+				_ => throw new NotSupportedException("The value is unknown."),
+			};
 		}
 
 		public static bool TryGetTaskbarRect(out Rect taskbarRect)
@@ -428,6 +472,30 @@ namespace ScreenFrame
 				return false;
 			}
 			taskbarRect = rect;
+			return true;
+		}
+
+		public static bool TryGetOverflowAreaRect(out Rect overflowAreaRect)
+		{
+			var overflowAreaHandle = FindWindowEx(
+				IntPtr.Zero,
+				IntPtr.Zero,
+				"NotifyIconOverflowWindow",
+				string.Empty);
+			if (overflowAreaHandle == IntPtr.Zero)
+			{
+				overflowAreaRect = Rect.Empty;
+				return false;
+			}
+
+			if (!GetWindowRect(
+				overflowAreaHandle,
+				out RECT rect))
+			{
+				overflowAreaRect = Rect.Empty;
+				return false;
+			}
+			overflowAreaRect = rect;
 			return true;
 		}
 

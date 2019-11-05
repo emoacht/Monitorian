@@ -41,7 +41,7 @@ namespace Monitorian.Core.Models.Monitor
 				buffer.Capacity,
 				IntPtr.Zero) > 0)
 			{
-				message.Append($", Message: {buffer}");
+				message.Append($", Message: ").Append(buffer);
 			}
 
 			return message.ToString();

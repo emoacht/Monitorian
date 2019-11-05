@@ -21,7 +21,7 @@ namespace Monitorian.Core.ViewModels
 
 		#region License
 
-		private const string LicenseFileName = "LICENSE.txt";
+		private const string LicenseFileName = "License.txt";
 
 		public void OpenLicense()
 		{

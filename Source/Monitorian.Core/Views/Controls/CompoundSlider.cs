@@ -142,7 +142,10 @@ namespace Monitorian.Core.Views.Controls
 					{
 						var instance = (CompoundSlider)d;
 
-						Moved?.Invoke(instance, (int)e.NewValue - instance.Value);
+						if (!instance.IsFocused && instance.IsUnison)
+						{
+							Moved?.Invoke(instance, (int)e.NewValue - instance.Value);
+						}
 					}));
 
 		protected override void OnValueChanged(double oldValue, double newValue)
@@ -155,23 +158,24 @@ namespace Monitorian.Core.Views.Controls
 			}
 		}
 
+		private double? _brightnessProtruded = null;
+
+		protected override void OnGotFocus(RoutedEventArgs e)
+		{
+			base.OnGotFocus(e);
+
+			_brightnessProtruded = null; // Reset
+		}
+
 		private void OnMoved(object sender, double delta)
 		{
-			if (ReferenceEquals(this, sender))
+			if (ReferenceEquals(this, sender) || (delta == 0D))
 				return;
 
-			var brightness = this.Value + delta;
-			if (brightness < this.Minimum)
-			{
-				brightness = this.Minimum;
-				IsUnison = false;
-			}
-			else if (this.Maximum < brightness)
-			{
-				brightness = this.Maximum;
-				IsUnison = false;
-			}
-			this.Value = brightness;
+			_brightnessProtruded ??= this.Value;
+			_brightnessProtruded += delta;
+
+			this.Value = Math.Min(this.Maximum, Math.Max(this.Minimum, _brightnessProtruded.Value));
 		}
 
 		#endregion

@@ -136,8 +136,7 @@ namespace ScreenFrame
 			NotifyIcon.Icon = GetIcon(this._icon, _dpi);
 			NotifyIcon.Visible = true;
 
-			if (_listener is null)
-				_listener = NotifyIconWindowListener.Create(this);
+			_listener ??= NotifyIconWindowListener.Create(this);
 		}
 
 		/// <summary>

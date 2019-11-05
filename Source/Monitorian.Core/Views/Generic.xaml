@@ -74,8 +74,8 @@
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type ToggleButton}">
-					<Grid Background="{TemplateBinding Background}"
-						  Margin="{TemplateBinding Padding}"
+					<Grid Margin="{TemplateBinding Padding}"
+						  Background="{TemplateBinding Background}"
 						  SnapsToDevicePixels="True" UseLayoutRounding="True">
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="Auto"/>
@@ -114,16 +114,15 @@
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type ContentControl}">
-					<Grid Background="{TemplateBinding Background}"
-						  Margin="{TemplateBinding Padding}"
+					<Grid Margin="{TemplateBinding Padding}"
+						  Background="{TemplateBinding Background}"
 						  SnapsToDevicePixels="True" UseLayoutRounding="True">
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="Auto"/>
 							<ColumnDefinition Width="*"/>
 						</Grid.ColumnDefinitions>
 						<Grid Grid.Column="0"
-							  Width="{Binding RelativeSource={RelativeSource Self}, Path=ActualHeight}">
-						</Grid>
+							  Width="{Binding RelativeSource={RelativeSource Self}, Path=ActualHeight}"/>
 						<ContentPresenter Grid.Column="1"
 										  Margin="3" HorizontalAlignment="Left" VerticalAlignment="Center"
 										  Focusable="False"/>
@@ -141,8 +140,8 @@
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type ContentControl}">
-					<Grid Background="{TemplateBinding Background}"
-						  Margin="{TemplateBinding Padding}"
+					<Grid Margin="{TemplateBinding Padding}"
+						  Background="{TemplateBinding Background}"
 						  SnapsToDevicePixels="True" UseLayoutRounding="True">
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="Auto"/>

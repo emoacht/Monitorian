@@ -37,6 +37,7 @@ namespace Monitorian.Core.Views.Behaviors
 			{
 				_container.Selected += OnSelected;
 				_container.Unselected += OnUnselected;
+				_container.GotFocus += OnSelected;
 			}
 		}
 
@@ -53,6 +54,7 @@ namespace Monitorian.Core.Views.Behaviors
 			{
 				_container.Selected -= OnSelected;
 				_container.Unselected -= OnUnselected;
+				_container.GotFocus -= OnSelected;
 			}
 		}
 

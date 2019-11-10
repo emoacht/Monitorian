@@ -53,7 +53,7 @@ namespace Monitorian.Core.Models
 			get => _showsAdjusted;
 			set => SetPropertyValue(ref _showsAdjusted, value);
 		}
-		private bool _showsAdjusted = false;
+		private bool _showsAdjusted = true;
 
 		/// <summary>
 		/// Known monitors with user-specified names

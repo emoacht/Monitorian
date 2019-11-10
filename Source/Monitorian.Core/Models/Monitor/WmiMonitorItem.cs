@@ -49,12 +49,11 @@ namespace Monitorian.Core.Models.Monitor
 				{
 					this.Brightness = PowerManagement.GetActiveSchemeBrightness();
 
-					if (LightSensor.AmbientLightSensorExists)
-					{
-						this.BrightnessSystemAdjusted = (0 <= brightness)
+					this.BrightnessSystemAdjusted = !PowerManagement.IsAdaptiveBrightnessEnabled
+						? -1 // Default
+						: (0 <= brightness)
 							? brightness
 							: MSMonitor.GetBrightness(DeviceInstanceId);
-					}
 				}
 				return (0 <= this.Brightness);
 			}

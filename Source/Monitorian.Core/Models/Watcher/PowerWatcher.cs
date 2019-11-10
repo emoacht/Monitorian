@@ -9,15 +9,28 @@ namespace Monitorian.Core.Models.Watcher
 {
 	internal class PowerWatcher : TimerWatcher, IDisposable
 	{
-		private Action _onChanged;
+		private Action _onPowerModeChanged;
+		private Action<PowerSettingChangedEventArgs> _onPowerSettingChanged;
+
+		private SystemEventsComplement _complement;
 
 		public PowerWatcher() : base(5, 5, 10, 20, 40, 80)
 		{ }
 
-		public void Subscribe(Action onChanged)
+		public void Subscribe(Action onPowerModeChanged)
 		{
-			this._onChanged = onChanged ?? throw new ArgumentNullException(nameof(onChanged));
+			this._onPowerModeChanged = onPowerModeChanged ?? throw new ArgumentNullException(nameof(onPowerModeChanged));
 			SystemEvents.PowerModeChanged += OnPowerModeChanged;
+		}
+
+		public void Subscribe(Action onPowerStatusChanged, (Guid[] guids, Action<PowerSettingChangedEventArgs> action) onPowerSettingChanged)
+		{
+			Subscribe(onPowerStatusChanged);
+
+			this._onPowerSettingChanged = onPowerSettingChanged.action;
+			_complement = new SystemEventsComplement();
+			_complement.PowerSettingChanged += (sender, e) => this._onPowerSettingChanged.Invoke(e);
+			_complement.RegisterPowerSettingEvent(onPowerSettingChanged.guids);
 		}
 
 		private void OnPowerModeChanged(object sender, PowerModeChangedEventArgs e)
@@ -27,7 +40,7 @@ namespace Monitorian.Core.Models.Watcher
 			switch (e.Mode)
 			{
 				default:
-					_onChanged?.Invoke();
+					_onPowerModeChanged?.Invoke();
 					break;
 				case PowerModes.Suspend:
 					// Do nothing.
@@ -40,7 +53,7 @@ namespace Monitorian.Core.Models.Watcher
 
 		protected override void TimerTick()
 		{
-			_onChanged?.Invoke();
+			_onPowerModeChanged?.Invoke();
 		}
 
 		#region IDisposable
@@ -62,6 +75,7 @@ namespace Monitorian.Core.Models.Watcher
 			{
 				// Free any other managed objects here.
 				SystemEvents.PowerModeChanged -= OnPowerModeChanged;
+				_complement?.UnregisterPowerSettingEvent();
 			}
 
 			// Free any unmanaged objects here.

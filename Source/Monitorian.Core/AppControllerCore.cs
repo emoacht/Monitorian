@@ -78,7 +78,7 @@ namespace Monitorian.Core
 			NotifyIconContainer.MouseRightButtonClick += OnMenuWindowShowRequested;
 
 			_settingsWatcher.Subscribe(() => OnMonitorsChangeInferred());
-			_powerWatcher.Subscribe(() => OnMonitorsChangeInferred());
+			_powerWatcher.Subscribe(() => OnMonitorsChangeInferred(), PowerManagement.GetOnPowerSettingChanged());
 			_brightnessWatcher.Subscribe((instanceName, brightness) => Update(instanceName, brightness));
 		}
 

@@ -35,7 +35,7 @@ namespace Monitorian.Core
 
 		public NotifyIconContainer NotifyIconContainer { get; }
 
-		private readonly SettingsWatcher _settingsWatcher;
+		private readonly DisplayWatcher _displayWatcher;
 		private readonly PowerWatcher _powerWatcher;
 		private readonly BrightnessWatcher _brightnessWatcher;
 
@@ -51,7 +51,7 @@ namespace Monitorian.Core
 
 			NotifyIconContainer = new NotifyIconContainer();
 
-			_settingsWatcher = new SettingsWatcher();
+			_displayWatcher = new DisplayWatcher();
 			_powerWatcher = new PowerWatcher();
 			_brightnessWatcher = new BrightnessWatcher();
 		}
@@ -77,7 +77,7 @@ namespace Monitorian.Core
 			NotifyIconContainer.MouseLeftButtonClick += OnMainWindowShowRequestedBySelf;
 			NotifyIconContainer.MouseRightButtonClick += OnMenuWindowShowRequested;
 
-			_settingsWatcher.Subscribe(() => OnMonitorsChangeInferred());
+			_displayWatcher.Subscribe(() => OnMonitorsChangeInferred());
 			_powerWatcher.Subscribe(() => OnMonitorsChangeInferred(), PowerManagement.GetOnPowerSettingChanged());
 			_brightnessWatcher.Subscribe((instanceName, brightness) => Update(instanceName, brightness));
 		}
@@ -87,7 +87,7 @@ namespace Monitorian.Core
 			MonitorsDispose();
 			NotifyIconContainer.Dispose();
 
-			_settingsWatcher.Dispose();
+			_displayWatcher.Dispose();
 			_powerWatcher.Dispose();
 			_brightnessWatcher.Dispose();
 		}

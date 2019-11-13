@@ -11,7 +11,7 @@ namespace Monitorian.Core.Models.Watcher
 	{
 		private Action _onDisplaySettingsChanged;
 
-		public DisplayWatcher() : base(3, 3, 6)
+		public DisplayWatcher() : base(1, 4, 5)
 		{ }
 
 		public void Subscribe(Action onDisplaySettingsChanged)
@@ -22,10 +22,6 @@ namespace Monitorian.Core.Models.Watcher
 
 		private void OnDisplaySettingsChanged(object sender, EventArgs e)
 		{
-			TimerStop();
-
-			_onDisplaySettingsChanged?.Invoke();
-
 			TimerStart();
 		}
 

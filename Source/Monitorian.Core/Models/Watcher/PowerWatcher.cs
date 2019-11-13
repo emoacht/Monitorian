@@ -7,15 +7,35 @@ using Microsoft.Win32;
 
 namespace Monitorian.Core.Models.Watcher
 {
-	internal class PowerWatcher : TimerWatcher, IDisposable
+	internal class PowerWatcher : IDisposable
 	{
 		private Action _onPowerModeChanged;
 		private Action<PowerSettingChangedEventArgs> _onPowerSettingChanged;
 
 		private SystemEventsComplement _complement;
 
-		public PowerWatcher() : base(5, 5, 10, 20, 40, 80)
-		{ }
+		private class PowerModeWatcher : TimerWatcher
+		{
+			private readonly PowerWatcher _instance;
+
+			public PowerModeWatcher(PowerWatcher instance, params int[] intervals) : base(intervals) => this._instance = instance;
+
+			public new void TimerStart() => base.TimerStart();
+			public new void TimerStop() => base.TimerStop();
+
+			protected override void TimerTick() => _instance._onPowerModeChanged?.Invoke();
+		}
+
+		private readonly PowerModeWatcher _resumeWatcher;
+		private readonly PowerModeWatcher _statusWatcher;
+
+		public PowerWatcher()
+		{
+			// Conform invocation timings so that the action would be executed efficiently when
+			// multiple and different events are fired almost simultaneously.
+			_resumeWatcher = new PowerModeWatcher(this, 5, 5, 10, 10, 30);
+			_statusWatcher = new PowerModeWatcher(this, 1, 4);
+		}
 
 		public void Subscribe(Action onPowerModeChanged)
 		{
@@ -35,25 +55,18 @@ namespace Monitorian.Core.Models.Watcher
 
 		private void OnPowerModeChanged(object sender, PowerModeChangedEventArgs e)
 		{
-			TimerStop();
-
 			switch (e.Mode)
 			{
-				default:
-					_onPowerModeChanged?.Invoke();
+				case PowerModes.Resume:
+					_resumeWatcher.TimerStart();
 					break;
 				case PowerModes.Suspend:
-					// Do nothing.
+					_resumeWatcher.TimerStop();
 					break;
-				case PowerModes.Resume:
-					TimerStart();
+				default:
+					_statusWatcher.TimerStart();
 					break;
 			}
-		}
-
-		protected override void TimerTick()
-		{
-			_onPowerModeChanged?.Invoke();
 		}
 
 		#region IDisposable

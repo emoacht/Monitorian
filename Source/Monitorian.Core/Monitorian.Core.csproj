@@ -79,8 +79,9 @@
     <Compile Include="Models\Monitor\PowerManagement.cs" />
     <Compile Include="Models\Monitor\WmiMonitorItem.cs" />
     <Compile Include="Models\Watcher\BrightnessWatcher.cs" />
+    <Compile Include="Models\Watcher\DisplayWatcher.cs" />
     <Compile Include="Models\Watcher\PowerWatcher.cs" />
-    <Compile Include="Models\Watcher\SettingsWatcher.cs" />
+    <Compile Include="Models\Watcher\SystemEventsComplement.cs" />
     <Compile Include="Models\Watcher\TimerWatcher.cs" />
     <Compile Include="Models\ConsoleService.cs" />
     <Compile Include="Models\DocumentService.cs" />

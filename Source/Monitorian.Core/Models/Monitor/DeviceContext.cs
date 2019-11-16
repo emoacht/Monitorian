@@ -100,7 +100,63 @@ namespace Monitorian.Core.Models.Monitor
 			DISPLAY_DEVICE_ATTACHED = 0x00000002,
 		}
 
+		[DllImport("User32.dll", EntryPoint = "EnumDisplaySettingsA")]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		private static extern bool EnumDisplaySettings(
+			string lpszDeviceName,
+			int iModeNum,
+			ref DEVMODE lpDevMode);
+
+		[DllImport("User32.dll", EntryPoint = "ChangeDisplaySettingsExA")]
+		private static extern int ChangeDisplaySettingsEx(
+			string lpszDeviceName,
+			[In] ref DEVMODE lpDevMode,
+			IntPtr hwnd, // Always null
+			uint dwflags,
+			IntPtr lParam);
+
+		[StructLayout(LayoutKind.Explicit, CharSet = CharSet.Ansi)]
+		private struct DEVMODE
+		{
+			[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+			[FieldOffset(0)] public string dmDeviceName;
+
+			[FieldOffset(36)] public ushort dmSize;
+
+			[FieldOffset(40)] public DM dmFields; // uint
+
+			[FieldOffset(52)] public DMDO dmDisplayOrientation; // uint
+
+			[FieldOffset(102)] public ushort dmLogPixels;
+			[FieldOffset(104)] public uint dmBitsPerPel;
+			[FieldOffset(108)] public uint dmPelsWidth;
+			[FieldOffset(112)] public uint dmPelsHeight;
+		}
+
+		[Flags]
+		private enum DM : uint
+		{
+			DM_DISPLAYORIENTATION = 0x00000080,
+			DM_LOGPIXELS = 0x00020000,
+			DM_BITSPERPEL = 0x00040000,
+			DM_PELSWIDTH = 0x00080000,
+			DM_PELSHEIGHT = 0x00100000
+		}
+
+		/// <summary>
+		/// DEVMODE Display Orientation (anti-clockwise from user's viewpoint) 
+		/// </summary>
+		private enum DMDO : uint
+		{
+			DMDO_DEFAULT = 0,
+			DMDO_90 = 1,
+			DMDO_180 = 2,
+			DMDO_270 = 3
+		}
+
 		private const uint EDD_GET_DEVICE_INTERFACE_NAME = 0x00000001;
+		private const int ENUM_CURRENT_SETTINGS = -1;
+		private const int DISP_CHANGE_SUCCESSFUL = 0;
 
 		#endregion
 
@@ -155,6 +211,24 @@ namespace Monitorian.Core.Models.Monitor
 
 		public static IEnumerable<DeviceItem> EnumerateMonitorDevices()
 		{
+			foreach (var (_, displayIndex, monitor, monitorIndex) in EnumerateDevices())
+			{
+				var deviceInstanceId = GetDeviceInstanceId(monitor.DeviceID);
+
+				//Debug.WriteLine($"DeviceId: {monitor.DeviceID}");
+				//Debug.WriteLine($"DeviceInstanceId: {deviceInstanceId}");
+				//Debug.WriteLine($"DeviceString: {monitor.DeviceString}");
+
+				yield return new DeviceItem(
+					deviceInstanceId: deviceInstanceId,
+					description: monitor.DeviceString,
+					displayIndex: displayIndex,
+					monitorIndex: monitorIndex);
+			}
+		}
+
+		private static IEnumerable<(DISPLAY_DEVICE display, byte displayIndex, DISPLAY_DEVICE monitor, byte monitorIndex)> EnumerateDevices()
+		{
 			var size = (uint)Marshal.SizeOf<DISPLAY_DEVICE>();
 			var display = new DISPLAY_DEVICE { cb = size };
 			var monitor = new DISPLAY_DEVICE { cb = size };
@@ -171,22 +245,10 @@ namespace Monitorian.Core.Models.Monitor
 
 				for (uint j = 0; EnumDisplayDevices(display.DeviceName, j, ref monitor, EDD_GET_DEVICE_INTERFACE_NAME); j++)
 				{
-					var deviceInstanceId = GetDeviceInstanceId(monitor.DeviceID);
-					var isActive = monitor.StateFlags.HasFlag(DISPLAY_DEVICE_FLAG.DISPLAY_DEVICE_ACTIVE);
-
-					//Debug.WriteLine($"DeviceId: {monitor.DeviceID}");
-					//Debug.WriteLine($"DeviceInstanceId: {deviceInstanceId}");
-					//Debug.WriteLine($"DeviceString: {monitor.DeviceString}");
-					//Debug.WriteLine($"IsActive {isActive}");
-
-					if (!isActive)
+					if (!monitor.StateFlags.HasFlag(DISPLAY_DEVICE_FLAG.DISPLAY_DEVICE_ACTIVE))
 						continue;
 
-					yield return new DeviceItem(
-						deviceInstanceId: deviceInstanceId,
-						description: monitor.DeviceString,
-						displayIndex: displayIndex,
-						monitorIndex: monitorIndex);
+					yield return (display, displayIndex, monitor, monitorIndex);
 
 					monitorIndex++;
 				}
@@ -258,6 +320,67 @@ namespace Monitorian.Core.Models.Monitor
 			}
 
 			return handleItems.ToArray();
+		}
+
+		public static bool Rotate(string deviceInstanceId)
+		{
+			if (!TryGetDisplay(deviceInstanceId, out string displayName, out DEVMODE dm))
+				return false;
+
+			// Change orientation 90 degrees clockwise.
+			var orientation = dm.dmDisplayOrientation switch
+			{
+				DMDO.DMDO_90 => DMDO.DMDO_DEFAULT,
+				DMDO.DMDO_180 => DMDO.DMDO_90,
+				DMDO.DMDO_270 => DMDO.DMDO_180,
+				_ => DMDO.DMDO_270
+			};
+
+			return RotateDisplay(displayName, ref dm, orientation);
+		}
+
+		private static bool TryGetDisplay(string deviceInstanceId, out string displayName, out DEVMODE dm)
+		{
+			foreach (var (display, _, monitor, _) in EnumerateDevices())
+			{
+				if (!string.Equals(GetDeviceInstanceId(monitor.DeviceID), deviceInstanceId, StringComparison.OrdinalIgnoreCase))
+					continue;
+
+				displayName = display.DeviceName;
+				dm = new DEVMODE { dmSize = (ushort)Marshal.SizeOf<DEVMODE>() };
+
+				// EnumDisplaySettings function only works with display device.
+				return EnumDisplaySettings(
+					displayName,
+					ENUM_CURRENT_SETTINGS,
+					ref dm);
+			}
+
+			displayName = null;
+			dm = default;
+			return false;
+		}
+
+		private static bool RotateDisplay(string displayName, ref DEVMODE dm, DMDO orientation)
+		{
+			static bool IsLandscape(DMDO value) => (value == DMDO.DMDO_DEFAULT) || (value == DMDO.DMDO_180);
+
+			if (IsLandscape(dm.dmDisplayOrientation) != IsLandscape(orientation))
+			{
+				// Swap width and height.
+				(dm.dmPelsWidth, dm.dmPelsHeight) = (dm.dmPelsHeight, dm.dmPelsWidth);
+				dm.dmFields = DM.DM_PELSWIDTH | DM.DM_PELSHEIGHT;
+			}
+
+			dm.dmDisplayOrientation = orientation;
+			dm.dmFields |= DM.DM_DISPLAYORIENTATION;
+
+			return (ChangeDisplaySettingsEx(
+				displayName,
+				ref dm,
+				IntPtr.Zero,
+				0, // Change the display dynamically.
+				IntPtr.Zero) == DISP_CHANGE_SUCCESSFUL);
 		}
 	}
 }

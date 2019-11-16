@@ -35,7 +35,7 @@ namespace Monitorian.Core
 
 		public NotifyIconContainer NotifyIconContainer { get; }
 
-		private readonly SettingsWatcher _settingsWatcher;
+		private readonly DisplayWatcher _displayWatcher;
 		private readonly PowerWatcher _powerWatcher;
 		private readonly BrightnessWatcher _brightnessWatcher;
 
@@ -51,7 +51,7 @@ namespace Monitorian.Core
 
 			NotifyIconContainer = new NotifyIconContainer();
 
-			_settingsWatcher = new SettingsWatcher();
+			_displayWatcher = new DisplayWatcher();
 			_powerWatcher = new PowerWatcher();
 			_brightnessWatcher = new BrightnessWatcher();
 		}
@@ -77,8 +77,8 @@ namespace Monitorian.Core
 			NotifyIconContainer.MouseLeftButtonClick += OnMainWindowShowRequestedBySelf;
 			NotifyIconContainer.MouseRightButtonClick += OnMenuWindowShowRequested;
 
-			_settingsWatcher.Subscribe(() => OnMonitorsChangeInferred());
-			_powerWatcher.Subscribe(() => OnMonitorsChangeInferred());
+			_displayWatcher.Subscribe(() => OnMonitorsChangeInferred());
+			_powerWatcher.Subscribe(() => OnMonitorsChangeInferred(), PowerManagement.GetOnPowerSettingChanged());
 			_brightnessWatcher.Subscribe((instanceName, brightness) => Update(instanceName, brightness));
 		}
 
@@ -87,7 +87,7 @@ namespace Monitorian.Core
 			MonitorsDispose();
 			NotifyIconContainer.Dispose();
 
-			_settingsWatcher.Dispose();
+			_displayWatcher.Dispose();
 			_powerWatcher.Dispose();
 			_brightnessWatcher.Dispose();
 		}
@@ -149,7 +149,7 @@ namespace Monitorian.Core
 
 		#region Monitors
 
-		protected virtual async void OnMonitorsChangeInferred() => await ScanAsync();
+		protected virtual async void OnMonitorsChangeInferred() => await ScanAsync(TimeSpan.FromSeconds(3));
 
 		internal event EventHandler<bool> ScanningChanged;
 
@@ -162,7 +162,9 @@ namespace Monitorian.Core
 		private int _scanCount = 0;
 		private int _updateCount = 0;
 
-		private async Task ScanAsync()
+		private Task ScanAsync() => ScanAsync(TimeSpan.Zero);
+
+		private async Task ScanAsync(TimeSpan interval)
 		{
 			var isEntered = false;
 			try
@@ -171,6 +173,8 @@ namespace Monitorian.Core
 				if (isEntered)
 				{
 					ScanningChanged?.Invoke(this, true);
+
+					var intervalTask = (interval > TimeSpan.Zero) ? Task.Delay(interval) : Task.CompletedTask;
 
 					await Task.Run(async () =>
 					{
@@ -249,6 +253,8 @@ namespace Monitorian.Core
 
 					foreach (var m in Monitors.Where(x => !x.IsControllable))
 						m.IsTarget = !controllableMonitorExists;
+
+					await intervalTask;
 				}
 			}
 			finally

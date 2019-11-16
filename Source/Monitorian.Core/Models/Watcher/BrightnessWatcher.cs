@@ -10,7 +10,7 @@ namespace Monitorian.Core.Models.Watcher
 	internal class BrightnessWatcher : IDisposable
 	{
 		private readonly ManagementEventWatcher _watcher;
-		private Action<string, int> _onChanged;
+		private Action<string, int> _onBrightnessChanged;
 
 		public BrightnessWatcher()
 		{
@@ -20,9 +20,9 @@ namespace Monitorian.Core.Models.Watcher
 			_watcher = new ManagementEventWatcher(scope, query, option);
 		}
 
-		public void Subscribe(Action<string, int> onChanged)
+		public void Subscribe(Action<string, int> onBrightnessChanged)
 		{
-			this._onChanged = onChanged ?? throw new ArgumentNullException(nameof(onChanged));
+			this._onBrightnessChanged = onBrightnessChanged ?? throw new ArgumentNullException(nameof(onBrightnessChanged));
 			_watcher.EventArrived += OnEventArrived;
 			_watcher.Start();
 		}
@@ -33,7 +33,7 @@ namespace Monitorian.Core.Models.Watcher
 			var instanceName = (string)newEvent["InstanceName"];
 			var brightness = (byte)newEvent["Brightness"];
 
-			_onChanged?.Invoke(instanceName, brightness);
+			_onBrightnessChanged?.Invoke(instanceName, brightness);
 		}
 
 		#region IDisposable

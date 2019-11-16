@@ -5,6 +5,9 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Win32;
+
+using Monitorian.Core.Models.Watcher;
 
 namespace Monitorian.Core.Models.Monitor
 {
@@ -23,39 +26,39 @@ namespace Monitorian.Core.Models.Monitor
 		[DllImport("PowrProf.dll")]
 		private static extern uint PowerReadACValueIndex(
 			IntPtr RootPowerKey, // Always null
-			[MarshalAs(UnmanagedType.LPStruct)] Guid SchemeGuid,
-			[MarshalAs(UnmanagedType.LPStruct)] Guid SubGroupOfPowerSettingsGuid,
-			[MarshalAs(UnmanagedType.LPStruct)] Guid PowerSettingGuid,
+			[MarshalAs(UnmanagedType.LPStruct), In] Guid SchemeGuid,
+			[MarshalAs(UnmanagedType.LPStruct), In] Guid SubGroupOfPowerSettingsGuid,
+			[MarshalAs(UnmanagedType.LPStruct), In] Guid PowerSettingGuid,
 			out uint AcValueIndex);
 
 		[DllImport("PowrProf.dll")]
 		private static extern uint PowerReadDCValueIndex(
 			IntPtr RootPowerKey, // Always null
-			[MarshalAs(UnmanagedType.LPStruct)] Guid SchemeGuid,
-			[MarshalAs(UnmanagedType.LPStruct)] Guid SubGroupOfPowerSettingsGuid,
-			[MarshalAs(UnmanagedType.LPStruct)] Guid PowerSettingGuid,
+			[MarshalAs(UnmanagedType.LPStruct), In] Guid SchemeGuid,
+			[MarshalAs(UnmanagedType.LPStruct), In] Guid SubGroupOfPowerSettingsGuid,
+			[MarshalAs(UnmanagedType.LPStruct), In] Guid PowerSettingGuid,
 			out uint DcValueIndex);
 
 		[DllImport("PowrProf.dll")]
 		private static extern uint PowerWriteACValueIndex(
 			IntPtr RootPowerKey, // Always null
-			[MarshalAs(UnmanagedType.LPStruct)] Guid SchemeGuid,
-			[MarshalAs(UnmanagedType.LPStruct)] Guid SubGroupOfPowerSettingsGuid,
-			[MarshalAs(UnmanagedType.LPStruct)] Guid PowerSettingGuid,
+			[MarshalAs(UnmanagedType.LPStruct), In] Guid SchemeGuid,
+			[MarshalAs(UnmanagedType.LPStruct), In] Guid SubGroupOfPowerSettingsGuid,
+			[MarshalAs(UnmanagedType.LPStruct), In] Guid PowerSettingGuid,
 			uint AcValueIndex);
 
 		[DllImport("PowrProf.dll")]
 		private static extern uint PowerWriteDCValueIndex(
 			IntPtr RootPowerKey, // Always null
-			[MarshalAs(UnmanagedType.LPStruct)] Guid SchemeGuid,
-			[MarshalAs(UnmanagedType.LPStruct)] Guid SubGroupOfPowerSettingsGuid,
-			[MarshalAs(UnmanagedType.LPStruct)] Guid PowerSettingGuid,
+			[MarshalAs(UnmanagedType.LPStruct), In] Guid SchemeGuid,
+			[MarshalAs(UnmanagedType.LPStruct), In] Guid SubGroupOfPowerSettingsGuid,
+			[MarshalAs(UnmanagedType.LPStruct), In] Guid PowerSettingGuid,
 			uint DcValueIndex);
 
 		[DllImport("PowrProf.dll")]
 		private static extern uint PowerSetActiveScheme(
 			IntPtr UserRootPowerKey, // Always null
-			[MarshalAs(UnmanagedType.LPStruct)] Guid SchemeGuid);
+			[MarshalAs(UnmanagedType.LPStruct), In] Guid SchemeGuid);
 
 		[DllImport("Kernel32.dll", SetLastError = true)]
 		[return: MarshalAs(UnmanagedType.Bool)]
@@ -78,9 +81,12 @@ namespace Monitorian.Core.Models.Monitor
 		#endregion
 
 		private static readonly Guid SUB_VIDEO = new Guid("7516b95f-f776-4464-8c53-06167f40cc99");
-		private static readonly Guid ADAPTBRIGHT = new Guid("fbd9aa66-9553-4097-ba44-ed6e9d65eab8");
 		private static readonly Guid VIDEO_BRIGHTNESS = new Guid("aded5e82-b909-4619-9949-f5d71dac0bcb");
 		private static readonly Guid VIDEO_DIM_BRIGHTNESS = new Guid("f1fbfde2-a960-4165-9f88-50667911ce96");
+
+		// Power setting GUIDs derived from winnt.h
+		private static readonly Guid GUID_ACDC_POWER_SOURCE = new Guid("5d3e9a59-e9d5-4b00-a6bd-ff34ff516548");
+		private static readonly Guid GUID_VIDEO_ADAPTIVE_DISPLAY_BRIGHTNESS = new Guid("fbd9aa66-9553-4097-ba44-ed6e9d65eab8");
 
 		public static Guid GetActiveScheme()
 		{
@@ -95,6 +101,61 @@ namespace Monitorian.Core.Models.Monitor
 		}
 
 		#region Adaptive Brightness
+
+		public static bool IsAdaptiveBrightnessEnabled
+		{
+			get => _isAdaptiveBrightnessEnabled ??= CanAdaptiveBrightnessEnabled && CheckAdaptiveBrightnessEnabled();
+			private set => _isAdaptiveBrightnessEnabled = value;
+		}
+		public static bool? _isAdaptiveBrightnessEnabled;
+
+		public static (IReadOnlyCollection<Guid>, Action<PowerSettingChangedEventArgs>) GetOnPowerSettingChanged()
+		{
+			if (!CanAdaptiveBrightnessEnabled)
+				return (null, null);
+
+			var powerSettingGuids = new[]
+			{
+				GUID_ACDC_POWER_SOURCE,
+				GUID_VIDEO_ADAPTIVE_DISPLAY_BRIGHTNESS
+			};
+			return (powerSettingGuids, (e) => IsAdaptiveBrightnessEnabled = CheckAdaptiveBrightnessEnabled(e));
+		}
+
+		private static bool CheckAdaptiveBrightnessEnabled(PowerSettingChangedEventArgs e = null)
+		{
+			if (e?.Guid == GUID_VIDEO_ADAPTIVE_DISPLAY_BRIGHTNESS)
+			{
+				// 0: Off
+				// 1: On
+				return (e.Data == 1);
+			}
+			return (IsActiveSchemeAdaptiveBrightnessEnabled() == true);
+		}
+
+		private static bool CanAdaptiveBrightnessEnabled => _canAdaptiveBrightnessEnabled ??= LightSensor.AmbientLightSensorExists && IsSettingAdaptiveBrightnessAdded();
+		private static bool? _canAdaptiveBrightnessEnabled;
+
+		private static bool IsSettingAdaptiveBrightnessAdded()
+		{
+			var name = $@"SYSTEM\CurrentControlSet\Control\Power\PowerSettings\{SUB_VIDEO}\{GUID_VIDEO_ADAPTIVE_DISPLAY_BRIGHTNESS}"; // HKLM
+
+			try
+			{
+				using (var key = Registry.LocalMachine.OpenSubKey(name))
+				{
+					// 1: Remove
+					// 2: Add
+					return ((int)key.GetValue("Attributes") == 2);
+				}
+			}
+			catch (Exception ex)
+			{
+				Debug.WriteLine("Failed to check if adaptive brightness setting is added" + Environment.NewLine
+					+ ex);
+				return false;
+			}
+		}
 
 		public static bool? IsActiveSchemeAdaptiveBrightnessEnabled()
 		{
@@ -111,7 +172,7 @@ namespace Monitorian.Core.Models.Monitor
 					IntPtr.Zero,
 					schemeGuid,
 					SUB_VIDEO,
-					ADAPTBRIGHT,
+					GUID_VIDEO_ADAPTIVE_DISPLAY_BRIGHTNESS,
 					out valueIndex) != ERROR_SUCCESS)
 				{
 					Debug.WriteLine("Failed to read AC Adaptive Brightness.");
@@ -124,7 +185,7 @@ namespace Monitorian.Core.Models.Monitor
 					IntPtr.Zero,
 					schemeGuid,
 					SUB_VIDEO,
-					ADAPTBRIGHT,
+					GUID_VIDEO_ADAPTIVE_DISPLAY_BRIGHTNESS,
 					out valueIndex) != ERROR_SUCCESS)
 				{
 					Debug.WriteLine("Failed to read DC Adaptive Brightness.");
@@ -152,7 +213,7 @@ namespace Monitorian.Core.Models.Monitor
 					IntPtr.Zero,
 					schemeGuid,
 					SUB_VIDEO,
-					ADAPTBRIGHT,
+					GUID_VIDEO_ADAPTIVE_DISPLAY_BRIGHTNESS,
 					valueIndex) != ERROR_SUCCESS)
 				{
 					Debug.WriteLine("Failed to write AC Adaptive Brightness.");
@@ -165,7 +226,7 @@ namespace Monitorian.Core.Models.Monitor
 					IntPtr.Zero,
 					schemeGuid,
 					SUB_VIDEO,
-					ADAPTBRIGHT,
+					GUID_VIDEO_ADAPTIVE_DISPLAY_BRIGHTNESS,
 					valueIndex) != ERROR_SUCCESS)
 				{
 					Debug.WriteLine("Failed to write DC Adaptive Brightness.");

@@ -33,6 +33,8 @@ namespace Monitorian.Core.Models.Watcher
 
 		protected void TimerStart()
 		{
+			_timer.Stop();
+
 			_count = 0;
 			_timer.Interval = _intervals[_count];
 			_timer.Start();

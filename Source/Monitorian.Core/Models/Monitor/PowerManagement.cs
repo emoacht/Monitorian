@@ -104,13 +104,16 @@ namespace Monitorian.Core.Models.Monitor
 
 		public static bool IsAdaptiveBrightnessEnabled
 		{
-			get => _isAdaptiveBrightnessEnabled ??= CheckAdaptiveBrightnessEnabled();
+			get => _isAdaptiveBrightnessEnabled ??= CanAdaptiveBrightnessEnabled && CheckAdaptiveBrightnessEnabled();
 			private set => _isAdaptiveBrightnessEnabled = value;
 		}
 		public static bool? _isAdaptiveBrightnessEnabled;
 
-		public static (Guid[], Action<PowerSettingChangedEventArgs>) GetOnPowerSettingChanged()
+		public static (IReadOnlyCollection<Guid>, Action<PowerSettingChangedEventArgs>) GetOnPowerSettingChanged()
 		{
+			if (!CanAdaptiveBrightnessEnabled)
+				return (null, null);
+
 			var powerSettingGuids = new[]
 			{
 				GUID_ACDC_POWER_SOURCE,
@@ -121,20 +124,19 @@ namespace Monitorian.Core.Models.Monitor
 
 		private static bool CheckAdaptiveBrightnessEnabled(PowerSettingChangedEventArgs e = null)
 		{
-			if (!LightSensor.AmbientLightSensorExists)
-				return false;
-
 			if (e?.Guid == GUID_VIDEO_ADAPTIVE_DISPLAY_BRIGHTNESS)
 			{
 				// 0: Off
 				// 1: On
 				return (e.Data == 1);
 			}
-
 			return (IsActiveSchemeAdaptiveBrightnessEnabled() == true);
 		}
 
-		private static bool IsAdaptiveBrightnessSettingAdded()
+		private static bool CanAdaptiveBrightnessEnabled => _canAdaptiveBrightnessEnabled ??= LightSensor.AmbientLightSensorExists && IsSettingAdaptiveBrightnessAdded();
+		private static bool? _canAdaptiveBrightnessEnabled;
+
+		private static bool IsSettingAdaptiveBrightnessAdded()
 		{
 			var name = $@"SYSTEM\CurrentControlSet\Control\Power\PowerSettings\{SUB_VIDEO}\{GUID_VIDEO_ADAPTIVE_DISPLAY_BRIGHTNESS}"; // HKLM
 

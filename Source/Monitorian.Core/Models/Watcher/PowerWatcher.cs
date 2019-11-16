@@ -43,9 +43,12 @@ namespace Monitorian.Core.Models.Watcher
 			SystemEvents.PowerModeChanged += OnPowerModeChanged;
 		}
 
-		public void Subscribe(Action onPowerStatusChanged, (Guid[] guids, Action<PowerSettingChangedEventArgs> action) onPowerSettingChanged)
+		public void Subscribe(Action onPowerStatusChanged, (IReadOnlyCollection<Guid> guids, Action<PowerSettingChangedEventArgs> action) onPowerSettingChanged)
 		{
 			Subscribe(onPowerStatusChanged);
+
+			if (onPowerSettingChanged.action is null)
+				return;
 
 			this._onPowerSettingChanged = onPowerSettingChanged.action;
 			_complement = new SystemEventsComplement();

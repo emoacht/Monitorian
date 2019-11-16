@@ -42,8 +42,6 @@ namespace Monitorian.Core.Models.Watcher
 
 		#endregion
 
-		#region Type
-
 		private class EventWindow : NativeWindow
 		{
 			private readonly Action<PowerSettingChangedEventArgs> _action;
@@ -61,7 +59,7 @@ namespace Monitorian.Core.Models.Watcher
 						if (m.WParam.ToInt32() == PBT_POWERSETTINGCHANGE)
 						{
 							var data = Marshal.PtrToStructure<POWERBROADCAST_SETTING>(m.LParam);
-							var buffer = (data.DataLength == 4) ? data.Data.ToInt32() : 0;
+							var buffer = (data.DataLength == 4 /* DWORD */) ? data.Data.ToInt32() : 0;
 							_action.Invoke(new PowerSettingChangedEventArgs(data.PowerSetting, buffer));
 						}
 						break;
@@ -70,24 +68,17 @@ namespace Monitorian.Core.Models.Watcher
 			}
 		}
 
-		#endregion
-
 		public event EventHandler<PowerSettingChangedEventArgs> PowerSettingChanged;
 
 		private List<IntPtr> _registrationHandles;
 		private EventWindow _eventWindow;
 
-		public bool RegisterPowerSettingEvent(IEnumerable<Guid> powerSettingGuids)
+		public bool RegisterPowerSettingEvent(IReadOnlyCollection<Guid> powerSettingGuids)
 		{
-			var systemEventsField = typeof(SystemEvents).GetField("systemEvents", BindingFlags.Static | BindingFlags.NonPublic);
-			var windowHandleField = typeof(SystemEvents).GetField("windowHandle", BindingFlags.Instance | BindingFlags.NonPublic);
-			var ensureSystemEventsMethod = typeof(SystemEvents).GetMethod("EnsureSystemEvents", BindingFlags.Static | BindingFlags.NonPublic);
-
-			if ((systemEventsField is null) || (windowHandleField is null) || (ensureSystemEventsMethod is null))
+			if (!(powerSettingGuids?.Any() == true))
 				return false;
 
-			var instance = systemEventsField.GetValue(null);
-			if (!(windowHandleField.GetValue(instance) is IntPtr windowHandle))
+			if (!TryGetSystemEventsWindowHandle(out IntPtr windowHandle))
 				return false;
 
 			_registrationHandles ??= new List<IntPtr>();
@@ -102,13 +93,45 @@ namespace Monitorian.Core.Models.Watcher
 					_registrationHandles.Add(handle);
 			}
 
-			ensureSystemEventsMethod.Invoke(null, new object[] { true, true });
+			TryEnsureSystemEvents();
 
 			if (_eventWindow is null)
 			{
 				_eventWindow = new EventWindow((e) => PowerSettingChanged?.Invoke(this, e));
 				_eventWindow.AssignHandle(windowHandle);
 			}
+			return true;
+		}
+
+		private static bool TryGetSystemEventsWindowHandle(out IntPtr windowHandle)
+		{
+			var systemEventsField = typeof(SystemEvents).GetField("systemEvents", BindingFlags.Static | BindingFlags.NonPublic);
+			var instance = systemEventsField?.GetValue(null);
+			if (instance is null)
+			{
+				windowHandle = default;
+				return false;
+			}
+
+			var windowHandleField = typeof(SystemEvents).GetField("windowHandle", BindingFlags.Instance | BindingFlags.NonPublic);
+			var handle = windowHandleField?.GetValue(instance);
+			if (handle is null)
+			{
+				windowHandle = default;
+				return false;
+			}
+
+			windowHandle = (IntPtr)handle;
+			return true;
+		}
+
+		private static bool TryEnsureSystemEvents()
+		{
+			var ensureSystemEventsMethod = typeof(SystemEvents).GetMethod("EnsureSystemEvents", BindingFlags.Static | BindingFlags.NonPublic);
+			if (ensureSystemEventsMethod is null)
+				return false;
+
+			ensureSystemEventsMethod.Invoke(null, new object[] { true, true });
 			return true;
 		}
 

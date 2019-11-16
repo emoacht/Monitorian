@@ -18,7 +18,7 @@ namespace Monitorian.Core.Models.Monitor
 
 		[DllImport("Setupapi.dll", SetLastError = true)]
 		private static extern IntPtr SetupDiGetClassDevs(
-			[MarshalAs(UnmanagedType.LPStruct)] Guid ClassGuid,
+			[MarshalAs(UnmanagedType.LPStruct), In] Guid ClassGuid,
 			IntPtr Enumerator, // Null
 			IntPtr hwndParent, // Null
 			DIGCF Flags);
@@ -40,7 +40,7 @@ namespace Monitorian.Core.Models.Monitor
 		private static extern bool SetupDiEnumDeviceInterfaces(
 			IntPtr DeviceInfoSet,
 			IntPtr DeviceInfoData,
-			[MarshalAs(UnmanagedType.LPStruct)] Guid InterfaceClassGuid,
+			[MarshalAs(UnmanagedType.LPStruct), In] Guid InterfaceClassGuid,
 			uint MemberIndex,
 			ref SP_DEVICE_INTERFACE_DATA DeviceInterfaceData);
 
@@ -319,7 +319,7 @@ namespace Monitorian.Core.Models.Monitor
 				out _,
 				buffer,
 				bufferSize,
-				out requiredSize))
+				out _))
 			{
 				return Array.Empty<byte>();
 			}

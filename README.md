@@ -23,7 +23,7 @@ The user can change the brightness of monitors, including external ones, either 
 [Monitorian](https://www.microsoft.com/store/apps/9nw33j738bl0) (Microsoft Store)
 
  * Other:<br>
-:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/2.1.0-Installer/MonitorianInstaller210.zip) | :floppy_disk: [Executables](https://github.com/emoacht/Monitorian/releases/download/2.1.0-Executables/Monitorian210.zip)
+:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/2.2.0-Installer/MonitorianInstaller220.zip) | :floppy_disk: [Executables](https://github.com/emoacht/Monitorian/releases/download/2.2.0-Executables/Monitorian220.zip)
 
 ## Install/Uninstall
 
@@ -79,6 +79,11 @@ An alternative language can be shown by adding a Resources (.resx) file which st
 `Resources.ja-JP.resx` (for Japanese) would be a good example for this purpose.
 
 ## History
+
+Ver 2.2.0 2019-11-18
+
+- Change setting to show adjusted brightness by ambient light enabled as default
+- Fix bugs
 
 Ver 2.1.0 2019-11-6
 

@@ -193,7 +193,7 @@ namespace Monitorian.Core
 								{
 									oldMonitorExists = true;
 									oldMonitorIndices.Remove(index);
-									item.Dispose();
+									oldMonitor.Replace(item);
 									break;
 								}
 							}

@@ -11,7 +11,7 @@ namespace Monitorian.Core.ViewModels
 	public class MonitorViewModel : ViewModelBase
 	{
 		private readonly AppControllerCore _controller;
-		private readonly IMonitor _monitor;
+		private IMonitor _monitor;
 
 		public MonitorViewModel(AppControllerCore controller, IMonitor monitor)
 		{
@@ -22,6 +22,18 @@ namespace Monitorian.Core.ViewModels
 		}
 
 		private readonly object _lock = new object();
+
+		internal void Replace(IMonitor monitor)
+		{
+			if (monitor is null)
+				return;
+
+			lock (_lock)
+			{
+				this._monitor.Dispose();
+				this._monitor = monitor;
+			}
+		}
 
 		public string DeviceInstanceId => _monitor.DeviceInstanceId;
 		public string Description => _monitor.Description;

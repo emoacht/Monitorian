@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 
+using Monitorian.Core.Collections;
 using Monitorian.Core.Common;
 using Monitorian.Core.Helper;
 

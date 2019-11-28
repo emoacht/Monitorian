@@ -11,7 +11,7 @@ namespace Monitorian.Core.ViewModels
 	public class MonitorViewModel : ViewModelBase
 	{
 		private readonly AppControllerCore _controller;
-		private readonly IMonitor _monitor;
+		private IMonitor _monitor;
 
 		public MonitorViewModel(AppControllerCore controller, IMonitor monitor)
 		{
@@ -19,6 +19,20 @@ namespace Monitorian.Core.ViewModels
 			this._monitor = monitor ?? throw new ArgumentNullException(nameof(monitor));
 
 			this._controller.TryLoadNameUnison(DeviceInstanceId, ref _name, ref _isUnison);
+		}
+
+		private readonly object _lock = new object();
+
+		internal void Replace(IMonitor monitor)
+		{
+			if (monitor is null)
+				return;
+
+			lock (_lock)
+			{
+				this._monitor.Dispose();
+				this._monitor = monitor;
+			}
 		}
 
 		public string DeviceInstanceId => _monitor.DeviceInstanceId;
@@ -77,16 +91,23 @@ namespace Monitorian.Core.ViewModels
 
 		public bool UpdateBrightness(int brightness = -1)
 		{
-			if (_monitor.UpdateBrightness(brightness))
+			var isSuccess = false;
+			lock (_lock)
+			{
+				isSuccess = _monitor.UpdateBrightness(brightness);
+			}
+			if (isSuccess)
 			{
 				RaisePropertyChanged(nameof(BrightnessSystemChanged)); // This must be prior to Brightness.
 				RaisePropertyChanged(nameof(Brightness));
 				RaisePropertyChanged(nameof(BrightnessSystemAdjusted));
 				OnSuccess();
-				return true;
 			}
-			OnFailure();
-			return false;
+			else
+			{
+				OnFailure();
+			}
+			return isSuccess;
 		}
 
 		public void IncrementBrightness()
@@ -117,14 +138,21 @@ namespace Monitorian.Core.ViewModels
 
 		private bool SetBrightness(int brightness)
 		{
-			if (_monitor.SetBrightness(brightness))
+			var isSuccess = false;
+			lock (_lock)
+			{
+				isSuccess = _monitor.SetBrightness(brightness);
+			}
+			if (isSuccess)
 			{
 				RaisePropertyChanged(nameof(Brightness));
 				OnSuccess();
-				return true;
 			}
-			OnFailure();
-			return false;
+			else
+			{
+				OnFailure();
+			}
+			return isSuccess;
 		}
 
 		#endregion
@@ -196,17 +224,20 @@ namespace Monitorian.Core.ViewModels
 
 		protected override void Dispose(bool disposing)
 		{
-			if (_isDisposed)
-				return;
-
-			if (disposing)
+			lock (_lock)
 			{
-				_monitor.Dispose();
+				if (_isDisposed)
+					return;
+
+				if (disposing)
+				{
+					_monitor.Dispose();
+				}
+
+				_isDisposed = true;
+
+				base.Dispose(disposing);
 			}
-
-			_isDisposed = true;
-
-			base.Dispose(disposing);
 		}
 
 		#endregion

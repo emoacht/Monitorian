@@ -55,9 +55,9 @@
   <ItemGroup>
     <Compile Include="AppControllerCore.cs" />
     <Compile Include="AppKeeper.cs" />
+    <Compile Include="Collections\ObservableDictionary.cs" />
+    <Compile Include="Collections\ObservableKeyedList.cs" />
     <Compile Include="Common\BindableBase.cs" />
-    <Compile Include="Common\ObservableDictionary.cs" />
-    <Compile Include="Common\ObservableKeyedList.cs" />
     <Compile Include="Helper\ArraySearch.cs" />
     <Compile Include="Helper\EnumerableExtension.cs" />
     <Compile Include="Helper\ExceptionExtension.cs" />

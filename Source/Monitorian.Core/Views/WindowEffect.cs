@@ -343,15 +343,14 @@ namespace Monitorian.Core.Views
 			const string keyName = @"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize";
 			const string valueName = "EnableTransparency";
 
-			using (var key = Registry.CurrentUser.OpenSubKey(keyName))
+			using var key = Registry.CurrentUser.OpenSubKey(keyName);
+
+			return key?.GetValue(valueName) switch
 			{
-				return key?.GetValue(valueName) switch
-				{
-					0 => false, // Off
-					1 => true,  // On
-					_ => false
-				};
-			}
+				0 => false, // Off
+				1 => true,  // On
+				_ => false
+			};
 		}
 
 		private static bool IsColorizationOpaqueBlendOn()
@@ -359,15 +358,14 @@ namespace Monitorian.Core.Views
 			const string keyName = @"Software\Microsoft\Windows\DWM";
 			const string valueName = "ColorizationOpaqueBlend";
 
-			using (var key = Registry.CurrentUser.OpenSubKey(keyName))
+			using var key = Registry.CurrentUser.OpenSubKey(keyName);
+
+			return key?.GetValue(valueName) switch
 			{
-				return key?.GetValue(valueName) switch
-				{
-					0 => true,  // On
-					1 => false, // Off
-					_ => false
-				};
-			}
+				0 => true,  // On
+				1 => false, // Off
+				_ => false
+			};
 		}
 
 		#endregion

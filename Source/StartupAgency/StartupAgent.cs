@@ -104,7 +104,7 @@ namespace StartupAgency
 		/// <summary>
 		/// Options
 		/// </summary>
-		public static IReadOnlyCollection<string> Options => new string[] { HideOption };
+		public static IReadOnlyCollection<string> Options => new[] { HideOption };
 
 		/// <summary>
 		/// Whether caller instance is expected to show its window

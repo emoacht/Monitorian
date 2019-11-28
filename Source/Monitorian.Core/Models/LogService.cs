@@ -59,7 +59,6 @@ namespace Monitorian.Core.Models
 		/// <summary>
 		/// Records exception log to AppData and Desktop.
 		/// </summary>
-		/// <param name="fileName">File name</param>
 		/// <param name="exception">Exception</param>
 		/// <remarks>A log file of previous dates will be overridden.</remarks>
 		public static void RecordException(Exception exception)

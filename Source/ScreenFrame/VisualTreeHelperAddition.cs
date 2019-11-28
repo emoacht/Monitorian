@@ -101,6 +101,8 @@ namespace ScreenFrame
 
 		#endregion
 
+		#region DPI
+
 		private const double DefaultPixelsPerInch = 96D; // Default pixels per Inch
 
 		/// <summary>
@@ -228,6 +230,10 @@ namespace ScreenFrame
 			return Marshal.PtrToStructure<RECT>(lParam);
 		}
 
+		#endregion
+
+		#region VisualTree
+
 		/// <summary>
 		/// Attempts to get the first ancestor visual of a specified visual.
 		/// </summary>
@@ -285,5 +291,7 @@ namespace ScreenFrame
 			descendant = default;
 			return false;
 		}
+
+		#endregion
 	}
 }

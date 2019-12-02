@@ -18,17 +18,14 @@
 		<sys:Double x:Key="BracketHeight">8</sys:Double>
 
 		<!-- Slider -->
-		<Color x:Key="Slider.Filled.Static.BackgroundColor">#FF2982CC</Color>
-		<Color x:Key="Slider.Filled.MouseOver.BackgroundColor">#FF1A5280</Color>
-		<Color x:Key="Slider.Filled.Pressed.BackgroundColor">#FF5CA4DE</Color>
-		<Color x:Key="Slider.Disabled.BackgroundColor">#FFF0F0F0</Color>
-		<Color x:Key="Slider.Vacant.BackgroundColor">#FF999999</Color>
+		<Color x:Key="Slider.Background.Filled.StaticColor">#FF2982CC</Color>
+		<Color x:Key="Slider.Background.Filled.MouseOverColor">#FF1A5280</Color>
+		<Color x:Key="Slider.Background.Filled.PressedColor">#FF5CA4DE</Color>
+		<Color x:Key="Slider.Background.DisabledColor">#FFF0F0F0</Color>
+		<Color x:Key="Slider.Background.VacantColor">#FF999999</Color>
 
-		<SolidColorBrush x:Key="Slider.Filled.Static.Background" Color="{StaticResource Slider.Filled.Static.BackgroundColor}"/>
-		<SolidColorBrush x:Key="Slider.Filled.MouseOver.Background" Color="{StaticResource Slider.Filled.MouseOver.BackgroundColor}"/>
-		<SolidColorBrush x:Key="Slider.Filled.Pressed.Background" Color="{StaticResource Slider.Filled.Pressed.BackgroundColor}"/>
-		<SolidColorBrush x:Key="Slider.Disabled.Background" Color="{StaticResource Slider.Disabled.BackgroundColor}"/>
-		<SolidColorBrush x:Key="Slider.Vacant.Background" Color="{StaticResource Slider.Vacant.BackgroundColor}"/>
+		<SolidColorBrush x:Key="Slider.Background.Filled.Static" Color="{StaticResource Slider.Background.Filled.StaticColor}"/>
+		<SolidColorBrush x:Key="Slider.Background.Vacant" Color="{StaticResource Slider.Background.VacantColor}"/>
 
 		<Style x:Key="SliderHorizontal" TargetType="{x:Type controls:CompoundSlider}">
 			<Setter Property="Stylus.IsPressAndHoldEnabled" Value="False"/>
@@ -82,7 +79,7 @@
 														   Width="{TemplateBinding Width}" Height="{TemplateBinding Height}"
 														   Margin="2">
 													<Rectangle.Fill>
-														<SolidColorBrush Color="{StaticResource Slider.Filled.Static.BackgroundColor}"/>
+														<SolidColorBrush Color="{StaticResource Slider.Background.Filled.StaticColor}"/>
 													</Rectangle.Fill>
 												</Rectangle>
 
@@ -94,7 +91,7 @@
 																<ColorAnimation	Storyboard.TargetName="grip"
 																				Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)"
 																				Duration="0:0:0.1"
-																				To="{StaticResource Slider.Filled.MouseOver.BackgroundColor}"/>
+																				To="{StaticResource Slider.Background.Filled.MouseOverColor}"/>
 															</Storyboard>
 														</VisualState>
 														<VisualState x:Name="Pressed">
@@ -102,7 +99,7 @@
 																<ColorAnimation	Storyboard.TargetName="grip"
 																				Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)"
 																				Duration="0:0:0.1"
-																				To="{StaticResource Slider.Filled.Pressed.BackgroundColor}"/>
+																				To="{StaticResource Slider.Background.Filled.PressedColor}"/>
 															</Storyboard>
 														</VisualState>
 														<VisualState x:Name="Disabled">
@@ -110,7 +107,7 @@
 																<ColorAnimation Storyboard.TargetName="grip"
 																				Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)"
 																				Duration="0:0:0.1"
-																				To="{StaticResource Slider.Disabled.BackgroundColor}"/>
+																				To="{StaticResource Slider.Background.DisabledColor}"/>
 															</Storyboard>
 														</VisualState>
 													</VisualStateGroup>
@@ -137,15 +134,15 @@
 											   x:Name="PART_ShadowThumb"
 											   Width="8"
 											   controls:FrameworkElementMargin.Vertical="{DynamicResource BracketHeight}"
-											   Fill="{StaticResource Slider.Vacant.Background}"
+											   Fill="{StaticResource Slider.Background.Vacant}"
 											   IsHitTestVisible="False"/>
 								</Grid>
 
 								<Rectangle Height="3" Margin="5,0" VerticalAlignment="Center"
-										   Fill="{StaticResource Slider.Vacant.Background}"/>
+										   Fill="{StaticResource Slider.Background.Vacant}"/>
 								<Rectangle Width="{Binding ElementName=TrackLeft, Path=ActualWidth}"
 										   Height="3" Margin="5,0" HorizontalAlignment="Left" VerticalAlignment="Center"
-										   Fill="{StaticResource Slider.Filled.Static.Background}"/>
+										   Fill="{StaticResource Slider.Background.Filled.Static}"/>
 
 								<Track x:Name="PART_Track">
 									<Track.DecreaseRepeatButton>

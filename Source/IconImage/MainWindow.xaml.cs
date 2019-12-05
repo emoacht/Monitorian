@@ -39,6 +39,8 @@ namespace IconImage
 			InitializeComponent();
 		}
 
+		private void Save(object sender, RoutedEventArgs e) => SaveImage();
+
 		private string _fileName = "Icon.png";
 		private string _folderPath;
 

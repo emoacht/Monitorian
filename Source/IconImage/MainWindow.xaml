@@ -1,7 +1,6 @@
 ﻿<Window x:Class="IconImage.MainWindow"
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-		xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
 		xmlns:local="clr-namespace:IconImage"
 		x:Name="WindowRoot"
 		Title="IconImage"
@@ -57,13 +56,8 @@
 			<!-- Save -->
 			<Grid Margin="8,0,8,8">
 				<Button Height="24"
-						Content="Save">
-					<i:Interaction.Triggers>
-						<i:EventTrigger EventName="Click">
-							<i:CallMethodAction MethodName="SaveImage" TargetObject="{Binding ElementName=WindowRoot}"/>
-						</i:EventTrigger>
-					</i:Interaction.Triggers>
-				</Button>
+						Content="Save"
+						Click="Save"/>
 			</Grid>
 		</StackPanel>
 	</Grid>

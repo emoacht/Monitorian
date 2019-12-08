@@ -46,8 +46,9 @@ namespace Monitorian.Core.Models.Watcher
 		{
 			private readonly Action<PowerSettingChangedEventArgs> _action;
 
-			public EventWindow(Action<PowerSettingChangedEventArgs> action)
+			public EventWindow(IntPtr handle, Action<PowerSettingChangedEventArgs> action)
 			{
+				this.AssignHandle(handle);
 				this._action = action ?? throw new ArgumentNullException(nameof(action));
 			}
 
@@ -73,17 +74,17 @@ namespace Monitorian.Core.Models.Watcher
 		private List<IntPtr> _registrationHandles;
 		private EventWindow _eventWindow;
 
-		public bool RegisterPowerSettingEvent(IReadOnlyCollection<Guid> powerSettingGuids)
+		public void RegisterPowerSettingEvent(IReadOnlyCollection<Guid> settingGuids)
 		{
-			if (!(powerSettingGuids?.Any() == true))
-				return false;
+			if (!(settingGuids?.Any() == true))
+				return;
 
 			if (!TryGetSystemEventsWindowHandle(out IntPtr windowHandle))
-				return false;
+				return;
 
 			_registrationHandles ??= new List<IntPtr>();
 
-			foreach (var guid in powerSettingGuids)
+			foreach (var guid in settingGuids)
 			{
 				var handle = RegisterPowerSettingNotification(
 					windowHandle,
@@ -95,18 +96,13 @@ namespace Monitorian.Core.Models.Watcher
 
 			TryEnsureSystemEvents();
 
-			if (_eventWindow is null)
-			{
-				_eventWindow = new EventWindow((e) => PowerSettingChanged?.Invoke(this, e));
-				_eventWindow.AssignHandle(windowHandle);
-			}
-			return true;
+			_eventWindow ??= new EventWindow(windowHandle, (e) => PowerSettingChanged?.Invoke(this, e));
 		}
 
 		private static bool TryGetSystemEventsWindowHandle(out IntPtr windowHandle)
 		{
 			var systemEventsField = typeof(SystemEvents).GetField("systemEvents", BindingFlags.Static | BindingFlags.NonPublic);
-			var instance = systemEventsField?.GetValue(null);
+			var instance = systemEventsField?.GetValue(null); // Static field
 			if (instance is null)
 			{
 				windowHandle = default;

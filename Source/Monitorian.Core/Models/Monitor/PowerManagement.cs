@@ -80,13 +80,14 @@ namespace Monitorian.Core.Models.Monitor
 
 		#endregion
 
-		private static readonly Guid SUB_VIDEO = new Guid("7516b95f-f776-4464-8c53-06167f40cc99");
-		private static readonly Guid VIDEO_BRIGHTNESS = new Guid("aded5e82-b909-4619-9949-f5d71dac0bcb");
-		private static readonly Guid VIDEO_DIM_BRIGHTNESS = new Guid("f1fbfde2-a960-4165-9f88-50667911ce96");
+		// Video settings derived from winnt.h
+		private static readonly Guid VIDEO_SUBGROUP = new Guid("7516b95f-f776-4464-8c53-06167f40cc99");
+		private static readonly Guid VIDEO_ADAPTIVE_DISPLAY_BRIGHTNESS = new Guid("fbd9aa66-9553-4097-ba44-ed6e9d65eab8");
+		private static readonly Guid DEVICE_POWER_POLICY_VIDEO_BRIGHTNESS = new Guid("aded5e82-b909-4619-9949-f5d71dac0bcb");
+		private static readonly Guid DEVICE_POWER_POLICY_VIDEO_DIM_BRIGHTNESS = new Guid("f1fbfde2-a960-4165-9f88-50667911ce96");
 
-		// Power setting GUIDs derived from winnt.h
-		private static readonly Guid GUID_ACDC_POWER_SOURCE = new Guid("5d3e9a59-e9d5-4b00-a6bd-ff34ff516548");
-		private static readonly Guid GUID_VIDEO_ADAPTIVE_DISPLAY_BRIGHTNESS = new Guid("fbd9aa66-9553-4097-ba44-ed6e9d65eab8");
+		// AC/DC power source derived from winnt.h
+		private static readonly Guid ACDC_POWER_SOURCE = new Guid("5d3e9a59-e9d5-4b00-a6bd-ff34ff516548");
 
 		public static Guid GetActiveScheme()
 		{
@@ -114,17 +115,17 @@ namespace Monitorian.Core.Models.Monitor
 			if (!CanAdaptiveBrightnessEnabled)
 				return (null, null);
 
-			var powerSettingGuids = new[]
+			var settingGuids = new[]
 			{
-				GUID_ACDC_POWER_SOURCE,
-				GUID_VIDEO_ADAPTIVE_DISPLAY_BRIGHTNESS
+				ACDC_POWER_SOURCE,
+				VIDEO_ADAPTIVE_DISPLAY_BRIGHTNESS
 			};
-			return (powerSettingGuids, (e) => IsAdaptiveBrightnessEnabled = CheckAdaptiveBrightnessEnabled(e));
+			return (settingGuids, (e) => IsAdaptiveBrightnessEnabled = CheckAdaptiveBrightnessEnabled(e));
 		}
 
 		private static bool CheckAdaptiveBrightnessEnabled(PowerSettingChangedEventArgs e = null)
 		{
-			if (e?.Guid == GUID_VIDEO_ADAPTIVE_DISPLAY_BRIGHTNESS)
+			if (e?.Guid == VIDEO_ADAPTIVE_DISPLAY_BRIGHTNESS)
 			{
 				// 0: Off
 				// 1: On
@@ -138,7 +139,7 @@ namespace Monitorian.Core.Models.Monitor
 
 		private static bool IsSettingAdaptiveBrightnessAdded()
 		{
-			var name = $@"SYSTEM\CurrentControlSet\Control\Power\PowerSettings\{SUB_VIDEO}\{GUID_VIDEO_ADAPTIVE_DISPLAY_BRIGHTNESS}"; // HKLM
+			var name = $@"SYSTEM\CurrentControlSet\Control\Power\PowerSettings\{VIDEO_SUBGROUP}\{VIDEO_ADAPTIVE_DISPLAY_BRIGHTNESS}"; // HKLM
 
 			try
 			{
@@ -164,15 +165,15 @@ namespace Monitorian.Core.Models.Monitor
 				return null;
 
 			var schemeGuid = GetActiveScheme();
-			uint valueIndex = 0;
+			uint valueIndex;
 
 			if (isOnline.Value)
 			{
 				if (PowerReadACValueIndex(
 					IntPtr.Zero,
 					schemeGuid,
-					SUB_VIDEO,
-					GUID_VIDEO_ADAPTIVE_DISPLAY_BRIGHTNESS,
+					VIDEO_SUBGROUP,
+					VIDEO_ADAPTIVE_DISPLAY_BRIGHTNESS,
 					out valueIndex) != ERROR_SUCCESS)
 				{
 					Debug.WriteLine("Failed to read AC Adaptive Brightness.");
@@ -184,8 +185,8 @@ namespace Monitorian.Core.Models.Monitor
 				if (PowerReadDCValueIndex(
 					IntPtr.Zero,
 					schemeGuid,
-					SUB_VIDEO,
-					GUID_VIDEO_ADAPTIVE_DISPLAY_BRIGHTNESS,
+					VIDEO_SUBGROUP,
+					VIDEO_ADAPTIVE_DISPLAY_BRIGHTNESS,
 					out valueIndex) != ERROR_SUCCESS)
 				{
 					Debug.WriteLine("Failed to read DC Adaptive Brightness.");
@@ -212,8 +213,8 @@ namespace Monitorian.Core.Models.Monitor
 				if (PowerWriteACValueIndex(
 					IntPtr.Zero,
 					schemeGuid,
-					SUB_VIDEO,
-					GUID_VIDEO_ADAPTIVE_DISPLAY_BRIGHTNESS,
+					VIDEO_SUBGROUP,
+					VIDEO_ADAPTIVE_DISPLAY_BRIGHTNESS,
 					valueIndex) != ERROR_SUCCESS)
 				{
 					Debug.WriteLine("Failed to write AC Adaptive Brightness.");
@@ -225,8 +226,8 @@ namespace Monitorian.Core.Models.Monitor
 				if (PowerWriteDCValueIndex(
 					IntPtr.Zero,
 					schemeGuid,
-					SUB_VIDEO,
-					GUID_VIDEO_ADAPTIVE_DISPLAY_BRIGHTNESS,
+					VIDEO_SUBGROUP,
+					VIDEO_ADAPTIVE_DISPLAY_BRIGHTNESS,
 					valueIndex) != ERROR_SUCCESS)
 				{
 					Debug.WriteLine("Failed to write DC Adaptive Brightness.");
@@ -262,8 +263,8 @@ namespace Monitorian.Core.Models.Monitor
 				if (PowerReadACValueIndex(
 					IntPtr.Zero,
 					schemeGuid,
-					SUB_VIDEO,
-					VIDEO_BRIGHTNESS,
+					VIDEO_SUBGROUP,
+					DEVICE_POWER_POLICY_VIDEO_BRIGHTNESS,
 					out valueIndex) != ERROR_SUCCESS)
 				{
 					Debug.WriteLine("Failed to read AC Brightness.");
@@ -275,8 +276,8 @@ namespace Monitorian.Core.Models.Monitor
 				if (PowerReadDCValueIndex(
 					IntPtr.Zero,
 					schemeGuid,
-					SUB_VIDEO,
-					VIDEO_BRIGHTNESS,
+					VIDEO_SUBGROUP,
+					DEVICE_POWER_POLICY_VIDEO_BRIGHTNESS,
 					out valueIndex) != ERROR_SUCCESS)
 				{
 					Debug.WriteLine("Failed to read DC Brightness.");
@@ -302,8 +303,8 @@ namespace Monitorian.Core.Models.Monitor
 				if (PowerWriteACValueIndex(
 					IntPtr.Zero,
 					schemeGuid,
-					SUB_VIDEO,
-					VIDEO_BRIGHTNESS,
+					VIDEO_SUBGROUP,
+					DEVICE_POWER_POLICY_VIDEO_BRIGHTNESS,
 					(uint)brightness) != ERROR_SUCCESS)
 				{
 					Debug.WriteLine("Failed to write AC Brightness.");
@@ -315,8 +316,8 @@ namespace Monitorian.Core.Models.Monitor
 				if (PowerWriteDCValueIndex(
 					IntPtr.Zero,
 					schemeGuid,
-					SUB_VIDEO,
-					VIDEO_BRIGHTNESS,
+					VIDEO_SUBGROUP,
+					DEVICE_POWER_POLICY_VIDEO_BRIGHTNESS,
 					(uint)brightness) != ERROR_SUCCESS)
 				{
 					Debug.WriteLine("Failed to write DC Brightness");

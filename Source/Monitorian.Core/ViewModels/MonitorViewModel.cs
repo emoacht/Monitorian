@@ -39,7 +39,7 @@ namespace Monitorian.Core.ViewModels
 		public string Description => _monitor.Description;
 		public byte DisplayIndex => _monitor.DisplayIndex;
 		public byte MonitorIndex => _monitor.MonitorIndex;
-		public bool IsAccessible => _monitor.IsAccessible;
+		public bool IsReachable => _monitor.IsReachable;
 
 		#region Name/Unison
 
@@ -159,14 +159,14 @@ namespace Monitorian.Core.ViewModels
 
 		#region Controllable
 
-		public bool IsControllable => IsAccessible && (_controllableCount > 0);
+		public bool IsControllable => IsReachable && (_controllableCount > 0);
 
 		public bool IsLikelyControllable => IsControllable || _isSuccessCalled;
 		private bool _isSuccessCalled;
 
 		// This count is for determining IsControllable property.
 		// To set this count, the following points need to be taken into account: 
-		// - The initial value of IsControllable property should be true (provided IsAccessible is
+		// - The initial value of IsControllable property should be true (provided IsReachable is
 		//   true) because a monitor is expected to be controllable. Therefore, the initial count
 		//   should be greater than 0.
 		// - The initial count is intended to give allowance for failures before the first success.

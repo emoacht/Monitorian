@@ -27,7 +27,7 @@ namespace Monitorian.Core.Models.Monitor
 				description: description,
 				displayIndex: displayIndex,
 				monitorIndex: monitorIndex,
-				isAccessible: true)
+				isReachable: true)
 		{
 			this._brightnessLevels = brightnessLevels ?? throw new ArgumentNullException(nameof(brightnessLevels));
 			this._isRemovable = isRemovable;

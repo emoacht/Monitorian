@@ -81,7 +81,7 @@ namespace Monitorian.Core.Models.Monitor
 			if (!(deviceItems?.Any() == true))
 				yield break;
 
-			// By DDC/CI
+			// Obtained by DDC/CI
 			foreach (var handleItem in DeviceContext.GetMonitorHandles())
 			{
 				foreach (var physicalItem in MonitorConfiguration.EnumeratePhysicalMonitors(handleItem.MonitorHandle))
@@ -115,7 +115,7 @@ namespace Monitorian.Core.Models.Monitor
 				}
 			}
 
-			// By WMI
+			// Obtained by WMI
 			var installedItems = DeviceInstallation.EnumerateInstalledMonitors().ToArray();
 
 			foreach (var desktopItem in MSMonitor.EnumerateDesktopMonitors())
@@ -147,10 +147,10 @@ namespace Monitorian.Core.Models.Monitor
 				}
 			}
 
-			// Rest
+			// Unreachable neither by DDC/CI nor by WMI
 			foreach (var deviceItem in deviceItems)
 			{
-				yield return new InaccessibleMonitorItem(
+				yield return new UnreachableMonitorItem(
 					deviceInstanceId: deviceItem.DeviceInstanceId,
 					description: deviceItem.AlternateDescription,
 					displayIndex: deviceItem.DisplayIndex,

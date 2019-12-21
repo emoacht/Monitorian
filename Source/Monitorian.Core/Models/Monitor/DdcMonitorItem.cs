@@ -26,7 +26,7 @@ namespace Monitorian.Core.Models.Monitor
 				description: description,
 				displayIndex: displayIndex,
 				monitorIndex: monitorIndex,
-				isAccessible: true)
+				isReachable: true)
 		{
 			this._handle = handle ?? throw new ArgumentNullException(nameof(handle));
 			this._useLowLevel = useLowLevel;

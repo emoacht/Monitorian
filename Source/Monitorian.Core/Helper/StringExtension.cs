@@ -59,5 +59,36 @@ namespace Monitorian.Core.Helper
 
 			return buffer.ToString();
 		}
+
+		public static int[] IndicesOf(this string source, string value, StringComparison comparisonType) =>
+			IndicesOf(source, value, int.MaxValue, comparisonType);
+
+		public static int[] IndicesOf(this string source, string value, int count, StringComparison comparisonType)
+		{
+			if (source is null)
+				throw new ArgumentNullException(nameof(source));
+			if (string.IsNullOrEmpty(value))
+				throw new ArgumentNullException(nameof(value));
+			if (count <= 0)
+				throw new ArgumentOutOfRangeException(nameof(count), count, "The count must be greater than 0.");
+
+			var indices = new List<int>();
+			int startIndex = 0;
+			int lastIndex = source.Length - value.Length;
+
+			while (startIndex <= lastIndex)
+			{
+				var foundIndex = source.IndexOf(value, startIndex, comparisonType);
+				if (foundIndex < 0)
+					break;
+
+				indices.Add(foundIndex);
+				if (indices.Count >= count)
+					break;
+
+				startIndex = foundIndex + value.Length;
+			}
+			return indices.ToArray();
+		}
 	}
 }

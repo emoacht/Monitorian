@@ -9,7 +9,7 @@ namespace Monitorian.Core.Models.Watcher
 {
 	internal class PowerWatcher : IDisposable
 	{
-		private Action _onPowerModeChanged;
+		private Action<PowerModeChangedEventArgs> _onPowerModeChanged;
 		private Action<PowerSettingChangedEventArgs> _onPowerSettingChanged;
 
 		private SystemEventsComplement _complement;
@@ -20,10 +20,17 @@ namespace Monitorian.Core.Models.Watcher
 
 			public PowerModeWatcher(PowerWatcher instance, params int[] intervals) : base(intervals) => this._instance = instance;
 
-			public new void TimerStart() => base.TimerStart();
+			private PowerModeChangedEventArgs _e;
+
+			public void TimerStart(PowerModeChangedEventArgs e)
+			{
+				this._e = e;
+				base.TimerStart();
+			}
+
 			public new void TimerStop() => base.TimerStop();
 
-			protected override void TimerTick() => _instance._onPowerModeChanged?.Invoke();
+			protected override void TimerTick() => _instance._onPowerModeChanged?.Invoke(_e);
 		}
 
 		private readonly PowerModeWatcher _resumeWatcher;
@@ -37,15 +44,15 @@ namespace Monitorian.Core.Models.Watcher
 			_statusWatcher = new PowerModeWatcher(this, 1, 4);
 		}
 
-		public void Subscribe(Action onPowerModeChanged)
+		public void Subscribe(Action<PowerModeChangedEventArgs> onPowerModeChanged)
 		{
 			this._onPowerModeChanged = onPowerModeChanged ?? throw new ArgumentNullException(nameof(onPowerModeChanged));
 			SystemEvents.PowerModeChanged += OnPowerModeChanged;
 		}
 
-		public void Subscribe(Action onPowerStatusChanged, (IReadOnlyCollection<Guid> guids, Action<PowerSettingChangedEventArgs> action) onPowerSettingChanged)
+		public void Subscribe(Action<PowerModeChangedEventArgs> onPowerModeChanged, (IReadOnlyCollection<Guid> guids, Action<PowerSettingChangedEventArgs> action) onPowerSettingChanged)
 		{
-			Subscribe(onPowerStatusChanged);
+			Subscribe(onPowerModeChanged);
 
 			if (onPowerSettingChanged.action is null)
 				return;
@@ -61,13 +68,13 @@ namespace Monitorian.Core.Models.Watcher
 			switch (e.Mode)
 			{
 				case PowerModes.Resume:
-					_resumeWatcher.TimerStart();
+					_resumeWatcher.TimerStart(e);
 					break;
 				case PowerModes.Suspend:
 					_resumeWatcher.TimerStop();
 					break;
 				default:
-					_statusWatcher.TimerStart();
+					_statusWatcher.TimerStart(e);
 					break;
 			}
 		}

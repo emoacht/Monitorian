@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Monitorian.Core.Helper;
+
 namespace Monitorian.Core.Models.Monitor
 {
 	internal abstract class MonitorItem : IMonitor, IDisposable
@@ -38,6 +40,19 @@ namespace Monitorian.Core.Models.Monitor
 
 		public abstract bool UpdateBrightness(int brightness = -1);
 		public abstract bool SetBrightness(int brightness);
+
+		public override string ToString()
+		{
+			return SimpleSerialization.Serialize(
+				(nameof(Type), this.GetType().Name),
+				(nameof(DeviceInstanceId), DeviceInstanceId),
+				(nameof(Description), Description),
+				(nameof(DisplayIndex), DisplayIndex),
+				(nameof(MonitorIndex), MonitorIndex),
+				(nameof(IsReachable), IsReachable),
+				(nameof(Brightness), Brightness),
+				(nameof(BrightnessSystemAdjusted), BrightnessSystemAdjusted));
+		}
 
 		#region IDisposable
 

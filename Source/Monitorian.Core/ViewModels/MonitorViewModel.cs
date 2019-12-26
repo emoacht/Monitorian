@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Monitorian.Core.Helper;
 using Monitorian.Core.Models.Monitor;
 
 namespace Monitorian.Core.ViewModels
@@ -239,6 +240,20 @@ namespace Monitorian.Core.ViewModels
 			set => SetPropertyValue(ref _isTarget, value);
 		}
 		private bool _isTarget;
+
+		public override string ToString()
+		{
+			return SimpleSerialization.Serialize(
+				("Item", _monitor),
+				(nameof(Name), Name),
+				(nameof(IsUnison), IsUnison),
+				(nameof(IsControllable), IsControllable),
+				(nameof(IsLikelyControllable), IsLikelyControllable),
+				("ControllableCount", _controllableCount),
+				(nameof(IsByKey), IsByKey),
+				(nameof(IsSelected), IsSelected),
+				(nameof(IsTarget), IsTarget));
+		}
 
 		#region IDisposable
 

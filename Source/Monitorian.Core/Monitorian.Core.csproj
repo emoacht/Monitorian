@@ -63,6 +63,7 @@
     <Compile Include="Helper\ExceptionExtension.cs" />
     <Compile Include="Helper\KeyValuePairExtension.cs" />
     <Compile Include="Helper\OsVersion.cs" />
+    <Compile Include="Helper\SimpleSerialization.cs" />
     <Compile Include="Helper\StringExtension.cs" />
     <Compile Include="Helper\Throttle.cs" />
     <Compile Include="Models\Monitor\DdcMonitorItem.cs" />
@@ -70,13 +71,13 @@
     <Compile Include="Models\Monitor\DeviceInstallation.cs" />
     <Compile Include="Models\Monitor\Error.cs" />
     <Compile Include="Models\Monitor\IMonitor.cs" />
-    <Compile Include="Models\Monitor\InaccessibleMonitorItem.cs" />
     <Compile Include="Models\Monitor\LightSensor.cs" />
     <Compile Include="Models\Monitor\MonitorConfiguration.cs" />
     <Compile Include="Models\Monitor\MonitorItem.cs" />
     <Compile Include="Models\Monitor\MonitorManager.cs" />
     <Compile Include="Models\Monitor\MSMonitor.cs" />
     <Compile Include="Models\Monitor\PowerManagement.cs" />
+    <Compile Include="Models\Monitor\UnreachableMonitorItem.cs" />
     <Compile Include="Models\Monitor\WmiMonitorItem.cs" />
     <Compile Include="Models\Watcher\BrightnessWatcher.cs" />
     <Compile Include="Models\Watcher\DisplayWatcher.cs" />
@@ -88,6 +89,7 @@
     <Compile Include="Models\FolderService.cs" />
     <Compile Include="Models\LanguageService.cs" />
     <Compile Include="Models\LogService.cs" />
+    <Compile Include="Models\OperationRecorder.cs" />
     <Compile Include="Models\ProductInfo.cs" />
     <Compile Include="Models\SettingsCore.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

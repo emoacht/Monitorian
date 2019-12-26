@@ -39,6 +39,8 @@ namespace Monitorian.Core
 		private readonly PowerWatcher _powerWatcher;
 		private readonly BrightnessWatcher _brightnessWatcher;
 
+		private readonly OperationRecorder _recorder;
+
 		public AppControllerCore(AppKeeper keeper, SettingsCore settings)
 		{
 			this._keeper = keeper ?? throw new ArgumentNullException(nameof(keeper));
@@ -54,6 +56,8 @@ namespace Monitorian.Core
 			_displayWatcher = new DisplayWatcher();
 			_powerWatcher = new PowerWatcher();
 			_brightnessWatcher = new BrightnessWatcher();
+
+			_recorder = OperationRecorder.Create();
 		}
 
 		public virtual async Task InitiateAsync()
@@ -77,8 +81,8 @@ namespace Monitorian.Core
 			NotifyIconContainer.MouseLeftButtonClick += OnMainWindowShowRequestedBySelf;
 			NotifyIconContainer.MouseRightButtonClick += OnMenuWindowShowRequested;
 
-			_displayWatcher.Subscribe(() => OnMonitorsChangeInferred());
-			_powerWatcher.Subscribe(() => OnMonitorsChangeInferred(), PowerManagement.GetOnPowerSettingChanged());
+			_displayWatcher.Subscribe(() => OnMonitorsChangeInferred(nameof(DisplayWatcher)));
+			_powerWatcher.Subscribe((e) => OnMonitorsChangeInferred($"{nameof(PowerWatcher)} - {e.Mode}"), PowerManagement.GetOnPowerSettingChanged());
 			_brightnessWatcher.Subscribe((instanceName, brightness) => Update(instanceName, brightness));
 		}
 
@@ -149,7 +153,12 @@ namespace Monitorian.Core
 
 		#region Monitors
 
-		protected virtual async void OnMonitorsChangeInferred() => await ScanAsync(TimeSpan.FromSeconds(3));
+		protected virtual async void OnMonitorsChangeInferred(object sender = null)
+		{
+			_recorder?.Record($"{nameof(OnMonitorsChangeInferred)} ({sender})");
+
+			await ScanAsync(TimeSpan.FromSeconds(3));
+		}
 
 		internal event EventHandler<bool> ScanningChanged;
 
@@ -176,6 +185,8 @@ namespace Monitorian.Core
 
 					var intervalTask = (interval > TimeSpan.Zero) ? Task.Delay(interval) : Task.CompletedTask;
 
+					_recorder?.StartRecord($"{nameof(ScanAsync)} [{DateTime.Now}]");
+
 					await Task.Run(async () =>
 					{
 						var oldMonitorIndices = Enumerable.Range(0, Monitors.Count).ToList();
@@ -183,13 +194,15 @@ namespace Monitorian.Core
 
 						foreach (var item in await MonitorManager.EnumerateMonitorsAsync())
 						{
+							_recorder?.AddItem("Items", item.ToString());
+
 							var oldMonitorExists = false;
 
 							foreach (int index in oldMonitorIndices)
 							{
 								var oldMonitor = Monitors[index];
 								if (string.Equals(oldMonitor.DeviceInstanceId, item.DeviceInstanceId, StringComparison.OrdinalIgnoreCase)
-									&& (oldMonitor.IsAccessible == item.IsAccessible))
+									&& (oldMonitor.IsReachable == item.IsReachable))
 								{
 									oldMonitorExists = true;
 									oldMonitorIndices.Remove(index);
@@ -231,7 +244,7 @@ namespace Monitorian.Core
 					var maxMonitorsCount = await GetMaxMonitorsCountAsync();
 
 					var updateResults = await Task.WhenAll(Monitors
-						.Where(x => x.IsControllable)
+						.Where(x => x.IsLikelyControllable)
 						.Select((x, index) =>
 						{
 							if (index < maxMonitorsCount)
@@ -253,6 +266,9 @@ namespace Monitorian.Core
 
 					foreach (var m in Monitors.Where(x => !x.IsControllable))
 						m.IsTarget = !controllableMonitorExists;
+
+					_recorder?.AddItems(nameof(Monitors), Monitors.Select(x => x.ToString()));
+					_recorder?.StopRecord();
 
 					await intervalTask;
 				}

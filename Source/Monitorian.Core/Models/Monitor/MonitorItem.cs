@@ -4,40 +4,55 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Monitorian.Core.Helper;
+
 namespace Monitorian.Core.Models.Monitor
 {
 	internal abstract class MonitorItem : IMonitor, IDisposable
 	{
 		public string DeviceInstanceId { get; }
-		public string Description { get; }		
+		public string Description { get; }
 		public byte DisplayIndex { get; }
 		public byte MonitorIndex { get; }
-		public bool IsAccessible { get; }
+		public bool IsReachable { get; }
 
 		public int Brightness { get; protected set; } = -1;
 		public int BrightnessSystemAdjusted { get; protected set; } = -1;
 
 		public MonitorItem(
 			string deviceInstanceId,
-			string description,			
+			string description,
 			byte displayIndex,
 			byte monitorIndex,
-			bool isAccessible)
+			bool isReachable)
 		{
 			if (string.IsNullOrWhiteSpace(deviceInstanceId))
 				throw new ArgumentNullException(nameof(deviceInstanceId));
 			if (string.IsNullOrWhiteSpace(description))
 				throw new ArgumentNullException(nameof(description));
-			
+
 			this.DeviceInstanceId = deviceInstanceId;
-			this.Description = description;			
+			this.Description = description;
 			this.DisplayIndex = displayIndex;
 			this.MonitorIndex = monitorIndex;
-			this.IsAccessible = isAccessible;
+			this.IsReachable = isReachable;
 		}
 
 		public abstract bool UpdateBrightness(int brightness = -1);
 		public abstract bool SetBrightness(int brightness);
+
+		public override string ToString()
+		{
+			return SimpleSerialization.Serialize(
+				(nameof(Type), this.GetType().Name),
+				(nameof(DeviceInstanceId), DeviceInstanceId),
+				(nameof(Description), Description),
+				(nameof(DisplayIndex), DisplayIndex),
+				(nameof(MonitorIndex), MonitorIndex),
+				(nameof(IsReachable), IsReachable),
+				(nameof(Brightness), Brightness),
+				(nameof(BrightnessSystemAdjusted), BrightnessSystemAdjusted));
+		}
 
 		#region IDisposable
 

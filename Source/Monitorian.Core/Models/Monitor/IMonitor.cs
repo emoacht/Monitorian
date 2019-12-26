@@ -12,7 +12,7 @@ namespace Monitorian.Core.Models.Monitor
 		string Description { get; }
 		byte DisplayIndex { get; }
 		byte MonitorIndex { get; }
-		bool IsAccessible { get; }
+		bool IsReachable { get; }
 
 		int Brightness { get; }
 		int BrightnessSystemAdjusted { get; }

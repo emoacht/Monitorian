@@ -89,6 +89,7 @@
     <Compile Include="Models\FolderService.cs" />
     <Compile Include="Models\LanguageService.cs" />
     <Compile Include="Models\LogService.cs" />
+    <Compile Include="Models\OperationRecorder.cs" />
     <Compile Include="Models\ProductInfo.cs" />
     <Compile Include="Models\SettingsCore.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

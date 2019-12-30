@@ -64,7 +64,7 @@
 			<ToggleButton Padding="8,4"
 						  Style="{StaticResource CheckButtonItemStyle}"
 						  FontSize="13"
-						  Content="{x:Static properties:Resources.UsesLargeElements}"
+						  Content="{x:Static properties:Resources.UseLargeElements}"
 						  IsChecked="{Binding Settings.UsesLargeElements}"/>
 		</ContentControl>
 
@@ -72,7 +72,7 @@
 			<ToggleButton Padding="8,4"
 						  Style="{StaticResource CheckButtonItemStyle}"
 						  FontSize="13"
-						  Content="{x:Static properties:Resources.ShowsAdjusted}"
+						  Content="{x:Static properties:Resources.ShowAdjusted}"
 						  IsChecked="{Binding Settings.ShowsAdjusted}"/>
 		</ContentControl>
 
@@ -80,7 +80,7 @@
 			<ToggleButton Padding="8,4"
 						  Style="{StaticResource CheckButtonItemStyle}"
 						  FontSize="13"
-						  Content="{x:Static properties:Resources.EnablesUnison}"
+						  Content="{x:Static properties:Resources.EnableUnison}"
 						  IsChecked="{Binding Settings.EnablesUnison}"/>
 		</ContentControl>
 

@@ -120,11 +120,20 @@
   <data name="Close" xml:space="preserve">
     <value>Close</value>
   </data>
-  <data name="EnablesUnison" xml:space="preserve">
+  <data name="CopyOperation" xml:space="preserve">
+    <value>Copy operation log</value>
+  </data>
+  <data name="CopyOperationMessage" xml:space="preserve">
+    <value>Save operation log to Desktop?</value>
+  </data>
+  <data name="EnableUnison" xml:space="preserve">
     <value>Enable moving in unison</value>
   </data>
   <data name="License" xml:space="preserve">
     <value>License</value>
+  </data>
+  <data name="MakeOperation" xml:space="preserve">
+    <value>Make operation log</value>
   </data>
   <data name="NotControllable" xml:space="preserve">
     <value>This monitor is not controllable.</value>
@@ -132,13 +141,13 @@
   <data name="Probe" xml:space="preserve">
     <value>Probe into monitors</value>
   </data>
-  <data name="RecordException" xml:space="preserve">
+  <data name="RecordExceptionMessage" xml:space="preserve">
     <value>An unexpected problem happened. Save exception log to Desktop?</value>
   </data>
-  <data name="RecordProbe" xml:space="preserve">
+  <data name="RecordProbeMessage" xml:space="preserve">
     <value>Save probe log to Desktop?</value>
   </data>
-  <data name="ShowsAdjusted" xml:space="preserve">
+  <data name="ShowAdjusted" xml:space="preserve">
     <value>Show adjusted brightness</value>
   </data>
   <data name="Site" xml:space="preserve">
@@ -150,7 +159,7 @@
   <data name="StartSignIn" xml:space="preserve">
     <value>Start on sign in</value>
   </data>
-  <data name="UsesLargeElements" xml:space="preserve">
+  <data name="UseLargeElements" xml:space="preserve">
     <value>Use large buttons</value>
   </data>
 </root>

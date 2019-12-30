@@ -43,6 +43,8 @@ Add-on features are available for Microsoft Store version on a subscription basi
 
 ![Screenshot](Images/Screenshot_keys_en.png)
 
+The experimental command line interaction is available. For the usage, execute `monitorian.exe /help`. No path is necessary.
+
 The code for add-on features is not included in this repository.
 
 ## Development

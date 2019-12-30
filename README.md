@@ -23,7 +23,7 @@ The user can change the brightness of monitors, including external ones, either 
 [Monitorian](https://www.microsoft.com/store/apps/9nw33j738bl0) (Microsoft Store)
 
  * Other:<br>
-:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/2.3.0-Installer/MonitorianInstaller230.zip) | :floppy_disk: [Executables](https://github.com/emoacht/Monitorian/releases/download/2.3.0-Executables/Monitorian230.zip)
+:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/2.4.0-Installer/MonitorianInstaller240.zip) | :floppy_disk: [Executables](https://github.com/emoacht/Monitorian/releases/download/2.4.0-Executables/Monitorian240.zip)
 
 ## Install/Uninstall
 
@@ -51,11 +51,13 @@ This app is a WPF app developed and tested with Surface Pro 4.
 
 ### Log
 
-The logs will be useful when looking into an issue.
+The logs will be useful source of information when looking into an issue.
 
  - __exception.log__ - Information on exceptions when an unexpected problem happened.
 
- - __probe.log__ - Information on capabilities of each monitor obtained from various APIs and used to find accessible monitors. To get this log, click the app title in menu window 3 times and then tap the button appeared beneath.
+ - __probe.log__ - Information on capabilities of each monitor obtained from various APIs and used to find accessible monitors. To get this log, click the app title in menu window 3 times and then tap `Probe into monitors`.
+
+ - __operation.log__ - Information on operations including to scan monitors and reflect their states. To get this log, do the same above and then check `Make operation log`. After that, the log can be copied by `Copy operation log`.
 
 ### Setup
 
@@ -67,11 +69,11 @@ The logs will be useful when looking into an issue.
 | .NET Framework 4.7.2 SDK<br>.NET Framework 4.7.2 targeting pack | TargetFrameworkVersion |
 | Windows 10 SDK (10.0.18362.0)                                   | TargetPlatformVersion  |
 
-3. Load the solution by specifying `/Source/Monitorian.sln`. Then right click the solution name in solution explorer and execute `Restore NuGet Packages`.
+3. Load the solution by specifying `/Source/Monitorian.sln`. Then go to the solution explorer and right click the solution name and execute `Restore NuGet Packages`.
 
 ### Globalization
 
-An alternative language can be shown by adding a Resources (.resx) file which stores name/value pairs under `/Source/Monitorian.Core/Properties` folder. The system will automatically select the file which matches the user's environment.
+An alternative language can be shown by adding a Resources (.resx) file into `/Source/Monitorian.Core/Properties` folder. Each Resources file stores name/value pairs for a specific language and will be selected automatically depending on the user's environment.
 
  - The file name must be in `Resources.[language-culture].resx` format.
  - The name of a name/value pair must correspond to that in the default `Resources.resx` file to override it.
@@ -79,6 +81,10 @@ An alternative language can be shown by adding a Resources (.resx) file which st
 `Resources.ja-JP.resx` (for Japanese) would be a good example for this purpose.
 
 ## History
+
+Ver 2.4.0 2019-12-30
+
+- Improve scan process
 
 Ver 2.3.0 2019-11-28
 

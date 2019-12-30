@@ -19,11 +19,11 @@ namespace Monitorian.Core.Views
 	{
 		internal ProbeSectionViewModel ViewModel => (ProbeSectionViewModel)this.DataContext;
 
-		public ProbeSection()
+		public ProbeSection(AppControllerCore controller)
 		{
 			InitializeComponent();
 
-			this.DataContext = new ProbeSectionViewModel();
+			this.DataContext = new ProbeSectionViewModel(controller);
 		}
 
 		public override void OnApplyTemplate()
@@ -33,7 +33,19 @@ namespace Monitorian.Core.Views
 			var window = Window.GetWindow(this) as MenuWindow;
 			if (window?.AppTitle is TextBlock appTitle)
 			{
-				appTitle.MouseDown += (sender, e) => ViewModel.EnableProbe();
+				appTitle.MouseDown += (sender, e) => Open();
+			}
+		}
+
+		private int _count = 0;
+		private const int CountThreshold = 3;
+
+		public void Open()
+		{
+			if (++_count == CountThreshold)
+			{
+				if (this.Resources["Content"] is FrameworkElement content)
+					this.Content = content;
 			}
 		}
 	}

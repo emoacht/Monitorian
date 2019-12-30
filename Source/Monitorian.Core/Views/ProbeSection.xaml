@@ -3,19 +3,47 @@
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
 			 xmlns:properties="clr-namespace:Monitorian.Core.Properties">
+	<UserControl.Resources>
+		<StackPanel x:Key="Content">
+			<ContentControl Style="{StaticResource MenuItemStyle}">
+				<Button Padding="8,4"
+						Style="{StaticResource PlainButtonItemStyle}"
+						FontSize="13"
+						Content="{x:Static properties:Resources.Probe}"
+						IsEnabled="{Binding CanProbe, Mode=OneWay}">
+					<i:Interaction.Triggers>
+						<i:EventTrigger EventName="Click">
+							<i:CallMethodAction TargetObject="{Binding}"
+												MethodName="PerformProbe"/>
+						</i:EventTrigger>
+					</i:Interaction.Triggers>
+				</Button>
+			</ContentControl>
 
-	<ContentControl Style="{StaticResource MenuItemStyle}">
-		<Button Padding="8,4"
-				Style="{StaticResource PlainButtonItemStyle}"
-				FontSize="13"
-				Content="{x:Static properties:Resources.Probe}"
-				Visibility="{Binding CanProbe, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverterKey}}">
-			<i:Interaction.Triggers>
-				<i:EventTrigger EventName="Click">
-					<i:CallMethodAction TargetObject="{Binding}"
-										MethodName="PerformProbe"/>
-				</i:EventTrigger>
-			</i:Interaction.Triggers>
-		</Button>
-	</ContentControl>
+			<ContentControl Style="{StaticResource MenuItemStyle}">
+				<ToggleButton Padding="8,4"
+							  Style="{StaticResource CheckButtonItemStyle}"
+							  FontSize="13"
+							  Content="{x:Static properties:Resources.MakeOperation}"
+							  IsChecked="{Binding Settings.MakesOperationLog}"/>
+			</ContentControl>
+
+			<ContentControl Style="{StaticResource MenuItemStyle}">
+				<Button Padding="8,4"
+						Style="{StaticResource PlainButtonItemStyle}"
+						FontSize="13"
+						Content="{x:Static properties:Resources.CopyOperation}">
+					<i:Interaction.Triggers>
+						<i:EventTrigger EventName="Click">
+							<i:CallMethodAction TargetObject="{Binding}"
+												MethodName="PerformCopy"/>
+						</i:EventTrigger>
+					</i:Interaction.Triggers>
+				</Button>
+			</ContentControl>
+
+			<Separator Style="{StaticResource MenuSeparatorStyle}"/>
+		</StackPanel>
+	</UserControl.Resources>
+
 </UserControl>

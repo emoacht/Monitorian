@@ -120,8 +120,14 @@
   <data name="Close" xml:space="preserve">
     <value>閉じる</value>
   </data>
-  <data name="EnablesUnison" xml:space="preserve">
+  <data name="CopyOperation" xml:space="preserve">
+    <value>動作ログをコピーする</value>
+  </data>
+  <data name="EnableUnison" xml:space="preserve">
     <value>一斉に動かせるようにする</value>
+  </data>
+  <data name="MakeOperation" xml:space="preserve">
+    <value>動作ログを作成する</value>
   </data>
   <data name="NotControllable" xml:space="preserve">
     <value>このモニターはコントロールできません。</value>
@@ -129,13 +135,13 @@
   <data name="Probe" xml:space="preserve">
     <value>モニターを調査する</value>
   </data>
-  <data name="ShowsAdjusted" xml:space="preserve">
+  <data name="ShowAdjusted" xml:space="preserve">
     <value>調整後の明るさを表示する</value>
   </data>
   <data name="StartSignIn" xml:space="preserve">
     <value>サインイン時に起動する</value>
   </data>
-  <data name="UsesLargeElements" xml:space="preserve">
+  <data name="UseLargeElements" xml:space="preserve">
     <value>大きいボタンを使う</value>
   </data>
 </root>

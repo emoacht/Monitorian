@@ -35,7 +35,7 @@ namespace Monitorian.Core.Models
 				+ content;
 
 			if (MessageBox.Show(
-				Resources.RecordProbe,
+				Resources.RecordProbeMessage,
 				ProductInfo.Title,
 				MessageBoxButton.OKCancel,
 				MessageBoxImage.Information,
@@ -46,7 +46,7 @@ namespace Monitorian.Core.Models
 		}
 
 		/// <summary>
-		/// Records operation log to Temp.
+		/// Records operation log to AppData.
 		/// </summary>
 		/// <param name="content">Content</param>
 		/// <remarks>
@@ -58,7 +58,26 @@ namespace Monitorian.Core.Models
 			content = ComposeHeader() + Environment.NewLine
 				+ content + Environment.NewLine + Environment.NewLine;
 
-			RecordToTemp(OperationFileName, content, 100);
+			RecordToAppData(OperationFileName, content, 100);
+		}
+
+		/// <summary>
+		/// Copies operation log to Desktop.
+		/// </summary>
+		public static void CopyOperation()
+		{
+			if (!TryReadFromAppData(OperationFileName, out string content))
+				return;
+
+			if (MessageBox.Show(
+				Resources.CopyOperationMessage,
+				ProductInfo.Title,
+				MessageBoxButton.OKCancel,
+				MessageBoxImage.Information,
+				MessageBoxResult.OK) != MessageBoxResult.OK)
+				return;
+
+			RecordToDesktop(OperationFileName, content);
 		}
 
 		/// <summary>
@@ -77,7 +96,7 @@ namespace Monitorian.Core.Models
 			RecordToAppData(ExceptionFileName, content, 10);
 
 			if (MessageBox.Show(
-				Resources.RecordException,
+				Resources.RecordExceptionMessage,
 				ProductInfo.Title,
 				MessageBoxButton.YesNo,
 				MessageBoxImage.Error,
@@ -121,6 +140,32 @@ namespace Monitorian.Core.Models
 				Trace.WriteLine("Failed to record log to AppData." + Environment.NewLine
 					+ ex);
 			}
+		}
+
+		private static bool TryReadFromAppData(string fileName, out string content)
+		{
+			var appDataFilePath = Path.Combine(
+				FolderService.AppDataFolderPath,
+				fileName);
+
+			if (File.Exists(appDataFilePath))
+			{
+				try
+				{
+					using (var sr = new StreamReader(appDataFilePath, Encoding.UTF8))
+					{
+						content = sr.ReadToEnd();
+						return true;
+					}
+				}
+				catch (Exception ex)
+				{
+					Trace.WriteLine("Failed to read log from AppData." + Environment.NewLine
+						+ ex);
+				}
+			}
+			content = null;
+			return false;
 		}
 
 		private static void RecordToDesktop(string fileName, string content, int maxCount = 1)

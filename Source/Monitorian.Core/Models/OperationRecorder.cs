@@ -10,15 +10,7 @@ namespace Monitorian.Core.Models
 {
 	internal class OperationRecorder
 	{
-		private const string OperationOption = "/operation";
-
-		public static IReadOnlyCollection<string> Options => new[] { OperationOption };
-
-		private static bool IsRecording() => Environment.GetCommandLineArgs().Skip(1).Contains(OperationOption);
-
-		public static OperationRecorder Create() => IsRecording() ? new OperationRecorder() : null;
-
-		private OperationRecorder() => LogService.RecordOperation(nameof(Create));
+		public OperationRecorder(string message) => LogService.RecordOperation(message);
 
 		public void Record(string content) => LogService.RecordOperation(content);
 

@@ -39,7 +39,7 @@ namespace Monitorian.Core
 		private readonly PowerWatcher _powerWatcher;
 		private readonly BrightnessWatcher _brightnessWatcher;
 
-		private readonly OperationRecorder _recorder;
+		private OperationRecorder _recorder;
 
 		public AppControllerCore(AppKeeper keeper, SettingsCore settings)
 		{
@@ -56,8 +56,6 @@ namespace Monitorian.Core
 			_displayWatcher = new DisplayWatcher();
 			_powerWatcher = new PowerWatcher();
 			_brightnessWatcher = new BrightnessWatcher();
-
-			_recorder = OperationRecorder.Create();
 		}
 
 		public virtual async Task InitiateAsync()
@@ -73,6 +71,9 @@ namespace Monitorian.Core
 
 			if (StartupAgent.IsWindowShowExpected())
 				_current.MainWindow.Show();
+
+			if (Settings.MakesOperationLog)
+				_recorder = new OperationRecorder("Initiated");
 
 			await ScanAsync();
 
@@ -141,7 +142,7 @@ namespace Monitorian.Core
 		{
 			var window = new MenuWindow(this, pivot);
 			window.ViewModel.CloseAppRequested += (sender, e) => _current.Shutdown();
-			window.AddMenuItem(new ProbeSection());
+			window.AddMenuItem(new ProbeSection(this));
 			window.Show();
 		}
 
@@ -149,6 +150,9 @@ namespace Monitorian.Core
 		{
 			if (e.PropertyName == nameof(Settings.EnablesUnison))
 				OnSettingsEnablesUnisonChanged();
+
+			if (e.PropertyName == nameof(Settings.MakesOperationLog))
+				_recorder = Settings.MakesOperationLog ? new OperationRecorder("Enabled") : null;
 		}
 
 		#region Monitors

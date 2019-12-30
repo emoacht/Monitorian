@@ -17,7 +17,7 @@ namespace Monitorian.Core
 		public IReadOnlyCollection<string> FilteredArguments { get; }
 		public StartupAgent StartupAgent { get; }
 
-		public AppKeeper(StartupEventArgs e) : this(e, StartupAgent.Options, LanguageService.Options, WindowEffect.Options, OperationRecorder.Options)
+		public AppKeeper(StartupEventArgs e) : this(e, StartupAgent.Options, LanguageService.Options, WindowEffect.Options)
 		{ }
 
 		public AppKeeper(StartupEventArgs e, params IEnumerable<string>[] ignorableOptions)

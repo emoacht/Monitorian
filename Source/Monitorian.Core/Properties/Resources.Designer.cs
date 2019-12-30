@@ -19,7 +19,7 @@ namespace Monitorian.Core.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Resources {
@@ -70,11 +70,29 @@ namespace Monitorian.Core.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Copy operation log.
+        /// </summary>
+        public static string CopyOperation {
+            get {
+                return ResourceManager.GetString("CopyOperation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save operation log to Desktop?.
+        /// </summary>
+        public static string CopyOperationMessage {
+            get {
+                return ResourceManager.GetString("CopyOperationMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enable moving in unison.
         /// </summary>
-        public static string EnablesUnison {
+        public static string EnableUnison {
             get {
-                return ResourceManager.GetString("EnablesUnison", resourceCulture);
+                return ResourceManager.GetString("EnableUnison", resourceCulture);
             }
         }
         
@@ -84,6 +102,15 @@ namespace Monitorian.Core.Properties {
         public static string License {
             get {
                 return ResourceManager.GetString("License", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Make operation log.
+        /// </summary>
+        public static string MakeOperation {
+            get {
+                return ResourceManager.GetString("MakeOperation", resourceCulture);
             }
         }
         
@@ -108,27 +135,27 @@ namespace Monitorian.Core.Properties {
         /// <summary>
         ///   Looks up a localized string similar to An unexpected problem happened. Save exception log to Desktop?.
         /// </summary>
-        public static string RecordException {
+        public static string RecordExceptionMessage {
             get {
-                return ResourceManager.GetString("RecordException", resourceCulture);
+                return ResourceManager.GetString("RecordExceptionMessage", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Save probe log to Desktop?.
         /// </summary>
-        public static string RecordProbe {
+        public static string RecordProbeMessage {
             get {
-                return ResourceManager.GetString("RecordProbe", resourceCulture);
+                return ResourceManager.GetString("RecordProbeMessage", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Show adjusted brightness.
         /// </summary>
-        public static string ShowsAdjusted {
+        public static string ShowAdjusted {
             get {
-                return ResourceManager.GetString("ShowsAdjusted", resourceCulture);
+                return ResourceManager.GetString("ShowAdjusted", resourceCulture);
             }
         }
         
@@ -162,9 +189,9 @@ namespace Monitorian.Core.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Use large buttons.
         /// </summary>
-        public static string UsesLargeElements {
+        public static string UseLargeElements {
             get {
-                return ResourceManager.GetString("UsesLargeElements", resourceCulture);
+                return ResourceManager.GetString("UseLargeElements", resourceCulture);
             }
         }
     }

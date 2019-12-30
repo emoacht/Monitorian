@@ -78,6 +78,17 @@ namespace Monitorian.Core.Models
 		}
 		private string _selectedDeviceInstanceId;
 
+		/// <summary>
+		/// Whether to make operation log
+		/// </summary>
+		[DataMember]
+		public bool MakesOperationLog
+		{
+			get => _makesOperationLog;
+			set => SetPropertyValue(ref _makesOperationLog, value);
+		}
+		private bool _makesOperationLog;
+
 		#endregion
 
 		private const string SettingsFileName = "settings.xml";

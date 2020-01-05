@@ -20,13 +20,13 @@ namespace Monitorian.Core.Models.Monitor
 		public class DesktopItem
 		{
 			[DataMember(Order = 0)]
-			public string DeviceInstanceId { get; private set; }
+			public string DeviceInstanceId { get; }
 
 			[DataMember(Order = 1)]
-			public string Description { get; private set; }
+			public string Description { get; }
 
 			[DataMember(Order = 2)]
-			public byte[] BrightnessLevels { get; private set; }
+			public byte[] BrightnessLevels { get; }
 
 			public DesktopItem(
 				string deviceInstanceId,

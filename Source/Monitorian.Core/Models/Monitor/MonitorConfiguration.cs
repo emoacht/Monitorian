@@ -150,23 +150,23 @@ namespace Monitorian.Core.Models.Monitor
 		public class PhysicalItem
 		{
 			[DataMember(Order = 0)]
-			public string Description { get; private set; }
+			public string Description { get; }
 
 			[DataMember(Order = 1)]
-			public int MonitorIndex { get; private set; }
+			public int MonitorIndex { get; }
 
 			public SafePhysicalMonitorHandle Handle { get; }
 
 			public bool IsSupported => IsHighLevelSupported || IsLowLevelSupported;
 
 			[DataMember(Order = 2)]
-			public bool IsHighLevelSupported { get; private set; }
+			public bool IsHighLevelSupported { get; }
 
 			[DataMember(Order = 3)]
-			public bool IsLowLevelSupported { get; private set; }
+			public bool IsLowLevelSupported { get; }
 
 			[DataMember(Order = 4)]
-			public string Capabilities { get; private set; }
+			public string Capabilities { get; }
 
 			public PhysicalItem(
 				string description,

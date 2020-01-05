@@ -166,13 +166,13 @@ namespace Monitorian.Core.Models.Monitor
 		public class InstalledItem
 		{
 			[DataMember(Order = 0)]
-			public string DeviceInstanceId { get; private set; }
+			public string DeviceInstanceId { get; }
 
 			[DataMember(Order = 1)]
-			public string Description { get; private set; }
+			public string Description { get; }
 
 			[DataMember(Order = 2)]
-			public bool IsRemovable { get; private set; }
+			public bool IsRemovable { get; }
 
 			public InstalledItem(
 				string deviceInstanceId,

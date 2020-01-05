@@ -168,7 +168,8 @@ namespace Monitorian.Core.Models.Monitor
 			using (var ms = new MemoryStream())
 			using (var jw = JsonReaderWriterFactory.CreateJsonWriter(ms, Encoding.UTF8, true, true))
 			{
-				var serializer = new DataContractJsonSerializer(typeof(MonitorData));
+				var serializer = new DataContractJsonSerializer(typeof(MonitorData),
+					new DataContractJsonSerializerSettings { SerializeReadOnlyTypes = true });
 				serializer.WriteObject(jw, data);
 				jw.Flush();
 				return Encoding.UTF8.GetString(ms.ToArray());

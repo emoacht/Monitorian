@@ -31,31 +31,31 @@ namespace Monitorian.Supplement
 			/// Device ID (Not device interface ID)
 			/// </summary>
 			[DataMember(Order = 0)]
-			public string DeviceInstanceId { get; private set; }
+			public string DeviceInstanceId { get; }
 
 			/// <summary>
 			/// Display name
 			/// </summary>
 			[DataMember(Order = 1)]
-			public string DisplayName { get; private set; }
+			public string DisplayName { get; }
 
 			/// <summary>
 			/// Whether the display is connected internally.
 			/// </summary>
 			[DataMember(Order = 2)]
-			public bool IsInternal { get; private set; }
+			public bool IsInternal { get; }
 
 			/// <summary>
 			/// Connection description
 			/// </summary>
 			[DataMember(Order = 3)]
-			public string ConnectionDescription { get; private set; }
+			public string ConnectionDescription { get; }
 
 			/// <summary>
 			/// Physical size (diagonal) in inches
 			/// </summary>
 			[DataMember(Order = 4)]
-			public float PhysicalSize { get; private set; }
+			public float PhysicalSize { get; }
 
 			internal DisplayItem(
 				string deviceInstanceId,

@@ -9,7 +9,7 @@ namespace Monitorian.Core.Helper
 	public static class StringExtension
 	{
 		/// <summary>
-		/// Indicates whether a specified string is composed of all ASCII characters.
+		/// Determines whether a specified string is composed of all ASCII characters.
 		/// </summary>
 		/// <param name="source">Source string</param>
 		/// <returns>True if all ASCII characters</returns>

@@ -17,7 +17,7 @@ namespace Monitorian.Supplement
 	public class LightInformation
 	{
 		/// <summary>
-		/// Whether an integrated ambient light sensor exists.
+		/// Determines whether an integrated ambient light sensor exists.
 		/// </summary>
 		/// <returns>True if exists</returns>
 		public static bool AmbientLightSensorExists()

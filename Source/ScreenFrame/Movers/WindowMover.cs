@@ -201,7 +201,7 @@ namespace ScreenFrame.Movers
 		}
 
 		/// <summary>
-		/// Whether the window is foreground window
+		/// Determines whether the window is foreground window.
 		/// </summary>
 		/// <returns>True if foreground</returns>
 		public bool IsForeground() => WindowHelper.IsForegroundWindow(_window);

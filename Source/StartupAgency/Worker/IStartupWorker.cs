@@ -9,17 +9,17 @@ namespace StartupAgency.Worker
 	internal interface IStartupWorker
 	{
 		/// <summary>
-		/// Whether caller instance is presumed to have started on sign in
+		/// Determines whether caller instance is presumed to have started on sign in.
 		/// </summary>
 		bool IsStartedOnSignIn();
 
 		/// <summary>
-		/// Whether caller instance can be registered in startup
+		/// Determines whether caller instance can be registered in startup.
 		/// </summary>
 		bool CanRegister();
 
 		/// <summary>
-		/// Whether caller instance is registered in startup
+		/// Determines whether caller instance is registered in startup.
 		/// </summary>
 		bool IsRegistered();
 

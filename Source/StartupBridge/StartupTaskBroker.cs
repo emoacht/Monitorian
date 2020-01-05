@@ -17,7 +17,7 @@ namespace StartupBridge
 	public static class StartupTaskBroker
 	{
 		/// <summary>
-		/// Whether the startup task for a specified AppX package can be enabled
+		/// Determines whether the startup task for a specified AppX package can be enabled.
 		/// </summary>
 		/// <param name="taskId">Startup task ID</param>
 		/// <returns>True if the startup task can be enabled</returns>
@@ -31,7 +31,7 @@ namespace StartupBridge
 		}
 
 		/// <summary>
-		/// Whether the startup task for a specified AppX package has been enabled
+		/// Determines whether the startup task for a specified AppX package has been enabled.
 		/// </summary>
 		/// <param name="taskId">Startup task ID</param>
 		/// <returns>True if the startup task has been enabled</returns>

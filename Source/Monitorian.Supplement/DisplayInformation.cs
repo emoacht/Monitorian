@@ -40,7 +40,7 @@ namespace Monitorian.Supplement
 			public string DisplayName { get; }
 
 			/// <summary>
-			/// Whether the display is connected internally.
+			/// Whether the display is connected internally
 			/// </summary>
 			[DataMember(Order = 2)]
 			public bool IsInternal { get; }

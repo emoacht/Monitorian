@@ -50,7 +50,7 @@ namespace Monitorian.Core.Models
 		#endregion
 
 		/// <summary>
-		/// Whether output is redirected from the standard output stream.
+		/// Determines whether output is redirected from the standard output stream.
 		/// </summary>
 		/// <returns>True if output is redirected</returns>
 		/// <remarks>

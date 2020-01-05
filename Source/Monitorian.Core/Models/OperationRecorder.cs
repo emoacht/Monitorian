@@ -18,14 +18,14 @@ namespace Monitorian.Core.Models
 
 		public void StartRecord(string actionName) => this._actionName = actionName;
 
-		private readonly List<(string group, string item)> _groups = new List<(string, string)>();
+		private readonly List<(string group, StringWrapper item)> _groups = new List<(string, StringWrapper)>();
 
-		public void AddItem(string groupName, string itemString) => _groups.Add((groupName, itemString));
-		public void AddItems(string groupName, IEnumerable<string> itemStrings) => _groups.AddRange(itemStrings.Select(x => (groupName, x)));
+		public void AddItem(string groupName, string itemString) => _groups.Add((groupName, new StringWrapper(itemString)));
+		public void AddItems(string groupName, IEnumerable<string> itemStrings) => _groups.AddRange(itemStrings.Select(x => (groupName, new StringWrapper(x))));
 
 		public void StopRecord()
 		{
-			var groupsStrings = _groups.GroupBy(x => x.group).Select(x => (x.Key, (object)x.Select(y => new StringWrapper(y.item)))).ToArray();
+			var groupsStrings = _groups.GroupBy(x => x.group).Select(x => (x.Key, (object)x.Select(y => y.item))).ToArray();
 
 			LogService.RecordOperation($"{_actionName}{Environment.NewLine}{SimpleSerialization.Serialize(groupsStrings)}");
 

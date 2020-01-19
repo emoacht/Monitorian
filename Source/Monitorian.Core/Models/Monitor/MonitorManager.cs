@@ -207,42 +207,41 @@ namespace Monitorian.Core.Models.Monitor
 			{
 				var sw = new Stopwatch();
 
-				var actions = new[]
+				var tasks = new[]
 				{
-					GetAction(nameof(DeviceItems), () =>
+					GetTask(nameof(DeviceItems), () =>
 						DeviceItems = DeviceContext.EnumerateMonitorDevices().ToArray()),
 
-					GetAction(nameof(PhysicalItems), () =>
+					GetTask(nameof(PhysicalItems), () =>
 						PhysicalItems = DeviceContext.GetMonitorHandles().ToDictionary(
 							x => x,
 							x => MonitorConfiguration.EnumeratePhysicalMonitors(x.MonitorHandle, true).ToArray())),
 
-					GetAction(nameof(InstalledItems), () =>
+					GetTask(nameof(InstalledItems), () =>
 						InstalledItems = DeviceInstallation.EnumerateInstalledMonitors().ToArray()),
 
-					GetAction(nameof(DesktopItems), () =>
+					GetTask(nameof(DesktopItems), () =>
 						DesktopItems = MSMonitor.EnumerateDesktopMonitors().ToArray()),
 
-					GetAction(nameof(DisplayItems), async () =>
+					GetTask(nameof(DisplayItems), async () =>
 					{
 						if (OsVersion.Is10Redstone4OrNewer)
 							DisplayItems = await DisplayInformation.GetDisplayMonitorsAsync();
 					})
 				};
 
-				ElapsedTime = new string[actions.Length];
-
 				sw.Start();
 
-				await Task.WhenAll(actions.Select((x, index) => Task.Run(() => x.Invoke(index))));
+				ElapsedTime = await Task.WhenAll(tasks);
 
 				sw.Stop();
 
-				Action<int> GetAction(string name, Action action) =>
-					new Action<int>((index) =>
+				Task<string> GetTask(string name, Action action) =>
+					Task.Run(() =>
 					{
 						action.Invoke();
-						ElapsedTime[index] = $"{name} -> {sw.ElapsedMilliseconds}";
+						var elapsed = sw.Elapsed;
+						return $@"{name,-14} -> {elapsed.ToString($@"{(elapsed.Minutes > 0 ? @"m\:" : string.Empty)}s\.fff")}";
 					});
 			}
 		}

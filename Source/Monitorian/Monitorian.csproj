@@ -39,7 +39,7 @@
     <ApplicationIcon>Resources\Icons\AppIcon.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Xaml.Behaviors, Version=1.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -81,7 +81,7 @@
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <None Include="app.manifest">
+    <None Include="Properties\app.manifest">
       <SubType>Designer</SubType>
     </None>
     <AppDesigner Include="Properties\" />

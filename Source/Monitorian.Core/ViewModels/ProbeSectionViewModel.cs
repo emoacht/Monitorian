@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Media;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -40,6 +41,16 @@ namespace Monitorian.Core.ViewModels
 		public void PerformCopy()
 		{
 			Task.Run(() => LogService.CopyOperation());
+		}
+
+		public void PerformRescan()
+		{
+			Task.Run(async () =>
+			{
+				await _controller.ScanAsync();
+
+				SystemSounds.Asterisk.Play();
+			});
 		}
 	}
 }

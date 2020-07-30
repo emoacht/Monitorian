@@ -146,7 +146,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Properties\Resources.ja-JP.resx" />
+    <EmbeddedResource Include="Properties\Resources.ja-JP.resx">
+      <DependentUpon>Resources.resx</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

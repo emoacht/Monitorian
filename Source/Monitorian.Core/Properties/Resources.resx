@@ -147,6 +147,9 @@
   <data name="RecordProbeMessage" xml:space="preserve">
     <value>Save probe log to Desktop?</value>
   </data>
+  <data name="Rescan" xml:space="preserve">
+    <value>Rescan monitors</value>
+  </data>
   <data name="ShowAdjusted" xml:space="preserve">
     <value>Show adjusted brightness</value>
   </data>

@@ -16,7 +16,9 @@ using Monitorian.Core.Models.Monitor;
 using Monitorian.Core.Models.Watcher;
 using Monitorian.Core.ViewModels;
 using Monitorian.Core.Views;
+
 using ScreenFrame;
+
 using StartupAgency;
 
 namespace Monitorian.Core
@@ -175,7 +177,7 @@ namespace Monitorian.Core
 		private int _scanCount = 0;
 		private int _updateCount = 0;
 
-		private Task ScanAsync() => ScanAsync(TimeSpan.Zero);
+		internal Task ScanAsync() => ScanAsync(TimeSpan.Zero);
 
 		private async Task ScanAsync(TimeSpan interval)
 		{

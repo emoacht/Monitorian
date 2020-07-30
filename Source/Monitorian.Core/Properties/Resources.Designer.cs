@@ -151,6 +151,15 @@ namespace Monitorian.Core.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Rescan monitors.
+        /// </summary>
+        public static string Rescan {
+            get {
+                return ResourceManager.GetString("Rescan", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show adjusted brightness.
         /// </summary>
         public static string ShowAdjusted {

@@ -21,6 +21,20 @@
 			</ContentControl>
 
 			<ContentControl Style="{StaticResource MenuItemStyle}">
+				<Button Padding="8,4"
+						Style="{StaticResource PlainButtonItemStyle}"
+						FontSize="13"
+						Content="{x:Static properties:Resources.Rescan}">
+					<i:Interaction.Triggers>
+						<i:EventTrigger EventName="Click">
+							<i:CallMethodAction TargetObject="{Binding}"
+												MethodName="PerformRescan"/>
+						</i:EventTrigger>
+					</i:Interaction.Triggers>
+				</Button>
+			</ContentControl>
+
+			<ContentControl Style="{StaticResource MenuItemStyle}">
 				<ToggleButton Padding="8,4"
 							  Style="{StaticResource CheckButtonItemStyle}"
 							  FontSize="13"

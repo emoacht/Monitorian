@@ -20,7 +20,7 @@ namespace Monitorian.Core.Views.Behaviors
 				"TargetElement",
 				typeof(UIElement),
 				typeof(FocusElementAction),
-				new PropertyMetadata(null));
+				new PropertyMetadata(default(UIElement)));
 
 		protected override void Invoke(object parameter)
 		{

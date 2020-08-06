@@ -48,32 +48,36 @@ namespace Monitorian.Core.Models.Monitor
 
 		private static async Task<List<DeviceItemPlus>> GetMonitorDevicesAsync()
 		{
-			if (!OsVersion.Is10Redstone4OrNewer)
-				return DeviceContext.EnumerateMonitorDevices().Select(x => new DeviceItemPlus(x)).ToList();
+			var displayItems = OsVersion.Is10Redstone4OrNewer
+				? await DisplayInformation.GetDisplayMonitorsAsync()
+				: Array.Empty<DisplayInformation.DisplayItem>();
 
-			var displayItems = await DisplayInformation.GetDisplayMonitorsAsync();
-
-			const string genericPattern = "^Generic (?:PnP|Non-PnP) Monitor$";
-
-			return DeviceContext.EnumerateMonitorDevices()
-				.Select(x =>
+			IEnumerable<DeviceItemPlus> Enumerate()
+			{
+				foreach (var deviceItem in DeviceContext.EnumerateMonitorDevices())
 				{
-					string alternateDescription = null;
-					if (Regex.IsMatch(x.Description, genericPattern, RegexOptions.IgnoreCase))
+					var isDescriptionNullOrWhiteSpace = string.IsNullOrWhiteSpace(deviceItem.Description);
+					if (isDescriptionNullOrWhiteSpace ||
+						Regex.IsMatch(deviceItem.Description, "^Generic (?:PnP|Non-PnP) Monitor$", RegexOptions.IgnoreCase))
 					{
-						var displayItem = displayItems.FirstOrDefault(y => string.Equals(x.DeviceInstanceId, y.DeviceInstanceId, StringComparison.OrdinalIgnoreCase));
+						var displayItem = displayItems.FirstOrDefault(x => string.Equals(deviceItem.DeviceInstanceId, x.DeviceInstanceId, StringComparison.OrdinalIgnoreCase));
 						if (!string.IsNullOrWhiteSpace(displayItem?.DisplayName))
 						{
-							alternateDescription = displayItem.DisplayName;
+							yield return new DeviceItemPlus(deviceItem, displayItem.DisplayName);
+							continue;
 						}
-						else if (!string.IsNullOrEmpty(displayItem?.ConnectionDescription))
+						if (!isDescriptionNullOrWhiteSpace &&
+							!string.IsNullOrWhiteSpace(displayItem?.ConnectionDescription))
 						{
-							alternateDescription = $"{x.Description} ({displayItem.ConnectionDescription})";
+							yield return new DeviceItemPlus(deviceItem, $"{deviceItem.Description} ({displayItem.ConnectionDescription})");
+							continue;
 						}
 					}
-					return new DeviceItemPlus(x, alternateDescription);
-				})
-				.ToList();
+					yield return new DeviceItemPlus(deviceItem);
+				}
+			}
+
+			return Enumerate().Where(x => !string.IsNullOrWhiteSpace(x.AlternateDescription)).ToList();
 		}
 
 		private static IEnumerable<IMonitor> EnumerateMonitors(List<DeviceItemPlus> deviceItems)
@@ -207,42 +211,41 @@ namespace Monitorian.Core.Models.Monitor
 			{
 				var sw = new Stopwatch();
 
-				var actions = new[]
+				var tasks = new[]
 				{
-					GetAction(nameof(DeviceItems), () =>
+					GetTask(nameof(DeviceItems), () =>
 						DeviceItems = DeviceContext.EnumerateMonitorDevices().ToArray()),
 
-					GetAction(nameof(PhysicalItems), () =>
+					GetTask(nameof(PhysicalItems), () =>
 						PhysicalItems = DeviceContext.GetMonitorHandles().ToDictionary(
 							x => x,
 							x => MonitorConfiguration.EnumeratePhysicalMonitors(x.MonitorHandle, true).ToArray())),
 
-					GetAction(nameof(InstalledItems), () =>
+					GetTask(nameof(InstalledItems), () =>
 						InstalledItems = DeviceInstallation.EnumerateInstalledMonitors().ToArray()),
 
-					GetAction(nameof(DesktopItems), () =>
+					GetTask(nameof(DesktopItems), () =>
 						DesktopItems = MSMonitor.EnumerateDesktopMonitors().ToArray()),
 
-					GetAction(nameof(DisplayItems), async () =>
+					GetTask(nameof(DisplayItems), async () =>
 					{
 						if (OsVersion.Is10Redstone4OrNewer)
 							DisplayItems = await DisplayInformation.GetDisplayMonitorsAsync();
 					})
 				};
 
-				ElapsedTime = new string[actions.Length];
-
 				sw.Start();
 
-				await Task.WhenAll(actions.Select((x, index) => Task.Run(() => x.Invoke(index))));
+				ElapsedTime = await Task.WhenAll(tasks);
 
 				sw.Stop();
 
-				Action<int> GetAction(string name, Action action) =>
-					new Action<int>((index) =>
+				Task<string> GetTask(string name, Action action) =>
+					Task.Run(() =>
 					{
 						action.Invoke();
-						ElapsedTime[index] = $"{name} -> {sw.ElapsedMilliseconds}";
+						var elapsed = sw.Elapsed;
+						return $@"{name,-14} -> {elapsed.ToString($@"{(elapsed.Minutes > 0 ? @"m\:" : string.Empty)}s\.fff")}";
 					});
 			}
 		}

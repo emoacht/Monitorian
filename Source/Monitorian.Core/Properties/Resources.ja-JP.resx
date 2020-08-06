@@ -135,6 +135,9 @@
   <data name="Probe" xml:space="preserve">
     <value>モニターを調査する</value>
   </data>
+  <data name="Rescan" xml:space="preserve">
+    <value>モニターを再探索する</value>
+  </data>
   <data name="ShowAdjusted" xml:space="preserve">
     <value>調整後の明るさを表示する</value>
   </data>

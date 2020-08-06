@@ -51,15 +51,22 @@ The code for add-on features is not included in this repository.
 
 This app is a WPF app developed and tested with Surface Pro 4.
 
-### Log
+### Probe
 
-The logs will be useful source of information when looking into an issue.
+ - You can check the compatibility of your monitor by __probe.log__. It will include raw information on monitors, including capabilities through DDC/CI, from various APIs that are used to find accesible monitors. To get this log, tap `Probe into monitors` in the hidden menu described below.
+ - To open the hidden menu, <ins>click app title at the top of menu window 3 times.</ins> 
 
- - __exception.log__ - Information on exceptions when an unexpected problem happened.
+### Rescan
 
- - __probe.log__ - Information on capabilities of each monitor obtained from various APIs and used to find accessible monitors. To get this log, click the app title in menu window 3 times and then tap `Probe into monitors`.
+ - As part of testing, you can manually trigger to rescan monitors via `Rescan monitors` in the hidden menu. A system sound will be played when completed.
 
- - __operation.log__ - Information on operations including to scan monitors and reflect their states. To get this log, do the same above and then check `Make operation log`. After that, the log can be copied by `Copy operation log`.
+### Operations
+
+ - As part of testing, you can record operations to scan monitors and reflect their states. To enable the recording, check `Make operation log` in the hidden menu. After that, __operation.log__ can be copied by `Copy operation log`.
+
+### Exceptions
+
+ - If anything unexpected happens, __exception.log__ will be saved. It will be useful source of information when looking into an issue.
 
 ### Setup
 
@@ -83,6 +90,10 @@ An alternative language can be shown by adding a Resources (.resx) file into `/S
 `Resources.ja-JP.resx` (for Japanese) would be a good example for this purpose.
 
 ## History
+
+Ver 2.5.0 2020-8-1
+
+- Fix issue of empty description
 
 Ver 2.4.0 2019-12-30
 

@@ -36,6 +36,7 @@
     <DocumentationFile>bin\Release\Monitorian.Supplement.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="PresentationCore" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />
@@ -58,6 +59,7 @@
   <ItemGroup>
     <Compile Include="DisplayInformation.cs" />
     <Compile Include="LightInformation.cs" />
+    <Compile Include="UIInformation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

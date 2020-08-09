@@ -8,6 +8,7 @@ using System.Windows.Threading;
 
 using Monitorian.Core.Models;
 using Monitorian.Core.Views;
+
 using StartupAgency;
 
 namespace Monitorian.Core
@@ -17,7 +18,7 @@ namespace Monitorian.Core
 		public IReadOnlyCollection<string> FilteredArguments { get; }
 		public StartupAgent StartupAgent { get; }
 
-		public AppKeeper(StartupEventArgs e) : this(e, StartupAgent.Options, LanguageService.Options, WindowEffect.Options)
+		public AppKeeper(StartupEventArgs e) : this(e, StartupAgent.Options, LanguageService.Options, UserInteraction.Options, WindowEffect.Options)
 		{ }
 
 		public AppKeeper(StartupEventArgs e, params IEnumerable<string>[] ignorableOptions)

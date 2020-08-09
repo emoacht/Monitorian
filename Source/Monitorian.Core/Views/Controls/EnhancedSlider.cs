@@ -32,7 +32,8 @@ namespace Monitorian.Core.Views.Controls
 			_thumb = _track?.Thumb;
 			CheckCanDrag();
 
-			MakeValueDeferred();
+			if (UserInteraction.IsValueDeferred)
+				MakeValueDeferred();
 		}
 
 		#region Drag

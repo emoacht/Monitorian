@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Data;
 using System.Windows.Input;
 
 namespace Monitorian.Core.Views.Controls
@@ -30,6 +31,8 @@ namespace Monitorian.Core.Views.Controls
 			_track = this.GetTemplateChild("PART_Track") as Track;
 			_thumb = _track?.Thumb;
 			CheckCanDrag();
+
+			MakeValueDeferred();
 		}
 
 		#region Drag
@@ -90,6 +93,15 @@ namespace Monitorian.Core.Views.Controls
 			base.OnPreviewMouseDown(e);
 		}
 
+		// OnPreviewMouseUp covers the case of OnPreviewStylusUp or OnPreviewTouchUp.
+		protected override void OnPreviewMouseUp(MouseButtonEventArgs e)
+		{
+			base.OnPreviewMouseUp(e);
+
+			UpdateValueDeferred();
+		}
+
+		// OnPreviewStylusDown covers the case of OnPreviewTouchDown.
 		protected override void OnPreviewStylusDown(StylusDownEventArgs e)
 		{
 			if (SetValueStartDrag(
@@ -111,7 +123,6 @@ namespace Monitorian.Core.Views.Controls
 			VisualStateManager.GoToState(_thumb, "Normal", true);
 		}
 
-		// This method will not be called when the event is handled by OnPreviewStylusDown method.
 		protected override void OnPreviewTouchDown(TouchEventArgs e)
 		{
 			if (SetValueStartDrag(
@@ -191,6 +202,8 @@ namespace Monitorian.Core.Views.Controls
 		protected override void OnManipulationCompleted(ManipulationCompletedEventArgs e)
 		{
 			base.OnManipulationCompleted(e);
+
+			UpdateValueDeferred();
 		}
 
 		protected override void OnManipulationDelta(ManipulationDeltaEventArgs e)
@@ -201,9 +214,6 @@ namespace Monitorian.Core.Views.Controls
 			var cumulativeValue = _track.ValueFromDistance(cumulativeDistance.X, cumulativeDistance.Y);
 			var newValue = _originValue + cumulativeValue;
 			newValue = Math.Min(this.Maximum, Math.Max(this.Minimum, Math.Round(newValue)));
-
-			if (this.Value == newValue)
-				return;
 
 			this.Value = newValue;
 		}
@@ -228,6 +238,39 @@ namespace Monitorian.Core.Views.Controls
 			newValue = Math.Min(this.Maximum, Math.Max(this.Minimum, Math.Round(newValue)));
 
 			this.Value = newValue;
+			UpdateValueDeferred();
+		}
+
+		#endregion
+
+		#region Deferral
+
+		private BindingExpression _valuePropertyExpression;
+
+		protected virtual void MakeValueDeferred()
+		{
+			_valuePropertyExpression = ReplaceBinding(this, ValueProperty, BindingMode.TwoWay, UpdateSourceTrigger.Explicit);
+
+			static BindingExpression ReplaceBinding(DependencyObject target, DependencyProperty dp, BindingMode mode, UpdateSourceTrigger trigger)
+			{
+				var bindingPath = BindingOperations.GetBinding(target, dp)?.Path.Path;
+				if (string.IsNullOrEmpty(bindingPath))
+					return null;
+
+				BindingOperations.ClearBinding(target, dp); // This does not work if the binding is set in DataTemplate.
+
+				var binding = new Binding(bindingPath)
+				{
+					Mode = mode,
+					UpdateSourceTrigger = trigger
+				};
+				return BindingOperations.SetBinding(target, dp, binding) as BindingExpression;
+			}
+		}
+
+		protected virtual void UpdateValueDeferred()
+		{
+			_valuePropertyExpression?.UpdateSource();
 		}
 
 		#endregion

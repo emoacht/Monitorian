@@ -23,7 +23,7 @@ namespace Monitorian.Core.Models
 			var preparedCulturePairs = PreparedCulturePairs;
 			var supportedCultureNames = new HashSet<string>(CultureInfo.GetCultures(CultureTypes.AllCultures).Select(x => x.Name));
 
-			return Environment.GetCommandLineArgs().Skip(1)
+			return AppKeeper.DefinedArguments
 				.Where(x => !string.IsNullOrWhiteSpace(x))
 				.Select(x => (Success: preparedCulturePairs.TryGetValue(x.ToLower(), out string value) && supportedCultureNames.Contains(value), CultureName: value))
 				.Where(x => x.Success)

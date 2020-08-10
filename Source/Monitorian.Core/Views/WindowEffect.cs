@@ -178,12 +178,12 @@ namespace Monitorian.Core.Views
 
 			var colorPairs = ColorPairs;
 			var colors = new Dictionary<ColorElement, Brush>();
-			var args = Environment.GetCommandLineArgs();
+			var arguments = AppKeeper.DefinedArguments;
 
-			int i = 1; // Skip 0.
-			while (i < args.Length - 1)
+			int i = 0;
+			while (i < arguments.Count - 1)
 			{
-				if (colorPairs.TryGetValue(args[i], out ColorElement key) && TryParse(args[i + 1], out Brush value))
+				if (colorPairs.TryGetValue(arguments[i], out ColorElement key) && TryParse(arguments[i + 1], out Brush value))
 				{
 					colors[key] = value;
 					i++;

@@ -30,7 +30,7 @@ namespace StartupAgency
 		/// <para>response: Response from another instance if that instance exists and returns an response</para> 
 		/// </returns>
 		/// <remarks>Startup task ID must match that in AppxManifest.xml.</remarks>
-		public (bool success, object response) Start(string name, string startupTaskId, IReadOnlyCollection<string> args)
+		public (bool success, object response) Start(string name, string startupTaskId, IReadOnlyList<string> args)
 		{
 			if (string.IsNullOrWhiteSpace(name))
 				throw new ArgumentNullException(nameof(name));

@@ -12,7 +12,7 @@ namespace Monitorian.Core.Views
 
 		public static IReadOnlyCollection<string> Options => new[] { DeferOption };
 
-		internal static bool IsValueDeferred => _isValueDeferred ??= Environment.GetCommandLineArgs().Skip(1).Contains(DeferOption);
+		internal static bool IsValueDeferred => _isValueDeferred ??= AppKeeper.DefinedArguments.Contains(DeferOption);
 		private static bool? _isValueDeferred;
 	}
 }

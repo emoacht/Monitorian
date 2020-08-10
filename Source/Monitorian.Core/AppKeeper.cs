@@ -15,32 +15,47 @@ namespace Monitorian.Core
 {
 	public class AppKeeper
 	{
-		public IReadOnlyCollection<string> FilteredArguments { get; }
+		public static IReadOnlyList<string> DefinedArguments => _definedArguments?.ToArray() ?? Array.Empty<string>();
+		private static string[] _definedArguments;
+
+		public static IReadOnlyList<string> OtherArguments => _otherArguments?.ToArray() ?? Array.Empty<string>();
+		private static string[] _otherArguments;
+
 		public StartupAgent StartupAgent { get; }
 
-		public AppKeeper(StartupEventArgs e) : this(e, StartupAgent.Options, LanguageService.Options, UserInteraction.Options, WindowEffect.Options)
+		public static string[] GetDefinedOptions() =>
+			new[]
+			{
+				StartupAgent.Options,
+				LanguageService.Options,
+				UserInteraction.Options,
+				WindowEffect.Options
+			}
+			.SelectMany(x => x)
+			.ToArray();
+
+		public AppKeeper(StartupEventArgs e) : this(e?.Args, GetDefinedOptions())
 		{ }
 
-		public AppKeeper(StartupEventArgs e, params IEnumerable<string>[] ignorableOptions)
+		public AppKeeper(string[] args, params string[] definedOptions)
 		{
-			FilteredArguments = Array.AsReadOnly(FilterArguments(e, ignorableOptions.SelectMany(x => x).ToArray()));
+			if (args?.Any() == true)
+			{
+				const char optionMark = '/';
+				var isDefined = false;
+
+				// First element of StartupEventArgs.Args is not executing assembly's path unlike
+				// that of arguments provided by Environment.GetCommandLineArgs method.
+				var buffer = args
+					.Where(x => !string.IsNullOrWhiteSpace(x))
+					.GroupBy(x => (x[0] == optionMark) ? (isDefined = definedOptions.Contains(x.ToLower())) : isDefined)
+					.ToArray();
+
+				_definedArguments = buffer.SingleOrDefault(x => x.Key)?.ToArray();
+				_otherArguments = buffer.SingleOrDefault(x => !x.Key)?.ToArray();
+			}
+
 			StartupAgent = new StartupAgent();
-		}
-
-		private static string[] FilterArguments(StartupEventArgs e, string[] ignorableOptions)
-		{
-			if (!(e?.Args?.Any() == true))
-				return Array.Empty<string>();
-
-			const char optionMark = '/';
-			var isUnignorable = true;
-
-			// First element of StartupEventArgs.Args is not executing assembly's path unlike
-			// that of arguments provided by Environment.GetCommandLineArgs method.
-			return e.Args
-				.Where(x => !string.IsNullOrWhiteSpace(x))
-				.Where(x => (x[0] == optionMark) ? (isUnignorable = !ignorableOptions.Contains(x.ToLower())) : isUnignorable)
-				.ToArray();
 		}
 
 		public bool Start()
@@ -48,13 +63,13 @@ namespace Monitorian.Core
 #if DEBUG
 			ConsoleService.TryStartWrite();
 #else
-			if (FilteredArguments.Any())
+			if (OtherArguments.Any())
 				ConsoleService.TryStartWrite();
 #endif
 
 			SubscribeExceptions();
 
-			var (success, response) = StartupAgent.Start(ProductInfo.Product, ProductInfo.StartupTaskId, FilteredArguments);
+			var (success, response) = StartupAgent.Start(ProductInfo.Product, ProductInfo.StartupTaskId, OtherArguments);
 			if (!success && (response != null))
 			{
 				ConsoleService.Write(response.ToString());

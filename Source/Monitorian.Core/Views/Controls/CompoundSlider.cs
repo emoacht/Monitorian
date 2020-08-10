@@ -169,13 +169,27 @@ namespace Monitorian.Core.Views.Controls
 
 		private void OnMoved(object sender, double delta)
 		{
-			if (ReferenceEquals(this, sender) || (delta == 0D))
+			if (ReferenceEquals(this, sender))
 				return;
 
-			_brightnessProtruded ??= this.Value;
-			_brightnessProtruded += delta;
+			if (delta != 0D)
+			{
+				_brightnessProtruded ??= this.Value;
+				_brightnessProtruded += delta;
 
-			this.Value = Math.Min(this.Maximum, Math.Max(this.Minimum, _brightnessProtruded.Value));
+				this.Value = Math.Min(this.Maximum, Math.Max(this.Minimum, _brightnessProtruded.Value));
+			}
+			else
+			{
+				base.UpdateValueDeferred();
+			}
+		}
+
+		protected override void UpdateValueDeferred()
+		{
+			base.UpdateValueDeferred();
+
+			Moved?.Invoke(this, 0D);
 		}
 
 		#endregion

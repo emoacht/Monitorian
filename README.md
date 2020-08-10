@@ -53,7 +53,7 @@ This app is a WPF app developed and tested with Surface Pro 4.
 
 ### Probe
 
- - You can check the compatibility of your monitor by __probe.log__. It will include raw information on monitors, including capabilities through DDC/CI, from various APIs that are used to find accesible monitors. To get this log, tap `Probe into monitors` in the hidden menu described below.
+ - You can check the compatibility of your monitor by __probe.log__. It will include raw information on monitors, including capabilities through DDC/CI, from various APIs that are used to find accessible monitors. To get this log, tap `Probe into monitors` in the hidden menu described below.
  - To open the hidden menu, <ins>click app title at the top of menu window 3 times.</ins> 
 
 ### Rescan
@@ -90,6 +90,10 @@ An alternative language can be shown by adding a Resources (.resx) file into `/S
 `Resources.ja-JP.resx` (for Japanese) would be a good example for this purpose.
 
 ## History
+
+Ver 2.6.0 2020-8-10
+
+- Enable to defer update of brightness
 
 Ver 2.5.0 2020-8-1
 

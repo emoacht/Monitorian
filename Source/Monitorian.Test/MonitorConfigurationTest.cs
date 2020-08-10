@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Monitorian.Core.Models.Monitor;
@@ -51,23 +53,48 @@ namespace Monitorian.Test
 		[TestMethod]
 		public void TestIsLowLevelSupported6()
 		{
+			// LG 27UL550-W
+			var source = @"(prot(monitor)type(lcd)UL550_500cmds(01 02 03 0C E3 F3)vcp(02 04 05 08 10 12 14(05 08 0B) 16 18 1A 52 60(11 12 0F 10) AC AE B2 B6 C0 C6 C8 C9 D6(01 04) DF 62 8D F4 F5(00 01 02) F6(00 01 02) 4D 4E 4F 15(01 06 09 10 11 13 14 28 29 32  44 48) F7(00 01 02 03) F8(00 01) F9 EF FD(00 01) FE(00 01 02) FF)mccs_ver(2.1)mswhql(1))";
+			Assert.IsTrue(TestIsLowLevelSupportedBase(source));
+			Assert.IsTrue(TestIsSpeakerVolumeSupportedBase(source));
+		}
+
+		[TestMethod]
+		public void TestIsLowLevelSupported7()
+		{
 			// HP LE1711
 			var source = @"(prot(monitor)type(lcd)model(HP LE1711)cmds(01 02 03 07 0C 4E F3 E3)vcp(02 04 05 06 08 0B 0C 0E 10 12 14(01 05 08 0B) 16 18 1A 1E 1F 20 30 3E 52 60(01) 6C 6E 70 AC AE B6 C0 C6 C8 C9 CA CC(01 02 03 04 05 06 08 0A 0D 14) D6(01 04 05) DF FA(00 01 02) FB FC FD FE(00 01 02 04) )mswhql(1)mccs_ver(2.1)asset_eep(32)mpu_ver(01))";
 			Assert.IsTrue(TestIsLowLevelSupportedBase(source));
 		}
 
 		[TestMethod]
-		public void TestIsLowLevelSupported7()
+		public void TestIsLowLevelSupported8()
 		{
 			// NEC L220W
 			var source = @"(vcp(02 04 05 06 08 0E 10 12 14(01 02 06 08 0B 0E) 16 18 1A 1E 20 30 3E 68(01 02 03 04 05 06 07 09 0D) B0 B6 DF E3 F4 F5(01 02 03 04 05 06 07 09 0D) F9 FA FC FF)vcp_p02(33 37 47 52 64 65 DA EA FF)vcp_p10(10 11 26 27 28 29 2A 2B 2C 2D)prot(monitor)type(LCD)cmds(01 02 03 07 0C C2 C4 C6 C8 F3)mccs_ver(2.0)asset_eep(20)mpu_ver(1.02)model(L220W)mswhql(1))";
 			Assert.IsTrue(TestIsLowLevelSupportedBase(source));
 		}
 
-		private bool TestIsLowLevelSupportedBase(string source)
+		private static bool TestIsLowLevelSupportedBase(string source)
 		{
 			var @class = new PrivateType(typeof(MonitorConfiguration));
 			return (bool)@class.InvokeStatic("IsLowLevelSupported", source);
+		}
+
+		private static bool TestIsSpeakerVolumeSupportedBase(string source)
+		{
+			var @class = new PrivateType(typeof(MonitorConfiguration));
+			var report = (string)@class.InvokeStatic("MakeCapabilitiesReport", source);
+
+			const string SpeakerVolume = "Speaker Volume:";
+			var index = report.IndexOf(SpeakerVolume);
+			if (0 <= index)
+			{
+				var buffer = report.Substring(index + SpeakerVolume.Length).Trim().Split().First();
+				if (bool.TryParse(buffer, out bool value))
+					return value;
+			}
+			return false;
 		}
 	}
 }

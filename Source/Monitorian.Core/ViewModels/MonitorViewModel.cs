@@ -99,6 +99,18 @@ namespace Monitorian.Core.ViewModels
 		}
 		private byte _rangeHighest = 100;
 
+		private double GetRangeRate() => Math.Abs(RangeHighest - RangeLowest) / 100D;
+
+		/// <summary>
+		/// Whether the range of brightness is changing
+		/// </summary>
+		public bool IsRangeChanging
+		{
+			get => _isRangeChanging;
+			set => SetPropertyValue(ref _isRangeChanging, value);
+		}
+		private bool _isRangeChanging = false;
+
 		#endregion
 
 		#region Brightness
@@ -152,18 +164,34 @@ namespace Monitorian.Core.ViewModels
 
 		public void IncrementBrightness(int tickSize, bool isCycle = true)
 		{
-			int brightness = (Brightness / tickSize) * tickSize + tickSize;
-			if (100 < brightness)
-				brightness = isCycle ? 0 : 100;
+			if (IsRangeChanging)
+				return;
+
+			var size = tickSize * GetRangeRate();
+			var count = Math.Floor((Brightness - RangeLowest) / size);
+			int brightness = RangeLowest + (int)Math.Ceiling((count + 1) * size);
+
+			if (brightness < RangeLowest)
+				brightness = RangeLowest;
+			else if (RangeHighest < brightness)
+				brightness = isCycle ? RangeLowest : RangeHighest;
 
 			SetBrightness(brightness);
 		}
 
 		public void DecrementBrightness(int tickSize, bool isCycle = true)
 		{
-			int brightness = (Brightness / tickSize) * tickSize - tickSize;
-			if (brightness < 0)
-				brightness = isCycle ? 100 : 0;
+			if (IsRangeChanging)
+				return;
+
+			var size = tickSize * GetRangeRate();
+			var count = Math.Ceiling((Brightness - RangeLowest) / size);
+			int brightness = RangeLowest + (int)Math.Floor((count - 1) * size);
+
+			if (brightness < RangeLowest)
+				brightness = isCycle ? RangeHighest : RangeLowest;
+			else if (RangeHighest < brightness)
+				brightness = RangeHighest;
 
 			SetBrightness(brightness);
 		}

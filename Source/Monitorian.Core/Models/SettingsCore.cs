@@ -57,15 +57,15 @@ namespace Monitorian.Core.Models
 		private bool _showsAdjusted = true;
 
 		/// <summary>
-		/// Known monitors with user-specified names
+		/// Monitor customizations by user
 		/// </summary>
 		[DataMember]
-		public ObservableKeyedList<string, MonitorValuePack> KnownMonitors
+		public ObservableKeyedList<string, MonitorCustomizationItem> MonitorCustomizations
 		{
-			get => _knownMonitors ??= new ObservableKeyedList<string, MonitorValuePack>();
-			protected set => _knownMonitors = value;
+			get => _monitorCustomizations ??= new ObservableKeyedList<string, MonitorCustomizationItem>();
+			protected set => _monitorCustomizations = value;
 		}
-		private ObservableKeyedList<string, MonitorValuePack> _knownMonitors;
+		private ObservableKeyedList<string, MonitorCustomizationItem> _monitorCustomizations;
 
 		/// <summary>
 		/// Device Instance ID of selected monitor
@@ -115,7 +115,7 @@ namespace Monitorian.Core.Models
 				TimeSpan.FromMilliseconds(100),
 				() => Save(this, _settingsFilePath));
 
-			KnownMonitors.CollectionChanged += (sender, e) => RaisePropertyChanged(nameof(KnownMonitors));
+			MonitorCustomizations.CollectionChanged += (sender, e) => RaisePropertyChanged(nameof(MonitorCustomizations));
 			PropertyChanged += async (sender, e) => await _save.PushAsync();
 		}
 
@@ -183,7 +183,7 @@ namespace Monitorian.Core.Models
 	}
 
 	[DataContract]
-	public class MonitorValuePack
+	public class MonitorCustomizationItem
 	{
 		[DataMember]
 		public string Name { get; private set; }
@@ -191,10 +191,22 @@ namespace Monitorian.Core.Models
 		[DataMember(Name = "Unison")]
 		public bool IsUnison { get; private set; }
 
-		public MonitorValuePack(string name, bool isUnison)
+		[DataMember]
+		public byte Lowest { get; private set; } = 0;
+
+		[DataMember]
+		public byte Highest { get; private set; } = 100;
+
+		public MonitorCustomizationItem(string name, bool isUnison)
 		{
 			this.Name = name;
 			this.IsUnison = isUnison;
+		}
+
+		public MonitorCustomizationItem(string name, bool isUnison, byte lowest, byte highest) : this(name, isUnison)
+		{
+			this.Lowest = lowest;
+			this.Highest = highest;
 		}
 	}
 }

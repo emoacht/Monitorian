@@ -19,7 +19,7 @@ namespace Monitorian.Core.ViewModels
 			this._controller = controller ?? throw new ArgumentNullException(nameof(controller));
 			this._monitor = monitor ?? throw new ArgumentNullException(nameof(monitor));
 
-			this._controller.TryLoadNameUnison(DeviceInstanceId, ref _name, ref _isUnison);
+			LoadCustomization();
 		}
 
 		private readonly object _lock = new object();
@@ -42,7 +42,10 @@ namespace Monitorian.Core.ViewModels
 		public byte MonitorIndex => _monitor.MonitorIndex;
 		public bool IsReachable => _monitor.IsReachable;
 
-		#region Name/Unison
+		#region Customization
+
+		private void LoadCustomization() => _controller.TryLoadCustomization(DeviceInstanceId, ref _name, ref _isUnison, ref _rangeLowest, ref _rangeHighest);
+		private void SaveCustomization() => _controller.SaveCustomization(DeviceInstanceId, _name, _isUnison, _rangeLowest, _rangeHighest);
 
 		public string Name
 		{
@@ -50,7 +53,7 @@ namespace Monitorian.Core.ViewModels
 			set
 			{
 				if (SetPropertyValue(ref _name, GetValueOrNull(value)))
-					_controller.SaveNameUnison(DeviceInstanceId, _name, _isUnison);
+					SaveCustomization();
 			}
 		}
 		private string _name;
@@ -63,10 +66,38 @@ namespace Monitorian.Core.ViewModels
 			set
 			{
 				if (SetPropertyValue(ref _isUnison, value))
-					_controller.SaveNameUnison(DeviceInstanceId, _name, _isUnison);
+					SaveCustomization();
 			}
 		}
 		private bool _isUnison;
+
+		/// <summary>
+		/// Lowest brightness in the range of brightness
+		/// </summary>
+		public int RangeLowest
+		{
+			get => _rangeLowest;
+			set
+			{
+				if (SetPropertyValue(ref _rangeLowest, (byte)value))
+					SaveCustomization();
+			}
+		}
+		private byte _rangeLowest = 0;
+
+		/// <summary>
+		/// Highest brightness in the range of brightness
+		/// </summary>
+		public int RangeHighest
+		{
+			get => _rangeHighest;
+			set
+			{
+				if (SetPropertyValue(ref _rangeHighest, (byte)value))
+					SaveCustomization();
+			}
+		}
+		private byte _rangeHighest = 100;
 
 		#endregion
 

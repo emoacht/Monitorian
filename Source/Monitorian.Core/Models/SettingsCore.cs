@@ -35,7 +35,18 @@ namespace Monitorian.Core.Models
 		private bool _usesLargeElements = true; // Default
 
 		/// <summary>
-		/// Whether to enable moving together
+		/// Whether to show adjusted brightness
+		/// </summary>
+		[DataMember]
+		public bool ShowsAdjusted
+		{
+			get => _showsAdjusted;
+			set => SetPropertyValue(ref _showsAdjusted, value);
+		}
+		private bool _showsAdjusted = true;
+
+		/// <summary>
+		/// Whether to enable moving in unison
 		/// </summary>
 		[DataMember]
 		public bool EnablesUnison
@@ -46,15 +57,15 @@ namespace Monitorian.Core.Models
 		private bool _enablesUnison = false;
 
 		/// <summary>
-		/// Whether to show adjusted brightness
+		/// Whether to change adjustable range
 		/// </summary>
 		[DataMember]
-		public bool ShowsAdjusted
+		public bool ChangesRange
 		{
-			get => _showsAdjusted;
-			set => SetPropertyValue(ref _showsAdjusted, value);
+			get => _changesRange;
+			set => SetPropertyValue(ref _changesRange, value);
 		}
-		private bool _showsAdjusted = true;
+		private bool _changesRange;
 
 		/// <summary>
 		/// Monitor customizations by user

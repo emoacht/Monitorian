@@ -11,7 +11,7 @@ namespace Monitorian.Core.Views.Controls
 	[TemplatePart(Name = "PART_ShadowThumb", Type = typeof(FrameworkElement))]
 	[TemplatePart(Name = "PART_ShadowLeft", Type = typeof(ColumnDefinition))]
 	[TemplatePart(Name = "PART_ShadowRight", Type = typeof(ColumnDefinition))]
-	public class ShadowSlider : EnhancedSlider
+	public class ShadowSlider : RangeSlider
 	{
 		public override void OnApplyTemplate()
 		{

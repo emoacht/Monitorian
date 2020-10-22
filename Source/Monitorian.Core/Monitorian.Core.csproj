@@ -111,6 +111,7 @@
     <Compile Include="Views\Behaviors\MouseDownParentAction.cs" />
     <Compile Include="Views\Controls\Sliders\CompoundSlider.cs" />
     <Compile Include="Views\Controls\Sliders\EnhancedSlider.cs" />
+    <Compile Include="Views\Controls\Sliders\RangeSlider.cs" />
     <Compile Include="Views\Controls\Sliders\ShadowSlider.cs" />
     <Compile Include="Views\Controls\FrameworkElementMargin.cs" />
     <Compile Include="Views\Controls\PulseLabel.cs" />

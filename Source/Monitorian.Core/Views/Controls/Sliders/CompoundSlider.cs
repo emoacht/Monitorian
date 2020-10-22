@@ -67,7 +67,8 @@ namespace Monitorian.Core.Views.Controls
 
 			if (this.IsFocused && IsUnison)
 			{
-				Moved?.Invoke(this, newValue - oldValue);
+				var delta = (newValue - oldValue) / GetRangeRate();
+				Moved?.Invoke(this, delta);
 			}
 		}
 
@@ -88,9 +89,9 @@ namespace Monitorian.Core.Views.Controls
 			if (delta != 0D)
 			{
 				_brightnessProtruded ??= this.Value;
-				_brightnessProtruded += delta;
+				_brightnessProtruded += delta * GetRangeRate();
 
-				this.Value = Math.Min(this.Maximum, Math.Max(this.Minimum, _brightnessProtruded.Value));
+				UpdateValue(_brightnessProtruded.Value);
 			}
 			else
 			{

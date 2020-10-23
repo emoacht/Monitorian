@@ -84,6 +84,14 @@
 						  IsChecked="{Binding Settings.EnablesUnison}"/>
 		</ContentControl>
 
+		<ContentControl Style="{StaticResource MenuItemStyle}">
+			<ToggleButton Padding="8,4"
+						  Style="{StaticResource CheckButtonItemStyle}"
+						  FontSize="13"
+						  Content="{x:Static properties:Resources.ChangeRange}"
+						  IsChecked="{Binding Settings.ChangesRange}"/>
+		</ContentControl>
+
 		<Separator Style="{StaticResource MenuSeparatorStyle}"/>
 
 		<!-- Close -->

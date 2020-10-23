@@ -61,6 +61,15 @@ namespace Monitorian.Core.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Change adjustable range.
+        /// </summary>
+        public static string ChangeRange {
+            get {
+                return ResourceManager.GetString("ChangeRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Close.
         /// </summary>
         public static string Close {

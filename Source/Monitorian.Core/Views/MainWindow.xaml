@@ -674,7 +674,8 @@
 									BorderThickness="1"
 									BorderBrush="{StaticResource App.Foreground.Invalid}">
 								<TextBlock Foreground="{StaticResource App.Foreground.Invalid}"
-										   Text="{x:Static properties:Resources.NotControllable}"/>
+										   TextWrapping="Wrap"
+										   Text="{Binding Status, Mode=OneWay}"/>
 							</Border>
 						</Grid>
 					</Grid>

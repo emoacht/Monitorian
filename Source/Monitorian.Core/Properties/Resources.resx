@@ -138,9 +138,6 @@
   <data name="MakeOperation" xml:space="preserve">
     <value>Make operation log</value>
   </data>
-  <data name="NotControllable" xml:space="preserve">
-    <value>This monitor is not controllable.</value>
-  </data>
   <data name="Probe" xml:space="preserve">
     <value>Probe into monitors</value>
   </data>
@@ -164,6 +161,15 @@
   </data>
   <data name="StartSignIn" xml:space="preserve">
     <value>Start on sign in</value>
+  </data>
+  <data name="StatusNotControllable" xml:space="preserve">
+    <value>Monitor is not controllable.</value>
+  </data>
+  <data name="StatusReasonDdcFailing" xml:space="preserve">
+    <value>DDC/CI has been failing repeatedly.</value>
+  </data>
+  <data name="StatusReasonDdcNotEnabled" xml:space="preserve">
+    <value>DDC/CI is not supported or enabled.</value>
   </data>
   <data name="UseLargeElements" xml:space="preserve">
     <value>Use large buttons</value>

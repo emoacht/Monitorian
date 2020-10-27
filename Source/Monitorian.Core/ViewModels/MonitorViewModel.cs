@@ -5,7 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Monitorian.Core.Helper;
+using Monitorian.Core.Models;
 using Monitorian.Core.Models.Monitor;
+using Monitorian.Core.Properties;
 
 namespace Monitorian.Core.ViewModels
 {
@@ -254,7 +256,10 @@ namespace Monitorian.Core.ViewModels
 				var formerCount = _controllableCount;
 				_controllableCount = NormalCount;
 				if (formerCount <= 0)
+				{
 					RaisePropertyChanged(nameof(IsControllable));
+					RaisePropertyChanged(nameof(Status));
+				}
 
 				_isSuccessCalled = true;
 			}
@@ -263,7 +268,30 @@ namespace Monitorian.Core.ViewModels
 		private void OnFailure()
 		{
 			if (--_controllableCount == 0)
+			{
 				RaisePropertyChanged(nameof(IsControllable));
+				RaisePropertyChanged(nameof(Status));
+			}
+		}
+
+		public string Status
+		{
+			get
+			{
+				if (IsControllable)
+					return null;
+
+				LanguageService.Switch();
+
+				var reason = _monitor switch
+				{
+					DdcMonitorItem _ => Resources.StatusReasonDdcFailing,
+					UnreachableMonitorItem { IsInternal: false } _ => Resources.StatusReasonDdcNotEnabled,
+					_ => null,
+				};
+
+				return Resources.StatusNotControllable + (reason is null ? string.Empty : Environment.NewLine + reason);
+			}
 		}
 
 		#endregion

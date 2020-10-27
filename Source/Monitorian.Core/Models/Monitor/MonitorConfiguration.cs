@@ -260,16 +260,16 @@ namespace Monitorian.Core.Models.Monitor
 					//Debug.WriteLine($"Handle: {physicalMonitor.hPhysicalMonitor}");
 					//Debug.WriteLine($"IsHighLevelSupported: {isHighLevelSupported}");
 					//Debug.WriteLine($"IsLowLevelSupported: {isLowLevelSupported}");
-					//Debug.WriteLine($"Capabilities: {capabilities}");
+					//Debug.WriteLine($"CapabilitiesString: {capabilitiesString}");
 
 					yield return new PhysicalItem(
-							description: physicalMonitor.szPhysicalMonitorDescription,
-							monitorIndex: monitorIndex,
-							handle: handle,
-							isHighLevelSupported: isHighLevelSupported,
-							isLowLevelSupported: isLowLevelSupported,
-							capabilitiesString: (verbose ? capabilitiesString : null),
-							capabilitiesReport: (verbose ? MakeCapabilitiesReport(capabilitiesString) : null));
+						description: physicalMonitor.szPhysicalMonitorDescription,
+						monitorIndex: monitorIndex,
+						handle: handle,
+						isHighLevelSupported: isHighLevelSupported,
+						isLowLevelSupported: isLowLevelSupported,
+						capabilitiesString: (verbose ? capabilitiesString : null),
+						capabilitiesReport: (verbose ? MakeCapabilitiesReport(capabilitiesString) : null));
 
 					monitorIndex++;
 				}
@@ -380,7 +380,7 @@ namespace Monitorian.Core.Models.Monitor
 					out uint currentBrightness,
 					out uint maximumBrightness))
 				{
-					Debug.WriteLine($"Failed to get brightnesses. {Error.GetMessage()}");
+					Debug.WriteLine($"Failed to get brightnesses (High level). {Error.GetMessage()}");
 					return (success: false, 0, 0, 0);
 				}
 				return (success: true,
@@ -431,7 +431,7 @@ namespace Monitorian.Core.Models.Monitor
 					physicalMonitorHandle,
 					brightness))
 				{
-					Debug.WriteLine($"Failed to set brightness. {Error.GetMessage()}");
+					Debug.WriteLine($"Failed to set brightness (High level). {Error.GetMessage()}");
 					return false;
 				}
 			}

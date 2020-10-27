@@ -31,6 +31,10 @@ namespace Monitorian.Core.ViewModels
 
 			lock (_lock)
 			{
+				// If IsReachable property is changed to true, reset _controllableCount.
+				if (!this._monitor.IsReachable && monitor.IsReachable)
+					_controllableCount = InitialCount;
+
 				this._monitor.Dispose();
 				this._monitor = monitor;
 			}
@@ -40,7 +44,6 @@ namespace Monitorian.Core.ViewModels
 		public string Description => _monitor.Description;
 		public byte DisplayIndex => _monitor.DisplayIndex;
 		public byte MonitorIndex => _monitor.MonitorIndex;
-		public bool IsReachable => _monitor.IsReachable;
 
 		#region Customization
 
@@ -219,7 +222,7 @@ namespace Monitorian.Core.ViewModels
 
 		#region Controllable
 
-		public bool IsControllable => IsReachable && (_controllableCount > 0);
+		public bool IsControllable => _monitor.IsReachable && (_controllableCount > 0);
 
 		public bool IsLikelyControllable => IsControllable || _isSuccessCalled;
 		private bool _isSuccessCalled;

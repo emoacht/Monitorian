@@ -207,8 +207,7 @@ namespace Monitorian.Core
 							foreach (int index in oldMonitorIndices)
 							{
 								var oldMonitor = Monitors[index];
-								if (string.Equals(oldMonitor.DeviceInstanceId, item.DeviceInstanceId, StringComparison.OrdinalIgnoreCase)
-									&& (oldMonitor.IsReachable == item.IsReachable))
+								if (string.Equals(oldMonitor.DeviceInstanceId, item.DeviceInstanceId, StringComparison.OrdinalIgnoreCase))
 								{
 									oldMonitorExists = true;
 									oldMonitorIndices.Remove(index);

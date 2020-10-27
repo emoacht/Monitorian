@@ -27,13 +27,16 @@ namespace Monitorian.Core.Models.Monitor
 			public string AlternateDescription { get; }
 			public byte DisplayIndex => _deviceItem.DisplayIndex;
 			public byte MonitorIndex => _deviceItem.MonitorIndex;
+			public bool IsInternal { get; }
 
 			public DeviceItemPlus(
 				DeviceContext.DeviceItem deviceItem,
-				string alternateDescription = null)
+				string alternateDescription = null,
+				bool isInternal = true)
 			{
 				this._deviceItem = deviceItem ?? throw new ArgumentNullException(nameof(deviceItem));
 				this.AlternateDescription = alternateDescription ?? deviceItem.Description;
+				this.IsInternal = isInternal;
 			}
 		}
 
@@ -56,21 +59,24 @@ namespace Monitorian.Core.Models.Monitor
 			{
 				foreach (var deviceItem in DeviceContext.EnumerateMonitorDevices())
 				{
-					var isDescriptionNullOrWhiteSpace = string.IsNullOrWhiteSpace(deviceItem.Description);
-					if (isDescriptionNullOrWhiteSpace ||
-						Regex.IsMatch(deviceItem.Description, "^Generic (?:PnP|Non-PnP) Monitor$", RegexOptions.IgnoreCase))
+					var displayItem = displayItems.FirstOrDefault(x => string.Equals(deviceItem.DeviceInstanceId, x.DeviceInstanceId, StringComparison.OrdinalIgnoreCase));
+					if (displayItem != null)
 					{
-						var displayItem = displayItems.FirstOrDefault(x => string.Equals(deviceItem.DeviceInstanceId, x.DeviceInstanceId, StringComparison.OrdinalIgnoreCase));
-						if (!string.IsNullOrWhiteSpace(displayItem?.DisplayName))
+						var isDescriptionNullOrWhiteSpace = string.IsNullOrWhiteSpace(deviceItem.Description);
+						if (isDescriptionNullOrWhiteSpace ||
+							Regex.IsMatch(deviceItem.Description, "^Generic (?:PnP|Non-PnP) Monitor$", RegexOptions.IgnoreCase))
 						{
-							yield return new DeviceItemPlus(deviceItem, displayItem.DisplayName);
-							continue;
-						}
-						if (!isDescriptionNullOrWhiteSpace &&
-							!string.IsNullOrWhiteSpace(displayItem?.ConnectionDescription))
-						{
-							yield return new DeviceItemPlus(deviceItem, $"{deviceItem.Description} ({displayItem.ConnectionDescription})");
-							continue;
+							if (!string.IsNullOrWhiteSpace(displayItem.DisplayName))
+							{
+								yield return new DeviceItemPlus(deviceItem, displayItem.DisplayName, displayItem.IsInternal);
+								continue;
+							}
+							if (!isDescriptionNullOrWhiteSpace &&
+								!string.IsNullOrWhiteSpace(displayItem.ConnectionDescription))
+							{
+								yield return new DeviceItemPlus(deviceItem, $"{deviceItem.Description} ({displayItem.ConnectionDescription})", displayItem.IsInternal);
+								continue;
+							}
 						}
 					}
 					yield return new DeviceItemPlus(deviceItem);
@@ -158,7 +164,8 @@ namespace Monitorian.Core.Models.Monitor
 					deviceInstanceId: deviceItem.DeviceInstanceId,
 					description: deviceItem.AlternateDescription,
 					displayIndex: deviceItem.DisplayIndex,
-					monitorIndex: deviceItem.MonitorIndex);
+					monitorIndex: deviceItem.MonitorIndex,
+					isInternal: deviceItem.IsInternal);
 			}
 		}
 

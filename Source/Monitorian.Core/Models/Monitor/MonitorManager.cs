@@ -188,6 +188,39 @@ namespace Monitorian.Core.Models.Monitor
 		}
 
 		[DataContract]
+		private class PhysicalItemPlus : MonitorConfiguration.PhysicalItem
+		{
+			[DataMember(Order = 6)]
+			public bool GetBrightness { get; private set; }
+
+			[DataMember(Order = 7)]
+			public bool SetBrightness { get; private set; }
+
+			public PhysicalItemPlus(
+				MonitorConfiguration.PhysicalItem item) : base(
+					description: item.Description,
+					monitorIndex: item.MonitorIndex,
+					handle: item.Handle,
+					isHighLevelSupported: item.IsHighLevelSupported,
+					isLowLevelSupported: item.IsLowLevelSupported,
+					capabilitiesString: item.CapabilitiesString,
+					capabilitiesReport: item.CapabilitiesReport)
+			{
+				TestBrightness();
+			}
+
+			private void TestBrightness()
+			{
+				var (success, _, current, maximum) = MonitorConfiguration.GetBrightness(Handle, IsLowLevelSupported);
+				GetBrightness = success;
+
+				SetBrightness = MonitorConfiguration.SetBrightness(Handle, Math.Min(maximum, current + 5), IsLowLevelSupported);
+				if (SetBrightness)
+					MonitorConfiguration.SetBrightness(Handle, current, IsLowLevelSupported);
+			}
+		}
+
+		[DataContract]
 		private class MonitorData
 		{
 			// When Name property of DataMemberAttribute contains a space or specific character 
@@ -197,7 +230,7 @@ namespace Monitorian.Core.Models.Monitor
 			public DeviceContext.DeviceItem[] DeviceItems { get; private set; }
 
 			[DataMember(Order = 1, Name = "Monitor Configuration - PhysicalItems")]
-			public Dictionary<DeviceContext.HandleItem, MonitorConfiguration.PhysicalItem[]> PhysicalItems { get; private set; }
+			public Dictionary<DeviceContext.HandleItem, PhysicalItemPlus[]> PhysicalItems { get; private set; }
 
 			[DataMember(Order = 2, Name = "Device Installation - InstalledItems")]
 			public DeviceInstallation.InstalledItem[] InstalledItems { get; private set; }
@@ -226,7 +259,9 @@ namespace Monitorian.Core.Models.Monitor
 					GetTask(nameof(PhysicalItems), () =>
 						PhysicalItems = DeviceContext.GetMonitorHandles().ToDictionary(
 							x => x,
-							x => MonitorConfiguration.EnumeratePhysicalMonitors(x.MonitorHandle, true).ToArray())),
+							x => MonitorConfiguration.EnumeratePhysicalMonitors(x.MonitorHandle, true)
+								.Select(x => new PhysicalItemPlus(x))
+								.ToArray())),
 
 					GetTask(nameof(InstalledItems), () =>
 						InstalledItems = DeviceInstallation.EnumerateInstalledMonitors().ToArray()),

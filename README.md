@@ -19,6 +19,16 @@ The user can change the brightness of monitors, including external ones, either 
 
 ## Download
 
+### Pre-release for testing
+
+Features:
+ - Ajustable range can be changed.
+ - Scan process is further adjusted.
+
+:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/2.7.1-Installer/MonitorianInstaller271.zip)
+
+### Normal release
+
  * Windows 10 Anniversary Update (1607) or newer:<br>
 [Monitorian](https://www.microsoft.com/store/apps/9nw33j738bl0) (Microsoft Store)
 

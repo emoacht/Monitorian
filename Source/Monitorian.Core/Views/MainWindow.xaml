@@ -26,7 +26,7 @@
 		<Color x:Key="Slider.Background.Range.PressedColor">#FFFFC400</Color>
 		<Color x:Key="Slider.Background.DisabledColor">#FFF0F0F0</Color>
 		<Color x:Key="Slider.Background.VacantColor">#FF999999</Color>
-		<Color x:Key="Slider.Background.OverlayColor">#45000000</Color>
+		<Color x:Key="Slider.Background.OverlayColor">#48000000</Color>
 
 		<SolidColorBrush x:Key="Slider.Background.Filled.Static" Color="{StaticResource Slider.Background.Filled.StaticColor}"/>
 		<SolidColorBrush x:Key="Slider.Background.Range.Static" Color="{StaticResource Slider.Background.Range.StaticColor}"/>
@@ -140,7 +140,7 @@
 
 								<Grid Height="3" Margin="7.5,0"
 									  ClipToBounds="True"
-									  IsHitTestVisible="False"									  
+									  IsHitTestVisible="False"
 									  Visibility="{Binding ElementName=PART_SelectionRange, Path=Visibility}">
 									<Grid Margin="-7.5,0">
 										<Grid.ColumnDefinitions>
@@ -252,9 +252,9 @@
 										<Rectangle Height="3" Margin="7.5,0" VerticalAlignment="Center"
 												   Fill="{StaticResource Slider.Background.Vacant}"/>
 
-										<Canvas VerticalAlignment="center">
+										<Canvas Height="3" VerticalAlignment="center">
 											<Rectangle x:Name="PART_SelectionRange"
-													   Height="3" Margin="0,-1,0,0"
+													   Height="3"
 													   Fill="{StaticResource Slider.Background.Range.Static}"
 													   Visibility="Visible"/>
 										</Canvas>
@@ -462,8 +462,7 @@
 									<Grid Height="{Binding RelativeSource={RelativeSource Self}, Path=ActualWidth}"
 										  Margin="1,2" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
 										  RenderOptions.EdgeMode="Aliased">
-										<Path x:Name="horizontalLine"
-											  Data="M 0,3 L 0,0 10,0 10,3 M 0,7 L 0,10 10,10 10,7" Stretch="Uniform"
+										<Path Data="M 0,3 L 0,0 10,0 10,3 M 0,7 L 0,10 10,10 10,7" Stretch="Uniform"
 											  Stroke="{TemplateBinding Foreground}" StrokeThickness="1"/>
 									</Grid>
 								</Border>
@@ -519,8 +518,7 @@
 									<Grid Height="{Binding RelativeSource={RelativeSource Self}, Path=ActualWidth}"
 										  Margin="1,2" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
 										  RenderOptions.EdgeMode="Aliased">
-										<Path x:Name="horizontalLine"
-											  Data="M 0,3 L 0,8 M 0,5 L 10,5 M 10,3 L 10,8" Stretch="Uniform"
+										<Path Data="M 0,2 L 0,8 M 0,5 L 10,5 M 10,2 L 10,8" Stretch="Uniform"
 											  Stroke="{TemplateBinding Foreground}" StrokeThickness="1"/>
 									</Grid>
 								</Border>
@@ -666,13 +664,12 @@
 										  Visibility="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Path=DataContext.Settings.ChangesRange, Converter={StaticResource BooleanToVisibilityConverterKey}}"/>
 						</Grid>
 
-						<!-- Alternative -->
+						<!-- Controllability -->
 						<Grid Grid.Row="1"
 							  Visibility="{Binding ElementName=BrightnessBox, Path=Visibility, Mode=OneWay, Converter={StaticResource VisibilityInverseConverterKey}}">
 							<Border Margin="6,4"
 									Padding="3"
-									BorderThickness="1"
-									BorderBrush="{StaticResource App.Foreground.Invalid}">
+									BorderBrush="{StaticResource App.Foreground.Invalid}" BorderThickness="1">
 								<TextBlock Foreground="{StaticResource App.Foreground.Invalid}"
 										   TextWrapping="Wrap"
 										   Text="{Binding Status, Mode=OneWay}"/>

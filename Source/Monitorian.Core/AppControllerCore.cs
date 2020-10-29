@@ -63,7 +63,7 @@ namespace Monitorian.Core
 		public virtual async Task InitiateAsync()
 		{
 			Settings.Initiate();
-			Settings.KnownMonitors.AbsoluteCapacity = MaxKnownMonitorsCount;
+			Settings.MonitorCustomizations.AbsoluteCapacity = MaxKnownMonitorsCount;
 			Settings.PropertyChanged += OnSettingsChanged;
 
 			NotifyIconContainer.ShowIcon("pack://application:,,,/Monitorian.Core;component/Resources/Icons/TrayIcon.ico", ProductInfo.Title);
@@ -207,8 +207,7 @@ namespace Monitorian.Core
 							foreach (int index in oldMonitorIndices)
 							{
 								var oldMonitor = Monitors[index];
-								if (string.Equals(oldMonitor.DeviceInstanceId, item.DeviceInstanceId, StringComparison.OrdinalIgnoreCase)
-									&& (oldMonitor.IsReachable == item.IsReachable))
+								if (string.Equals(oldMonitor.DeviceInstanceId, item.DeviceInstanceId, StringComparison.OrdinalIgnoreCase))
 								{
 									oldMonitorExists = true;
 									oldMonitorIndices.Remove(index);
@@ -347,7 +346,7 @@ namespace Monitorian.Core
 
 		#endregion
 
-		#region Name/Unison
+		#region Customization
 
 		private void OnSettingsEnablesUnisonChanged()
 		{
@@ -358,26 +357,31 @@ namespace Monitorian.Core
 				m.IsUnison = false;
 		}
 
-		protected internal virtual bool TryLoadNameUnison(string deviceInstanceId, ref string name, ref bool isUnison)
+		protected internal virtual bool TryLoadCustomization(string deviceInstanceId, ref string name, ref bool isUnison, ref byte lowest, ref byte highest)
 		{
-			if (Settings.KnownMonitors.TryGetValue(deviceInstanceId, out MonitorValuePack value))
+			if (Settings.MonitorCustomizations.TryGetValue(deviceInstanceId, out MonitorCustomizationItem m)
+				&& (m.Lowest < m.Highest) && (m.Highest <= 100))
 			{
-				name = value.Name;
-				isUnison = value.IsUnison;
+				name = m.Name;
+				isUnison = m.IsUnison;
+				lowest = m.Lowest;
+				highest = m.Highest;
 				return true;
 			}
 			return false;
 		}
 
-		protected internal virtual void SaveNameUnison(string deviceInstanceId, string name, bool isUnison)
+		protected internal virtual void SaveCustomization(string deviceInstanceId, string name, bool isUnison, byte lowest, byte highest)
 		{
-			if ((name != null) || isUnison)
+			if (((name != null) || isUnison || (0 != lowest) || (highest != 100))
+				&& (lowest < highest) && (highest <= 100))
 			{
-				Settings.KnownMonitors.Add(deviceInstanceId, new MonitorValuePack(name, isUnison));
+				Settings.MonitorCustomizations.Add(deviceInstanceId, new MonitorCustomizationItem(name, isUnison, lowest, highest));
+
 			}
 			else
 			{
-				Settings.KnownMonitors.Remove(deviceInstanceId);
+				Settings.MonitorCustomizations.Remove(deviceInstanceId);
 			}
 		}
 

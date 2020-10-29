@@ -61,6 +61,15 @@ namespace Monitorian.Core.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Change adjustable range.
+        /// </summary>
+        public static string ChangeRange {
+            get {
+                return ResourceManager.GetString("ChangeRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Close.
         /// </summary>
         public static string Close {
@@ -111,15 +120,6 @@ namespace Monitorian.Core.Properties {
         public static string MakeOperation {
             get {
                 return ResourceManager.GetString("MakeOperation", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to This monitor is not controllable..
-        /// </summary>
-        public static string NotControllable {
-            get {
-                return ResourceManager.GetString("NotControllable", resourceCulture);
             }
         }
         
@@ -192,6 +192,33 @@ namespace Monitorian.Core.Properties {
         public static string StartSignIn {
             get {
                 return ResourceManager.GetString("StartSignIn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Monitor is not controllable..
+        /// </summary>
+        public static string StatusNotControllable {
+            get {
+                return ResourceManager.GetString("StatusNotControllable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to DDC/CI has been failing repeatedly..
+        /// </summary>
+        public static string StatusReasonDdcFailing {
+            get {
+                return ResourceManager.GetString("StatusReasonDdcFailing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to DDC/CI is not supported or enabled..
+        /// </summary>
+        public static string StatusReasonDdcNotEnabled {
+            get {
+                return ResourceManager.GetString("StatusReasonDdcNotEnabled", resourceCulture);
             }
         }
         

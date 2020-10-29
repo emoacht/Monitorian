@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ChangeRange" xml:space="preserve">
+    <value>調整可能な幅を変更する</value>
+  </data>
   <data name="Close" xml:space="preserve">
     <value>閉じる</value>
   </data>
@@ -129,9 +132,6 @@
   <data name="MakeOperation" xml:space="preserve">
     <value>動作ログを作成する</value>
   </data>
-  <data name="NotControllable" xml:space="preserve">
-    <value>このモニターはコントロールできません。</value>
-  </data>
   <data name="Probe" xml:space="preserve">
     <value>モニターを調査する</value>
   </data>
@@ -143,6 +143,15 @@
   </data>
   <data name="StartSignIn" xml:space="preserve">
     <value>サインイン時に起動する</value>
+  </data>
+  <data name="StatusNotControllable" xml:space="preserve">
+    <value>モニターはコントロールできません。</value>
+  </data>
+  <data name="StatusReasonDdcFailing" xml:space="preserve">
+    <value>DDC/CIが繰り返し失敗しています。</value>
+  </data>
+  <data name="StatusReasonDdcNotEnabled" xml:space="preserve">
+    <value>DDC/CIがサポートされていないか有効になっていません。</value>
   </data>
   <data name="UseLargeElements" xml:space="preserve">
     <value>大きいボタンを使う</value>

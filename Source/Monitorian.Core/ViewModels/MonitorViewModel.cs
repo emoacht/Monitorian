@@ -5,7 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Monitorian.Core.Helper;
+using Monitorian.Core.Models;
 using Monitorian.Core.Models.Monitor;
+using Monitorian.Core.Properties;
 
 namespace Monitorian.Core.ViewModels
 {
@@ -19,7 +21,7 @@ namespace Monitorian.Core.ViewModels
 			this._controller = controller ?? throw new ArgumentNullException(nameof(controller));
 			this._monitor = monitor ?? throw new ArgumentNullException(nameof(monitor));
 
-			this._controller.TryLoadNameUnison(DeviceInstanceId, ref _name, ref _isUnison);
+			LoadCustomization();
 		}
 
 		private readonly object _lock = new object();
@@ -31,6 +33,10 @@ namespace Monitorian.Core.ViewModels
 
 			lock (_lock)
 			{
+				// If IsReachable property is changed to true, reset _controllableCount.
+				if (!this._monitor.IsReachable && monitor.IsReachable)
+					_controllableCount = InitialCount;
+
 				this._monitor.Dispose();
 				this._monitor = monitor;
 			}
@@ -40,9 +46,11 @@ namespace Monitorian.Core.ViewModels
 		public string Description => _monitor.Description;
 		public byte DisplayIndex => _monitor.DisplayIndex;
 		public byte MonitorIndex => _monitor.MonitorIndex;
-		public bool IsReachable => _monitor.IsReachable;
 
-		#region Name/Unison
+		#region Customization
+
+		private void LoadCustomization() => _controller.TryLoadCustomization(DeviceInstanceId, ref _name, ref _isUnison, ref _rangeLowest, ref _rangeHighest);
+		private void SaveCustomization() => _controller.SaveCustomization(DeviceInstanceId, _name, _isUnison, _rangeLowest, _rangeHighest);
 
 		public string Name
 		{
@@ -50,7 +58,7 @@ namespace Monitorian.Core.ViewModels
 			set
 			{
 				if (SetPropertyValue(ref _name, GetValueOrNull(value)))
-					_controller.SaveNameUnison(DeviceInstanceId, _name, _isUnison);
+					SaveCustomization();
 			}
 		}
 		private string _name;
@@ -63,10 +71,50 @@ namespace Monitorian.Core.ViewModels
 			set
 			{
 				if (SetPropertyValue(ref _isUnison, value))
-					_controller.SaveNameUnison(DeviceInstanceId, _name, _isUnison);
+					SaveCustomization();
 			}
 		}
 		private bool _isUnison;
+
+		/// <summary>
+		/// Lowest brightness in the range of brightness
+		/// </summary>
+		public int RangeLowest
+		{
+			get => _rangeLowest;
+			set
+			{
+				if (SetPropertyValue(ref _rangeLowest, (byte)value))
+					SaveCustomization();
+			}
+		}
+		private byte _rangeLowest = 0;
+
+		/// <summary>
+		/// Highest brightness in the range of brightness
+		/// </summary>
+		public int RangeHighest
+		{
+			get => _rangeHighest;
+			set
+			{
+				if (SetPropertyValue(ref _rangeHighest, (byte)value))
+					SaveCustomization();
+			}
+		}
+		private byte _rangeHighest = 100;
+
+		private double GetRangeRate() => Math.Abs(RangeHighest - RangeLowest) / 100D;
+
+		/// <summary>
+		/// Whether the range of brightness is changing
+		/// </summary>
+		public bool IsRangeChanging
+		{
+			get => _isRangeChanging;
+			set => SetPropertyValue(ref _isRangeChanging, value);
+		}
+		private bool _isRangeChanging = false;
 
 		#endregion
 
@@ -121,18 +169,34 @@ namespace Monitorian.Core.ViewModels
 
 		public void IncrementBrightness(int tickSize, bool isCycle = true)
 		{
-			int brightness = (Brightness / tickSize) * tickSize + tickSize;
-			if (100 < brightness)
-				brightness = isCycle ? 0 : 100;
+			if (IsRangeChanging)
+				return;
+
+			var size = tickSize * GetRangeRate();
+			var count = Math.Floor((Brightness - RangeLowest) / size);
+			int brightness = RangeLowest + (int)Math.Ceiling((count + 1) * size);
+
+			if (brightness < RangeLowest)
+				brightness = RangeLowest;
+			else if (RangeHighest < brightness)
+				brightness = isCycle ? RangeLowest : RangeHighest;
 
 			SetBrightness(brightness);
 		}
 
 		public void DecrementBrightness(int tickSize, bool isCycle = true)
 		{
-			int brightness = (Brightness / tickSize) * tickSize - tickSize;
-			if (brightness < 0)
-				brightness = isCycle ? 100 : 0;
+			if (IsRangeChanging)
+				return;
+
+			var size = tickSize * GetRangeRate();
+			var count = Math.Ceiling((Brightness - RangeLowest) / size);
+			int brightness = RangeLowest + (int)Math.Floor((count - 1) * size);
+
+			if (brightness < RangeLowest)
+				brightness = isCycle ? RangeHighest : RangeLowest;
+			else if (RangeHighest < brightness)
+				brightness = RangeHighest;
 
 			SetBrightness(brightness);
 		}
@@ -160,7 +224,7 @@ namespace Monitorian.Core.ViewModels
 
 		#region Controllable
 
-		public bool IsControllable => IsReachable && (_controllableCount > 0);
+		public bool IsControllable => _monitor.IsReachable && (_controllableCount > 0);
 
 		public bool IsLikelyControllable => IsControllable || _isSuccessCalled;
 		private bool _isSuccessCalled;
@@ -192,7 +256,10 @@ namespace Monitorian.Core.ViewModels
 				var formerCount = _controllableCount;
 				_controllableCount = NormalCount;
 				if (formerCount <= 0)
+				{
 					RaisePropertyChanged(nameof(IsControllable));
+					RaisePropertyChanged(nameof(Status));
+				}
 
 				_isSuccessCalled = true;
 			}
@@ -201,7 +268,30 @@ namespace Monitorian.Core.ViewModels
 		private void OnFailure()
 		{
 			if (--_controllableCount == 0)
+			{
 				RaisePropertyChanged(nameof(IsControllable));
+				RaisePropertyChanged(nameof(Status));
+			}
+		}
+
+		public string Status
+		{
+			get
+			{
+				if (IsControllable)
+					return null;
+
+				LanguageService.Switch();
+
+				var reason = _monitor switch
+				{
+					DdcMonitorItem _ => Resources.StatusReasonDdcFailing,
+					UnreachableMonitorItem { IsInternal: false } _ => Resources.StatusReasonDdcNotEnabled,
+					_ => null,
+				};
+
+				return Resources.StatusNotControllable + (reason is null ? string.Empty : Environment.NewLine + reason);
+			}
 		}
 
 		#endregion

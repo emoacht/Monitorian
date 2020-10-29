@@ -109,8 +109,10 @@
     <Compile Include="Views\Behaviors\ItemSelectorBehavior.cs" />
     <Compile Include="Views\Behaviors\ItemSliderBehavior.cs" />
     <Compile Include="Views\Behaviors\MouseDownParentAction.cs" />
-    <Compile Include="Views\Controls\CompoundSlider.cs" />
-    <Compile Include="Views\Controls\EnhancedSlider.cs" />
+    <Compile Include="Views\Controls\Sliders\CompoundSlider.cs" />
+    <Compile Include="Views\Controls\Sliders\EnhancedSlider.cs" />
+    <Compile Include="Views\Controls\Sliders\RangeSlider.cs" />
+    <Compile Include="Views\Controls\Sliders\ShadowSlider.cs" />
     <Compile Include="Views\Controls\FrameworkElementMargin.cs" />
     <Compile Include="Views\Controls\PulseLabel.cs" />
     <Compile Include="Views\Controls\ReversalLabel.cs" />
@@ -149,10 +151,12 @@
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.ja-JP.resx">
       <DependentUpon>Resources.resx</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

@@ -21,11 +21,17 @@
 		<Color x:Key="Slider.Background.Filled.StaticColor">#FF2982CC</Color>
 		<Color x:Key="Slider.Background.Filled.MouseOverColor">#FF1A5280</Color>
 		<Color x:Key="Slider.Background.Filled.PressedColor">#FF5CA4DE</Color>
+		<Color x:Key="Slider.Background.Range.StaticColor">#FFFFA500</Color>
+		<Color x:Key="Slider.Background.Range.MouseOverColor">#FFFF8C00</Color>
+		<Color x:Key="Slider.Background.Range.PressedColor">#FFFFC400</Color>
 		<Color x:Key="Slider.Background.DisabledColor">#FFF0F0F0</Color>
 		<Color x:Key="Slider.Background.VacantColor">#FF999999</Color>
+		<Color x:Key="Slider.Background.OverlayColor">#48000000</Color>
 
 		<SolidColorBrush x:Key="Slider.Background.Filled.Static" Color="{StaticResource Slider.Background.Filled.StaticColor}"/>
+		<SolidColorBrush x:Key="Slider.Background.Range.Static" Color="{StaticResource Slider.Background.Range.StaticColor}"/>
 		<SolidColorBrush x:Key="Slider.Background.Vacant" Color="{StaticResource Slider.Background.VacantColor}"/>
+		<SolidColorBrush x:Key="Slider.Background.Overlay" Color="{StaticResource Slider.Background.OverlayColor}"/>
 
 		<Style x:Key="SliderHorizontal" TargetType="{x:Type controls:CompoundSlider}">
 			<Setter Property="Stylus.IsPressAndHoldEnabled" Value="False"/>
@@ -35,25 +41,6 @@
 				<Setter.Value>
 					<ControlTemplate TargetType="{x:Type controls:CompoundSlider}">
 						<ControlTemplate.Resources>
-							<Style TargetType="{x:Type ToolTip}">
-								<Setter Property="OverridesDefaultStyle" Value="True"/>
-								<Setter Property="Padding" Value="5,3"/>
-								<Setter Property="Background" Value="{StaticResource App.Background.Plain}"/>
-								<Setter Property="Foreground" Value="{StaticResource App.Foreground}"/>
-								<Setter Property="FontSize" Value="13"/>
-								<Setter Property="Template">
-									<Setter.Value>
-										<ControlTemplate TargetType="{x:Type ToolTip}">
-											<Border Width="{TemplateBinding Width}" Height="{TemplateBinding Height}"
-													BorderThickness="0"
-													Background="{TemplateBinding Background}">
-												<ContentPresenter Margin="{TemplateBinding Padding}"/>
-											</Border>
-										</ControlTemplate>
-									</Setter.Value>
-								</Setter>
-							</Style>
-
 							<Style x:Key="SliderButtonHorizontal" TargetType="{x:Type RepeatButton}">
 								<Setter Property="OverridesDefaultStyle" Value="True"/>
 								<Setter Property="Focusable" Value="False"/>
@@ -138,11 +125,36 @@
 											   IsHitTestVisible="False"/>
 								</Grid>
 
-								<Rectangle Height="3" Margin="5,0" VerticalAlignment="Center"
+								<Rectangle Height="3" Margin="7.5,0" VerticalAlignment="Center"
 										   Fill="{StaticResource Slider.Background.Vacant}"/>
 								<Rectangle Width="{Binding ElementName=TrackLeft, Path=ActualWidth}"
-										   Height="3" Margin="5,0" HorizontalAlignment="Left" VerticalAlignment="Center"
+										   Height="3" Margin="7.5,0" HorizontalAlignment="Left" VerticalAlignment="Center"
 										   Fill="{StaticResource Slider.Background.Filled.Static}"/>
+
+								<Canvas VerticalAlignment="center"
+										IsHitTestVisible="False">
+									<Rectangle x:Name="PART_SelectionRange"
+											   Height="3"
+											   Visibility="Hidden"/>
+								</Canvas>
+
+								<Grid Height="3" Margin="7.5,0"
+									  ClipToBounds="True"
+									  IsHitTestVisible="False"
+									  Visibility="{Binding ElementName=PART_SelectionRange, Path=Visibility}">
+									<Grid Margin="-7.5,0">
+										<Grid.ColumnDefinitions>
+											<ColumnDefinition Width="{Binding ElementName=PART_SelectionRange, Path=(Canvas.Left)}"/>
+											<ColumnDefinition Width="{Binding ElementName=PART_SelectionRange, Path=ActualWidth}"/>
+											<ColumnDefinition Width="*"/>
+										</Grid.ColumnDefinitions>
+
+										<Rectangle Grid.Column="0"
+												   Fill="{StaticResource Slider.Background.Overlay}"/>
+										<Rectangle Grid.Column="2"
+												   Fill="{StaticResource Slider.Background.Overlay}"/>
+									</Grid>
+								</Grid>
 
 								<Track x:Name="PART_Track">
 									<Track.DecreaseRepeatButton>
@@ -164,6 +176,9 @@
 							</Grid>
 						</Border>
 						<ControlTemplate.Triggers>
+							<Trigger Property="IsSelectionRangeEnabled" Value="true">
+								<Setter Property="Visibility" TargetName="PART_SelectionRange" Value="Visible"/>
+							</Trigger>
 							<Trigger Property="IsUnison" Value="True">
 								<Setter Property="Background" TargetName="thumb" Value="{StaticResource App.Foreground.Shadow}"/>
 							</Trigger>
@@ -171,6 +186,129 @@
 					</ControlTemplate>
 				</Setter.Value>
 			</Setter>
+
+			<Style.Triggers>
+				<Trigger Property="IsSelectionRangeChanging" Value="True">
+					<Setter Property="Template">
+						<Setter.Value>
+							<ControlTemplate TargetType="{x:Type controls:CompoundSlider}">
+								<ControlTemplate.Resources>
+									<Style x:Key="SliderThumbHorizontal" TargetType="{x:Type Thumb}">
+										<Setter Property="OverridesDefaultStyle" Value="True"/>
+										<Setter Property="Focusable" Value="False"/>
+										<Setter Property="Background" Value="Transparent"/>
+										<Setter Property="Template">
+											<Setter.Value>
+												<ControlTemplate TargetType="{x:Type Thumb}">
+													<Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+														<Rectangle x:Name="grip"
+																   Width="{TemplateBinding Width}" Height="{TemplateBinding Height}"
+																   Margin="2">
+															<Rectangle.Fill>
+																<SolidColorBrush Color="{StaticResource Slider.Background.Range.StaticColor}"/>
+															</Rectangle.Fill>
+														</Rectangle>
+
+														<VisualStateManager.VisualStateGroups>
+															<VisualStateGroup x:Name="CommonStates">
+																<VisualState x:Name="Normal"/>
+																<VisualState x:Name="MouseOver">
+																	<Storyboard>
+																		<ColorAnimation	Storyboard.TargetName="grip"
+																						Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)"
+																						Duration="0:0:0.1"
+																						To="{StaticResource Slider.Background.Range.MouseOverColor}"/>
+																	</Storyboard>
+																</VisualState>
+																<VisualState x:Name="Pressed">
+																	<Storyboard>
+																		<ColorAnimation	Storyboard.TargetName="grip"
+																						Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)"
+																						Duration="0:0:0.1"
+																						To="{StaticResource Slider.Background.Range.PressedColor}"/>
+																	</Storyboard>
+																</VisualState>
+																<VisualState x:Name="Disabled">
+																	<Storyboard>
+																		<ColorAnimation Storyboard.TargetName="grip"
+																						Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)"
+																						Duration="0:0:0.1"
+																						To="{StaticResource Slider.Background.DisabledColor}"/>
+																	</Storyboard>
+																</VisualState>
+															</VisualStateGroup>
+														</VisualStateManager.VisualStateGroups>
+													</Grid>
+												</ControlTemplate>
+											</Setter.Value>
+										</Setter>
+									</Style>
+								</ControlTemplate.Resources>
+
+								<Border x:Name="border"
+										Background="{TemplateBinding Background}"
+										SnapsToDevicePixels="True" UseLayoutRounding="True">
+									<Grid>
+										<Rectangle Height="3" Margin="7.5,0" VerticalAlignment="Center"
+												   Fill="{StaticResource Slider.Background.Vacant}"/>
+
+										<Canvas Height="3" VerticalAlignment="center">
+											<Rectangle x:Name="PART_SelectionRange"
+													   Height="3"
+													   Fill="{StaticResource Slider.Background.Range.Static}"
+													   Visibility="Visible"/>
+										</Canvas>
+
+										<!-- This is necessary for PART_SelectionRange to work. -->
+										<Track x:Name="PART_Track"
+											   Visibility="Hidden"
+											   IsHitTestVisible="False">
+											<Track.Thumb>
+												<Thumb Width="15" Height="4"
+													   Style="{x:Null}"/>
+											</Track.Thumb>
+										</Track>
+
+										<Track x:Name="PART_StartTrack">
+											<Track.Thumb>
+												<Thumb Width="13" Height="{DynamicResource ThumbHeight}"
+													   Style="{StaticResource SliderThumbHorizontal}"/>
+											</Track.Thumb>
+										</Track>
+										<Track x:Name="PART_EndTrack">
+											<Track.Thumb>
+												<Thumb Width="13" Height="{DynamicResource ThumbHeight}"
+													   Style="{StaticResource SliderThumbHorizontal}"/>
+											</Track.Thumb>
+										</Track>
+									</Grid>
+								</Border>
+							</ControlTemplate>
+						</Setter.Value>
+					</Setter>
+				</Trigger>
+			</Style.Triggers>
+
+			<Style.Resources>
+				<Style TargetType="{x:Type ToolTip}">
+					<Setter Property="OverridesDefaultStyle" Value="True"/>
+					<Setter Property="Padding" Value="5,3"/>
+					<Setter Property="Background" Value="{StaticResource App.Background.Plain}"/>
+					<Setter Property="Foreground" Value="{StaticResource App.Foreground}"/>
+					<Setter Property="FontSize" Value="13"/>
+					<Setter Property="Template">
+						<Setter.Value>
+							<ControlTemplate TargetType="{x:Type ToolTip}">
+								<Border Width="{TemplateBinding Width}" Height="{TemplateBinding Height}"
+										BorderThickness="0"
+										Background="{TemplateBinding Background}">
+									<ContentPresenter Margin="{TemplateBinding Padding}"/>
+								</Border>
+							</ControlTemplate>
+						</Setter.Value>
+					</Setter>
+				</Style>
+			</Style.Resources>
 		</Style>
 
 		<!-- Pulse Label -->
@@ -305,7 +443,9 @@
 		<!-- Unison Button -->
 		<Style x:Key="UnisonButtonStyle" TargetType="{x:Type ToggleButton}">
 			<Setter Property="Focusable" Value="False"/>
-			<Setter Property="Foreground" Value="{StaticResource App.Foreground}"/>
+			<Setter Property="Foreground" Value="{StaticResource App.Foreground.Shadow}"/>
+			<Setter Property="SnapsToDevicePixels" Value="True"/>
+			<Setter Property="UseLayoutRounding" Value="True"/>
 			<Setter Property="Template">
 				<Setter.Value>
 					<ControlTemplate TargetType="{x:Type ToggleButton}">
@@ -320,15 +460,10 @@
 										<SolidColorBrush Color="{StaticResource Access.Border.NormalColor}"/>
 									</Border.BorderBrush>
 									<Grid Height="{Binding RelativeSource={RelativeSource Self}, Path=ActualWidth}"
-										  Margin="2" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+										  Margin="1,2" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
 										  RenderOptions.EdgeMode="Aliased">
-										<Path x:Name="horizontalLine"
-											  Data="M 0,0 1,0" Stretch="Uniform"
+										<Path Data="M 0,3 L 0,0 10,0 10,3 M 0,7 L 0,10 10,10 10,7" Stretch="Uniform"
 											  Stroke="{TemplateBinding Foreground}" StrokeThickness="1"/>
-										<Path x:Name="verticalLine"
-											  Data="M 0,0 0,1" Stretch="Uniform"
-											  Stroke="{TemplateBinding Foreground}" StrokeThickness="1"
-											  Opacity="1"/>
 									</Grid>
 								</Border>
 							</Grid>
@@ -354,16 +489,61 @@
 									</VisualState>
 									<VisualState x:Name="Disabled"/>
 								</VisualStateGroup>
-								<VisualStateGroup x:Name="CheckStates">
-									<VisualState x:Name="Checked">
+							</VisualStateManager.VisualStateGroups>
+						</Grid>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
+
+		<!-- Range Button -->
+		<Style x:Key="RangeButtonStyle" TargetType="{x:Type ToggleButton}">
+			<Setter Property="Focusable" Value="False"/>
+			<Setter Property="Foreground" Value="{StaticResource App.Foreground.Shadow}"/>
+			<Setter Property="SnapsToDevicePixels" Value="True"/>
+			<Setter Property="UseLayoutRounding" Value="True"/>
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="{x:Type ToggleButton}">
+						<Grid>
+							<Grid x:Name="base">
+								<Grid.Background>
+									<SolidColorBrush Color="{StaticResource Access.Background.NormalColor}"/>
+								</Grid.Background>
+								<Border x:Name="border"
+										BorderThickness="2">
+									<Border.BorderBrush>
+										<SolidColorBrush Color="{StaticResource Access.Border.NormalColor}"/>
+									</Border.BorderBrush>
+									<Grid Height="{Binding RelativeSource={RelativeSource Self}, Path=ActualWidth}"
+										  Margin="1,2" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+										  RenderOptions.EdgeMode="Aliased">
+										<Path Data="M 0,2 L 0,8 M 0,5 L 10,5 M 10,2 L 10,8" Stretch="Uniform"
+											  Stroke="{TemplateBinding Foreground}" StrokeThickness="1"/>
+									</Grid>
+								</Border>
+							</Grid>
+
+							<VisualStateManager.VisualStateGroups>
+								<VisualStateGroup x:Name="CommonStates">
+									<VisualState x:Name="Normal"/>
+									<VisualState x:Name="MouseOver">
 										<Storyboard>
-											<DoubleAnimation Storyboard.TargetName="verticalLine"
-															 Storyboard.TargetProperty="(UIElement.Opacity)"
-															 Duration="0"
-															 To="0"/>
+											<ColorAnimation Storyboard.TargetName="border"
+															Storyboard.TargetProperty="(Border.BorderBrush).(SolidColorBrush.Color)"
+															Duration="0"
+															To="{StaticResource Access.Border.MouseOverColor}"/>
 										</Storyboard>
 									</VisualState>
-									<VisualState x:Name="Unchecked"/>
+									<VisualState x:Name="Pressed">
+										<Storyboard>
+											<ColorAnimation Storyboard.TargetName="base"
+															Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)"
+															Duration="0"
+															To="{StaticResource Access.Background.PressedColor}"/>
+										</Storyboard>
+									</VisualState>
+									<VisualState x:Name="Disabled"/>
 								</VisualStateGroup>
 							</VisualStateManager.VisualStateGroups>
 						</Grid>
@@ -420,6 +600,7 @@
 								<ColumnDefinition Width="Auto"/>
 								<ColumnDefinition Width="*"/>
 								<ColumnDefinition Width="Auto"/>
+								<ColumnDefinition Width="Auto"/>
 								<ColumnDefinition Width="4"/>
 							</Grid.ColumnDefinitions>
 
@@ -430,8 +611,16 @@
 							<Button Grid.Column="1"
 									Width="80" Height="{DynamicResource ButtonHeight}" Margin="3,0,0,0"
 									Style="{StaticResource BrightnessButtonStyle}">
-								<TextBlock Margin="2" HorizontalAlignment="Left" VerticalAlignment="Bottom"
-										   Text="{Binding Brightness, Mode=OneWay, StringFormat={}{0}%}"/>
+								<Grid>
+									<TextBlock Margin="2" HorizontalAlignment="Left" VerticalAlignment="Bottom"
+											   Text="{Binding Brightness, Mode=OneWay, StringFormat={}{0}%}"
+											   Visibility="{Binding IsRangeChanging, Mode=OneWay, Converter={StaticResource BooleanToVisibilityTurnConverterKey}, ConverterParameter=True}"/>
+									<TextBlock Margin="2" HorizontalAlignment="Left" VerticalAlignment="Bottom"
+											   Visibility="{Binding IsRangeChanging, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverterKey}}">
+										<Run Text="{Binding RangeLowest, Mode=OneWay, StringFormat={}{0}-}"/><Run Text="{Binding RangeHighest, Mode=OneWay, StringFormat={}{0}%}"/>
+									</TextBlock>
+								</Grid>
+
 								<i:Interaction.Triggers>
 									<i:EventTrigger EventName="Click">
 										<behaviors:MouseDownParentAction/>
@@ -444,13 +633,16 @@
 							<controls:CompoundSlider Grid.Column="2"
 													 Margin="8,0,6,0" VerticalAlignment="Center"
 													 Style="{StaticResource SliderHorizontal}"
-													 AutoToolTipPlacement="TopLeft"
 													 Minimum="0" Maximum="100"
 													 Value="{Binding Brightness, Mode=TwoWay, Delay=50}"
 													 IsShadowVisible="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Path=DataContext.Settings.ShowsAdjusted}"
 													 ValueShadow="{Binding BrightnessSystemAdjusted, Mode=OneWay}"
 													 IsUnison="{Binding IsUnison, Mode=TwoWay}"
-													 ValueUnison="{Binding BrightnessSystemChanged, Mode=OneWay}">
+													 ValueUnison="{Binding BrightnessSystemChanged, Mode=OneWay}"
+													 MinimumSelectionRange="10"
+													 IsSelectionRangeChanging="{Binding IsRangeChanging, Mode=OneWay}"
+													 SelectionStart="{Binding RangeLowest, Mode=TwoWay, Delay=50}"
+													 SelectionEnd="{Binding RangeHighest, Mode=TwoWay, Delay=50}">
 								<i:Interaction.Behaviors>
 									<behaviors:ItemSliderBehavior IsSelected="{Binding IsSelected, Mode=OneWay}"
 																  IsByKey="{Binding IsByKey, Mode=TwoWay}"/>
@@ -463,17 +655,24 @@
 										  VerticalContentAlignment="Bottom"
 										  IsChecked="{Binding IsUnison, Mode=TwoWay}"
 										  Visibility="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Path=DataContext.Settings.EnablesUnison, Converter={StaticResource BooleanToVisibilityConverterKey}}"/>
+
+							<ToggleButton Grid.Column="4"
+										  Width="16" Height="{DynamicResource ButtonHeight}" Margin="4,0,2,0"
+										  Style="{StaticResource RangeButtonStyle}"
+										  VerticalContentAlignment="Bottom"
+										  IsChecked="{Binding IsRangeChanging, Mode=TwoWay}"
+										  Visibility="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Path=DataContext.Settings.ChangesRange, Converter={StaticResource BooleanToVisibilityConverterKey}}"/>
 						</Grid>
 
-						<!-- Alternative -->
+						<!-- Controllability -->
 						<Grid Grid.Row="1"
 							  Visibility="{Binding ElementName=BrightnessBox, Path=Visibility, Mode=OneWay, Converter={StaticResource VisibilityInverseConverterKey}}">
 							<Border Margin="6,4"
 									Padding="3"
-									BorderThickness="1"
-									BorderBrush="{StaticResource App.Foreground.Invalid}">
+									BorderBrush="{StaticResource App.Foreground.Invalid}" BorderThickness="1">
 								<TextBlock Foreground="{StaticResource App.Foreground.Invalid}"
-										   Text="{x:Static properties:Resources.NotControllable}"/>
+										   TextWrapping="Wrap"
+										   Text="{Binding Status, Mode=OneWay}"/>
 							</Border>
 						</Grid>
 					</Grid>

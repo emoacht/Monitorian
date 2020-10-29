@@ -11,7 +11,7 @@ namespace Monitorian.Core.Views.Controls
 	[TemplatePart(Name = "PART_ShadowThumb", Type = typeof(FrameworkElement))]
 	[TemplatePart(Name = "PART_ShadowLeft", Type = typeof(ColumnDefinition))]
 	[TemplatePart(Name = "PART_ShadowRight", Type = typeof(ColumnDefinition))]
-	public class CompoundSlider : EnhancedSlider
+	public class ShadowSlider : RangeSlider
 	{
 		public override void OnApplyTemplate()
 		{
@@ -32,10 +32,10 @@ namespace Monitorian.Core.Views.Controls
 			DependencyProperty.Register(
 				"IsShadowVisible",
 				typeof(bool),
-				typeof(CompoundSlider),
+				typeof(ShadowSlider),
 				new PropertyMetadata(
 					false,
-					(d, e) => ((CompoundSlider)d).ReflectShadow()));
+					(d, e) => ((ShadowSlider)d).ReflectShadow()));
 
 		public double ValueShadow
 		{
@@ -46,10 +46,10 @@ namespace Monitorian.Core.Views.Controls
 			DependencyProperty.Register(
 				"ValueShadow",
 				typeof(double),
-				typeof(CompoundSlider),
+				typeof(ShadowSlider),
 				new PropertyMetadata(
 					-1D,
-					(d, e) => ((CompoundSlider)d).ReflectShadow()));
+					(d, e) => ((ShadowSlider)d).ReflectShadow()));
 
 		protected bool CanUseShadow { get; private set; }
 
@@ -92,104 +92,6 @@ namespace Monitorian.Core.Views.Controls
 
 			_shadowLeft.Width = new GridLength(ratio, GridUnitType.Star);
 			_shadowRight.Width = new GridLength(1D - ratio, GridUnitType.Star);
-		}
-
-		#endregion
-
-		#region Unison
-
-		private static event EventHandler<double> Moved; // Static event
-
-		public bool IsUnison
-		{
-			get { return (bool)GetValue(IsUnisonProperty); }
-			set { SetValue(IsUnisonProperty, value); }
-		}
-		public static readonly DependencyProperty IsUnisonProperty =
-			DependencyProperty.Register(
-				"IsUnison",
-				typeof(bool),
-				typeof(CompoundSlider),
-				new PropertyMetadata(
-					false,
-					(d, e) =>
-					{
-						var instance = (CompoundSlider)d;
-
-						if ((bool)e.NewValue)
-						{
-							Moved += instance.OnMoved;
-						}
-						else
-						{
-							Moved -= instance.OnMoved;
-						}
-					}));
-
-		public int ValueUnison
-		{
-			get { return (int)GetValue(ValueUnisonProperty); }
-			set { SetValue(ValueUnisonProperty, value); }
-		}
-		public static readonly DependencyProperty ValueUnisonProperty =
-			DependencyProperty.Register(
-				"ValueUnison",
-				typeof(int),
-				typeof(CompoundSlider),
-				new PropertyMetadata(
-					0,
-					(d, e) =>
-					{
-						var instance = (CompoundSlider)d;
-
-						if (!instance.IsFocused && instance.IsUnison)
-						{
-							Moved?.Invoke(instance, (int)e.NewValue - instance.Value);
-						}
-					}));
-
-		protected override void OnValueChanged(double oldValue, double newValue)
-		{
-			base.OnValueChanged(oldValue, newValue);
-
-			if (this.IsFocused && IsUnison)
-			{
-				Moved?.Invoke(this, newValue - oldValue);
-			}
-		}
-
-		private double? _brightnessProtruded = null;
-
-		protected override void OnGotFocus(RoutedEventArgs e)
-		{
-			base.OnGotFocus(e);
-
-			_brightnessProtruded = null; // Reset
-		}
-
-		private void OnMoved(object sender, double delta)
-		{
-			if (ReferenceEquals(this, sender))
-				return;
-
-			if (delta != 0D)
-			{
-				_brightnessProtruded ??= this.Value;
-				_brightnessProtruded += delta;
-
-				this.Value = Math.Min(this.Maximum, Math.Max(this.Minimum, _brightnessProtruded.Value));
-			}
-			else
-			{
-				base.UpdateValueDeferred();
-			}
-		}
-
-		protected override void UpdateValueDeferred()
-		{
-			base.UpdateValueDeferred();
-
-			Moved?.Invoke(this, 0D);
 		}
 
 		#endregion

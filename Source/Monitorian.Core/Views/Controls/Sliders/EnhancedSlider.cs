@@ -18,7 +18,8 @@ namespace Monitorian.Core.Views.Controls
 		{
 			base.OnInitialized(e);
 
-			this.IsSnapToTickEnabled = true;
+			this.IsSnapToTickEnabled = false;
+			this.AutoToolTipPlacement = AutoToolTipPlacement.TopLeft;
 		}
 
 		private Track _track;
@@ -36,6 +37,19 @@ namespace Monitorian.Core.Views.Controls
 				MakeValueDeferred();
 		}
 
+		protected virtual bool UpdateValue(double value)
+		{
+			// Slider.SnapToTick property will not be reflected like Slider.UpdateValue method.
+			// Still, the value will snap to each integer.
+
+			var adjustedValue = Math.Min(this.Maximum, Math.Max(this.Minimum, Math.Round(value)));
+			if (this.Value == adjustedValue)
+				return false;
+
+			this.Value = adjustedValue;
+			return true;
+		}
+
 		#region Drag
 
 		protected bool CanDrag { get; private set; }
@@ -43,7 +57,7 @@ namespace Monitorian.Core.Views.Controls
 
 		private void CheckCanDrag()
 		{
-			CanDrag = (_thumb != null) && FindNonPublicMembers();
+			CanDrag = (_thumb != null) && (_canAccessNonPublicMembers ??= FindNonPublicMembers());
 			if (!CanDrag)
 			{
 				// Fallback
@@ -52,17 +66,16 @@ namespace Monitorian.Core.Views.Controls
 			}
 		}
 
-		private static MethodInfo _updateValue;
+		private static bool? _canAccessNonPublicMembers;
+
 		private static PropertyInfo _thumbIsDragging;
 		private static FieldInfo _thumbOriginThumbPoint;
 		private static FieldInfo _thumbPreviousScreenCoordPosition;
 		private static FieldInfo _thumbOriginScreenCoordPosition;
+		private static MethodInfo _reposition;
 
 		private static bool FindNonPublicMembers()
 		{
-			// Slider.UpdateValue private method
-			_updateValue = typeof(Slider).GetMethod("UpdateValue", BindingFlags.NonPublic | BindingFlags.Instance);
-
 			// Thumb.IsDragging public readonly property
 			_thumbIsDragging = typeof(Thumb).GetProperty("IsDragging", BindingFlags.Public | BindingFlags.Instance);
 
@@ -75,11 +88,14 @@ namespace Monitorian.Core.Views.Controls
 			// Thumb._originScreenCoordPosition private field
 			_thumbOriginScreenCoordPosition = typeof(Thumb).GetField("_originScreenCoordPosition", BindingFlags.NonPublic | BindingFlags.Instance);
 
-			return (_updateValue != null)
-				&& (_thumbIsDragging != null)
+			// Popup.Reposition internal method
+			_reposition = typeof(Popup).GetMethod("Reposition", BindingFlags.NonPublic | BindingFlags.Instance);
+
+			return (_thumbIsDragging != null)
 				&& (_thumbOriginThumbPoint != null)
 				&& (_thumbPreviousScreenCoordPosition != null)
-				&& (_thumbOriginScreenCoordPosition != null);
+				&& (_thumbOriginScreenCoordPosition != null)
+				&& (_reposition != null);
 		}
 
 		protected override void OnPreviewMouseDown(MouseButtonEventArgs e)
@@ -136,7 +152,7 @@ namespace Monitorian.Core.Views.Controls
 			base.OnPreviewTouchDown(e);
 		}
 
-		private bool SetValueStartDrag(
+		protected virtual bool SetValueStartDrag(
 			Func<IInputElement, Point> getPosition,
 			Action<UIElement> captureDevice)
 		{
@@ -148,13 +164,8 @@ namespace Monitorian.Core.Views.Controls
 
 			var originTrackPoint = getPosition(_track);
 			var newValue = _track.ValueFromPoint(originTrackPoint);
-			newValue = Math.Min(this.Maximum, Math.Max(this.Minimum, Math.Round(newValue)));
-
-			if (newValue == this.Value)
+			if (UpdateValue(newValue))
 				return false;
-
-			// Set new value.
-			_updateValue.Invoke(this, new object[] { newValue });
 
 			// Reproduce Thumb.OnMouseLeftButtonDown method.
 			if (!_thumb.IsDragging)
@@ -173,6 +184,7 @@ namespace Monitorian.Core.Views.Controls
 
 				try
 				{
+					// Trigger Thumb.DragStartedEvent event.
 					_thumb.RaiseEvent(new DragStartedEventArgs(originThumbPoint.X, originThumbPoint.Y));
 				}
 				catch
@@ -182,6 +194,72 @@ namespace Monitorian.Core.Views.Controls
 				}
 			}
 			return true;
+		}
+
+		protected override void OnThumbDragStarted(DragStartedEventArgs e)
+		{
+			OpenToolTip(_track);
+
+			e.Handled = true; // This is necessary to prevent another ToolTip from being shown.
+		}
+
+		protected override void OnThumbDragDelta(DragDeltaEventArgs e)
+		{
+			var newValue = _track.Value + _track.ValueFromDistance(e.HorizontalChange, e.VerticalChange);
+			UpdateValue(newValue);
+
+			OpenToolTip(_track);
+		}
+
+		protected override void OnThumbDragCompleted(DragCompletedEventArgs e)
+		{
+			CloseToolTip(_track);
+		}
+
+		private ToolTip _autoToolTip;
+
+		protected virtual void OpenToolTip(Track track)
+		{
+			if (!_canAccessNonPublicMembers.GetValueOrDefault())
+				return;
+
+			_autoToolTip ??= new ToolTip
+			{
+				Placement = PlacementMode.Custom,
+				CustomPopupPlacementCallback = new CustomPopupPlacementCallback(AutoToolTipCustomPlacementCallback)
+			};
+
+			if (track.Thumb.ToolTip != _autoToolTip)
+			{
+				track.Thumb.ToolTip = _autoToolTip;
+				_autoToolTip.PlacementTarget = track.Thumb;
+			}
+
+			_autoToolTip.Content = track.Value.ToString("F0");
+			_autoToolTip.IsOpen = true;
+
+			_reposition.Invoke((Popup)_autoToolTip.Parent, null);
+
+			CustomPopupPlacement[] AutoToolTipCustomPlacementCallback(Size popupSize, Size targetSize, Point offset)
+			{
+				// Accept the combination of AutoToolTipPlacement.TopLeft and Orientation.Horizontal only.
+				switch (this.AutoToolTipPlacement, this.Orientation)
+				{
+					case (AutoToolTipPlacement.TopLeft, Orientation.Horizontal):
+						// Place popup at top of thumb
+						return new[] { new CustomPopupPlacement(new Point((targetSize.Width - popupSize.Width) * 0.5, -popupSize.Height), PopupPrimaryAxis.Horizontal) };
+					default:
+						throw new InvalidOperationException();
+				}
+			}
+		}
+
+		protected virtual void CloseToolTip(Track track)
+		{
+			if (_autoToolTip != null)
+				_autoToolTip.IsOpen = false;
+
+			track.Thumb.ToolTip = null;
 		}
 
 		#endregion
@@ -200,13 +278,6 @@ namespace Monitorian.Core.Views.Controls
 			_originValue = _track.ValueFromPoint(e.ManipulationOrigin);
 		}
 
-		protected override void OnManipulationCompleted(ManipulationCompletedEventArgs e)
-		{
-			base.OnManipulationCompleted(e);
-
-			UpdateValueDeferred();
-		}
-
 		protected override void OnManipulationDelta(ManipulationDeltaEventArgs e)
 		{
 			base.OnManipulationDelta(e);
@@ -214,9 +285,14 @@ namespace Monitorian.Core.Views.Controls
 			var cumulativeDistance = e.CumulativeManipulation.Translation;
 			var cumulativeValue = _track.ValueFromDistance(cumulativeDistance.X, cumulativeDistance.Y);
 			var newValue = _originValue + cumulativeValue;
-			newValue = Math.Min(this.Maximum, Math.Max(this.Minimum, Math.Round(newValue)));
+			UpdateValue(newValue);
+		}
 
-			this.Value = newValue;
+		protected override void OnManipulationCompleted(ManipulationCompletedEventArgs e)
+		{
+			base.OnManipulationCompleted(e);
+
+			UpdateValueDeferred();
 		}
 
 		#endregion
@@ -236,9 +312,7 @@ namespace Monitorian.Core.Views.Controls
 				return;
 
 			var newValue = this.Value + e.Delta * ReductionFactor;
-			newValue = Math.Min(this.Maximum, Math.Max(this.Minimum, Math.Round(newValue)));
-
-			this.Value = newValue;
+			UpdateValue(newValue);
 			UpdateValueDeferred();
 		}
 

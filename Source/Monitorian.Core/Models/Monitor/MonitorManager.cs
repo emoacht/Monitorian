@@ -27,13 +27,16 @@ namespace Monitorian.Core.Models.Monitor
 			public string AlternateDescription { get; }
 			public byte DisplayIndex => _deviceItem.DisplayIndex;
 			public byte MonitorIndex => _deviceItem.MonitorIndex;
+			public bool IsInternal { get; }
 
 			public DeviceItemPlus(
 				DeviceContext.DeviceItem deviceItem,
-				string alternateDescription = null)
+				string alternateDescription = null,
+				bool isInternal = true)
 			{
 				this._deviceItem = deviceItem ?? throw new ArgumentNullException(nameof(deviceItem));
 				this.AlternateDescription = alternateDescription ?? deviceItem.Description;
+				this.IsInternal = isInternal;
 			}
 		}
 
@@ -56,21 +59,24 @@ namespace Monitorian.Core.Models.Monitor
 			{
 				foreach (var deviceItem in DeviceContext.EnumerateMonitorDevices())
 				{
-					var isDescriptionNullOrWhiteSpace = string.IsNullOrWhiteSpace(deviceItem.Description);
-					if (isDescriptionNullOrWhiteSpace ||
-						Regex.IsMatch(deviceItem.Description, "^Generic (?:PnP|Non-PnP) Monitor$", RegexOptions.IgnoreCase))
+					var displayItem = displayItems.FirstOrDefault(x => string.Equals(deviceItem.DeviceInstanceId, x.DeviceInstanceId, StringComparison.OrdinalIgnoreCase));
+					if (displayItem != null)
 					{
-						var displayItem = displayItems.FirstOrDefault(x => string.Equals(deviceItem.DeviceInstanceId, x.DeviceInstanceId, StringComparison.OrdinalIgnoreCase));
-						if (!string.IsNullOrWhiteSpace(displayItem?.DisplayName))
+						var isDescriptionNullOrWhiteSpace = string.IsNullOrWhiteSpace(deviceItem.Description);
+						if (isDescriptionNullOrWhiteSpace ||
+							Regex.IsMatch(deviceItem.Description, "^Generic (?:PnP|Non-PnP) Monitor$", RegexOptions.IgnoreCase))
 						{
-							yield return new DeviceItemPlus(deviceItem, displayItem.DisplayName);
-							continue;
-						}
-						if (!isDescriptionNullOrWhiteSpace &&
-							!string.IsNullOrWhiteSpace(displayItem?.ConnectionDescription))
-						{
-							yield return new DeviceItemPlus(deviceItem, $"{deviceItem.Description} ({displayItem.ConnectionDescription})");
-							continue;
+							if (!string.IsNullOrWhiteSpace(displayItem.DisplayName))
+							{
+								yield return new DeviceItemPlus(deviceItem, displayItem.DisplayName, displayItem.IsInternal);
+								continue;
+							}
+							if (!isDescriptionNullOrWhiteSpace &&
+								!string.IsNullOrWhiteSpace(displayItem.ConnectionDescription))
+							{
+								yield return new DeviceItemPlus(deviceItem, $"{deviceItem.Description} ({displayItem.ConnectionDescription})", displayItem.IsInternal);
+								continue;
+							}
 						}
 					}
 					yield return new DeviceItemPlus(deviceItem);
@@ -158,7 +164,8 @@ namespace Monitorian.Core.Models.Monitor
 					deviceInstanceId: deviceItem.DeviceInstanceId,
 					description: deviceItem.AlternateDescription,
 					displayIndex: deviceItem.DisplayIndex,
-					monitorIndex: deviceItem.MonitorIndex);
+					monitorIndex: deviceItem.MonitorIndex,
+					isInternal: deviceItem.IsInternal);
 			}
 		}
 
@@ -181,6 +188,39 @@ namespace Monitorian.Core.Models.Monitor
 		}
 
 		[DataContract]
+		private class PhysicalItemPlus : MonitorConfiguration.PhysicalItem
+		{
+			[DataMember(Order = 6)]
+			public bool GetBrightness { get; private set; }
+
+			[DataMember(Order = 7)]
+			public bool SetBrightness { get; private set; }
+
+			public PhysicalItemPlus(
+				MonitorConfiguration.PhysicalItem item) : base(
+					description: item.Description,
+					monitorIndex: item.MonitorIndex,
+					handle: item.Handle,
+					isHighLevelSupported: item.IsHighLevelSupported,
+					isLowLevelSupported: item.IsLowLevelSupported,
+					capabilitiesString: item.CapabilitiesString,
+					capabilitiesReport: item.CapabilitiesReport)
+			{
+				TestBrightness();
+			}
+
+			private void TestBrightness()
+			{
+				var (success, _, current, maximum) = MonitorConfiguration.GetBrightness(Handle, IsLowLevelSupported);
+				GetBrightness = success;
+
+				SetBrightness = MonitorConfiguration.SetBrightness(Handle, Math.Min(maximum, current + 5), IsLowLevelSupported);
+				if (SetBrightness)
+					MonitorConfiguration.SetBrightness(Handle, current, IsLowLevelSupported);
+			}
+		}
+
+		[DataContract]
 		private class MonitorData
 		{
 			// When Name property of DataMemberAttribute contains a space or specific character 
@@ -190,7 +230,7 @@ namespace Monitorian.Core.Models.Monitor
 			public DeviceContext.DeviceItem[] DeviceItems { get; private set; }
 
 			[DataMember(Order = 1, Name = "Monitor Configuration - PhysicalItems")]
-			public Dictionary<DeviceContext.HandleItem, MonitorConfiguration.PhysicalItem[]> PhysicalItems { get; private set; }
+			public Dictionary<DeviceContext.HandleItem, PhysicalItemPlus[]> PhysicalItems { get; private set; }
 
 			[DataMember(Order = 2, Name = "Device Installation - InstalledItems")]
 			public DeviceInstallation.InstalledItem[] InstalledItems { get; private set; }
@@ -219,7 +259,9 @@ namespace Monitorian.Core.Models.Monitor
 					GetTask(nameof(PhysicalItems), () =>
 						PhysicalItems = DeviceContext.GetMonitorHandles().ToDictionary(
 							x => x,
-							x => MonitorConfiguration.EnumeratePhysicalMonitors(x.MonitorHandle, true).ToArray())),
+							x => MonitorConfiguration.EnumeratePhysicalMonitors(x.MonitorHandle, true)
+								.Select(x => new PhysicalItemPlus(x))
+								.ToArray())),
 
 					GetTask(nameof(InstalledItems), () =>
 						InstalledItems = DeviceInstallation.EnumerateInstalledMonitors().ToArray()),

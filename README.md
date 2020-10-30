@@ -10,6 +10,11 @@ The user can change the brightness of monitors, including external ones, either 
 ![Screenshot](Images/Screenshot_unison.png)<br>
 (DPI: 100%)
 
+In addition, the user can change the adjustable range of brightness for each monitor seamlessly.
+
+![Screenshot](Images/Screenshot_range.png)<br>
+(DPI: 100%)
+
 ## Requirements
 
  * Windows 7 or newer
@@ -19,21 +24,11 @@ The user can change the brightness of monitors, including external ones, either 
 
 ## Download
 
-### Pre-release for testing
-
-Features:
- - Ajustable range can be changed.
- - Scan process is further adjusted.
-
-:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/2.7.1-Installer/MonitorianInstaller271.zip)
-
-### Normal release
-
  * Windows 10 Anniversary Update (1607) or newer:<br>
 [Monitorian](https://www.microsoft.com/store/apps/9nw33j738bl0) (Microsoft Store)
 
  * Other:<br>
-:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/2.4.0-Installer/MonitorianInstaller240.zip) | :floppy_disk: [Executables](https://github.com/emoacht/Monitorian/releases/download/2.4.0-Executables/Monitorian240.zip)
+:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/2.7.2-Installer/MonitorianInstaller272.zip) | :floppy_disk: [Executables](https://github.com/emoacht/Monitorian/releases/download/2.7.2-Executables/Monitorian272.zip)
 
 ## Install/Uninstall
 
@@ -101,34 +96,39 @@ An alternative language can be shown by adding a Resources (.resx) file into `/S
 
 ## History
 
-Ver 2.6.0 2020-8-10
+Ver 2.7 2020-10-30
+
+- Enable to change adjustable range
+- Adjust scan process
+
+Ver 2.6 2020-8-10
 
 - Enable to defer update of brightness
 
-Ver 2.5.0 2020-8-1
+Ver 2.5 2020-8-1
 
 - Fix issue of empty description
 
-Ver 2.4.0 2019-12-30
+Ver 2.4 2019-12-30
 
 - Improve scan process
 
-Ver 2.3.0 2019-11-28
+Ver 2.3 2019-11-28
 
 - Change scan process
 
-Ver 2.2.0 2019-11-18
+Ver 2.2 2019-11-18
 
 - Change setting to show adjusted brightness by ambient light enabled as default
 - Fix bugs
 
-Ver 2.1.0 2019-11-6
+Ver 2.1 2019-11-6
 
  - Change location to show when the icon is in overflow area
  - Change behavior when sliders are moving in unison
  - Fix bugs
 
-Ver 2.0.0 2019-8-6
+Ver 2.0 2019-8-6
 
  - Enable operation by arrow keys
  - Redesign slider
@@ -154,18 +154,6 @@ Ver 1.8.0 2018-11-24
 
  - Supplement generic monitor name with connection type
 
-Ver 1.7.4 2018-11-14
-
- - Suppress an exception
-
-Ver 1.7.2 2018-10-17
-
- - Fix an exception
-
-Ver 1.7.1 2018-10-8
-
- - Modify handling of exceptions
-
 Ver 1.7.0 2018-8-22
 
  - Improved finding monitor name for Windows 10 April 2018 Update (1803)
@@ -174,10 +162,6 @@ Ver 1.6.0 2018-5-25
 
  - Extended function to control DDC/CI connected monitor
  - Modified function to enable moving together
-
-Ver 1.5.1 2018-2-19
-
- - Refactored
 
 Ver 1.5.0 2018-2-12
 
@@ -190,18 +174,6 @@ Ver 1.4.0 2018-1-17
 Ver 1.2.4 2017-10-12
 
  - Added control by mouse wheel
-
-Ver 1.2.3 2017-5-24
-
- - Suppressed exception
-
-Ver 1.2.2 2017-4-17
-
- - Fixed issue of window location
-
-Ver 1.2.1 2017-4-3
-
- - Refactored
 
 Ver 1.2.0 2017-3-29
 

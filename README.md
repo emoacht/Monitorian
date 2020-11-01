@@ -133,53 +133,50 @@ Ver 2.0 2019-8-6
  - Enable operation by arrow keys
  - Redesign slider
 
-Ver 1.12.0 2019-3-9
+Ver 1.12 2019-3-9
 
  - Modify to handle raw brightnesses correctly when raw minimum and maximum brightnesses are not standard values. Thanks to @reflecat!
  - Change target framework to .NET Framework 4.7.2
 
-Ver 1.11.0 2019-2-7
+Ver 1.11 2019-2-7
 
  - Further suppress an exception
 
-Ver 1.10.0 2019-2-3
+Ver 1.10 2019-2-3
 
  - Change to enable transparency and blur effects only when transparency effects of OS is on
 
-Ver 1.9.0 2018-12-5
+Ver 1.9 2018-12-5
 
  - Change scan timings after resume
 
-Ver 1.8.0 2018-11-24
+Ver 1.8 2018-11-24
 
  - Supplement generic monitor name with connection type
 
-Ver 1.7.0 2018-8-22
+Ver 1.7 2018-8-22
 
  - Improved finding monitor name for Windows 10 April 2018 Update (1803)
 
-Ver 1.6.0 2018-5-25
+Ver 1.6 2018-5-25
 
  - Extended function to control DDC/CI connected monitor
  - Modified function to enable moving together
 
-Ver 1.5.0 2018-2-12
+Ver 1.5 2018-2-12
 
  - Improved handling of uncontrollable monitor
 
-Ver 1.4.0 2018-1-17
+Ver 1.4 2018-1-17
 
  - Modified handling of monitor names
 
-Ver 1.2.4 2017-10-12
+Ver 1.2 2017-10-12
 
  - Added control by mouse wheel
-
-Ver 1.2.0 2017-3-29
-
  - Added function to show adjusted brightness
 
-Ver 1.0.0 2017-2-22
+Ver 1.0 2017-2-22
 
  - Initial release
 

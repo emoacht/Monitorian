@@ -28,7 +28,7 @@ In addition, the user can change the adjustable range of brightness for each mon
 [Monitorian](https://www.microsoft.com/store/apps/9nw33j738bl0) (Microsoft Store)
 
  * Other:<br>
-:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/2.7.2-Installer/MonitorianInstaller272.zip) | :floppy_disk: [Executables](https://github.com/emoacht/Monitorian/releases/download/2.7.2-Executables/Monitorian272.zip)
+:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/2.7.4-Installer/MonitorianInstaller274.zip) | :floppy_disk: [Executables](https://github.com/emoacht/Monitorian/releases/download/2.7.4-Executables/Monitorian274.zip)
 
 ## Install/Uninstall
 
@@ -100,6 +100,7 @@ Ver 2.7 2020-10-30
 
 - Enable to change adjustable range
 - Adjust scan process
+- Add get/set brightness test to probe
 
 Ver 2.6 2020-8-10
 

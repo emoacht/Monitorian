@@ -191,10 +191,10 @@ namespace Monitorian.Core.Models.Monitor
 		private class PhysicalItemPlus : MonitorConfiguration.PhysicalItem
 		{
 			[DataMember(Order = 6)]
-			public bool GetBrightness { get; private set; }
+			public string GetBrightness { get; private set; }
 
 			[DataMember(Order = 7)]
-			public bool SetBrightness { get; private set; }
+			public string SetBrightness { get; private set; }
 
 			public PhysicalItemPlus(
 				MonitorConfiguration.PhysicalItem item) : base(
@@ -211,11 +211,23 @@ namespace Monitorian.Core.Models.Monitor
 
 			private void TestBrightness()
 			{
-				var (success, _, current, maximum) = MonitorConfiguration.GetBrightness(Handle, IsLowLevelSupported);
-				GetBrightness = success;
+				var (isGetSuccess, minimum, current, maximum) = MonitorConfiguration.GetBrightness(Handle, IsLowLevelSupported);
+				var isValid = (minimum < maximum) && (minimum <= current) && (current <= maximum);
+				GetBrightness = $"Success: {isGetSuccess}" + (isGetSuccess ? $", Valid: {isValid} (Minimum: {minimum}, Current: {current}, Maximum: {maximum})" : string.Empty);
 
-				SetBrightness = MonitorConfiguration.SetBrightness(Handle, Math.Min(maximum, current + 5), IsLowLevelSupported);
-				if (SetBrightness)
+				var difference = (uint)(DateTime.Now.Ticks % 6 + 5); // Integer from 5 to 10
+				var expected = difference;
+				if (isGetSuccess && isValid)
+				{
+					expected = (current - minimum > maximum - current) ? current - difference : current + difference;
+					expected = Math.Min(maximum, Math.Max(minimum, expected));
+				}
+
+				var isSetSuccess = MonitorConfiguration.SetBrightness(Handle, expected, IsLowLevelSupported);
+				var (_, _, actual, _) = MonitorConfiguration.GetBrightness(Handle, IsLowLevelSupported);
+				SetBrightness = $"Success: {isSetSuccess}" + (isSetSuccess ? $", Match: {expected == actual} (Expected: {expected}, Actual: {actual})" : string.Empty);
+
+				if (isSetSuccess)
 					MonitorConfiguration.SetBrightness(Handle, current, IsLowLevelSupported);
 			}
 		}

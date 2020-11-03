@@ -427,6 +427,7 @@ namespace Monitorian.Core.Models.Monitor
 
 			if (!useLowLevel)
 			{
+				// SetMonitorBrightness function may return true even when it actually failed.
 				if (!SetMonitorBrightness(
 					physicalMonitorHandle,
 					brightness))

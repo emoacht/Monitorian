@@ -164,7 +164,7 @@ namespace Monitorian.Core.Views.Controls
 
 			var originTrackPoint = getPosition(_track);
 			var newValue = _track.ValueFromPoint(originTrackPoint);
-			if (UpdateValue(newValue))
+			if (!UpdateValue(newValue))
 				return false;
 
 			// Reproduce Thumb.OnMouseLeftButtonDown method.

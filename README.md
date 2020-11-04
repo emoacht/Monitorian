@@ -28,7 +28,7 @@ In addition, the user can change the adjustable range of brightness for each mon
 [Monitorian](https://www.microsoft.com/store/apps/9nw33j738bl0) (Microsoft Store)
 
  * Other:<br>
-:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/2.7.4-Installer/MonitorianInstaller274.zip) | :floppy_disk: [Executables](https://github.com/emoacht/Monitorian/releases/download/2.7.4-Executables/Monitorian274.zip)
+:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/2.7.5-Installer/MonitorianInstaller275.zip) | :floppy_disk: [Executables](https://github.com/emoacht/Monitorian/releases/download/2.7.5-Executables/Monitorian275.zip)
 
 ## Install/Uninstall
 

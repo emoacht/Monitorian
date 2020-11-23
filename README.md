@@ -28,7 +28,7 @@ In addition, the user can change the adjustable range of brightness for each mon
 [Monitorian](https://www.microsoft.com/store/apps/9nw33j738bl0) (Microsoft Store)
 
  * Other:<br>
-:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/2.7.5-Installer/MonitorianInstaller275.zip) | :floppy_disk: [Executables](https://github.com/emoacht/Monitorian/releases/download/2.7.5-Executables/Monitorian275.zip)
+:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/2.8.0-Installer/MonitorianInstaller280.zip) | :floppy_disk: [Executables](https://github.com/emoacht/Monitorian/releases/download/2.8.0-Executables/Monitorian280.zip)
 
 ## Install/Uninstall
 
@@ -95,6 +95,10 @@ An alternative language can be shown by adding a Resources (.resx) file into `/S
 `Resources.ja-JP.resx` (for Japanese) would be a good example for this purpose.
 
 ## History
+
+Ver 2.8 2020-11-23
+
+- Adjust mouse wheel rotation
 
 Ver 2.7 2020-10-30
 

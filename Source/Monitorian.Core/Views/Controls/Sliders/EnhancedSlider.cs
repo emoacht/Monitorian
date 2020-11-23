@@ -299,7 +299,7 @@ namespace Monitorian.Core.Views.Controls
 
 		#region MouseWheel
 
-		private const double ReductionFactor = 0.05;
+		public static int WheelFactor { get; set; } = 5;
 
 		protected override void OnMouseWheel(MouseWheelEventArgs e)
 		{
@@ -311,7 +311,18 @@ namespace Monitorian.Core.Views.Controls
 			if (e.Delta == 0)
 				return;
 
-			var newValue = this.Value + e.Delta * ReductionFactor;
+			// The default wheel rotation delta (for one notch) is set at 120.
+			// This value is seen as WHEEL_DELTA and System.Windows.Input.Mouse.MouseWheelDeltaForOneLine.
+			// Although a wheel rotation delta is expressed in multiples or divisions of WHEEL_DELTA,
+			// usually, it will be a multiple of WHEEL_DELTA (+120/-120).
+			// Some explanations are provided in:
+			// WM_MOUSEWHEEL Message
+			// https://docs.microsoft.com/en-us/windows/win32/inputdev/wm-mousewheel
+			// System.Windows.Forms.MouseEventArgs.Delta Property
+			// https://docs.microsoft.com/en-us/dotnet/api/system.windows.forms.mouseeventargs.delta
+			//
+			// Mouse.MouseWheelDeltaForOneLine should be casted to double in case the delta is smaller than 120.
+			var newValue = this.Value + (e.Delta / (double)Mouse.MouseWheelDeltaForOneLine * WheelFactor);
 			UpdateValue(newValue);
 			UpdateValueDeferred();
 		}

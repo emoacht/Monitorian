@@ -81,7 +81,7 @@ This app is a WPF app developed and tested with Surface Pro 4.
 | Components                                                      | Fields                 |
 |-----------------------------------------------------------------|------------------------|
 | .NET Framework 4.7.2 SDK<br>.NET Framework 4.7.2 targeting pack | TargetFrameworkVersion |
-| Windows 10 SDK (10.0.18362.0)                                   | TargetPlatformVersion  |
+| Windows 10 SDK (10.0.19041.0)                                   | TargetPlatformVersion  |
 
 3. Load the solution by specifying `/Source/Monitorian.sln`. Then go to the solution explorer and right click the solution name and execute `Restore NuGet Packages`.
 

@@ -22,7 +22,7 @@ namespace Monitorian.Supplement
 		/// <returns>True if exists</returns>
 		public static bool AmbientLightSensorExists()
 		{
-			return (LightSensor.GetDefault() != null);
+			return (LightSensor.GetDefault() is not null);
 		}
 
 		/// <summary>
@@ -59,7 +59,7 @@ namespace Monitorian.Supplement
 					if (TimeSpan.Zero < value)
 					{
 						var sensor = _sensor ?? LightSensor.GetDefault();
-						if (sensor != null)
+						if (sensor is not null)
 						{
 							_reportInterval = Math.Max(sensor.MinimumReportInterval, (uint)value.TotalMilliseconds);
 						}
@@ -104,7 +104,7 @@ namespace Monitorian.Supplement
 						return;
 
 					_ambientLightChanged -= value;
-					if (_ambientLightChanged != null)
+					if (_ambientLightChanged is not null)
 						return;
 
 					_sensor.ReportInterval = 0; // Resetting to the default interval is necessary when ending subscription.

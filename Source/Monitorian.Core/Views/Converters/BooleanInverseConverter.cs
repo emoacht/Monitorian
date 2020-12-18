@@ -14,7 +14,7 @@ namespace Monitorian.Core.Views.Converters
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			if (!(value is bool sourceValue))
+			if (value is not bool sourceValue)
 				return DependencyProperty.UnsetValue;
 
 			return !sourceValue;

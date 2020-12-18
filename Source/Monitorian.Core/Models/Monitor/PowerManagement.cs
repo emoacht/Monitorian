@@ -289,7 +289,7 @@ namespace Monitorian.Core.Models.Monitor
 
 		public static bool SetActiveSchemeBrightness(int brightness)
 		{
-			if ((brightness < 0) || (100 < brightness))
+			if (brightness is < 0 or > 100)
 				throw new ArgumentOutOfRangeException(nameof(brightness), brightness, "The brightness must be within 0 to 100.");
 
 			var isOnline = IsOnline();

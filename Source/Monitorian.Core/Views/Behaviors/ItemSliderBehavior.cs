@@ -33,7 +33,7 @@ namespace Monitorian.Core.Views.Behaviors
 			_window = Window.GetWindow(this.AssociatedObject);
 
 			_container = this.AssociatedObject.GetSelfAndAncestors().OfType<ListBoxItem>().FirstOrDefault();
-			if (_container != null)
+			if (_container is not null)
 			{
 				_container.Selected += OnSelected;
 				_container.Unselected += OnUnselected;
@@ -50,7 +50,7 @@ namespace Monitorian.Core.Views.Behaviors
 			this.AssociatedObject.GotFocus -= OnGotFocus;
 			this.AssociatedObject.PreviewKeyDown -= OnPreviewKeyDown;
 
-			if (_container != null)
+			if (_container is not null)
 			{
 				_container.Selected -= OnSelected;
 				_container.Unselected -= OnUnselected;
@@ -67,7 +67,7 @@ namespace Monitorian.Core.Views.Behaviors
 
 		private void OnLoaded(object sender, RoutedEventArgs e)
 		{
-			if (IsSelected && (_container != null))
+			if (IsSelected && (_container is not null))
 				OnSelected(null, null);
 		}
 
@@ -79,7 +79,7 @@ namespace Monitorian.Core.Views.Behaviors
 
 		private void OnGotFocus(object sender, RoutedEventArgs e)
 		{
-			if ((_container != null) && !_container.IsSelected)
+			if ((_container is not null) && !_container.IsSelected)
 				Selector.SetIsSelected(_container, true);
 		}
 

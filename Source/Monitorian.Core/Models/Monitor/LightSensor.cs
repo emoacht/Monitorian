@@ -121,10 +121,10 @@ namespace Monitorian.Core.Models.Monitor
 			}
 			finally
 			{
-				if (sensorManager != null)
+				if (sensorManager is not null)
 					Marshal.FinalReleaseComObject(sensorManager);
 
-				if (sensorCollection != null)
+				if (sensorCollection is not null)
 					Marshal.FinalReleaseComObject(sensorCollection);
 			}
 		}

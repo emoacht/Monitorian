@@ -21,7 +21,7 @@ namespace Monitorian.Core.Helper
 			}
 			else
 			{
-				innerExceptions = (ex.InnerException != null)
+				innerExceptions = (ex.InnerException is not null)
 					? new Exception[] { ex.InnerException }
 					: Array.Empty<Exception>();
 

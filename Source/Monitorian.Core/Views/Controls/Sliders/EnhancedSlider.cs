@@ -57,7 +57,7 @@ namespace Monitorian.Core.Views.Controls
 
 		private void CheckCanDrag()
 		{
-			CanDrag = (_thumb != null) && (_canAccessNonPublicMembers ??= FindNonPublicMembers());
+			CanDrag = (_thumb is not null) && (_canAccessNonPublicMembers ??= FindNonPublicMembers());
 			if (!CanDrag)
 			{
 				// Fallback
@@ -91,11 +91,11 @@ namespace Monitorian.Core.Views.Controls
 			// Popup.Reposition internal method
 			_reposition = typeof(Popup).GetMethod("Reposition", BindingFlags.NonPublic | BindingFlags.Instance);
 
-			return (_thumbIsDragging != null)
-				&& (_thumbOriginThumbPoint != null)
-				&& (_thumbPreviousScreenCoordPosition != null)
-				&& (_thumbOriginScreenCoordPosition != null)
-				&& (_reposition != null);
+			return (_thumbIsDragging is not null)
+				&& (_thumbOriginThumbPoint is not null)
+				&& (_thumbPreviousScreenCoordPosition is not null)
+				&& (_thumbOriginScreenCoordPosition is not null)
+				&& (_reposition is not null);
 		}
 
 		protected override void OnPreviewMouseDown(MouseButtonEventArgs e)
@@ -256,7 +256,7 @@ namespace Monitorian.Core.Views.Controls
 
 		protected virtual void CloseToolTip(Track track)
 		{
-			if (_autoToolTip != null)
+			if (_autoToolTip is not null)
 				_autoToolTip.IsOpen = false;
 
 			track.Thumb.ToolTip = null;

@@ -95,8 +95,8 @@ namespace StartupAgency
 		/// </remarks>
 		public event EventHandler<StartupRequestEventArgs> Requested
 		{
-			add { if (_holder != null) { _holder.Requested += value; } }
-			remove { if (_holder != null) { _holder.Requested -= value; } }
+			add { if (_holder is not null) { _holder.Requested += value; } }
+			remove { if (_holder is not null) { _holder.Requested -= value; } }
 		}
 
 		private const string HideOption = "/hide";

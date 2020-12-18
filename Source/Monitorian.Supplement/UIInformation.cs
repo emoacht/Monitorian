@@ -53,10 +53,10 @@ namespace Monitorian.Supplement
 				lock (_lock)
 				{
 					_colorsChanged -= value;
-					if (_colorsChanged != null)
+					if (_colorsChanged is not null)
 						return;
 
-					if (_uiSettings != null)
+					if (_uiSettings is not null)
 					{
 						_uiSettings.ColorValuesChanged -= OnColorValuesChanged;
 						_uiSettings = null;

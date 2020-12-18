@@ -92,8 +92,8 @@ namespace StartupAgency
 
 		public event EventHandler<StartupRequestEventArgs> Requested
 		{
-			add { if (_space != null) { _space.Requested += value; } }
-			remove { if (_space != null) { _space.Requested -= value; } }
+			add { if (_space is not null) { _space.Requested += value; } }
+			remove { if (_space is not null) { _space.Requested -= value; } }
 		}
 	}
 

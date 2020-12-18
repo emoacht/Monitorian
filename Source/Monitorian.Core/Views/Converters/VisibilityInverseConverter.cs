@@ -14,7 +14,7 @@ namespace Monitorian.Core.Views.Converters
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			if (!(value is Visibility sourceValue))
+			if (value is not Visibility sourceValue)
 				return DependencyProperty.UnsetValue;
 
 			return (sourceValue != Visibility.Visible) ? Visibility.Visible : Visibility.Collapsed;

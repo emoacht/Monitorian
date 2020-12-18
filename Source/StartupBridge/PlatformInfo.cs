@@ -28,7 +28,7 @@ namespace StartupBridge
 			catch (InvalidOperationException ex) when ((uint)ex.HResult == 0x80073D54)
 			{
 				// Message: The process has no package identity. (Exception from HRESULT: 0x80073D54)
-				// This error code means 0x3D54 -> 15700 -> APPMODEL_ERROR_NO_PACKAGE
+				// 0x80073D54 means 0x3D54 -> 15700 -> APPMODEL_ERROR_NO_PACKAGE
 				return false;
 			}
 			catch (AggregateException ex) when (ex.InnerException is ArgumentException)

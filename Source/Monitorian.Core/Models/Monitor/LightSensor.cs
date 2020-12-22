@@ -80,7 +80,7 @@ namespace Monitorian.Core.Models.Monitor
 		}
 
 		private static uint S_OK = 0x0;
-		private static uint E_ELEMENTNOTFOUND = 0x80070490; // This error code means 0x0490 -> 1168 -> ERROR_NOT_FOUND
+		private static uint E_ELEMENTNOTFOUND = 0x80070490; // 0x80070490 means 0x0490 -> 1168 -> ERROR_NOT_FOUND
 
 		#endregion
 
@@ -116,15 +116,15 @@ namespace Monitorian.Core.Models.Monitor
 			{
 				// Message: This program is blocked by group policy. For more information, 
 				// contact your system administrator. (Exception from HRESULT: 0x800704EC).
-				// This error code means 0x04EC -> 1260 -> ERROR_ACCESS_DISABLED_BY_POLICY
+				// 0x800704EC means 0x04EC -> 1260 -> ERROR_ACCESS_DISABLED_BY_POLICY
 				return false;
 			}
 			finally
 			{
-				if (sensorManager != null)
+				if (sensorManager is not null)
 					Marshal.FinalReleaseComObject(sensorManager);
 
-				if (sensorCollection != null)
+				if (sensorCollection is not null)
 					Marshal.FinalReleaseComObject(sensorCollection);
 			}
 		}

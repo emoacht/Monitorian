@@ -329,7 +329,8 @@ namespace Monitorian.Core
 		private void MonitorsResetByKey()
 		{
 			var monitor = Monitors.FirstOrDefault(x => x.IsSelectedByKey);
-			if (monitor != null)
+
+			if (monitor is not null)
 				monitor.IsByKey = false;
 		}
 
@@ -373,7 +374,7 @@ namespace Monitorian.Core
 
 		protected internal virtual void SaveCustomization(string deviceInstanceId, string name, bool isUnison, byte lowest, byte highest)
 		{
-			if (((name != null) || isUnison || (0 != lowest) || (highest != 100))
+			if (((name is not null) || isUnison || (0 != lowest) || (highest != 100))
 				&& (lowest < highest) && (highest <= 100))
 			{
 				Settings.MonitorCustomizations.Add(deviceInstanceId, new MonitorCustomizationItem(name, isUnison, lowest, highest));

@@ -12,7 +12,7 @@ using System.Windows;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("Monitorian")]
-[assembly: AssemblyCopyright("Copyright © 2017-2020 emoacht")]
+[assembly: AssemblyCopyright("Copyright © 2017 emoacht")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -51,7 +51,7 @@ using System.Windows;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("2.8.0.0")]
-[assembly: AssemblyFileVersion("2.8.0.0")]
+[assembly: AssemblyVersion("2.9.0.0")]
+[assembly: AssemblyFileVersion("2.9.0.0")]
 [assembly: Guid("a4cc5362-9b08-465b-ad64-5cfabc72a4c7")]
 [assembly: NeutralResourcesLanguage("en-US")]

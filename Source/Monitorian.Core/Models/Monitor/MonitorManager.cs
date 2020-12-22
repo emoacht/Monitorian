@@ -60,7 +60,7 @@ namespace Monitorian.Core.Models.Monitor
 				foreach (var deviceItem in DeviceContext.EnumerateMonitorDevices())
 				{
 					var displayItem = displayItems.FirstOrDefault(x => string.Equals(deviceItem.DeviceInstanceId, x.DeviceInstanceId, StringComparison.OrdinalIgnoreCase));
-					if (displayItem != null)
+					if (displayItem is not null)
 					{
 						var isDescriptionNullOrWhiteSpace = string.IsNullOrWhiteSpace(deviceItem.Description);
 						if (isDescriptionNullOrWhiteSpace ||

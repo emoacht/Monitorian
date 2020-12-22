@@ -14,7 +14,7 @@ namespace IconImage
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			if (!(value is double sourceValue) || !double.TryParse(parameter?.ToString(), out double factor))
+			if ((value is not double sourceValue) || !double.TryParse(parameter?.ToString(), out double factor))
 				return DependencyProperty.UnsetValue;
 
 			return sourceValue / factor;
@@ -22,7 +22,7 @@ namespace IconImage
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			if (!(value is double targetValue) || !double.TryParse(parameter?.ToString(), out double factor))
+			if ((value is not double targetValue) || !double.TryParse(parameter?.ToString(), out double factor))
 				return DependencyProperty.UnsetValue;
 
 			return targetValue * factor;

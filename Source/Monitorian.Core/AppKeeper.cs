@@ -70,7 +70,7 @@ namespace Monitorian.Core
 			SubscribeExceptions();
 
 			var (success, response) = StartupAgent.Start(ProductInfo.Product, ProductInfo.StartupTaskId, OtherArguments);
-			if (!success && (response != null))
+			if (!success && (response is not null))
 			{
 				ConsoleService.Write(response.ToString());
 			}

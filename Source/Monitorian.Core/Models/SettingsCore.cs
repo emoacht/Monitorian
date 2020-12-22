@@ -156,7 +156,7 @@ namespace Monitorian.Core.Models
 			}
 			catch (Exception ex)
 			{
-				if ((ex is SerializationException) | (ex is XmlException))
+				if (ex is SerializationException or XmlException)
 				{
 					// Ignore faulty settings file.
 					return;

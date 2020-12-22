@@ -14,7 +14,7 @@ namespace Monitorian.Core.Views.Converters
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			if (!(value is Visibility sourceValue))
+			if (value is not Visibility sourceValue)
 				return DependencyProperty.UnsetValue;
 
 			var targetValue = (sourceValue == Visibility.Visible);
@@ -27,7 +27,7 @@ namespace Monitorian.Core.Views.Converters
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			if (!(value is bool targetValue))
+			if (value is not bool targetValue)
 				return DependencyProperty.UnsetValue;
 
 			if (IsFilteredOut(targetValue, parameter))

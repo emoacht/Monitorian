@@ -363,7 +363,7 @@ namespace Monitorian.Core.Models.Monitor
 
 		private static bool RotateDisplay(string displayName, ref DEVMODE dm, DMDO orientation)
 		{
-			static bool IsLandscape(DMDO value) => (value == DMDO.DMDO_DEFAULT) || (value == DMDO.DMDO_180);
+			static bool IsLandscape(DMDO value) => (value is DMDO.DMDO_DEFAULT or DMDO.DMDO_180);
 
 			if (IsLandscape(dm.dmDisplayOrientation) != IsLandscape(orientation))
 			{

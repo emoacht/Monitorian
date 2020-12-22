@@ -60,7 +60,7 @@ namespace Monitorian.Core.ViewModels
 						{
 							var monitor = MonitorsView.Cast<MonitorViewModel>()
 								.FirstOrDefault(x => string.Equals(x.DeviceInstanceId, Settings.SelectedDeviceInstanceId));
-							if (monitor != null)
+							if (monitor is not null)
 								monitor.IsSelected = true;
 						}
 					}

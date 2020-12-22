@@ -112,7 +112,7 @@ namespace ScreenFrame
 				throw new ArgumentNullException(nameof(iconPath));
 
 			var iconResource = System.Windows.Application.GetResourceStream(new Uri(iconPath));
-			if (iconResource != null)
+			if (iconResource is not null)
 			{
 				using (var iconStream = iconResource.Stream)
 				{
@@ -179,7 +179,7 @@ namespace ScreenFrame
 		/// <param name="newDpi">New DPI information</param>
 		protected virtual void OnDpiChanged(DpiScale oldDpi, DpiScale newDpi)
 		{
-			if (_icon != null)
+			if (_icon is not null)
 			{
 				NotifyIcon.Icon = GetIcon(_icon, newDpi);
 			}
@@ -196,16 +196,12 @@ namespace ScreenFrame
 
 		private static System.Drawing.Size GetIconSize(DpiScale dpi)
 		{
-			var factor = dpi.DpiScaleX;
-			if (factor <= Limit16)
+			return dpi.DpiScaleX switch
 			{
-				return new System.Drawing.Size(16, 16);
-			}
-			if (factor <= Limit32)
-			{
-				return new System.Drawing.Size(32, 32);
-			}
-			return new System.Drawing.Size(48, 48);
+				<= Limit16 => new System.Drawing.Size(16, 16),
+				<= Limit32 => new System.Drawing.Size(32, 32),
+				_ => new System.Drawing.Size(48, 48)
+			};
 		}
 
 		#endregion

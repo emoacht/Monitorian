@@ -48,7 +48,7 @@ namespace Monitorian.Test
 			// Dell S2721QS
 			var source = @"(prot(monitor)type(lcd)model(S2721QS)cmds(01 02 03 07 0C E3 F3)vcp(02 04 05 08 10 12 14(05 08 0B 0C) 16 18 1A 52 60( 0F 11 12) 62 AC AE B2 B6 C6 C8 C9 CC(02 03 04 06 09 0A 0D 0E) D6(01 04 05) DC(00 03 ) DF E0 E1 E2(00 1D 02 20 21 22 0E 12 14 23 24 27 )E3 E5 E8 E9(00 01 02 21 22 24) EA F0(00 0C 0F 10 11 31 32 34 35) F1 F2 FD)mccs_ver(2.1)mswhql(1))";
 			Assert.IsTrue(TestIsLowLevelSupportedBase(source));
-			Assert.IsTrue(TestIsSpeakerVolumeSupportedBase(source));
+			Assert.IsTrue(TestMakeCapabilitiesReportBase(source));
 		}
 
 		[TestMethod]
@@ -65,7 +65,7 @@ namespace Monitorian.Test
 			// LG 27UL550-W
 			var source = @"(prot(monitor)type(lcd)UL550_500cmds(01 02 03 0C E3 F3)vcp(02 04 05 08 10 12 14(05 08 0B) 16 18 1A 52 60(11 12 0F 10) AC AE B2 B6 C0 C6 C8 C9 D6(01 04) DF 62 8D F4 F5(00 01 02) F6(00 01 02) 4D 4E 4F 15(01 06 09 10 11 13 14 28 29 32  44 48) F7(00 01 02 03) F8(00 01) F9 EF FD(00 01) FE(00 01 02) FF)mccs_ver(2.1)mswhql(1))";
 			Assert.IsTrue(TestIsLowLevelSupportedBase(source));
-			Assert.IsTrue(TestIsSpeakerVolumeSupportedBase(source));
+			Assert.IsTrue(TestMakeCapabilitiesReportBase(source));
 		}
 
 		[TestMethod]
@@ -90,20 +90,26 @@ namespace Monitorian.Test
 			return (bool)@class.InvokeStatic("IsLowLevelSupported", source);
 		}
 
-		private static bool TestIsSpeakerVolumeSupportedBase(string source)
+		private static bool TestMakeCapabilitiesReportBase(string source)
 		{
 			var @class = new PrivateType(typeof(MonitorConfiguration));
 			var report = (string)@class.InvokeStatic("MakeCapabilitiesReport", source);
 
-			const string SpeakerVolume = "Speaker Volume:";
-			var index = report.IndexOf(SpeakerVolume);
-			if (0 <= index)
+			bool IsSupported(string name)
 			{
-				var buffer = report.Substring(index + SpeakerVolume.Length).Trim().Split().First();
-				if (bool.TryParse(buffer, out bool value))
-					return value;
+				var index = report.IndexOf(name);
+				if (index < 0)
+					return false;
+
+				var buffer = report.Substring(index + name.Length)
+					.Split(new[] { ',', ' ' }, StringSplitOptions.RemoveEmptyEntries)
+					.First();
+
+				return bool.TryParse(buffer, out bool value) && value;
 			}
-			return false;
+
+			return IsSupported("Contrast:")
+				&& IsSupported("Speaker Volume:");
 		}
 	}
 }

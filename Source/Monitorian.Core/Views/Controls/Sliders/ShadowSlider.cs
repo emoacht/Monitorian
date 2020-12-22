@@ -68,9 +68,9 @@ namespace Monitorian.Core.Views.Controls
 			_shadowLeft = this.GetTemplateChild("PART_ShadowLeft") as ColumnDefinition;
 			_shadowRight = this.GetTemplateChild("PART_ShadowRight") as ColumnDefinition;
 
-			return (_shadowThumb != null)
-				&& (_shadowLeft != null)
-				&& (_shadowRight != null);
+			return (_shadowThumb is not null)
+				&& (_shadowLeft is not null)
+				&& (_shadowRight is not null);
 		}
 
 		private void ReflectShadow()

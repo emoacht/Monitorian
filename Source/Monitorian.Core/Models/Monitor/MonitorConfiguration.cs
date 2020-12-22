@@ -341,7 +341,7 @@ namespace Monitorian.Core.Models.Monitor
 				}
 			}
 
-			static bool IsHexNumber(char c) => ('0' <= c && c <= '9') || ('A' <= c && c <= 'F') || ('a' <= c && c <= 'f');
+			static bool IsHexNumber(char c) => c is (>= '0' and <= '9') or (>= 'A' and <= 'F') or (>= 'a' and <= 'f');
 		}
 
 		/// <summary>

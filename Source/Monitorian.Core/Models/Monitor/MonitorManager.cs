@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Management;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System.Text;
@@ -235,25 +236,28 @@ namespace Monitorian.Core.Models.Monitor
 		[DataContract]
 		private class MonitorData
 		{
+			[DataMember(Order = 0)]
+			public string System { get; private set; }
+
 			// When Name property of DataMemberAttribute contains a space or specific character 
 			// (e.g. !, ?), DataContractJsonSerializer.WriteObject method will internally throw 
 			// a System.Xml.XmlException while it will work fine.
-			[DataMember(Order = 0, Name = "Device Context - DeviceItems")]
+			[DataMember(Order = 1, Name = "Device Context - DeviceItems")]
 			public DeviceContext.DeviceItem[] DeviceItems { get; private set; }
 
-			[DataMember(Order = 1, Name = "Monitor Configuration - PhysicalItems")]
+			[DataMember(Order = 2, Name = "Monitor Configuration - PhysicalItems")]
 			public Dictionary<DeviceContext.HandleItem, PhysicalItemPlus[]> PhysicalItems { get; private set; }
 
-			[DataMember(Order = 2, Name = "Device Installation - InstalledItems")]
+			[DataMember(Order = 3, Name = "Device Installation - InstalledItems")]
 			public DeviceInstallation.InstalledItem[] InstalledItems { get; private set; }
 
-			[DataMember(Order = 3, Name = "MSMonitorClass - DesktopItems")]
+			[DataMember(Order = 4, Name = "MSMonitorClass - DesktopItems")]
 			public MSMonitor.DesktopItem[] DesktopItems { get; private set; }
 
-			[DataMember(Order = 4, Name = "DisplayMonitor - DisplayItems")]
+			[DataMember(Order = 5, Name = "DisplayMonitor - DisplayItems")]
 			public DisplayInformation.DisplayItem[] DisplayItems { get; private set; }
 
-			[DataMember(Order = 5)]
+			[DataMember(Order = 6)]
 			public string[] ElapsedTime { get; private set; }
 
 			public MonitorData()
@@ -261,6 +265,8 @@ namespace Monitorian.Core.Models.Monitor
 
 			public async Task PopulateAsync()
 			{
+				System = GetSystem();
+
 				var sw = new Stopwatch();
 
 				var tasks = new[]
@@ -301,6 +307,13 @@ namespace Monitorian.Core.Models.Monitor
 						var elapsed = sw.Elapsed;
 						return $@"{name,-14} -> {elapsed.ToString($@"{(elapsed.Minutes > 0 ? @"m\:" : string.Empty)}s\.fff")}";
 					});
+			}
+
+			private string GetSystem()
+			{
+				using var @class = new ManagementClass("Win32_ComputerSystem");
+				using var instance = @class.GetInstances().Cast<ManagementObject>().FirstOrDefault();
+				return $"Manufacturer: {instance?["Manufacturer"]}, Model: {instance?["Model"]}";
 			}
 		}
 

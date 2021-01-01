@@ -39,7 +39,7 @@ namespace Monitorian.Core
 
 		public AppKeeper(string[] args, params string[] definedOptions)
 		{
-			if (args?.Any() == true)
+			if (args?.Any() is true)
 			{
 				const char optionMark = '/';
 				var isDefined = false;

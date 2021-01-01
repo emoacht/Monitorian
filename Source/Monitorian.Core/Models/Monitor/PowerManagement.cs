@@ -131,7 +131,7 @@ namespace Monitorian.Core.Models.Monitor
 				// 1: On
 				return (e.Data == 1);
 			}
-			return (IsActiveSchemeAdaptiveBrightnessEnabled() == true);
+			return (IsActiveSchemeAdaptiveBrightnessEnabled() is true);
 		}
 
 		private static bool CanAdaptiveBrightnessEnabled => _canAdaptiveBrightnessEnabled ??= LightSensor.AmbientLightSensorExists && IsSettingAdaptiveBrightnessAdded();

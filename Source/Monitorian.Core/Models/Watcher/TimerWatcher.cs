@@ -18,7 +18,7 @@ namespace Monitorian.Core.Models.Watcher
 		/// <param name="intervals">Sequence of timer intervals in seconds</param>
 		protected TimerWatcher(params int[] intervals)
 		{
-			if (!(intervals?.Length > 0))
+			if (intervals?.Length is not > 0)
 				throw new ArgumentNullException(nameof(intervals));
 			if (intervals.Any(x => x <= 0))
 				throw new ArgumentOutOfRangeException(nameof(intervals), intervals.First(x => x <= 0), "An interval must be positive.");

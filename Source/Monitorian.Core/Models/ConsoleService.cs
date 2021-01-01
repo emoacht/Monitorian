@@ -64,16 +64,13 @@ namespace Monitorian.Core.Models
 			if ((outputHandle == IntPtr.Zero) || (outputHandle == INVALID_HANDLE_VALUE))
 				return false;
 
-			switch (GetFileType(outputHandle))
+			return GetFileType(outputHandle) switch
 			{
-				case FILE_TYPE.FILE_TYPE_DISK:
-				case FILE_TYPE.FILE_TYPE_PIPE:
-					return true;
-				case FILE_TYPE.FILE_TYPE_CHAR:
-					return !GetConsoleMode(outputHandle, out _);
-				default:
-					return false;
-			}
+				FILE_TYPE.FILE_TYPE_DISK or
+				FILE_TYPE.FILE_TYPE_PIPE => true,
+				FILE_TYPE.FILE_TYPE_CHAR => !GetConsoleMode(outputHandle, out _),
+				_ => false
+			};
 		}
 
 		private static ConsoleTraceListener _listener;

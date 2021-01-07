@@ -198,21 +198,20 @@ namespace Monitorian.Core.Views
 			if (_colors.Value is null)
 				return false;
 
-			var isMainWindow = window is MainWindow;
 			var isBackgroundChanged = false;
 
 			foreach (var (key, value) in _colors.Value)
 			{
-				switch (key)
+				switch (key, window is MainWindow)
 				{
-					case ColorElement.MainBorder when isMainWindow:
-					case ColorElement.MenuBorder when !isMainWindow:
+					case (ColorElement.MainBorder, true):
+					case (ColorElement.MenuBorder, false):
 						window.BorderBrush = value;
 						window.BorderThickness = new Thickness(1);
 						break;
 
-					case ColorElement.MainBackground when isMainWindow:
-					case ColorElement.MenuBackground when !isMainWindow:
+					case (ColorElement.MainBackground, true):
+					case (ColorElement.MenuBackground, false):
 						window.Background = value;
 						isBackgroundChanged = true;
 						break;

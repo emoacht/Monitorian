@@ -97,18 +97,12 @@ namespace ScreenFrame.Movers
 			{
 				case TaskbarAlignment.Top:
 				case TaskbarAlignment.Bottom:
-					switch (iconPlacement)
+					x = iconPlacement switch
 					{
-						case IconPlacement.InTaskbar:
-							x = iconRect.Right;
-							break;
-						case IconPlacement.InOverflowArea:
-							x = overflowAreaRect.Left;
-							break;
-						default:
-							x = taskbarRect.Right; // Fallback
-							break;
-					}
+						IconPlacement.InTaskbar => iconRect.Right,
+						IconPlacement.InOverflowArea => overflowAreaRect.Left,
+						_ => taskbarRect.Right,// Fallback
+					};
 					x -= (windowWidth - windowMargin.Right);
 
 					switch (taskbarAlignment)
@@ -137,18 +131,12 @@ namespace ScreenFrame.Movers
 							break;
 					}
 
-					switch (iconPlacement)
+					y = iconPlacement switch
 					{
-						case IconPlacement.InTaskbar:
-							y = iconRect.Bottom;
-							break;
-						case IconPlacement.InOverflowArea:
-							y = overflowAreaRect.Top;
-							break;
-						default:
-							y = taskbarRect.Bottom; // Fallback
-							break;
-					}
+						IconPlacement.InTaskbar => iconRect.Bottom,
+						IconPlacement.InOverflowArea => overflowAreaRect.Top,
+						_ => taskbarRect.Bottom,// Fallback
+					};
 					y -= (windowHeight - windowMargin.Bottom);
 					break;
 			}

@@ -8,7 +8,6 @@ using System.Windows.Threading;
 
 using Monitorian.Core.Models;
 using Monitorian.Core.Views;
-
 using StartupAgency;
 
 namespace Monitorian.Core
@@ -39,7 +38,7 @@ namespace Monitorian.Core
 
 		public AppKeeper(string[] args, params string[] definedOptions)
 		{
-			if (args?.Any() == true)
+			if (args?.Any() is true)
 			{
 				const char optionMark = '/';
 				var isDefined = false;

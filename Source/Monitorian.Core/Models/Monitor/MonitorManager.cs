@@ -89,7 +89,7 @@ namespace Monitorian.Core.Models.Monitor
 
 		private static IEnumerable<IMonitor> EnumerateMonitors(List<DeviceItemPlus> deviceItems)
 		{
-			if (!(deviceItems?.Any() == true))
+			if (deviceItems?.Any() is not true)
 				yield break;
 
 			// Obtained by DDC/CI

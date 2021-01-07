@@ -20,7 +20,7 @@ In addition, the user can change the adjustable range of brightness for each mon
  * Windows 7 or newer
  * .NET Framework __4.7.2__
  * An external monitor must be DDC/CI enabled.
-![OSD](Images/Dell-ddcci.jpg)
+![OSD](Images/Dell_ddcci.jpg)
 
 ## Download
 

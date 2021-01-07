@@ -17,9 +17,7 @@ using Monitorian.Core.Models.Monitor;
 using Monitorian.Core.Models.Watcher;
 using Monitorian.Core.ViewModels;
 using Monitorian.Core.Views;
-
 using ScreenFrame;
-
 using StartupAgency;
 
 namespace Monitorian.Core

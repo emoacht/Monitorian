@@ -8,7 +8,6 @@ using System.Windows.Threading;
 
 using Monitorian.Core.Models;
 using Monitorian.Core.Views;
-
 using StartupAgency;
 
 namespace Monitorian.Core

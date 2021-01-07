@@ -10,6 +10,7 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Threading;
+using Microsoft.Win32;
 
 using Monitorian.Core.Models;
 using Monitorian.Core.Models.Monitor;
@@ -85,7 +86,7 @@ namespace Monitorian.Core
 			NotifyIconContainer.MouseRightButtonClick += OnMenuWindowShowRequested;
 
 			_displayWatcher.Subscribe(() => OnMonitorsChangeInferred(nameof(DisplayWatcher)));
-			_powerWatcher.Subscribe((e) => OnMonitorsChangeInferred($"{nameof(PowerWatcher)} - {e.Mode}"), PowerManagement.GetOnPowerSettingChanged());
+			_powerWatcher.Subscribe((e) => OnMonitorsChangeInferred(nameof(PowerWatcher), e.Mode), PowerManagement.GetOnPowerSettingChanged());
 			_brightnessWatcher.Subscribe((instanceName, brightness) => Update(instanceName, brightness));
 		}
 
@@ -159,9 +160,9 @@ namespace Monitorian.Core
 
 		#region Monitors
 
-		protected virtual async void OnMonitorsChangeInferred(object sender = null)
+		protected virtual async void OnMonitorsChangeInferred(object sender = null, PowerModes mode = default)
 		{
-			_recorder?.Record($"{nameof(OnMonitorsChangeInferred)} ({sender})");
+			_recorder?.Record($"{nameof(OnMonitorsChangeInferred)} ({sender}{(mode == default ? string.Empty : $"- {mode}")})");
 
 			await ScanAsync(TimeSpan.FromSeconds(3));
 		}
@@ -179,7 +180,7 @@ namespace Monitorian.Core
 
 		internal Task ScanAsync() => ScanAsync(TimeSpan.Zero);
 
-		private async Task ScanAsync(TimeSpan interval)
+		protected virtual async Task ScanAsync(TimeSpan interval)
 		{
 			var isEntered = false;
 			try
@@ -289,7 +290,7 @@ namespace Monitorian.Core
 			}
 		}
 
-		private async Task UpdateAsync()
+		protected virtual async Task UpdateAsync()
 		{
 			if (_scanCount > 0)
 				return;
@@ -314,7 +315,7 @@ namespace Monitorian.Core
 			}
 		}
 
-		private void Update(string instanceName, int brightness)
+		protected virtual void Update(string instanceName, int brightness)
 		{
 			var monitor = Monitors.FirstOrDefault(x => instanceName.StartsWith(x.DeviceInstanceId, StringComparison.OrdinalIgnoreCase));
 			monitor?.UpdateBrightness(brightness);

@@ -48,7 +48,22 @@ Add-on features are available for Microsoft Store version on a subscription basi
 
 ![Screenshot](Images/Screenshot_keys_en.png)
 
-The experimental command line interaction is available. For the usage, execute `monitorian.exe /help`. No path is necessary.
+The command-line options to get/set the brigtness are available.
+
+| Actions                                | Options                                |
+|----------------------------------------|----------------------------------------|
+| Get brightness of a monitor.           | /get                                   |
+| Get brightness of a specified monitor. | /get [Device Instance ID]              |
+| Get brightness of all monitors.        | /get all                               |
+| Set brightness of a monitor.           | /set [Brightness]                      |
+| Set brightness of a specified monitor. | /set [Device Instance ID] [Brightness] |
+| Set brightness of all monitors.        | /set all [Brightness]                  |
+
+The brightness ranges from 0 to 100%. It can be specified with brightness itself (e.g. 20), increase (e.g. +10) or decrease (e.g. -10). The device instance ID is an unique identifier given by the OS to each monitor.
+
+You can call this app by its name `Monitorian` in command prompt or bat file. From Task Scheduler, it can be performed by the path to its alias `%LOCALAPPDATA%\Microsoft\WindowsApps\Monitorian.exe`. For example, to increase brightness of all monitors by 30%, the Action will be the following:
+
+![Task Scheduler](Images/TaskScheduler_action.png)
 
 The code for add-on features is not included in this repository.
 

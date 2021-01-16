@@ -46,9 +46,13 @@ When you use only executables, please note the following:
 
 Add-on features are available for Microsoft Store version on a subscription basis.
 
+### Hot keys & Shortcut keys
+
 ![Screenshot](Images/Screenshot_keys_en.png)
 
-The command-line options to get/set the brigtness are available.
+### Command-line options
+
+You can use command-line options to get/set the brigtness.
 
 | Actions                                | Options                                |
 |----------------------------------------|----------------------------------------|

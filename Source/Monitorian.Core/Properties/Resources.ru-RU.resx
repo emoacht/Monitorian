@@ -133,7 +133,7 @@
     <value>Включить одновременную регулировку</value>
   </data>
   <data name="License" xml:space="preserve">
-    <value>Лицензия</value>
+    <value>License</value>
   </data>
   <data name="MakeOperation" xml:space="preserve">
     <value>Создать журнал действий</value>
@@ -154,7 +154,7 @@
     <value>Показывать подстроенную яркость</value>
   </data>
   <data name="Site" xml:space="preserve">
-    <value>Сайт</value>
+    <value>Site</value>
   </data>
   <data name="SiteUrl" xml:space="preserve">
     <value>https://github.com/emoacht/Monitorian</value>

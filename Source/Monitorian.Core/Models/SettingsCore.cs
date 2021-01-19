@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
-using System.Xml;
 
 using Monitorian.Core.Collections;
 using Monitorian.Core.Common;
@@ -103,28 +100,25 @@ namespace Monitorian.Core.Models
 		#endregion
 
 		private const string SettingsFileName = "settings.xml";
-		private readonly string _settingsFilePath;
+		private readonly string _fileName;
 
 		public SettingsCore() : this(null)
 		{ }
 
 		protected SettingsCore(string fileName)
 		{
-			if (string.IsNullOrWhiteSpace(fileName))
-				fileName = SettingsFileName;
-
-			_settingsFilePath = Path.Combine(FolderService.AppDataFolderPath, fileName);
+			this._fileName = !string.IsNullOrWhiteSpace(fileName) ? fileName : SettingsFileName;
 		}
 
 		private Throttle _save;
 
 		protected internal virtual void Initiate()
 		{
-			Load(this, _settingsFilePath);
+			Load(this);
 
 			_save = new Throttle(
 				TimeSpan.FromMilliseconds(100),
-				() => Save(this, _settingsFilePath));
+				() => Save(this));
 
 			MonitorCustomizations.CollectionChanged += (sender, e) => RaisePropertyChanged(nameof(MonitorCustomizations));
 			PropertyChanged += async (sender, e) => await _save.PushAsync();
@@ -132,56 +126,24 @@ namespace Monitorian.Core.Models
 
 		#region Load/Save
 
-		private static void Load<T>(T instance, string filePath) where T : class
+		private void Load<T>(T instance) where T : class
 		{
-			var fileInfo = new FileInfo(filePath);
-			if (!fileInfo.Exists || (fileInfo.Length == 0))
-				return;
-
-			var type = instance.GetType(); // GetType method works in derived class.
-
 			try
 			{
-				using (var sr = new StreamReader(filePath, Encoding.UTF8))
-				using (var xr = XmlReader.Create(sr))
-				{
-					var serializer = new DataContractSerializer(type);
-					var loaded = (T)serializer.ReadObject(xr);
-
-					type.GetProperties(BindingFlags.Public | BindingFlags.Instance)
-						.Where(x => x.CanWrite)
-						.ToList()
-						.ForEach(x => x.SetValue(instance, x.GetValue(loaded)));
-				}
+				AppDataService.Load(instance, _fileName);
 			}
 			catch (Exception ex)
 			{
-				if (ex is SerializationException or XmlException)
-				{
-					// Ignore faulty settings file.
-					return;
-				}
-
 				Debug.WriteLine("Failed to load settings from AppData." + Environment.NewLine
 					+ ex);
 			}
 		}
 
-		private static void Save<T>(T instance, string filePath) where T : class
+		private void Save<T>(T instance) where T : class
 		{
-			var type = instance.GetType(); // GetType method works in derived class.
-
 			try
 			{
-				FolderService.AssureAppDataFolder();
-
-				using (var sw = new StreamWriter(filePath, false, Encoding.UTF8)) // BOM will be emitted.
-				using (var xw = XmlWriter.Create(sw, new XmlWriterSettings { Indent = true }))
-				{
-					var serializer = new DataContractSerializer(type);
-					serializer.WriteObject(xw, instance);
-					xw.Flush();
-				}
+				AppDataService.Save(instance, _fileName);
 			}
 			catch (Exception ex)
 			{

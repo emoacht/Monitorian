@@ -127,10 +127,10 @@ namespace Monitorian.Core.Models
 		{
 			try
 			{
-				FolderService.AssureAppDataFolder();
+				AppDataService.AssureFolder();
 
 				var appDataFilePath = Path.Combine(
-					FolderService.AppDataFolderPath,
+					AppDataService.FolderPath,
 					fileName);
 
 				UpdateText(appDataFilePath, content, maxCount);
@@ -145,7 +145,7 @@ namespace Monitorian.Core.Models
 		private static bool TryReadFromAppData(string fileName, out string content)
 		{
 			var appDataFilePath = Path.Combine(
-				FolderService.AppDataFolderPath,
+				AppDataService.FolderPath,
 				fileName);
 
 			if (File.Exists(appDataFilePath))

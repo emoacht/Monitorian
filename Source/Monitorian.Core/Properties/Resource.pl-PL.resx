@@ -133,7 +133,7 @@
     <value>Włącz równoczesne dostosowowywanie</value>
   </data>
   <data name="License" xml:space="preserve">
-    <value>Licencja</value>
+    <value>License</value>
   </data>
   <data name="MakeOperation" xml:space="preserve">
     <value>Utwórz dziennik operacji</value>
@@ -154,7 +154,7 @@
     <value>Pokazuj dostosowaną jasność</value>
   </data>
   <data name="Site" xml:space="preserve">
-    <value>Strona internetowa</value>
+    <value>Site</value>
   </data>
   <data name="SiteUrl" xml:space="preserve">
     <value>https://github.com/emoacht/Monitorian</value>

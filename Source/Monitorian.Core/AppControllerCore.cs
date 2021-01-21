@@ -154,11 +154,16 @@ namespace Monitorian.Core
 
 		protected virtual void OnSettingsChanged(object sender, PropertyChangedEventArgs e)
 		{
-			if (e.PropertyName == nameof(Settings.EnablesUnison))
-				OnSettingsEnablesUnisonChanged();
+			switch (e.PropertyName)
+			{
+				case nameof(Settings.EnablesUnison):
+					OnSettingsEnablesUnisonChanged();
+					break;
 
-			if (e.PropertyName == nameof(Settings.MakesOperationLog))
-				Recorder = Settings.MakesOperationLog ? new OperationRecorder("Enabled") : null;
+				case nameof(Settings.MakesOperationLog):
+					Recorder = Settings.MakesOperationLog ? new("Enabled") : null;
+					break;
+			}
 		}
 
 		#region Monitors

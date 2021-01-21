@@ -65,6 +65,8 @@ namespace Monitorian.Core
 			Settings.MonitorCustomizations.AbsoluteCapacity = MaxKnownMonitorsCount;
 			Settings.PropertyChanged += OnSettingsChanged;
 
+			OnSettingsInitiated();
+
 			NotifyIconContainer.ShowIcon("pack://application:,,,/Monitorian.Core;component/Resources/Icons/TrayIcon.ico", ProductInfo.Title);
 
 			_current.MainWindow = new MainWindow(this);
@@ -72,9 +74,6 @@ namespace Monitorian.Core
 
 			if (StartupAgent.IsWindowShowExpected())
 				_current.MainWindow.Show();
-
-			if (Settings.MakesOperationLog)
-				Recorder = new OperationRecorder("Initiated");
 
 			await ScanAsync();
 
@@ -145,6 +144,12 @@ namespace Monitorian.Core
 			window.ViewModel.CloseAppRequested += (sender, e) => _current.Shutdown();
 			window.AddMenuItem(new ProbeSection(this));
 			window.Show();
+		}
+
+		protected virtual void OnSettingsInitiated()
+		{
+			if (Settings.MakesOperationLog)
+				Recorder = new("Initiated");
 		}
 
 		protected virtual void OnSettingsChanged(object sender, PropertyChangedEventArgs e)

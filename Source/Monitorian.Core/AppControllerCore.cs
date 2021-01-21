@@ -40,7 +40,7 @@ namespace Monitorian.Core
 		private readonly PowerWatcher _powerWatcher;
 		private readonly BrightnessWatcher _brightnessWatcher;
 
-		private OperationRecorder _recorder;
+		protected OperationRecorder Recorder { get; private set; }
 
 		public AppControllerCore(AppKeeper keeper, SettingsCore settings)
 		{
@@ -74,7 +74,7 @@ namespace Monitorian.Core
 				_current.MainWindow.Show();
 
 			if (Settings.MakesOperationLog)
-				_recorder = new OperationRecorder("Initiated");
+				Recorder = new OperationRecorder("Initiated");
 
 			await ScanAsync();
 
@@ -153,14 +153,14 @@ namespace Monitorian.Core
 				OnSettingsEnablesUnisonChanged();
 
 			if (e.PropertyName == nameof(Settings.MakesOperationLog))
-				_recorder = Settings.MakesOperationLog ? new OperationRecorder("Enabled") : null;
+				Recorder = Settings.MakesOperationLog ? new OperationRecorder("Enabled") : null;
 		}
 
 		#region Monitors
 
 		protected virtual async void OnMonitorsChangeInferred(object sender = null, PowerModes mode = default, int? count = null)
 		{
-			_recorder?.Record($"{nameof(OnMonitorsChangeInferred)} ({sender}{(mode == default ? string.Empty : $"- {mode} {count}")})");
+			Recorder?.Record($"{nameof(OnMonitorsChangeInferred)} ({sender}{(mode == default ? string.Empty : $"- {mode} {count}")})");
 
 			if (count == 0)
 				return;
@@ -193,7 +193,7 @@ namespace Monitorian.Core
 
 					var intervalTask = (interval > TimeSpan.Zero) ? Task.Delay(interval) : Task.CompletedTask;
 
-					_recorder?.StartRecord($"{nameof(ScanAsync)} [{DateTime.Now}]");
+					Recorder?.StartGroupRecord($"{nameof(ScanAsync)} [{DateTime.Now}]");
 
 					await Task.Run(async () =>
 					{
@@ -202,7 +202,7 @@ namespace Monitorian.Core
 
 						foreach (var item in await MonitorManager.EnumerateMonitorsAsync())
 						{
-							_recorder?.AddItem("Items", item.ToString());
+							Recorder?.AddGroupRecordItem("Items", item.ToString());
 
 							var oldMonitorExists = false;
 
@@ -274,8 +274,8 @@ namespace Monitorian.Core
 					foreach (var m in Monitors.Where(x => !x.IsControllable))
 						m.IsTarget = !controllableMonitorExists;
 
-					_recorder?.AddItems(nameof(Monitors), Monitors.Select(x => x.ToString()));
-					_recorder?.StopRecord();
+					Recorder?.AddGroupRecordItems(nameof(Monitors), Monitors.Select(x => x.ToString()));
+					Recorder?.EndGroupRecord();
 
 					await intervalTask;
 				}

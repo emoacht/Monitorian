@@ -75,12 +75,20 @@
 
       <Directory Id="ResourcesFolder_jaJP" Name="ja-JP"
                  FileSource="$(var.Monitorian.TargetDir)ja-JP">
-        <!--<Component Id="MainResourcesLibrary_jaJP" Guid="{9CEFCEF0-E3EF-4455-AD16-EBC8256A67C5}">
-          <File Id="MainResourcesLibrary_jaJP" Name="$(var.Monitorian.TargetName).resources.dll" KeyPath="yes"/>
-        </Component>-->
-
         <Component Id="CoreResourcesLibrary_jaJP" Guid="{AFE32597-13D8-40D0-887E-9C2B5AB0F9B6}">
           <File Id="CoreResourcesLibrary_jaJP" Name="$(var.Monitorian.TargetName).Core.resources.dll" KeyPath="yes"/>
+        </Component>
+      </Directory>
+      <Directory Id="ResourcesFolder_plPL" Name="pl-PL"
+                 FileSource="$(var.Monitorian.TargetDir)pl-PL">
+        <Component Id="CoreResourcesLibrary_plPL" Guid="{BFD709FC-0C56-4520-BCBD-657E15CDD02A}">
+          <File Id="CoreResourcesLibrary_plPL" Name="$(var.Monitorian.TargetName).Core.resources.dll" KeyPath="yes"/>
+        </Component>
+      </Directory>
+      <Directory Id="ResourcesFolder_ruRU" Name="ru-RU"
+                 FileSource="$(var.Monitorian.TargetDir)ru-RU">
+        <Component Id="CoreResourcesLibrary_ruRU" Guid="{CC11D857-3E32-44AA-8EA3-B1E2D9686B73}">
+          <File Id="CoreResourcesLibrary_ruRU" Name="$(var.Monitorian.TargetName).Core.resources.dll" KeyPath="yes"/>
         </Component>
       </Directory>
     </DirectoryRef>
@@ -121,8 +129,9 @@
       <ComponentRef Id="AgencyLibrary"/>
       <ComponentRef Id="BridgeLibrary"/>
       <ComponentRef Id="VisualManifest"/>
-      <!--<ComponentRef Id="MainResourcesLibrary_jaJP"/>-->
       <ComponentRef Id="CoreResourcesLibrary_jaJP"/>
+      <ComponentRef Id="CoreResourcesLibrary_plPL"/>
+      <ComponentRef Id="CoreResourcesLibrary_ruRU"/>
       <ComponentRef Id="ApplicationShortcut"/>
       <ComponentRef Id="ApplicationWorkingFolder"/>
     </Feature>

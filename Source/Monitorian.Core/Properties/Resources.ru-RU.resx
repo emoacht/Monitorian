@@ -132,9 +132,6 @@
   <data name="EnableUnison" xml:space="preserve">
     <value>Включить одновременную регулировку</value>
   </data>
-  <data name="License" xml:space="preserve">
-    <value>License</value>
-  </data>
   <data name="MakeOperation" xml:space="preserve">
     <value>Создать журнал действий</value>
   </data>
@@ -152,12 +149,6 @@
   </data>
   <data name="ShowAdjusted" xml:space="preserve">
     <value>Показывать подстроенную яркость</value>
-  </data>
-  <data name="Site" xml:space="preserve">
-    <value>Site</value>
-  </data>
-  <data name="SiteUrl" xml:space="preserve">
-    <value>https://github.com/emoacht/Monitorian</value>
   </data>
   <data name="StartSignIn" xml:space="preserve">
     <value>Запускать при входе в систему</value>

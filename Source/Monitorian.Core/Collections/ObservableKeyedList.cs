@@ -101,6 +101,7 @@ namespace Monitorian.Core.Collections
 					return item.Value;
 				}
 			}
+			set => Add(key, value);
 		}
 
 		public bool TryGetValue(TKey key, out TValue value)

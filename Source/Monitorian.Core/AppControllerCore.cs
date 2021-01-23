@@ -40,7 +40,7 @@ namespace Monitorian.Core
 		private readonly PowerWatcher _powerWatcher;
 		private readonly BrightnessWatcher _brightnessWatcher;
 
-		private OperationRecorder _recorder;
+		protected OperationRecorder Recorder { get; private set; }
 
 		public AppControllerCore(AppKeeper keeper, SettingsCore settings)
 		{
@@ -65,6 +65,8 @@ namespace Monitorian.Core
 			Settings.MonitorCustomizations.AbsoluteCapacity = MaxKnownMonitorsCount;
 			Settings.PropertyChanged += OnSettingsChanged;
 
+			OnSettingsInitiated();
+
 			NotifyIconContainer.ShowIcon("pack://application:,,,/Monitorian.Core;component/Resources/Icons/TrayIcon.ico", ProductInfo.Title);
 
 			_current.MainWindow = new MainWindow(this);
@@ -72,9 +74,6 @@ namespace Monitorian.Core
 
 			if (StartupAgent.IsWindowShowExpected())
 				_current.MainWindow.Show();
-
-			if (Settings.MakesOperationLog)
-				_recorder = new OperationRecorder("Initiated");
 
 			await ScanAsync();
 
@@ -84,7 +83,7 @@ namespace Monitorian.Core
 			NotifyIconContainer.MouseRightButtonClick += OnMenuWindowShowRequested;
 
 			_displayWatcher.Subscribe(() => OnMonitorsChangeInferred(nameof(DisplayWatcher)));
-			_powerWatcher.Subscribe((e) => OnMonitorsChangeInferred(nameof(PowerWatcher), e.Mode), PowerManagement.GetOnPowerSettingChanged());
+			_powerWatcher.Subscribe((e) => OnMonitorsChangeInferred(nameof(PowerWatcher), e.Mode, e.Count), PowerManagement.GetOnPowerSettingChanged());
 			_brightnessWatcher.Subscribe((instanceName, brightness) => Update(instanceName, brightness));
 		}
 
@@ -147,20 +146,34 @@ namespace Monitorian.Core
 			window.Show();
 		}
 
+		protected virtual void OnSettingsInitiated()
+		{
+			if (Settings.MakesOperationLog)
+				Recorder = new("Initiated");
+		}
+
 		protected virtual void OnSettingsChanged(object sender, PropertyChangedEventArgs e)
 		{
-			if (e.PropertyName == nameof(Settings.EnablesUnison))
-				OnSettingsEnablesUnisonChanged();
+			switch (e.PropertyName)
+			{
+				case nameof(Settings.EnablesUnison):
+					OnSettingsEnablesUnisonChanged();
+					break;
 
-			if (e.PropertyName == nameof(Settings.MakesOperationLog))
-				_recorder = Settings.MakesOperationLog ? new OperationRecorder("Enabled") : null;
+				case nameof(Settings.MakesOperationLog):
+					Recorder = Settings.MakesOperationLog ? new("Enabled") : null;
+					break;
+			}
 		}
 
 		#region Monitors
 
-		protected virtual async void OnMonitorsChangeInferred(object sender = null, PowerModes mode = default)
+		protected virtual async void OnMonitorsChangeInferred(object sender = null, PowerModes mode = default, int? count = null)
 		{
-			_recorder?.Record($"{nameof(OnMonitorsChangeInferred)} ({sender}{(mode == default ? string.Empty : $"- {mode}")})");
+			Recorder?.Record($"{nameof(OnMonitorsChangeInferred)} ({sender}{(mode == default ? string.Empty : $"- {mode} {count}")})");
+
+			if (count == 0)
+				return;
 
 			await ScanAsync(TimeSpan.FromSeconds(3));
 		}
@@ -190,7 +203,7 @@ namespace Monitorian.Core
 
 					var intervalTask = (interval > TimeSpan.Zero) ? Task.Delay(interval) : Task.CompletedTask;
 
-					_recorder?.StartRecord($"{nameof(ScanAsync)} [{DateTime.Now}]");
+					Recorder?.StartGroupRecord($"{nameof(ScanAsync)} [{DateTime.Now}]");
 
 					await Task.Run(async () =>
 					{
@@ -199,7 +212,7 @@ namespace Monitorian.Core
 
 						foreach (var item in await MonitorManager.EnumerateMonitorsAsync())
 						{
-							_recorder?.AddItem("Items", item.ToString());
+							Recorder?.AddGroupRecordItem("Items", item.ToString());
 
 							var oldMonitorExists = false;
 
@@ -271,8 +284,8 @@ namespace Monitorian.Core
 					foreach (var m in Monitors.Where(x => !x.IsControllable))
 						m.IsTarget = !controllableMonitorExists;
 
-					_recorder?.AddItems(nameof(Monitors), Monitors.Select(x => x.ToString()));
-					_recorder?.StopRecord();
+					Recorder?.AddGroupRecordItems(nameof(Monitors), Monitors.Select(x => x.ToString()));
+					await Recorder?.EndGroupRecordAsync();
 
 					await intervalTask;
 				}

@@ -25,10 +25,7 @@ namespace Monitorian.Core.Models.Watcher
 			TimerStart();
 		}
 
-		protected override void TimerTick()
-		{
-			_onDisplaySettingsChanged?.Invoke();
-		}
+		protected override void TimerTick() => _onDisplaySettingsChanged?.Invoke();
 
 		#region IDisposable
 

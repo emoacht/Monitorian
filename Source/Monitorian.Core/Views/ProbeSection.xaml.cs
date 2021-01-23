@@ -19,11 +19,14 @@ namespace Monitorian.Core.Views
 	{
 		internal ProbeSectionViewModel ViewModel => (ProbeSectionViewModel)this.DataContext;
 
-		public ProbeSection(AppControllerCore controller)
+		private readonly UIElement[] _additionalItems;
+
+		public ProbeSection(AppControllerCore controller, UIElement[] additionalItems = null)
 		{
 			InitializeComponent();
 
 			this.DataContext = new ProbeSectionViewModel(controller);
+			this._additionalItems = additionalItems;
 		}
 
 		public override void OnApplyTemplate()
@@ -42,11 +45,21 @@ namespace Monitorian.Core.Views
 
 		public void Open()
 		{
-			if (++_count == CountThreshold)
+			if (++_count != CountThreshold)
+				return;
+
+			if (this.Resources["Content"] is not StackPanel content)
+				return;
+
+			if (_additionalItems is not null)
 			{
-				if (this.Resources["Content"] is FrameworkElement content)
-					this.Content = content;
+				int index = Math.Max(0, content.Children.Count - 1);
+
+				foreach (var item in _additionalItems)
+					content.Children.Insert(index, item);
 			}
+
+			this.Content = content;
 		}
 	}
 }

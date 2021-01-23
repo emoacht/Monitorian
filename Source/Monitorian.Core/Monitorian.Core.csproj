@@ -82,9 +82,9 @@
     <Compile Include="Models\Watcher\PowerWatcher.cs" />
     <Compile Include="Models\Watcher\SystemEventsComplement.cs" />
     <Compile Include="Models\Watcher\TimerWatcher.cs" />
+    <Compile Include="Models\AppDataService.cs" />
     <Compile Include="Models\ConsoleService.cs" />
     <Compile Include="Models\DocumentService.cs" />
-    <Compile Include="Models\FolderService.cs" />
     <Compile Include="Models\LanguageService.cs" />
     <Compile Include="Models\LogService.cs" />
     <Compile Include="Models\OperationRecorder.cs" />
@@ -151,9 +151,17 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.pl-PL.resx">
+      <DependentUpon>Resources.resx</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.ru-RU.resx">
+      <DependentUpon>Resources.resx</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>

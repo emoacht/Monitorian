@@ -9,8 +9,11 @@ namespace Monitorian.Core.Models.Watcher
 {
 	internal class PowerWatcher : IDisposable
 	{
-		private Action<PowerModeChangedEventArgs> _onPowerModeChanged;
+		private Action<PowerModeCountChangedEventArgs> _onPowerModeChanged;
 		private Action<PowerSettingChangedEventArgs> _onPowerSettingChanged;
+
+		private void RaisePowerModeChanged(PowerModes mode, int count) =>
+			_onPowerModeChanged?.Invoke(new PowerModeCountChangedEventArgs(mode, count));
 
 		private SystemEventsComplement _complement;
 
@@ -20,17 +23,15 @@ namespace Monitorian.Core.Models.Watcher
 
 			public PowerModeWatcher(PowerWatcher instance, params int[] intervals) : base(intervals) => this._instance = instance;
 
-			private PowerModeChangedEventArgs _e;
+			public PowerModes Mode { get; private set; }
 
 			public void TimerStart(PowerModeChangedEventArgs e)
 			{
-				this._e = e;
+				this.Mode = e.Mode;
 				base.TimerStart();
 			}
 
-			public new void TimerStop() => base.TimerStop();
-
-			protected override void TimerTick() => _instance._onPowerModeChanged?.Invoke(_e);
+			protected override void TimerTick() => _instance.RaisePowerModeChanged(Mode, Count);
 		}
 
 		private readonly PowerModeWatcher _resumeWatcher;
@@ -44,13 +45,13 @@ namespace Monitorian.Core.Models.Watcher
 			_statusWatcher = new PowerModeWatcher(this, 1, 4);
 		}
 
-		public void Subscribe(Action<PowerModeChangedEventArgs> onPowerModeChanged)
+		public void Subscribe(Action<PowerModeCountChangedEventArgs> onPowerModeChanged)
 		{
 			this._onPowerModeChanged = onPowerModeChanged ?? throw new ArgumentNullException(nameof(onPowerModeChanged));
 			SystemEvents.PowerModeChanged += OnPowerModeChanged;
 		}
 
-		public void Subscribe(Action<PowerModeChangedEventArgs> onPowerModeChanged, (IReadOnlyCollection<Guid> guids, Action<PowerSettingChangedEventArgs> action) onPowerSettingChanged)
+		public void Subscribe(Action<PowerModeCountChangedEventArgs> onPowerModeChanged, (IReadOnlyCollection<Guid> guids, Action<PowerSettingChangedEventArgs> action) onPowerSettingChanged)
 		{
 			Subscribe(onPowerModeChanged);
 
@@ -68,10 +69,12 @@ namespace Monitorian.Core.Models.Watcher
 			switch (e.Mode)
 			{
 				case PowerModes.Resume:
+					RaisePowerModeChanged(PowerModes.Resume, 0);
 					_resumeWatcher.TimerStart(e);
 					break;
 				case PowerModes.Suspend:
 					_resumeWatcher.TimerStop();
+					RaisePowerModeChanged(PowerModes.Suspend, 0);
 					break;
 				default:
 					_statusWatcher.TimerStart(e);
@@ -106,5 +109,12 @@ namespace Monitorian.Core.Models.Watcher
 		}
 
 		#endregion
+	}
+
+	public class PowerModeCountChangedEventArgs : PowerModeChangedEventArgs
+	{
+		public int Count { get; }
+
+		public PowerModeCountChangedEventArgs(PowerModes mode, int count) : base(mode) => this.Count = count;
 	}
 }

@@ -29,18 +29,17 @@ namespace Monitorian.Core.Models.Watcher
 			_timer.Tick += OnTick;
 		}
 
-		private int _count = 0;
+		public int Count { get; private set; }
 
-		protected void TimerStart()
+		public void TimerStart()
 		{
 			_timer.Stop();
-
-			_count = 0;
-			_timer.Interval = _intervals[_count];
+			Count = 0;
+			_timer.Interval = _intervals[Count];
 			_timer.Start();
 		}
 
-		protected void TimerStop()
+		public void TimerStop()
 		{
 			_timer.Stop();
 		}
@@ -48,13 +47,13 @@ namespace Monitorian.Core.Models.Watcher
 		private void OnTick(object sender, EventArgs e)
 		{
 			_timer.Stop();
+			Count++;
 
 			TimerTick();
 
-			_count++;
-			if (_count < _intervals.Length)
+			if (Count < _intervals.Length)
 			{
-				_timer.Interval = _intervals[_count];
+				_timer.Interval = _intervals[Count];
 				_timer.Start();
 			}
 		}

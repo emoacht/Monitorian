@@ -285,7 +285,7 @@ namespace Monitorian.Core
 						m.IsTarget = !controllableMonitorExists;
 
 					Recorder?.AddGroupRecordItems(nameof(Monitors), Monitors.Select(x => x.ToString()));
-					Recorder?.EndGroupRecord();
+					await Recorder?.EndGroupRecordAsync();
 
 					await intervalTask;
 				}

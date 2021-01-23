@@ -11,13 +11,22 @@ namespace Monitorian.Core.Models
 {
 	public class OperationRecorder
 	{
-		public OperationRecorder(string message) => LogService.RecordOperation(message);
+		/// <summary>
+		/// The number of entries that operation log file can contain
+		/// </summary>
+		public static int Capacity { get; set; } = 128;
 
-		public void Record(string content) => LogService.RecordOperation(content);
+		public OperationRecorder(string message) => LogService.RecordOperation(message, Capacity);
+
+		public void Record(string content) => LogService.RecordOperation(content, Capacity);
 
 		#region Line
 
-		private readonly ConcurrentDictionary<string, List<string>> _actionLines = new();
+		private readonly Lazy<Throttle<string>> _record = new(() => new(
+			TimeSpan.FromSeconds(1),
+			async queue => await Task.Run(() => LogService.RecordOperation(string.Join(Environment.NewLine, queue), Capacity))));
+
+		private readonly Lazy<ConcurrentDictionary<string, List<string>>> _actionLines = new(() => new());
 
 		/// <summary>
 		/// Starts a record consisting of lines (concurrent).
@@ -26,22 +35,21 @@ namespace Monitorian.Core.Models
 		/// <param name="actionName">Action name</param>
 		public void StartLineRecord(string key, string actionName)
 		{
-			_actionLines[key] = new List<string>(new[] { actionName });
+			_actionLines.Value[key] = new List<string>(new[] { actionName });
 		}
 
 		public void AddLineRecord(string key, string lineString)
 		{
-			if (_actionLines.TryGetValue(key, out var lines))
+			if (_actionLines.Value.TryGetValue(key, out var lines))
 				lines.Add(lineString);
 		}
 
-		public void EndLineRecord(string key)
+		public async Task EndLineRecordAsync(string key)
 		{
-			if (_actionLines.TryGetValue(key, out var lines))
+			if (_actionLines.Value.TryGetValue(key, out var lines))
 			{
-				LogService.RecordOperation(string.Join(Environment.NewLine, lines));
-
-				_actionLines.TryRemove(key, out _);
+				await _record.Value.PushAsync(string.Join(Environment.NewLine, lines));
+				_actionLines.Value.TryRemove(key, out _);
 			}
 		}
 
@@ -50,7 +58,7 @@ namespace Monitorian.Core.Models
 		#region Group
 
 		private string _actionName;
-		private readonly List<(string groupName, StringWrapper item)> _actionGroups = new();
+		private readonly Lazy<List<(string groupName, StringWrapper item)>> _actionGroups = new(() => new());
 
 		/// <summary>
 		/// Starts a record consisting of groups of lines (non-concurrent).
@@ -59,19 +67,19 @@ namespace Monitorian.Core.Models
 		public void StartGroupRecord(string actionName) => this._actionName = actionName;
 
 		public void AddGroupRecordItem(string groupName, string itemString) =>
-			_actionGroups.Add((groupName, new StringWrapper(itemString)));
+			_actionGroups.Value.Add((groupName, new StringWrapper(itemString)));
 
 		public void AddGroupRecordItems(string groupName, IEnumerable<string> itemStrings) =>
-			_actionGroups.AddRange(itemStrings.Select(x => (groupName, new StringWrapper(x))));
+			_actionGroups.Value.AddRange(itemStrings.Select(x => (groupName, new StringWrapper(x))));
 
-		public void EndGroupRecord()
+		public async Task EndGroupRecordAsync()
 		{
-			var groupsStrings = _actionGroups.GroupBy(x => x.groupName).Select(x => (x.Key, (object)x.Select(y => y.item))).ToArray();
+			var groupsStrings = _actionGroups.Value.GroupBy(x => x.groupName).Select(x => (x.Key, (object)x.Select(y => y.item))).ToArray();
 
-			LogService.RecordOperation($"{_actionName}{Environment.NewLine}{SimpleSerialization.Serialize(groupsStrings)}");
+			await Task.Run(() => LogService.RecordOperation($"{_actionName}{Environment.NewLine}{SimpleSerialization.Serialize(groupsStrings)}", Capacity));
 
 			_actionName = null;
-			_actionGroups.Clear();
+			_actionGroups.Value.Clear();
 		}
 
 		#endregion

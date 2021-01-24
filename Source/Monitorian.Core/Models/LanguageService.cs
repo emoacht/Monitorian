@@ -16,6 +16,7 @@ namespace Monitorian.Core.Models
 			{ "/ja", "ja-JP" },
 			{ "/pl", "pl-PL" },
 			{ "/ru", "ru-RU" },
+			{ "/zh", "zh-Hans" },
 		};
 
 		public static IReadOnlyCollection<string> Options => PreparedCulturePairs.Keys.ToArray();

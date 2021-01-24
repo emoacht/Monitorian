@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <Product Id="*" Name="Monitorian" Manufacturer="emoacht" Version="2.11.1"
+  <Product Id="*" Name="Monitorian" Manufacturer="emoacht" Version="2.11.2"
            Language="1033" Codepage="1252" UpgradeCode="{81A4D148-75D3-462E-938D-8C208FB48E3C}">
     <Package Id="*" InstallerVersion="500" Compressed="yes"
              InstallScope="perMachine" InstallPrivileges="elevated"
@@ -73,6 +73,7 @@
               Source="$(var.Monitorian.TargetDir)" Name="$(var.Monitorian.TargetName).VisualElementsManifest.xml" KeyPath="yes"/>
       </Component>
 
+      <!-- Language resources -->
       <Directory Id="ResourcesFolder_jaJP" Name="ja-JP"
                  FileSource="$(var.Monitorian.TargetDir)ja-JP">
         <Component Id="CoreResourcesLibrary_jaJP" Guid="{AFE32597-13D8-40D0-887E-9C2B5AB0F9B6}">
@@ -89,6 +90,12 @@
                  FileSource="$(var.Monitorian.TargetDir)ru-RU">
         <Component Id="CoreResourcesLibrary_ruRU" Guid="{CC11D857-3E32-44AA-8EA3-B1E2D9686B73}">
           <File Id="CoreResourcesLibrary_ruRU" Name="$(var.Monitorian.TargetName).Core.resources.dll" KeyPath="yes"/>
+        </Component>
+      </Directory>
+      <Directory Id="ResourcesFolder_zhHans" Name="zh-Hans"
+                 FileSource="$(var.Monitorian.TargetDir)zh-Hans">
+        <Component Id="CoreResourcesLibrary_zhHans" Guid="{D4727E68-157A-495D-B9B8-0CD100291E5E}">
+          <File Id="CoreResourcesLibrary_zhHans" Name="$(var.Monitorian.TargetName).Core.resources.dll" KeyPath="yes"/>
         </Component>
       </Directory>
     </DirectoryRef>
@@ -132,6 +139,7 @@
       <ComponentRef Id="CoreResourcesLibrary_jaJP"/>
       <ComponentRef Id="CoreResourcesLibrary_plPL"/>
       <ComponentRef Id="CoreResourcesLibrary_ruRU"/>
+      <ComponentRef Id="CoreResourcesLibrary_zhHans"/>
       <ComponentRef Id="ApplicationShortcut"/>
       <ComponentRef Id="ApplicationWorkingFolder"/>
     </Feature>

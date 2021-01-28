@@ -49,16 +49,20 @@ namespace Monitorian.Core.Models
 		/// Records operation log to AppData.
 		/// </summary>
 		/// <param name="content">Content</param>
+		/// <param name="capacity">The number of entries that the log file can contain</param>
 		/// <remarks>
 		/// The log file will be appended with new content as long as one day has not yet passed
 		/// since last write. Otherwise, the log file will be overwritten.
 		/// </remarks>
-		public static void RecordOperation(string content)
+		public static void RecordOperation(string content, int capacity = 128)
 		{
+			if (capacity <= 0)
+				throw new ArgumentOutOfRangeException(nameof(capacity), capacity, "The capacity must be positive.");
+
 			content = ComposeHeader() + Environment.NewLine
 				+ content + Environment.NewLine + Environment.NewLine;
 
-			RecordToAppData(OperationFileName, content, 100);
+			RecordToAppData(OperationFileName, content, capacity);
 		}
 
 		/// <summary>
@@ -84,16 +88,22 @@ namespace Monitorian.Core.Models
 		/// Records exception log to AppData and Desktop.
 		/// </summary>
 		/// <param name="exception">Exception</param>
+		/// <param name="capacity">The number of excceptions that the log file can contain</param>
 		/// <remarks>
 		/// The log file will be appended with new exception as long as one day has not yet passed
 		/// since last write. Otherwise, the log file will be overwritten.
 		/// </remarks>
-		public static void RecordException(Exception exception)
+		public static void RecordException(Exception exception, int capacity = 8)
 		{
+			if (exception is null)
+				throw new ArgumentNullException(nameof(exception));
+			if (capacity <= 0)
+				throw new ArgumentOutOfRangeException(nameof(capacity), capacity, "The capacity must be positive.");
+
 			var content = ComposeHeader() + Environment.NewLine
 				+ exception.ToDetailedString() + Environment.NewLine + Environment.NewLine;
 
-			RecordToAppData(ExceptionFileName, content, 10);
+			RecordToAppData(ExceptionFileName, content, capacity);
 
 			if (MessageBox.Show(
 				Resources.RecordExceptionMessage,
@@ -103,18 +113,18 @@ namespace Monitorian.Core.Models
 				MessageBoxResult.Yes) != MessageBoxResult.Yes)
 				return;
 
-			RecordToDesktop(ExceptionFileName, content, 10);
+			RecordToDesktop(ExceptionFileName, content, capacity);
 		}
 
 		#region Helper
 
-		private static void RecordToTemp(string fileName, string content, int maxCount = 1)
+		private static void RecordToTemp(string fileName, string content, int capacity = 1)
 		{
 			try
 			{
 				var tempFilePath = Path.Combine(Path.GetTempPath(), fileName);
 
-				UpdateText(tempFilePath, content, maxCount);
+				UpdateText(tempFilePath, content, capacity);
 			}
 			catch (Exception ex)
 			{
@@ -123,17 +133,17 @@ namespace Monitorian.Core.Models
 			}
 		}
 
-		private static void RecordToAppData(string fileName, string content, int maxCount = 1)
+		private static void RecordToAppData(string fileName, string content, int capacity = 1)
 		{
 			try
 			{
-				FolderService.AssureAppDataFolder();
+				AppDataService.AssureFolder();
 
 				var appDataFilePath = Path.Combine(
-					FolderService.AppDataFolderPath,
+					AppDataService.FolderPath,
 					fileName);
 
-				UpdateText(appDataFilePath, content, maxCount);
+				UpdateText(appDataFilePath, content, capacity);
 			}
 			catch (Exception ex)
 			{
@@ -145,7 +155,7 @@ namespace Monitorian.Core.Models
 		private static bool TryReadFromAppData(string fileName, out string content)
 		{
 			var appDataFilePath = Path.Combine(
-				FolderService.AppDataFolderPath,
+				AppDataService.FolderPath,
 				fileName);
 
 			if (File.Exists(appDataFilePath))
@@ -168,7 +178,7 @@ namespace Monitorian.Core.Models
 			return false;
 		}
 
-		private static void RecordToDesktop(string fileName, string content, int maxCount = 1)
+		private static void RecordToDesktop(string fileName, string content, int capacity = 1)
 		{
 			try
 			{
@@ -176,7 +186,7 @@ namespace Monitorian.Core.Models
 					Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory),
 					fileName);
 
-				UpdateText(desktopFilePath, content, maxCount);
+				UpdateText(desktopFilePath, content, capacity);
 			}
 			catch (Exception ex)
 			{
@@ -191,16 +201,16 @@ namespace Monitorian.Core.Models
 				sw.Write(content);
 		}
 
-		private static void UpdateText(string filePath, string newContent, int maxCount)
+		private static void UpdateText(string filePath, string newContent, int capacity)
 		{
 			string oldContent = null;
 
-			if ((1 < maxCount) && File.Exists(filePath) && (File.GetLastWriteTime(filePath) > DateTime.Now.AddDays(-1)))
+			if ((1 < capacity) && File.Exists(filePath) && (File.GetLastWriteTime(filePath) > DateTime.Now.AddDays(-1)))
 			{
 				using (var sr = new StreamReader(filePath, Encoding.UTF8))
 					oldContent = sr.ReadToEnd();
 
-				oldContent = TruncateSections(oldContent, HeaderStart, maxCount - 1);
+				oldContent = TruncateSections(oldContent, HeaderStart, capacity - 1);
 			}
 
 			SaveText(filePath, oldContent + newContent);

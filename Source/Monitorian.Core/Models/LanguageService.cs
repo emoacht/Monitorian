@@ -13,7 +13,10 @@ namespace Monitorian.Core.Models
 		private static IReadOnlyDictionary<string, string> PreparedCulturePairs => new Dictionary<string, string>
 		{
 			{ "/en", "en-US" },
-			{ "/ja", "ja-JP" }
+			{ "/ja", "ja-JP" },
+			{ "/pl", "pl-PL" },
+			{ "/ru", "ru-RU" },
+			{ "/zh", "zh-Hans" },
 		};
 
 		public static IReadOnlyCollection<string> Options => PreparedCulturePairs.Keys.ToArray();

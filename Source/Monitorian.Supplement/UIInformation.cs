@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
+using Microsoft.Win32;
 using Windows.UI.ViewManagement;
 
 namespace Monitorian.Supplement
@@ -17,17 +18,41 @@ namespace Monitorian.Supplement
 	/// </remarks>
 	public class UIInformation
 	{
+		private static UISettings _uiSettings;
+
 		/// <summary>
-		/// Gets accent color.
+		/// Gets the system accent color.
 		/// </summary>
 		/// <returns></returns>
-		public static Color GetAccentColor()
+		public static Color GetAccentColor() => GetUIColor(UIColorType.Accent);
+
+		/// <summary>
+		/// Gets the system background color.
+		/// </summary>
+		/// <returns></returns>
+		public static Color GetBackgroundColor() => GetUIColor(UIColorType.Background);
+
+		private static Color GetUIColor(UIColorType colorType)
 		{
-			var value = (_uiSettings ?? new UISettings()).GetColorValue(UIColorType.Accent);
+			var value = (_uiSettings ?? new UISettings()).GetColorValue(colorType);
 			return Color.FromArgb(value.A, value.R, value.G, value.B);
 		}
 
-		private static UISettings _uiSettings;
+		/// <summary>
+		/// Determines whether light theme is used by the system.
+		/// </summary>
+		/// <returns>True if light theme is used</returns>
+		public static bool IsLightThemeUsed()
+		{
+			const string keyName = @"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize"; // HKCU
+			const string valueName = "SystemUsesLightTheme";
+
+			using var key = Registry.CurrentUser.OpenSubKey(keyName);
+
+			return (key?.GetValue(valueName) is int value)
+				&& (value == 1);
+		}
+
 		private static readonly object _lock = new object();
 
 		/// <summary>

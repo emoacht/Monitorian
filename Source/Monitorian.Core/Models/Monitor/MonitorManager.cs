@@ -245,19 +245,22 @@ namespace Monitorian.Core.Models.Monitor
 			[DataMember(Order = 1, Name = "Device Context - DeviceItems")]
 			public DeviceContext.DeviceItem[] DeviceItems { get; private set; }
 
-			[DataMember(Order = 2, Name = "Monitor Configuration - PhysicalItems")]
+			[DataMember(Order = 2, Name = "Display Config - ConfigItems")]
+			public DisplayConfig.ConfigItem[] ConfigItems { get; private set; }
+
+			[DataMember(Order = 3, Name = "Monitor Configuration - PhysicalItems")]
 			public Dictionary<DeviceContext.HandleItem, PhysicalItemPlus[]> PhysicalItems { get; private set; }
 
-			[DataMember(Order = 3, Name = "Device Installation - InstalledItems")]
+			[DataMember(Order = 4, Name = "Device Installation - InstalledItems")]
 			public DeviceInstallation.InstalledItem[] InstalledItems { get; private set; }
 
-			[DataMember(Order = 4, Name = "MSMonitorClass - DesktopItems")]
+			[DataMember(Order = 5, Name = "MSMonitorClass - DesktopItems")]
 			public MSMonitor.DesktopItem[] DesktopItems { get; private set; }
 
-			[DataMember(Order = 5, Name = "DisplayMonitor - DisplayItems")]
+			[DataMember(Order = 6, Name = "DisplayMonitor - DisplayItems")]
 			public DisplayInformation.DisplayItem[] DisplayItems { get; private set; }
 
-			[DataMember(Order = 6)]
+			[DataMember(Order = 7)]
 			public string[] ElapsedTime { get; private set; }
 
 			public MonitorData()
@@ -273,6 +276,9 @@ namespace Monitorian.Core.Models.Monitor
 				{
 					GetTask(nameof(DeviceItems), () =>
 						DeviceItems = DeviceContext.EnumerateMonitorDevices().ToArray()),
+
+					GetTask(nameof(ConfigItems), () =>
+						ConfigItems = DisplayConfig.EnumerateDisplayConfigs().ToArray()),
 
 					GetTask(nameof(PhysicalItems), () =>
 						PhysicalItems = DeviceContext.GetMonitorHandles().ToDictionary(

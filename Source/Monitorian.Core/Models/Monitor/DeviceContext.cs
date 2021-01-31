@@ -213,7 +213,7 @@ namespace Monitorian.Core.Models.Monitor
 		{
 			foreach (var (_, displayIndex, monitor, monitorIndex) in EnumerateDevices())
 			{
-				var deviceInstanceId = GetDeviceInstanceId(monitor.DeviceID);
+				var deviceInstanceId = DeviceConversion.ConvertDeviceInstanceId(monitor.DeviceID);
 
 				//Debug.WriteLine($"DeviceId: {monitor.DeviceID}");
 				//Debug.WriteLine($"DeviceInstanceId: {deviceInstanceId}");
@@ -270,25 +270,6 @@ namespace Monitorian.Core.Models.Monitor
 			return true;
 		}
 
-		private static string GetDeviceInstanceId(string deviceId)
-		{
-			// The typical format of device ID is as follows:
-			// \\?\DISPLAY#<hardware-specific-ID>#<instance-specific-ID>#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}
-			// \\?\ is extended-length path prefix.
-			// DISPLAY indicates display device.
-			// {e6f07b5f-ee97-4a90-b076-33f57bf4eaa7} means GUID_DEVINTERFACE_MONITOR.
-
-			int index = deviceId.IndexOf("DISPLAY", StringComparison.Ordinal);
-			if (index < 0)
-				return null;
-
-			var fields = deviceId.Substring(index).Split('#');
-			if (fields.Length < 3)
-				return null;
-
-			return string.Join(@"\", fields.Take(3));
-		}
-
 		public static HandleItem[] GetMonitorHandles()
 		{
 			var handleItems = new List<HandleItem>();
@@ -343,7 +324,7 @@ namespace Monitorian.Core.Models.Monitor
 		{
 			foreach (var (display, _, monitor, _) in EnumerateDevices())
 			{
-				if (!string.Equals(GetDeviceInstanceId(monitor.DeviceID), deviceInstanceId, StringComparison.OrdinalIgnoreCase))
+				if (!string.Equals(DeviceConversion.ConvertDeviceInstanceId(monitor.DeviceID), deviceInstanceId, StringComparison.OrdinalIgnoreCase))
 					continue;
 
 				displayName = display.DeviceName;

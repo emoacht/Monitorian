@@ -35,34 +35,37 @@ namespace Monitorian.Core.Models.Monitor
 		private uint _minimum = 0; // Raw minimum brightness (not always 0)
 		private uint _maximum = 100; // Raw maximum brightness (not always 100)
 
-		public override bool UpdateBrightness(int brightness = -1)
+		public override AccessResult UpdateBrightness(int brightness = -1)
 		{
-			var (success, minimum, current, maximum) = MonitorConfiguration.GetBrightness(_handle, _useLowLevel);
+			var (result, minimum, current, maximum) = MonitorConfiguration.GetBrightness(_handle, _useLowLevel);
 
-			if (!success || !(minimum < maximum) || !(minimum <= current) || !(current <= maximum))
+			if ((result == AccessResult.Succeeded) && (minimum < maximum) && (minimum <= current) && (current <= maximum))
+			{
+				this.Brightness = (int)Math.Round((double)(current - minimum) / (maximum - minimum) * 100D, MidpointRounding.AwayFromZero);
+				this._minimum = minimum;
+				this._maximum = maximum;
+			}
+			else
 			{
 				this.Brightness = -1;
-				return false;
 			}
-			this.Brightness = (int)Math.Round((double)(current - minimum) / (maximum - minimum) * 100D, MidpointRounding.AwayFromZero);
-			this._minimum = minimum;
-			this._maximum = maximum;
-			return true;
+			return result;
 		}
 
-		public override bool SetBrightness(int brightness)
+		public override AccessResult SetBrightness(int brightness)
 		{
 			if (brightness is < 0 or > 100)
 				throw new ArgumentOutOfRangeException(nameof(brightness), brightness, "The brightness must be within 0 to 100.");
 
 			var buffer = (uint)Math.Round(brightness / 100D * (_maximum - _minimum) + _minimum, MidpointRounding.AwayFromZero);
 
-			if (MonitorConfiguration.SetBrightness(_handle, buffer, _useLowLevel))
+			var result = MonitorConfiguration.SetBrightness(_handle, buffer, _useLowLevel);
+
+			if (result == AccessResult.Succeeded)
 			{
 				this.Brightness = brightness;
-				return true;
 			}
-			return false;
+			return result;
 		}
 
 		#region IDisposable

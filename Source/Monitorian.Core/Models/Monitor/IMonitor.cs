@@ -17,7 +17,16 @@ namespace Monitorian.Core.Models.Monitor
 		int Brightness { get; }
 		int BrightnessSystemAdjusted { get; }
 
-		bool UpdateBrightness(int brightness = -1);
-		bool SetBrightness(int brightness);
+		AccessResult UpdateBrightness(int brightness = -1);
+		AccessResult SetBrightness(int brightness);
+	}
+
+	public enum AccessResult
+	{
+		None = 0,
+		Succeeded,
+		Failed,
+		DdcFailed,
+		NoLongerExist
 	}
 }

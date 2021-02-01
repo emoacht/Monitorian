@@ -350,7 +350,7 @@ namespace Monitorian.Core.Models.Monitor
 		/// <param name="physicalMonitorHandle">Physical monitor handle</param>
 		/// <param name="useLowLevel">Whether to use low level function</param>
 		/// <returns>
-		/// <para>success: True if successfully gets</para>
+		/// <para>result: Result</para>
 		/// <para>minimum: Raw minimum brightness (not always 0)</para>
 		/// <para>current: Raw current brightness (not always 0 to 100)</para>
 		/// <para>maximum: Raw maximum brightness (not always 100)</para>
@@ -361,7 +361,7 @@ namespace Monitorian.Core.Models.Monitor
 		/// in percentage using those values. They are used to convert brightness in percentage
 		/// back to raw brightness when settings brightness as well.
 		/// </remarks>
-		public static (bool success, uint minimum, uint current, uint maximum) GetBrightness(SafePhysicalMonitorHandle physicalMonitorHandle, bool useLowLevel = false)
+		public static (AccessResult result, uint minimum, uint current, uint maximum) GetBrightness(SafePhysicalMonitorHandle physicalMonitorHandle, bool useLowLevel = false)
 		{
 			if (physicalMonitorHandle is null)
 				throw new ArgumentNullException(nameof(physicalMonitorHandle));
@@ -369,41 +369,43 @@ namespace Monitorian.Core.Models.Monitor
 			if (physicalMonitorHandle.IsClosed)
 			{
 				Debug.WriteLine("Failed to get brightnesses. The physical monitor handle has been closed.");
-				return (success: false, 0, 0, 0);
+				return (result: AccessResult.Failed, 0, 0, 0);
 			}
 
 			if (!useLowLevel)
 			{
-				if (!GetMonitorBrightness(
+				if (GetMonitorBrightness(
 					physicalMonitorHandle,
 					out uint minimumBrightness,
 					out uint currentBrightness,
 					out uint maximumBrightness))
 				{
-					Debug.WriteLine($"Failed to get brightnesses (High level). {Error.GetMessage()}");
-					return (success: false, 0, 0, 0);
+					return (result: AccessResult.Succeeded,
+						minimum: minimumBrightness,
+						current: currentBrightness,
+						maximum: maximumBrightness);
 				}
-				return (success: true,
-					minimum: minimumBrightness,
-					current: currentBrightness,
-					maximum: maximumBrightness);
+				var (message, errorCode) = Error.GetMessageCode();
+				Debug.WriteLine($"Failed to get brightnesses (High level). {message}");
+				return (result: GetResult(errorCode), 0, 0, 0);
 			}
 			else
 			{
-				if (!GetVCPFeatureAndVCPFeatureReply(
+				if (GetVCPFeatureAndVCPFeatureReply(
 					physicalMonitorHandle,
 					LuminanceCode,
 					out _,
 					out uint currentValue,
 					out uint maximumValue))
 				{
-					Debug.WriteLine($"Failed to get brightnesses (Low level). {Error.GetMessage()}");
-					return (success: false, 0, 0, 0);
+					return (result: AccessResult.Succeeded,
+						minimum: 0,
+						current: currentValue,
+						maximum: maximumValue);
 				}
-				return (success: true,
-					minimum: 0,
-					current: currentValue,
-					maximum: maximumValue);
+				var (message, errorCode) = Error.GetMessageCode();
+				Debug.WriteLine($"Failed to get brightnesses (Low level). {message}");
+				return (result: GetResult(errorCode), 0, 0, 0);
 			}
 		}
 
@@ -413,8 +415,8 @@ namespace Monitorian.Core.Models.Monitor
 		/// <param name="physicalMonitorHandle">Physical monitor handle</param>
 		/// <param name="brightness">Raw brightness (not always 0 to 100)</param>
 		/// <param name="useLowLevel">Whether to use low level function</param>
-		/// <returns>True if successfully sets</returns>
-		public static bool SetBrightness(SafePhysicalMonitorHandle physicalMonitorHandle, uint brightness, bool useLowLevel = false)
+		/// <returns>Result</returns>
+		public static AccessResult SetBrightness(SafePhysicalMonitorHandle physicalMonitorHandle, uint brightness, bool useLowLevel = false)
 		{
 			if (physicalMonitorHandle is null)
 				throw new ArgumentNullException(nameof(physicalMonitorHandle));
@@ -422,32 +424,61 @@ namespace Monitorian.Core.Models.Monitor
 			if (physicalMonitorHandle.IsClosed)
 			{
 				Debug.WriteLine("Failed to set brightness. The physical monitor handle has been closed.");
-				return false;
+				return AccessResult.Failed;
 			}
 
 			if (!useLowLevel)
 			{
 				// SetMonitorBrightness function may return true even when it actually failed.
-				if (!SetMonitorBrightness(
+				if (SetMonitorBrightness(
 					physicalMonitorHandle,
 					brightness))
 				{
-					Debug.WriteLine($"Failed to set brightness (High level). {Error.GetMessage()}");
-					return false;
+					return AccessResult.Succeeded;
 				}
+				var (message, errorCode) = Error.GetMessageCode();
+				Debug.WriteLine($"Failed to set brightness (High level). {message}");
+				return GetResult(errorCode);
 			}
 			else
 			{
-				if (!SetVCPFeature(
+				if (SetVCPFeature(
 					physicalMonitorHandle,
 					LuminanceCode,
 					brightness))
 				{
-					Debug.WriteLine($"Failed to set brightness (Low level). {Error.GetMessage()}");
-					return false;
+					return AccessResult.Succeeded;
 				}
+				var (message, errorCode) = Error.GetMessageCode();
+				Debug.WriteLine($"Failed to set brightness (Low level). {message}");
+				return GetResult(errorCode);
 			}
-			return true;
 		}
+
+		#region Error
+
+		// Derived from winerror.h
+		private const uint ERROR_GRAPHICS_DDCCI_VCP_NOT_SUPPORTED = 0xC0262584;
+		private const uint ERROR_GRAPHICS_DDCCI_INVALID_DATA = 0xC0262585;
+		private const uint ERROR_GRAPHICS_DDCCI_INVALID_MESSAGE_COMMAND = 0xC0262589;
+		private const uint ERROR_GRAPHICS_DDCCI_INVALID_MESSAGE_LENGTH = 0xC026258A;
+		private const uint ERROR_GRAPHICS_DDCCI_INVALID_MESSAGE_CHECKSUM = 0xC026258B;
+		private const uint ERROR_GRAPHICS_MONITOR_NO_LONGER_EXISTS = 0xC026258D;
+
+		private static AccessResult GetResult(int errorCode)
+		{
+			return unchecked((uint)errorCode) switch
+			{
+				ERROR_GRAPHICS_DDCCI_VCP_NOT_SUPPORTED or
+				ERROR_GRAPHICS_DDCCI_INVALID_DATA or
+				ERROR_GRAPHICS_DDCCI_INVALID_MESSAGE_COMMAND or
+				ERROR_GRAPHICS_DDCCI_INVALID_MESSAGE_LENGTH or
+				ERROR_GRAPHICS_DDCCI_INVALID_MESSAGE_CHECKSUM => AccessResult.DdcFailed,
+				ERROR_GRAPHICS_MONITOR_NO_LONGER_EXISTS => AccessResult.NoLongerExist,
+				_ => AccessResult.Failed
+			};
+		}
+
+		#endregion
 	}
 }

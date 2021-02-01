@@ -33,7 +33,7 @@ namespace Monitorian.Core.Models.Monitor
 			this._isRemovable = isRemovable;
 		}
 
-		public override bool UpdateBrightness(int brightness = -1)
+		public override AccessResult UpdateBrightness(int brightness = -1)
 		{
 			if (_isRemovable)
 			{
@@ -51,10 +51,10 @@ namespace Monitorian.Core.Models.Monitor
 						? brightness
 						: MSMonitor.GetBrightness(DeviceInstanceId);
 			}
-			return (0 <= this.Brightness);
+			return (0 <= this.Brightness) ? AccessResult.Succeeded : AccessResult.Failed;
 		}
 
-		public override bool SetBrightness(int brightness)
+		public override AccessResult SetBrightness(int brightness)
 		{
 			if (brightness is < 0 or > 100)
 				throw new ArgumentOutOfRangeException(nameof(brightness), brightness, "The brightness must be within 0 to 100.");
@@ -66,7 +66,7 @@ namespace Monitorian.Core.Models.Monitor
 				if (MSMonitor.SetBrightness(DeviceInstanceId, brightness))
 				{
 					this.Brightness = brightness;
-					return true;
+					return AccessResult.Succeeded;
 				}
 			}
 			else
@@ -74,10 +74,10 @@ namespace Monitorian.Core.Models.Monitor
 				if (PowerManagement.SetActiveSchemeBrightness(brightness))
 				{
 					this.Brightness = brightness;
-					return true;
+					return AccessResult.Succeeded;
 				}
 			}
-			return false;
+			return AccessResult.Failed;
 		}
 	}
 }

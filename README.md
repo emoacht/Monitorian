@@ -35,7 +35,7 @@ Additional languages:
 [Monitorian](https://www.microsoft.com/store/apps/9nw33j738bl0) (Microsoft Store)
 
  * Other:<br>
-:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/2.11.2-Installer/MonitorianInstaller2112.zip) | :floppy_disk: [Executables](https://github.com/emoacht/Monitorian/releases/download/2.11.2-Executables/Monitorian2112.zip)
+:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/2.12.0-Installer/MonitorianInstaller2120.zip) | :floppy_disk: [Executables](https://github.com/emoacht/Monitorian/releases/download/2.12.0-Executables/Monitorian2120.zip)
 
 ## Install/Uninstall
 
@@ -121,6 +121,10 @@ An alternative language can be shown by adding a Resources (.resx) file into `/S
 `Resources.ja-JP.resx` (for Japanese) would be a good example for this purpose.
 
 ## History
+
+Ver 2.12 2021-2-2
+
+- Improve internal process
 
 Ver 2.11 2021-1-26
 

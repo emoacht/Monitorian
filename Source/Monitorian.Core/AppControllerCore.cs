@@ -178,6 +178,11 @@ namespace Monitorian.Core
 			await ScanAsync(TimeSpan.FromSeconds(3));
 		}
 
+		protected internal virtual void OnMonitorDetached()
+		{
+			_displayWatcher.RaiseDisplaySettingsChanged();
+		}
+
 		internal event EventHandler<bool> ScanningChanged;
 
 		protected virtual Task<byte> GetMaxMonitorsCountAsync() => Task.FromResult<byte>(4);

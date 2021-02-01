@@ -38,8 +38,8 @@ namespace Monitorian.Core.Models.Monitor
 			this.IsReachable = isReachable;
 		}
 
-		public abstract bool UpdateBrightness(int brightness = -1);
-		public abstract bool SetBrightness(int brightness);
+		public abstract AccessResult UpdateBrightness(int brightness = -1);
+		public abstract AccessResult SetBrightness(int brightness);
 
 		public override string ToString()
 		{

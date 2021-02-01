@@ -25,6 +25,12 @@ namespace Monitorian.Core.Models.Monitor
 
 		#endregion
 
+		public static (string message, int errorCode) GetMessageCode()
+		{
+			var errorCode = Marshal.GetLastWin32Error();
+			return (GetMessage(errorCode), errorCode);
+		}
+
 		public static string GetMessage() => GetMessage(Marshal.GetLastWin32Error());
 
 		public static string GetMessage(int errorCode)

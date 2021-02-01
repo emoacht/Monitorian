@@ -140,23 +140,29 @@ namespace Monitorian.Core.ViewModels
 
 		public bool UpdateBrightness(int brightness = -1)
 		{
-			var isSuccess = false;
+			AccessResult result;
 			lock (_lock)
 			{
-				isSuccess = _monitor.UpdateBrightness(brightness);
+				result = _monitor.UpdateBrightness(brightness);
 			}
-			if (isSuccess)
+
+			switch (result)
 			{
-				RaisePropertyChanged(nameof(BrightnessSystemChanged)); // This must be prior to Brightness.
-				RaisePropertyChanged(nameof(Brightness));
-				RaisePropertyChanged(nameof(BrightnessSystemAdjusted));
-				OnSuccess();
+				case AccessResult.Succeeded:
+					RaisePropertyChanged(nameof(BrightnessSystemChanged)); // This must be prior to Brightness.
+					RaisePropertyChanged(nameof(Brightness));
+					RaisePropertyChanged(nameof(BrightnessSystemAdjusted));
+					OnSucceeded();
+					return true;
+
+				case AccessResult.NoLongerExist:
+					_controller.OnMonitorDetached();
+					goto default;
+
+				default:
+					OnFailed();
+					return false;
 			}
-			else
-			{
-				OnFailure();
-			}
-			return isSuccess;
 		}
 
 		public void IncrementBrightness()
@@ -203,31 +209,37 @@ namespace Monitorian.Core.ViewModels
 
 		private bool SetBrightness(int brightness)
 		{
-			var isSuccess = false;
+			AccessResult result;
 			lock (_lock)
 			{
-				isSuccess = _monitor.SetBrightness(brightness);
+				result = _monitor.SetBrightness(brightness);
 			}
-			if (isSuccess)
+
+			switch (result)
 			{
-				RaisePropertyChanged(nameof(Brightness));
-				OnSuccess();
+				case AccessResult.Succeeded:
+					RaisePropertyChanged(nameof(Brightness));
+					OnSucceeded();
+					return true;
+
+				case AccessResult.NoLongerExist:
+					_controller.OnMonitorDetached();
+					goto default;
+
+				default:
+					OnFailed();
+					return false;
 			}
-			else
-			{
-				OnFailure();
-			}
-			return isSuccess;
 		}
 
 		#endregion
 
 		#region Controllable
 
-		public bool IsControllable => _monitor.IsReachable && (_controllableCount > 0);
+		public bool IsControllable => _monitor.IsReachable && (0 < _controllableCount);
 
-		public bool IsLikelyControllable => IsControllable || _isSuccessCalled;
-		private bool _isSuccessCalled;
+		public bool IsLikelyControllable => IsControllable || _hasSucceeded;
+		private bool _hasSucceeded;
 
 		// This count is for determining IsControllable property.
 		// To set this count, the following points need to be taken into account: 
@@ -237,19 +249,19 @@ namespace Monitorian.Core.ViewModels
 		// - The initial count is intended to give allowance for failures before the first success.
 		//   If the count has been consumed without any success, the monitor will be regarded as
 		//   uncontrollable at all.
-		// - _isSuccessCalled field indicates that the monitor has succeeded at least once.
-		//   It essentially needs to be changed only once at the first success.
+		// - _hasSucceeded field indicates that the monitor has succeeded at least once. It will be
+		//   set true at the first success and at a succeeding success after a failure.
 		// - The normal count gives allowance for failures after the first and succeeding successes.
 		//   As long as the monitor continues to succeed, the count will stay at the normal count.
 		//   Each time the monitor fails, the count decreases. The decreased count will be reverted
 		//   to the normal count when the monitor succeeds again.
-		// - The initial count must be smaller than the normal count so that _isSuccessCalled field
+		// - The initial count must be smaller than the normal count so that _hasSucceeded field
 		//   will be set at the first success while reducing unnecessary access to the field.
 		private short _controllableCount = InitialCount;
 		private const short InitialCount = 3;
 		private const short NormalCount = 5;
 
-		private void OnSuccess()
+		private void OnSucceeded()
 		{
 			if (_controllableCount < NormalCount)
 			{
@@ -261,11 +273,11 @@ namespace Monitorian.Core.ViewModels
 					RaisePropertyChanged(nameof(Status));
 				}
 
-				_isSuccessCalled = true;
+				_hasSucceeded = true;
 			}
 		}
 
-		private void OnFailure()
+		private void OnFailed()
 		{
 			if (--_controllableCount == 0)
 			{

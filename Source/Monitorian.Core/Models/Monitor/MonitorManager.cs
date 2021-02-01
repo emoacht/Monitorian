@@ -212,8 +212,9 @@ namespace Monitorian.Core.Models.Monitor
 
 			private void TestBrightness()
 			{
-				var (isGetSuccess, minimum, current, maximum) = MonitorConfiguration.GetBrightness(Handle, IsLowLevelSupported);
-				var isValid = (minimum < maximum) && (minimum <= current) && (current <= maximum);
+				var (getResult, minimum, current, maximum) = MonitorConfiguration.GetBrightness(Handle, IsLowLevelSupported);
+				var isGetSuccess = (getResult == AccessResult.Succeeded);
+				var isValid = (minimum < maximum) && (minimum <= current) && (current <= maximum);				
 				GetBrightness = $"Success: {isGetSuccess}" + (isGetSuccess ? $", Valid: {isValid} (Minimum: {minimum}, Current: {current}, Maximum: {maximum})" : string.Empty);
 
 				var difference = (uint)(DateTime.Now.Ticks % 6 + 5); // Integer from 5 to 10
@@ -224,7 +225,8 @@ namespace Monitorian.Core.Models.Monitor
 					expected = Math.Min(maximum, Math.Max(minimum, expected));
 				}
 
-				var isSetSuccess = MonitorConfiguration.SetBrightness(Handle, expected, IsLowLevelSupported);
+				var setResult = MonitorConfiguration.SetBrightness(Handle, expected, IsLowLevelSupported);
+				var isSetSuccess = (setResult == AccessResult.Succeeded);
 				var (_, _, actual, _) = MonitorConfiguration.GetBrightness(Handle, IsLowLevelSupported);
 				SetBrightness = $"Success: {isSetSuccess}" + (isSetSuccess ? $", Match: {expected == actual} (Expected: {expected}, Actual: {actual})" : string.Empty);
 
@@ -245,19 +247,22 @@ namespace Monitorian.Core.Models.Monitor
 			[DataMember(Order = 1, Name = "Device Context - DeviceItems")]
 			public DeviceContext.DeviceItem[] DeviceItems { get; private set; }
 
-			[DataMember(Order = 2, Name = "Monitor Configuration - PhysicalItems")]
+			[DataMember(Order = 2, Name = "Display Config - ConfigItems")]
+			public DisplayConfig.ConfigItem[] ConfigItems { get; private set; }
+
+			[DataMember(Order = 3, Name = "Monitor Configuration - PhysicalItems")]
 			public Dictionary<DeviceContext.HandleItem, PhysicalItemPlus[]> PhysicalItems { get; private set; }
 
-			[DataMember(Order = 3, Name = "Device Installation - InstalledItems")]
+			[DataMember(Order = 4, Name = "Device Installation - InstalledItems")]
 			public DeviceInstallation.InstalledItem[] InstalledItems { get; private set; }
 
-			[DataMember(Order = 4, Name = "MSMonitorClass - DesktopItems")]
+			[DataMember(Order = 5, Name = "MSMonitorClass - DesktopItems")]
 			public MSMonitor.DesktopItem[] DesktopItems { get; private set; }
 
-			[DataMember(Order = 5, Name = "DisplayMonitor - DisplayItems")]
+			[DataMember(Order = 6, Name = "DisplayMonitor - DisplayItems")]
 			public DisplayInformation.DisplayItem[] DisplayItems { get; private set; }
 
-			[DataMember(Order = 6)]
+			[DataMember(Order = 7)]
 			public string[] ElapsedTime { get; private set; }
 
 			public MonitorData()
@@ -273,6 +278,9 @@ namespace Monitorian.Core.Models.Monitor
 				{
 					GetTask(nameof(DeviceItems), () =>
 						DeviceItems = DeviceContext.EnumerateMonitorDevices().ToArray()),
+
+					GetTask(nameof(ConfigItems), () =>
+						ConfigItems = DisplayConfig.EnumerateDisplayConfigs().ToArray()),
 
 					GetTask(nameof(PhysicalItems), () =>
 						PhysicalItems = DeviceContext.GetMonitorHandles().ToDictionary(

@@ -66,7 +66,9 @@
     <Compile Include="Helper\Throttle.cs" />
     <Compile Include="Models\Monitor\DdcMonitorItem.cs" />
     <Compile Include="Models\Monitor\DeviceContext.cs" />
+    <Compile Include="Models\Monitor\DeviceConversion.cs" />
     <Compile Include="Models\Monitor\DeviceInstallation.cs" />
+    <Compile Include="Models\Monitor\DisplayConfig.cs" />
     <Compile Include="Models\Monitor\Error.cs" />
     <Compile Include="Models\Monitor\IMonitor.cs" />
     <Compile Include="Models\Monitor\LightSensor.cs" />

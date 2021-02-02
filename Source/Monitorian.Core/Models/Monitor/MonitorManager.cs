@@ -50,15 +50,20 @@ namespace Monitorian.Core.Models.Monitor
 			return EnumerateMonitors(deviceItems);
 		}
 
+		private static HashSet<string> _ids;
+
 		private static async Task<List<DeviceItemPlus>> GetMonitorDevicesAsync()
 		{
 			var displayItems = OsVersion.Is10Redstone4OrNewer
 				? await DisplayInformation.GetDisplayMonitorsAsync()
 				: Array.Empty<DisplayInformation.DisplayItem>();
 
+			var deviceItems = DeviceContext.EnumerateMonitorDevices().ToArray();
+			_ids = new HashSet<string>(deviceItems.Select(x => x.DeviceInstanceId));
+
 			IEnumerable<DeviceItemPlus> Enumerate()
 			{
-				foreach (var deviceItem in DeviceContext.EnumerateMonitorDevices())
+				foreach (var deviceItem in deviceItems)
 				{
 					var displayItem = displayItems.FirstOrDefault(x => string.Equals(deviceItem.DeviceInstanceId, x.DeviceInstanceId, StringComparison.OrdinalIgnoreCase));
 					if (displayItem is not null)
@@ -170,6 +175,14 @@ namespace Monitorian.Core.Models.Monitor
 			}
 		}
 
+		public static bool CheckMonitorsChanged()
+		{
+			var newIds = new HashSet<string>(DeviceContext.EnumerateMonitorDevices().Select(x => x.DeviceInstanceId));
+			var oldIds = _ids;
+			_ids = newIds;
+			return (oldIds?.SetEquals(newIds) is not true);
+		}
+
 		#region Probe
 
 		public static async Task<string> ProbeMonitorsAsync()
@@ -214,7 +227,7 @@ namespace Monitorian.Core.Models.Monitor
 			{
 				var (getResult, minimum, current, maximum) = MonitorConfiguration.GetBrightness(Handle, IsLowLevelSupported);
 				var isGetSuccess = (getResult == AccessResult.Succeeded);
-				var isValid = (minimum < maximum) && (minimum <= current) && (current <= maximum);				
+				var isValid = (minimum < maximum) && (minimum <= current) && (current <= maximum);
 				GetBrightness = $"Success: {isGetSuccess}" + (isGetSuccess ? $", Valid: {isValid} (Minimum: {minimum}, Current: {current}, Maximum: {maximum})" : string.Empty);
 
 				var difference = (uint)(DateTime.Now.Ticks % 6 + 5); // Integer from 5 to 10

@@ -106,7 +106,7 @@ namespace Monitorian.Core
 		protected async void OnMainWindowShowRequestedBySelf(object sender, EventArgs e)
 		{
 			ShowMainWindow();
-			await UpdateAsync();
+			await CheckUpdateAsync();
 		}
 
 		protected void OnMainWindowShowRequestedByOther(object sender, EventArgs e)
@@ -178,9 +178,14 @@ namespace Monitorian.Core
 			await ScanAsync(TimeSpan.FromSeconds(3));
 		}
 
-		protected internal virtual void OnMonitorDetached()
+		protected internal virtual void OnMonitorsChangeFound()
 		{
-			_displayWatcher.RaiseDisplaySettingsChanged();
+			if (Monitors.Any())
+			{
+				Recorder?.Record($"{nameof(OnMonitorsChangeFound)}");
+
+				_displayWatcher.RaiseDisplaySettingsChanged();
+			}
 		}
 
 		internal event EventHandler<bool> ScanningChanged;
@@ -306,7 +311,7 @@ namespace Monitorian.Core
 			}
 		}
 
-		protected virtual async Task UpdateAsync()
+		protected virtual async Task CheckUpdateAsync()
 		{
 			if (_scanCount > 0)
 				return;
@@ -317,9 +322,16 @@ namespace Monitorian.Core
 				isEntered = (Interlocked.Increment(ref _updateCount) == 1);
 				if (isEntered)
 				{
-					await Task.WhenAll(Monitors
-						.Where(x => x.IsTarget)
-						.Select(x => Task.Run(() => x.UpdateBrightness())));
+					if (await Task.Run(() => MonitorManager.CheckMonitorsChanged()))
+					{
+						OnMonitorsChangeFound();
+					}
+					else
+					{
+						await Task.WhenAll(Monitors
+							.Where(x => x.IsTarget)
+							.Select(x => Task.Run(() => x.UpdateBrightness())));
+					}
 				}
 			}
 			finally

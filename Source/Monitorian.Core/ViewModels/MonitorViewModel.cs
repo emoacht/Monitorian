@@ -156,7 +156,7 @@ namespace Monitorian.Core.ViewModels
 					return true;
 
 				case AccessResult.NoLongerExist:
-					_controller.OnMonitorDetached();
+					_controller.OnMonitorsChangeFound();
 					goto default;
 
 				default:
@@ -223,7 +223,7 @@ namespace Monitorian.Core.ViewModels
 					return true;
 
 				case AccessResult.NoLongerExist:
-					_controller.OnMonitorDetached();
+					_controller.OnMonitorsChangeFound();
 					goto default;
 
 				default:

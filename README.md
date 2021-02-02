@@ -35,7 +35,7 @@ Additional languages:
 [Monitorian](https://www.microsoft.com/store/apps/9nw33j738bl0) (Microsoft Store)
 
  * Other:<br>
-:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/2.12.0-Installer/MonitorianInstaller2120.zip) | :floppy_disk: [Executables](https://github.com/emoacht/Monitorian/releases/download/2.12.0-Executables/Monitorian2120.zip)
+:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/2.12.1-Installer/MonitorianInstaller2121.zip) | :floppy_disk: [Executables](https://github.com/emoacht/Monitorian/releases/download/2.12.1-Executables/Monitorian2121.zip)
 
 ## Install/Uninstall
 

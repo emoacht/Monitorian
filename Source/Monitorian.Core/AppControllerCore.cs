@@ -77,7 +77,7 @@ namespace Monitorian.Core
 
 			await ScanAsync();
 
-			StartupAgent.Requested += (sender, e) => e.Response = OnRequested(sender, e.Args);
+			StartupAgent.HandleRequestAsync = HandleRequestAsync;
 
 			NotifyIconContainer.MouseLeftButtonClick += OnMainWindowShowRequestedBySelf;
 			NotifyIconContainer.MouseRightButtonClick += OnMenuWindowShowRequested;
@@ -97,10 +97,10 @@ namespace Monitorian.Core
 			_brightnessWatcher.Dispose();
 		}
 
-		protected virtual object OnRequested(object sender, IReadOnlyCollection<string> args)
+		protected virtual Task<string> HandleRequestAsync(IReadOnlyCollection<string> args)
 		{
-			OnMainWindowShowRequestedByOther(sender, EventArgs.Empty);
-			return null;
+			OnMainWindowShowRequestedByOther(null, EventArgs.Empty);
+			return Task.FromResult<string>(null);
 		}
 
 		protected async void OnMainWindowShowRequestedBySelf(object sender, EventArgs e)
@@ -109,10 +109,10 @@ namespace Monitorian.Core
 			await CheckUpdateAsync();
 		}
 
-		protected void OnMainWindowShowRequestedByOther(object sender, EventArgs e)
+		protected async void OnMainWindowShowRequestedByOther(object sender, EventArgs e)
 		{
 			_current.Dispatcher.Invoke(() => ShowMainWindow());
-			OnMonitorsChangeInferred();
+			await CheckUpdateAsync();
 		}
 
 		protected void OnMenuWindowShowRequested(object sender, Point e)

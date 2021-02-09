@@ -83,11 +83,10 @@ namespace Monitorian.Core
 			ConsoleService.EndWrite();
 		}
 
-		public void Write(object content)
+		public void Write(string content)
 		{
-			var buffer = content?.ToString();
-			if (!string.IsNullOrEmpty(buffer))
-				ConsoleService.Write(buffer);
+			if (!string.IsNullOrEmpty(content))
+				ConsoleService.Write(content);
 		}
 
 		#region Exception

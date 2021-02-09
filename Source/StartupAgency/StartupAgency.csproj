@@ -47,7 +47,7 @@
     <Compile Include="Worker\BridgeWorker.cs" />
     <Compile Include="Worker\IStartupWorker.cs" />
     <Compile Include="Worker\RegistryWorker.cs" />
-    <Compile Include="RemotingHolder.cs" />
+    <Compile Include="PipeHolder.cs" />
     <Compile Include="StartupAgent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

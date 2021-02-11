@@ -15,7 +15,7 @@ namespace Monitorian.Supplement
 	/// </summary>
 	/// <remarks>
 	/// <see cref="Windows.Devices.Display.DisplayMonitor"/> is only available
-	/// on Windows 10 (Redstone 4, 1803 = version 10.0.17134.0) or newer.
+	/// on Windows 10 (version 10.0.17134.0) or newer.
 	/// </remarks>
 	public class DisplayInformation
 	{

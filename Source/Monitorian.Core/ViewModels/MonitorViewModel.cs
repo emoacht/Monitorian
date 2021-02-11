@@ -190,6 +190,14 @@ namespace Monitorian.Core.ViewModels
 			SetBrightness(brightness);
 		}
 
+		public void DecrementBrightness()
+		{
+			DecrementBrightness(10);
+
+			if (IsSelected)
+				_controller.SaveMonitorUserChanged(this);
+		}
+
 		public void DecrementBrightness(int tickSize, bool isCycle = true)
 		{
 			if (IsRangeChanging)

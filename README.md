@@ -35,7 +35,7 @@ Additional languages:
 [Monitorian](https://www.microsoft.com/store/apps/9nw33j738bl0) (Microsoft Store)
 
  * Other:<br>
-:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/2.12.1-Installer/MonitorianInstaller2121.zip) | :floppy_disk: [Executables](https://github.com/emoacht/Monitorian/releases/download/2.12.1-Executables/Monitorian2121.zip)
+:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/2.13.1-Installer/MonitorianInstaller2131.zip) | :floppy_disk: [Executables](https://github.com/emoacht/Monitorian/releases/download/2.13.1-Executables/Monitorian2131.zip)
 
 ## Install/Uninstall
 
@@ -122,7 +122,7 @@ An alternative language can be shown by adding a Resources (.resx) file into `/S
 
 ## History
 
-Ver 2.12 2021-2-2
+Ver 2.13 2021-2-13
 
 - Improve internal process
 

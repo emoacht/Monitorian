@@ -21,7 +21,7 @@ namespace Monitorian.Core.Models.Monitor
 			string description,
 			byte displayIndex,
 			byte monitorIndex,
-			byte[] brightnessLevels,
+			IEnumerable<byte> brightnessLevels,
 			bool isRemovable) : base(
 				deviceInstanceId: deviceInstanceId,
 				description: description,
@@ -29,7 +29,7 @@ namespace Monitorian.Core.Models.Monitor
 				monitorIndex: monitorIndex,
 				isReachable: true)
 		{
-			this._brightnessLevels = brightnessLevels ?? throw new ArgumentNullException(nameof(brightnessLevels));
+			this._brightnessLevels = brightnessLevels?.ToArray() ?? throw new ArgumentNullException(nameof(brightnessLevels));
 			this._isRemovable = isRemovable;
 		}
 

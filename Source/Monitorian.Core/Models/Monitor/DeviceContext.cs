@@ -257,9 +257,7 @@ namespace Monitorian.Core.Models.Monitor
 
 		private static bool TryGetDisplayIndex(string device, out byte index)
 		{
-			const string displayPattern = @"DISPLAY(?<index>\d{1,2})\s*$";
-
-			var match = Regex.Match(device, displayPattern);
+			var match = Regex.Match(device, @"DISPLAY(?<index>\d{1,2})\s*$");
 			if (!match.Success)
 			{
 				index = 0;

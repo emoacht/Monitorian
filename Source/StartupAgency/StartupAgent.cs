@@ -17,7 +17,7 @@ namespace StartupAgency
 	public class StartupAgent : IDisposable
 	{
 		private IStartupWorker _worker;
-		private RemotingHolder _holder;
+		private PipeHolder _holder;
 
 		/// <summary>
 		/// Starts.
@@ -30,15 +30,15 @@ namespace StartupAgency
 		/// <para>response: Response from another instance if that instance exists and returns an response</para> 
 		/// </returns>
 		/// <remarks>Startup task ID must match that in AppxManifest.xml.</remarks>
-		public (bool success, object response) Start(string name, string startupTaskId, IReadOnlyList<string> args)
+		public (bool success, string response) Start(string name, string startupTaskId, IReadOnlyList<string> args)
 		{
 			if (string.IsNullOrWhiteSpace(name))
 				throw new ArgumentNullException(nameof(name));
 			if (string.IsNullOrWhiteSpace(startupTaskId))
 				throw new ArgumentNullException(nameof(startupTaskId));
 
-			_holder = new RemotingHolder();
-			var (success, response) = _holder.Create(name, args?.ToArray());
+			_holder = new PipeHolder(name, null);
+			var (success, response) = _holder.Create(args?.ToArray());
 			if (!success)
 				return (success: false, response);
 
@@ -87,16 +87,16 @@ namespace StartupAgency
 		public bool IsPackaged => PlatformInfo.IsPackaged;
 
 		/// <summary>
-		/// Occurs when this instance is requested to take an action by another instance.
+		/// Delegate to asynchronously handle the arguments from another instance
 		/// </summary>
 		/// <remarks>
-		/// This event will be raised by a thread other than that instantiated this object.
+		/// This delegate will be called by a thread other than that instantiated this object.
 		/// Accordingly, the appropriate use of dispatcher is required.
 		/// </remarks>
-		public event EventHandler<StartupRequestEventArgs> Requested
+		public Func<string[], Task<string>> HandleRequestAsync
 		{
-			add { if (_holder is not null) { _holder.Requested += value; } }
-			remove { if (_holder is not null) { _holder.Requested -= value; } }
+			get => _holder?.HandleRequestAsync;
+			set { if (_holder is not null) { _holder.HandleRequestAsync = value; } }
 		}
 
 		private const string HideOption = "/hide";
@@ -174,34 +174,5 @@ namespace StartupAgency
 		}
 
 		#endregion
-	}
-
-	/// <summary>
-	/// Startup event data
-	/// </summary>
-	public class StartupRequestEventArgs : EventArgs
-	{
-		/// <summary>
-		/// Arguments (immutable)
-		/// </summary>
-		public IReadOnlyCollection<string> Args { get; }
-
-		/// <summary>
-		/// Response (mutable)
-		/// </summary>
-		/// <remarks>
-		/// This property is mutable so that an instance which responds to this event can store its response
-		/// and then another instance which raises this event can make use of the response.
-		/// </remarks>
-		public object Response { get; set; }
-
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="args">Arguments</param>
-		public StartupRequestEventArgs(string[] args)
-		{
-			this.Args = Array.AsReadOnly(args?.ToArray() ?? Array.Empty<string>());
-		}
 	}
 }

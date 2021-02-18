@@ -21,12 +21,12 @@ namespace Monitorian.Core.Views
 
 		private readonly UIElement[] _additionalItems;
 
-		public ProbeSection(AppControllerCore controller, UIElement[] additionalItems = null)
+		public ProbeSection(AppControllerCore controller, IEnumerable<UIElement> additionalItems = null)
 		{
 			InitializeComponent();
 
 			this.DataContext = new ProbeSectionViewModel(controller);
-			this._additionalItems = additionalItems;
+			this._additionalItems = additionalItems?.ToArray();
 		}
 
 		public override void OnApplyTemplate()

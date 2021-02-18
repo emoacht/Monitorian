@@ -113,7 +113,7 @@ namespace Monitorian.Core.Models.Monitor
 		public static (IReadOnlyCollection<Guid>, Action<PowerSettingChangedEventArgs>) GetOnPowerSettingChanged()
 		{
 			if (!CanAdaptiveBrightnessEnabled)
-				return (null, null);
+				return default;
 
 			var settingGuids = new[]
 			{

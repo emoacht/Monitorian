@@ -610,7 +610,8 @@
 
 							<Button Grid.Column="1"
 									Width="80" Height="{DynamicResource ButtonHeight}" Margin="3,0,0,0"
-									Style="{StaticResource BrightnessButtonStyle}">
+									Style="{StaticResource BrightnessButtonStyle}"
+									IsManipulationEnabled="True">
 								<Grid>
 									<TextBlock Margin="2" HorizontalAlignment="Left" VerticalAlignment="Bottom"
 											   Text="{Binding Brightness, Mode=OneWay, StringFormat={}{0}%}"
@@ -626,6 +627,11 @@
 										<behaviors:MouseDownParentAction/>
 										<i:CallMethodAction TargetObject="{Binding}"
 															MethodName="IncrementBrightness"/>
+									</i:EventTrigger>
+									<i:EventTrigger EventName="ManipulationCompleted">
+										<behaviors:ManipulationCallMethodAction TargetObject="{Binding}"
+																				IncreaseMethodName="IncrementBrightness"
+																				DecreaseMethodName="DecrementBrightness"/>
 									</i:EventTrigger>
 								</i:Interaction.Triggers>
 							</Button>

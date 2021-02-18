@@ -132,7 +132,7 @@ namespace Monitorian.Core.Models.Monitor
 			}
 
 			// Obtained by WMI
-			var installedItems = DeviceInstallation.EnumerateInstalledMonitors().ToArray();
+			var installedItems = DeviceInformation.EnumerateInstalledMonitors().ToArray();
 
 			foreach (var desktopItem in MSMonitor.EnumerateDesktopMonitors())
 			{
@@ -267,7 +267,7 @@ namespace Monitorian.Core.Models.Monitor
 			public Dictionary<DeviceContext.HandleItem, PhysicalItemPlus[]> PhysicalItems { get; private set; }
 
 			[DataMember(Order = 4, Name = "Device Installation - InstalledItems")]
-			public DeviceInstallation.InstalledItem[] InstalledItems { get; private set; }
+			public DeviceInformation.InstalledItem[] InstalledItems { get; private set; }
 
 			[DataMember(Order = 5, Name = "MSMonitorClass - DesktopItems")]
 			public MSMonitor.DesktopItem[] DesktopItems { get; private set; }
@@ -303,7 +303,7 @@ namespace Monitorian.Core.Models.Monitor
 								.ToArray())),
 
 					GetTask(nameof(InstalledItems), () =>
-						InstalledItems = DeviceInstallation.EnumerateInstalledMonitors().ToArray()),
+						InstalledItems = DeviceInformation.EnumerateInstalledMonitors().ToArray()),
 
 					GetTask(nameof(DesktopItems), () =>
 						DesktopItems = MSMonitor.EnumerateDesktopMonitors().ToArray()),

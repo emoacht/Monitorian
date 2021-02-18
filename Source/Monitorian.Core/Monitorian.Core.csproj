@@ -67,7 +67,7 @@
     <Compile Include="Models\Monitor\DdcMonitorItem.cs" />
     <Compile Include="Models\Monitor\DeviceContext.cs" />
     <Compile Include="Models\Monitor\DeviceConversion.cs" />
-    <Compile Include="Models\Monitor\DeviceInstallation.cs" />
+    <Compile Include="Models\Monitor\DeviceInformation.cs" />
     <Compile Include="Models\Monitor\DisplayConfig.cs" />
     <Compile Include="Models\Monitor\Error.cs" />
     <Compile Include="Models\Monitor\IMonitor.cs" />
@@ -108,6 +108,7 @@
     <Compile Include="Views\Behaviors\ItemBehavior.cs" />
     <Compile Include="Views\Behaviors\ItemSelectorBehavior.cs" />
     <Compile Include="Views\Behaviors\ItemSliderBehavior.cs" />
+    <Compile Include="Views\Behaviors\ManipulationCallMethodAction.cs" />
     <Compile Include="Views\Behaviors\MouseDownParentAction.cs" />
     <Compile Include="Views\Controls\Sliders\CompoundSlider.cs" />
     <Compile Include="Views\Controls\Sliders\EnhancedSlider.cs" />

@@ -112,12 +112,22 @@ namespace Monitorian.Core.Models.Monitor
 				sensorCollection.GetCount(out uint count);
 				return (0 < count);
 			}
-			catch (COMException ex) when ((uint)ex.HResult == 0x800704EC)
+			catch (COMException ex)
 			{
-				// Message: This program is blocked by group policy. For more information, 
-				// contact your system administrator. (Exception from HRESULT: 0x800704EC).
-				// 0x800704EC means 0x04EC -> 1260 -> ERROR_ACCESS_DISABLED_BY_POLICY
-				return false;
+				switch ((uint)ex.HResult)
+				{
+					case 0x800704EC:
+						// Message: This program is blocked by group policy. For more information, 
+						// contact your system administrator. (Exception from HRESULT: 0x800704EC).
+						// 0x800704EC means 0x04EC -> 1260 -> ERROR_ACCESS_DISABLED_BY_POLICY
+						return false;
+
+					case 0x80040154:
+						// Message: Class not registered (Exception from HRESULT: 0x80040154 
+						// (REGDB_E_CLASSNOTREG)).
+						return false;
+				}
+				throw;
 			}
 			finally
 			{

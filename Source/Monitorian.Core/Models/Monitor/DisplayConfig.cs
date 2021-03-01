@@ -328,7 +328,7 @@ namespace Monitorian.Core.Models.Monitor
 				if (DisplayConfigGetDeviceInfo(ref deviceName) != ERROR_SUCCESS)
 					continue;
 
-				var deviceInstanceId = DeviceConversion.ConvertDeviceInstanceId(deviceName.monitorDevicePath);
+				var deviceInstanceId = DeviceConversion.ConvertToDeviceInstanceId(deviceName.monitorDevicePath);
 
 				yield return new ConfigItem(
 					deviceInstanceId: deviceInstanceId,

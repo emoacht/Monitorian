@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
@@ -15,6 +14,7 @@ namespace Monitorian.Core.Models.Monitor
 		#region Win32
 
 		[DllImport("User32.dll")]
+		[return: MarshalAs(UnmanagedType.Bool)]
 		private static extern bool EnumDisplayMonitors(
 			IntPtr hdc,
 			IntPtr lprcClip,
@@ -29,6 +29,7 @@ namespace Monitorian.Core.Models.Monitor
 			IntPtr dwData);
 
 		[DllImport("User32.dll", EntryPoint = "GetMonitorInfoW")]
+		[return: MarshalAs(UnmanagedType.Bool)]
 		private static extern bool GetMonitorInfo(
 			IntPtr hMonitor,
 			ref MONITORINFOEX lpmi);
@@ -55,6 +56,7 @@ namespace Monitorian.Core.Models.Monitor
 		}
 
 		[DllImport("User32.dll", EntryPoint = "EnumDisplayDevicesA")]
+		[return: MarshalAs(UnmanagedType.Bool)]
 		private static extern bool EnumDisplayDevices(
 			string lpDevice,
 			uint iDevNum,
@@ -99,6 +101,8 @@ namespace Monitorian.Core.Models.Monitor
 			DISPLAY_DEVICE_ACTIVE = 0x00000001,
 			DISPLAY_DEVICE_ATTACHED = 0x00000002,
 		}
+
+		private const uint EDD_GET_DEVICE_INTERFACE_NAME = 0x00000001;
 
 		[DllImport("User32.dll", EntryPoint = "EnumDisplaySettingsA")]
 		[return: MarshalAs(UnmanagedType.Bool)]
@@ -154,7 +158,6 @@ namespace Monitorian.Core.Models.Monitor
 			DMDO_270 = 3
 		}
 
-		private const uint EDD_GET_DEVICE_INTERFACE_NAME = 0x00000001;
 		private const int ENUM_CURRENT_SETTINGS = -1;
 		private const int DISP_CHANGE_SUCCESSFUL = 0;
 
@@ -213,7 +216,7 @@ namespace Monitorian.Core.Models.Monitor
 		{
 			foreach (var (_, displayIndex, monitor, monitorIndex) in EnumerateDevices())
 			{
-				var deviceInstanceId = DeviceConversion.ConvertDeviceInstanceId(monitor.DeviceID);
+				var deviceInstanceId = DeviceConversion.ConvertToDeviceInstanceId(monitor.DeviceID);
 
 				//Debug.WriteLine($"DeviceId: {monitor.DeviceID}");
 				//Debug.WriteLine($"DeviceInstanceId: {deviceInstanceId}");
@@ -255,50 +258,53 @@ namespace Monitorian.Core.Models.Monitor
 			}
 		}
 
-		private static bool TryGetDisplayIndex(string device, out byte index)
+		private static bool TryGetDisplayIndex(string deviceName, out byte index)
 		{
-			var match = Regex.Match(device, @"DISPLAY(?<index>\d{1,2})\s*$");
-			if (!match.Success)
-			{
-				index = 0;
-				return false;
-			}
+			// The typical format of device name is as follows:
+			// EnumDisplayDevices (display), GetMonitorInfo : \\.\DISPLAY[index starting at 1]
+			// EnumDisplayDevices (monitor)                 : \\.\DISPLAY[index starting at 1]\Monitor[index starting at 0]
 
-			index = byte.Parse(match.Groups["index"].Value);
-			return true;
+			var match = Regex.Match(deviceName, @"DISPLAY(?<index>\d{1,2})\s*$");
+			if (match.Success)
+			{
+				index = byte.Parse(match.Groups["index"].Value);
+				return true;
+			}
+			index = 0;
+			return false;
 		}
 
 		public static HandleItem[] GetMonitorHandles()
 		{
 			var handleItems = new List<HandleItem>();
 
-			if (!EnumDisplayMonitors(
+			if (EnumDisplayMonitors(
 				IntPtr.Zero,
 				IntPtr.Zero,
-				MonitorEnum,
+				Proc,
 				IntPtr.Zero))
 			{
-				return Array.Empty<HandleItem>();
+				return handleItems.ToArray();
 			}
+			return Array.Empty<HandleItem>();
 
-			bool MonitorEnum(IntPtr hMonitor, IntPtr hdcMonitor, IntPtr lprcMonitor, IntPtr dwData)
+			bool Proc(IntPtr monitorHandle, IntPtr hdcMonitor, IntPtr lprcMonitor, IntPtr dwData)
 			{
 				var monitorInfo = new MONITORINFOEX { cbSize = (uint)Marshal.SizeOf<MONITORINFOEX>() };
 
-				if (!GetMonitorInfo(hMonitor, ref monitorInfo))
+				if (GetMonitorInfo(
+					monitorHandle,
+					ref monitorInfo))
 				{
-					Debug.WriteLine($"Failed to get information on a display monitor.");
-				}
-				else if (TryGetDisplayIndex(monitorInfo.szDevice, out byte displayIndex))
-				{
-					handleItems.Add(new HandleItem(
-						monitorHandle: hMonitor,
-						displayIndex: displayIndex));
+					if (TryGetDisplayIndex(monitorInfo.szDevice, out byte displayIndex))
+					{
+						handleItems.Add(new HandleItem(
+							monitorHandle: monitorHandle,
+							displayIndex: displayIndex));
+					}
 				}
 				return true;
 			}
-
-			return handleItems.ToArray();
 		}
 
 		public static bool Rotate(string deviceInstanceId)
@@ -322,7 +328,7 @@ namespace Monitorian.Core.Models.Monitor
 		{
 			foreach (var (display, _, monitor, _) in EnumerateDevices())
 			{
-				if (!string.Equals(DeviceConversion.ConvertDeviceInstanceId(monitor.DeviceID), deviceInstanceId, StringComparison.OrdinalIgnoreCase))
+				if (!string.Equals(DeviceConversion.ConvertToDeviceInstanceId(monitor.DeviceID), deviceInstanceId, StringComparison.OrdinalIgnoreCase))
 					continue;
 
 				displayName = display.DeviceName;

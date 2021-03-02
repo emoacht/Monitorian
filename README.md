@@ -110,6 +110,7 @@ This app is a WPF app developed and tested with Surface Pro 4.
 | Windows 10 SDK (10.0.19041.0)                                   | TargetPlatformVersion  |
 
 3. Load the solution by specifying `/Source/Monitorian.sln`. Then go to the solution explorer and right click the solution name and execute `Restore NuGet Packages`.
+4. To open installer project, install [WiX Toolset Build Tools](https://wixtoolset.org/releases/) and [WiX Toolset Visual Studio Extension](https://marketplace.visualstudio.com/items?itemName=WixToolset.WiXToolset)
 
 ### Globalization
 

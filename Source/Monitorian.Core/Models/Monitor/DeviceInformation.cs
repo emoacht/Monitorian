@@ -23,6 +23,9 @@ namespace Monitorian.Core.Models.Monitor
 			IntPtr hwndParent, // Null
 			DIGCF Flags);
 
+		private const int INVALID_HANDLE_VALUE = -1;
+		private const int ERROR_NO_MORE_ITEMS = 259;
+
 		[DllImport("Setupapi.dll", SetLastError = true)]
 		[return: MarshalAs(UnmanagedType.Bool)]
 		private static extern bool SetupDiDestroyDeviceInfoList(
@@ -155,9 +158,6 @@ namespace Monitorian.Core.Models.Monitor
 			CM_DEVCAP_HARDWAREDISABLED = 0x00000100,
 			CM_DEVCAP_NONDYNAMIC = 0x00000200
 		}
-
-		private const int INVALID_HANDLE_VALUE = -1;
-		private const int ERROR_NO_MORE_ITEMS = 259;
 
 		#endregion
 

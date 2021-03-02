@@ -8,7 +8,7 @@ namespace Monitorian.Core.Models.Monitor
 {
 	internal static class DeviceConversion
 	{
-		public static string ConvertDeviceInstanceId(string devicePath)
+		public static string ConvertToDeviceInstanceId(string devicePath)
 		{
 			// The typical format of device path is as follows:
 			// \\?\DISPLAY#<hardware-specific-ID>#<instance-specific-ID>#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}

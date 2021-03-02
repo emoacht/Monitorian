@@ -48,10 +48,15 @@ namespace ScreenFrame.Movers
 		/// <returns>True if successfully gets</returns>
 		protected bool TryGetAdjacentLocationToPivot(double windowWidth, double windowHeight, out Rect location)
 		{
+			if (!WindowHelper.TryGetTaskbar(out _, out TaskbarAlignment taskbarAlignment))
+			{
+				location = default;
+				return false;
+			}
+
 			var x = _pivot.X;
 			var y = _pivot.Y;
 
-			var taskbarAlignment = WindowHelper.GetTaskbarAlignment();
 			switch (taskbarAlignment)
 			{
 				case TaskbarAlignment.Left:
@@ -75,10 +80,6 @@ namespace ScreenFrame.Movers
 					y += -windowHeight - 1;
 					PivotAlignment = PivotAlignment.BottomRight;
 					break;
-
-				default:
-					location = default;
-					return false;
 			}
 			location = new Rect(x, y, windowWidth, windowHeight);
 			return true;

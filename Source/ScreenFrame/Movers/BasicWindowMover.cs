@@ -101,7 +101,10 @@ namespace ScreenFrame.Movers
 				// Rect.IntersectsWith method is not enough because it will return true when two rectangles
 				// share only the outline.
 				var intersection = Rect.Intersect(x, location);
-				return (intersection.Width * intersection.Height > 0);
+
+				// If intersection is Rect.Empty, its width and height will be double.NegativeInfinity and
+				// its square will be double.PositiveInfinity.
+				return (intersection.Width > 0D) && (intersection.Height > 0D);
 			});
 		}
 	}

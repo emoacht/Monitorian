@@ -31,7 +31,7 @@ namespace Monitorian.Test
 		private string TestConvertDeviceInstanceIdBase(string source)
 		{
 			var @class = new PrivateType(typeof(DeviceConversion));
-			return (string)@class.InvokeStatic(nameof(DeviceConversion.ConvertDeviceInstanceId), source);
+			return (string)@class.InvokeStatic(nameof(DeviceConversion.ConvertToDeviceInstanceId), source);
 		}
 	}
 }

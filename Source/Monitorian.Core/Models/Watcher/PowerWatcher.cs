@@ -41,7 +41,7 @@ namespace Monitorian.Core.Models.Watcher
 		{
 			// Conform invocation timings so that the action would be executed efficiently when
 			// multiple and different events are fired almost simultaneously.
-			_resumeWatcher = new PowerModeWatcher(this, 5, 5, 10, 10, 30);
+			_resumeWatcher = new PowerModeWatcher(this, 5, 5, 10, 10, 30, 30);
 			_statusWatcher = new PowerModeWatcher(this, 1, 4);
 		}
 

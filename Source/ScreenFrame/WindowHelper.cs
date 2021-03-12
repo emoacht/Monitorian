@@ -305,8 +305,8 @@ namespace ScreenFrame
 				{
 					if (Convert.ToBoolean(monitorInfo.dwFlags & MONITORINFOF_PRIMARY))
 					{
-						// Store the primary monitor at the beginning of the collection because in most cases,
-						// the primary monitor should be checked first.
+						// Store the primary monitor at the beginning of the collection because in
+						// most cases, the primary monitor should be checked first.
 						monitorRects.Insert(0, monitorInfo.rcMonitor);
 					}
 					else
@@ -542,6 +542,9 @@ namespace ScreenFrame
 
 		public static bool TryGetOverflowAreaRect(out Rect overflowAreaRect)
 		{
+			// This combination of functions will not produce current location of overflow area
+			// until it is shown in the monitor where primary taskbar currently locates. Thus
+			// the location must be verified by other means.
 			var overflowAreaHandle = FindWindowEx(
 				IntPtr.Zero,
 				IntPtr.Zero,

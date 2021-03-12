@@ -78,11 +78,14 @@ namespace ScreenFrame.Movers
 
 			if (NotifyIconHelper.TryGetNotifyIconRect(_notifyIcon, out Rect iconRect))
 			{
-				if (taskbarRect.Contains(iconRect))
+				if (taskbarRect.Contains(
+					iconRect.X + iconRect.Width / 2D,
+					iconRect.Y + iconRect.Height / 2D))
 				{
 					iconPlacement = IconPlacement.InTaskbar;
 				}
-				else if (WindowHelper.TryGetOverflowAreaRect(out overflowAreaRect))
+				else if (WindowHelper.TryGetOverflowAreaRect(out overflowAreaRect)
+					&& overflowAreaRect.Contains(iconRect))
 				{
 					iconPlacement = IconPlacement.InOverflowArea;
 				}
@@ -101,7 +104,7 @@ namespace ScreenFrame.Movers
 					{
 						IconPlacement.InTaskbar => iconRect.Right,
 						IconPlacement.InOverflowArea => overflowAreaRect.Left,
-						_ => taskbarRect.Right,// Fallback
+						_ => taskbarRect.Right, // Fallback
 					};
 					x -= (windowWidth - windowMargin.Right);
 
@@ -135,7 +138,7 @@ namespace ScreenFrame.Movers
 					{
 						IconPlacement.InTaskbar => iconRect.Bottom,
 						IconPlacement.InOverflowArea => overflowAreaRect.Top,
-						_ => taskbarRect.Bottom,// Fallback
+						_ => taskbarRect.Bottom, // Fallback
 					};
 					y -= (windowHeight - windowMargin.Bottom);
 					break;

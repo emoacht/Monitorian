@@ -259,7 +259,7 @@ namespace ScreenFrame
 
 		#region Monitor
 
-		public static bool TryGetMonitorRect(Rect windowRect, out Rect monitorRect)
+		public static bool TryGetMonitorRect(Rect windowRect, out Rect monitorRect, out Rect workRect)
 		{
 			RECT rect = windowRect;
 			var monitorHandle = MonitorFromRect(
@@ -274,10 +274,12 @@ namespace ScreenFrame
 					ref monitorInfo))
 				{
 					monitorRect = monitorInfo.rcMonitor;
+					workRect = monitorInfo.rcWork;
 					return true;
 				}
 			}
 			monitorRect = Rect.Empty;
+			workRect = Rect.Empty;
 			return false;
 		}
 

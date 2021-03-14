@@ -60,7 +60,7 @@ namespace Monitorian.Core
 
 		public virtual async Task InitiateAsync()
 		{
-			Settings.Initiate();
+			await Settings.InitiateAsync();
 			Settings.MonitorCustomizations.AbsoluteCapacity = MaxKnownMonitorsCount;
 			Settings.PropertyChanged += OnSettingsChanged;
 

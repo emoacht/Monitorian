@@ -112,9 +112,9 @@ namespace Monitorian.Core.Models
 
 		private Throttle _save;
 
-		protected internal virtual void Initiate()
+		protected internal virtual async Task InitiateAsync()
 		{
-			Load(this);
+			await Task.Run(() => Load(this));
 
 			_save = new Throttle(
 				TimeSpan.FromMilliseconds(100),

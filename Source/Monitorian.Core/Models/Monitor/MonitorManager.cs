@@ -131,35 +131,29 @@ namespace Monitorian.Core.Models.Monitor
 			}
 
 			// Obtained by WMI
-			var installedItems = DeviceInformation.EnumerateInstalledMonitors().ToArray();
-
 			foreach (var desktopItem in MSMonitor.EnumerateDesktopMonitors())
 			{
-				foreach (var installedItem in installedItems)
+				int index = -1;
+				if (desktopItem.BrightnessLevels.Any())
 				{
-					int index = -1;
-					if (desktopItem.BrightnessLevels.Any())
-					{
-						index = deviceItems.FindIndex(x =>
-							string.Equals(x.DeviceInstanceId, desktopItem.DeviceInstanceId, StringComparison.OrdinalIgnoreCase) &&
-							string.Equals(x.DeviceInstanceId, installedItem.DeviceInstanceId, StringComparison.OrdinalIgnoreCase));
-					}
-					if (index < 0)
-						continue;
-
-					var deviceItem = deviceItems[index];
-					yield return new WmiMonitorItem(
-						deviceInstanceId: deviceItem.DeviceInstanceId,
-						description: deviceItem.AlternateDescription,
-						displayIndex: deviceItem.DisplayIndex,
-						monitorIndex: deviceItem.MonitorIndex,
-						brightnessLevels: desktopItem.BrightnessLevels,
-						isRemovable: installedItem.IsRemovable);
-
-					deviceItems.RemoveAt(index);
-					if (deviceItems.Count == 0)
-						yield break;
+					index = deviceItems.FindIndex(x =>
+						string.Equals(x.DeviceInstanceId, desktopItem.DeviceInstanceId, StringComparison.OrdinalIgnoreCase));
 				}
+				if (index < 0)
+					continue;
+
+				var deviceItem = deviceItems[index];
+				yield return new WmiMonitorItem(
+					deviceInstanceId: deviceItem.DeviceInstanceId,
+					description: deviceItem.AlternateDescription,
+					displayIndex: deviceItem.DisplayIndex,
+					monitorIndex: deviceItem.MonitorIndex,
+					isInternal: deviceItem.IsInternal,
+					brightnessLevels: desktopItem.BrightnessLevels);
+
+				deviceItems.RemoveAt(index);
+				if (deviceItems.Count == 0)
+					yield break;
 			}
 
 			// Unreachable neither by DDC/CI nor by WMI
@@ -224,7 +218,7 @@ namespace Monitorian.Core.Models.Monitor
 
 			private void TestBrightness()
 			{
-				var (getResult, minimum, current, maximum) = MonitorConfiguration.GetBrightness(Handle, IsLowLevelSupported);
+				var (getResult, minimum, current, maximum) = MonitorConfiguration.GetBrightness(Handle, IsHighLevelSupported);
 				var isGetSuccess = (getResult == AccessResult.Succeeded);
 				var isValid = (minimum < maximum) && (minimum <= current) && (current <= maximum);
 				GetBrightness = $"Success: {isGetSuccess}" + (isGetSuccess ? $", Valid: {isValid} (Minimum: {minimum}, Current: {current}, Maximum: {maximum})" : string.Empty);
@@ -237,13 +231,13 @@ namespace Monitorian.Core.Models.Monitor
 					expected = Math.Min(maximum, Math.Max(minimum, expected));
 				}
 
-				var setResult = MonitorConfiguration.SetBrightness(Handle, expected, IsLowLevelSupported);
+				var setResult = MonitorConfiguration.SetBrightness(Handle, expected, IsHighLevelSupported);
 				var isSetSuccess = (setResult == AccessResult.Succeeded);
-				var (_, _, actual, _) = MonitorConfiguration.GetBrightness(Handle, IsLowLevelSupported);
+				var (_, _, actual, _) = MonitorConfiguration.GetBrightness(Handle, IsHighLevelSupported);
 				SetBrightness = $"Success: {isSetSuccess}" + (isSetSuccess ? $", Match: {expected == actual} (Expected: {expected}, Actual: {actual})" : string.Empty);
 
 				if (isSetSuccess)
-					MonitorConfiguration.SetBrightness(Handle, current, IsLowLevelSupported);
+					MonitorConfiguration.SetBrightness(Handle, current, IsHighLevelSupported);
 			}
 		}
 
@@ -265,11 +259,11 @@ namespace Monitorian.Core.Models.Monitor
 			[DataMember(Order = 3, Name = "Display Config - DisplayItems")]
 			public DisplayConfig.DisplayItem[] DisplayConfigItems { get; private set; }
 
-			[DataMember(Order = 4, Name = "Monitor Configuration - PhysicalItems")]
-			public Dictionary<DeviceContext.HandleItem, PhysicalItemPlus[]> PhysicalItems { get; private set; }
-
-			[DataMember(Order = 5, Name = "Device Installation - InstalledItems")]
+			[DataMember(Order = 4, Name = "Device Installation - InstalledItems")]
 			public DeviceInformation.InstalledItem[] InstalledItems { get; private set; }
+
+			[DataMember(Order = 5, Name = "Monitor Configuration - PhysicalItems")]
+			public Dictionary<DeviceContext.HandleItem, PhysicalItemPlus[]> PhysicalItems { get; private set; }
 
 			[DataMember(Order = 6, Name = "MSMonitorClass - DesktopItems")]
 			public MSMonitor.DesktopItem[] DesktopItems { get; private set; }
@@ -300,15 +294,15 @@ namespace Monitorian.Core.Models.Monitor
 					GetTask(nameof(DisplayConfigItems), () =>
 						DisplayConfigItems = DisplayConfig.EnumerateDisplayConfigs().ToArray()),
 
+					GetTask(nameof(InstalledItems), () =>
+						InstalledItems = DeviceInformation.EnumerateInstalledMonitors().ToArray()),
+
 					GetTask(nameof(PhysicalItems), () =>
 						PhysicalItems = DeviceContext.GetMonitorHandles().ToDictionary(
 							x => x,
 							x => MonitorConfiguration.EnumeratePhysicalMonitors(x.MonitorHandle, true)
 								.Select(x => new PhysicalItemPlus(x))
 								.ToArray())),
-
-					GetTask(nameof(InstalledItems), () =>
-						InstalledItems = DeviceInformation.EnumerateInstalledMonitors().ToArray()),
 
 					GetTask(nameof(DesktopItems), () =>
 						DesktopItems = MSMonitor.EnumerateDesktopMonitors().ToArray())

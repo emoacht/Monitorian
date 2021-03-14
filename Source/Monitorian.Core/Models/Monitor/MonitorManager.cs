@@ -11,7 +11,6 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 using Monitorian.Core.Helper;
-using Monitorian.Supplement;
 
 namespace Monitorian.Core.Models.Monitor
 {
@@ -54,9 +53,9 @@ namespace Monitorian.Core.Models.Monitor
 
 		private static async Task<List<DeviceItemPlus>> GetMonitorDevicesAsync()
 		{
-			var displayItems = OsVersion.Is10Redstone4OrNewer
-				? await DisplayInformation.GetDisplayMonitorsAsync()
-				: Array.Empty<DisplayInformation.DisplayItem>();
+			IDisplayItem[] displayItems = OsVersion.Is10Redstone4OrNewer
+				? await DisplayMonitor.GetDisplayMonitorsAsync()
+				: DisplayConfig.EnumerateDisplayConfigs().ToArray();
 
 			var deviceItems = DeviceContext.EnumerateMonitorDevices().ToArray();
 			_ids = new HashSet<string>(deviceItems.Select(x => x.DeviceInstanceId));
@@ -260,20 +259,20 @@ namespace Monitorian.Core.Models.Monitor
 			[DataMember(Order = 1, Name = "Device Context - DeviceItems")]
 			public DeviceContext.DeviceItem[] DeviceItems { get; private set; }
 
-			[DataMember(Order = 2, Name = "Display Config - ConfigItems")]
-			public DisplayConfig.ConfigItem[] ConfigItems { get; private set; }
+			[DataMember(Order = 2, Name = "DisplayMonitor - DisplayItems")]
+			public DisplayMonitor.DisplayItem[] DisplayMonitorItems { get; private set; }
 
-			[DataMember(Order = 3, Name = "Monitor Configuration - PhysicalItems")]
+			[DataMember(Order = 3, Name = "Display Config - DisplayItems")]
+			public DisplayConfig.DisplayItem[] DisplayConfigItems { get; private set; }
+
+			[DataMember(Order = 4, Name = "Monitor Configuration - PhysicalItems")]
 			public Dictionary<DeviceContext.HandleItem, PhysicalItemPlus[]> PhysicalItems { get; private set; }
 
-			[DataMember(Order = 4, Name = "Device Installation - InstalledItems")]
+			[DataMember(Order = 5, Name = "Device Installation - InstalledItems")]
 			public DeviceInformation.InstalledItem[] InstalledItems { get; private set; }
 
-			[DataMember(Order = 5, Name = "MSMonitorClass - DesktopItems")]
+			[DataMember(Order = 6, Name = "MSMonitorClass - DesktopItems")]
 			public MSMonitor.DesktopItem[] DesktopItems { get; private set; }
-
-			[DataMember(Order = 6, Name = "DisplayMonitor - DisplayItems")]
-			public DisplayInformation.DisplayItem[] DisplayItems { get; private set; }
 
 			[DataMember(Order = 7)]
 			public string[] ElapsedTime { get; private set; }
@@ -292,8 +291,14 @@ namespace Monitorian.Core.Models.Monitor
 					GetTask(nameof(DeviceItems), () =>
 						DeviceItems = DeviceContext.EnumerateMonitorDevices().ToArray()),
 
-					GetTask(nameof(ConfigItems), () =>
-						ConfigItems = DisplayConfig.EnumerateDisplayConfigs().ToArray()),
+					GetTask(nameof(DisplayMonitorItems), async () =>
+					{
+						if (OsVersion.Is10Redstone4OrNewer)
+							DisplayMonitorItems = await DisplayMonitor.GetDisplayMonitorsAsync();
+					}),
+
+					GetTask(nameof(DisplayConfigItems), () =>
+						DisplayConfigItems = DisplayConfig.EnumerateDisplayConfigs().ToArray()),
 
 					GetTask(nameof(PhysicalItems), () =>
 						PhysicalItems = DeviceContext.GetMonitorHandles().ToDictionary(
@@ -306,13 +311,7 @@ namespace Monitorian.Core.Models.Monitor
 						InstalledItems = DeviceInformation.EnumerateInstalledMonitors().ToArray()),
 
 					GetTask(nameof(DesktopItems), () =>
-						DesktopItems = MSMonitor.EnumerateDesktopMonitors().ToArray()),
-
-					GetTask(nameof(DisplayItems), async () =>
-					{
-						if (OsVersion.Is10Redstone4OrNewer)
-							DisplayItems = await DisplayInformation.GetDisplayMonitorsAsync();
-					})
+						DesktopItems = MSMonitor.EnumerateDesktopMonitors().ToArray())
 				};
 
 				sw.Start();

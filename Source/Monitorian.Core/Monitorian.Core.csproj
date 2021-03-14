@@ -69,6 +69,7 @@
     <Compile Include="Models\Monitor\DeviceConversion.cs" />
     <Compile Include="Models\Monitor\DeviceInformation.cs" />
     <Compile Include="Models\Monitor\DisplayConfig.cs" />
+    <Compile Include="Models\Monitor\DisplayMonitor.cs" />
     <Compile Include="Models\Monitor\Error.cs" />
     <Compile Include="Models\Monitor\IMonitor.cs" />
     <Compile Include="Models\Monitor\LightSensor.cs" />

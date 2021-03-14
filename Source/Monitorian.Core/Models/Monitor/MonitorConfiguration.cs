@@ -348,7 +348,7 @@ namespace Monitorian.Core.Models.Monitor
 		/// Gets raw brightnesses not represented in percentage.
 		/// </summary>
 		/// <param name="physicalMonitorHandle">Physical monitor handle</param>
-		/// <param name="useLowLevel">Whether to use low level function</param>
+		/// <param name="useHighLevel">Whether to use high level function</param>
 		/// <returns>
 		/// <para>result: Result</para>
 		/// <para>minimum: Raw minimum brightness (not always 0)</para>
@@ -361,7 +361,7 @@ namespace Monitorian.Core.Models.Monitor
 		/// in percentage using those values. They are used to convert brightness in percentage
 		/// back to raw brightness when settings brightness as well.
 		/// </remarks>
-		public static (AccessResult result, uint minimum, uint current, uint maximum) GetBrightness(SafePhysicalMonitorHandle physicalMonitorHandle, bool useLowLevel = false)
+		public static (AccessResult result, uint minimum, uint current, uint maximum) GetBrightness(SafePhysicalMonitorHandle physicalMonitorHandle, bool useHighLevel = true)
 		{
 			if (physicalMonitorHandle is null)
 				throw new ArgumentNullException(nameof(physicalMonitorHandle));
@@ -372,7 +372,7 @@ namespace Monitorian.Core.Models.Monitor
 				return (result: AccessResult.Failed, 0, 0, 0);
 			}
 
-			if (!useLowLevel)
+			if (useHighLevel)
 			{
 				if (GetMonitorBrightness(
 					physicalMonitorHandle,
@@ -414,9 +414,9 @@ namespace Monitorian.Core.Models.Monitor
 		/// </summary>
 		/// <param name="physicalMonitorHandle">Physical monitor handle</param>
 		/// <param name="brightness">Raw brightness (not always 0 to 100)</param>
-		/// <param name="useLowLevel">Whether to use low level function</param>
+		/// <param name="useHighLevel">Whether to use high level function</param>
 		/// <returns>Result</returns>
-		public static AccessResult SetBrightness(SafePhysicalMonitorHandle physicalMonitorHandle, uint brightness, bool useLowLevel = false)
+		public static AccessResult SetBrightness(SafePhysicalMonitorHandle physicalMonitorHandle, uint brightness, bool useHighLevel = true)
 		{
 			if (physicalMonitorHandle is null)
 				throw new ArgumentNullException(nameof(physicalMonitorHandle));
@@ -427,7 +427,7 @@ namespace Monitorian.Core.Models.Monitor
 				return AccessResult.Failed;
 			}
 
-			if (!useLowLevel)
+			if (useHighLevel)
 			{
 				// SetMonitorBrightness function may return true even when it actually failed.
 				if (SetMonitorBrightness(

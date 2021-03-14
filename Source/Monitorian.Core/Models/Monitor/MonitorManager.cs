@@ -122,7 +122,7 @@ namespace Monitorian.Core.Models.Monitor
 						displayIndex: deviceItem.DisplayIndex,
 						monitorIndex: deviceItem.MonitorIndex,
 						handle: physicalItem.Handle,
-						useLowLevel: physicalItem.IsLowLevelSupported);
+						useHighLevel: physicalItem.IsHighLevelSupported);
 
 					deviceItems.RemoveAt(index);
 					if (deviceItems.Count == 0)

@@ -21,12 +21,23 @@ namespace Monitorian.Core.Models.Monitor
 		AccessResult SetBrightness(int brightness);
 	}
 
-	public enum AccessResult
+	public enum AccessStatus
 	{
 		None = 0,
 		Succeeded,
 		Failed,
 		DdcFailed,
 		NoLongerExist
+	}
+
+	public class AccessResult
+	{
+		public AccessStatus Status { get; }
+		public string Message { get; }
+
+		public AccessResult(AccessStatus status, string message) => (Status, Message) = (status, message);
+
+		public static readonly AccessResult Succeeded = new(AccessStatus.Succeeded, null);
+		public static readonly AccessResult Failed = new(AccessStatus.Failed, null);
 	}
 }

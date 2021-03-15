@@ -177,6 +177,13 @@ namespace Monitorian.Core
 			await ScanAsync(TimeSpan.FromSeconds(3));
 		}
 
+		protected internal virtual void OnMonitorAccessFailed(AccessResult result)
+		{
+			Recorder?.Record($"{nameof(OnMonitorAccessFailed)}" + Environment.NewLine
+				+ $"Status: {result.Status}" + Environment.NewLine
+				+ $"Message: {result.Message}");
+		}
+
 		protected internal virtual void OnMonitorsChangeFound()
 		{
 			if (Monitors.Any())

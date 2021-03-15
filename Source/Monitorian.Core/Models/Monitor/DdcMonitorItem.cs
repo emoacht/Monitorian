@@ -39,7 +39,7 @@ namespace Monitorian.Core.Models.Monitor
 		{
 			var (result, minimum, current, maximum) = MonitorConfiguration.GetBrightness(_handle, _useHighLevel);
 
-			if ((result == AccessResult.Succeeded) && (minimum < maximum) && (minimum <= current) && (current <= maximum))
+			if ((result.Status == AccessStatus.Succeeded) && (minimum < maximum) && (minimum <= current) && (current <= maximum))
 			{
 				this.Brightness = (int)Math.Round((double)(current - minimum) / (maximum - minimum) * 100D, MidpointRounding.AwayFromZero);
 				this._minimum = minimum;
@@ -61,7 +61,7 @@ namespace Monitorian.Core.Models.Monitor
 
 			var result = MonitorConfiguration.SetBrightness(_handle, buffer, _useHighLevel);
 
-			if (result == AccessResult.Succeeded)
+			if (result.Status == AccessStatus.Succeeded)
 			{
 				this.Brightness = brightness;
 			}

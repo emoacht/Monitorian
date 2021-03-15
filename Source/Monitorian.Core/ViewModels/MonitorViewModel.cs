@@ -146,20 +146,24 @@ namespace Monitorian.Core.ViewModels
 				result = _monitor.UpdateBrightness(brightness);
 			}
 
-			switch (result)
+			switch (result.Status)
 			{
-				case AccessResult.Succeeded:
+				case AccessStatus.Succeeded:
 					RaisePropertyChanged(nameof(BrightnessSystemChanged)); // This must be prior to Brightness.
 					RaisePropertyChanged(nameof(Brightness));
 					RaisePropertyChanged(nameof(BrightnessSystemAdjusted));
 					OnSucceeded();
 					return true;
 
-				case AccessResult.NoLongerExist:
-					_controller.OnMonitorsChangeFound();
-					goto default;
-
 				default:
+					_controller.OnMonitorAccessFailed(result);
+
+					switch (result.Status)
+					{
+						case AccessStatus.NoLongerExist:
+							_controller.OnMonitorsChangeFound();
+							break;
+					}
 					OnFailed();
 					return false;
 			}
@@ -223,18 +227,22 @@ namespace Monitorian.Core.ViewModels
 				result = _monitor.SetBrightness(brightness);
 			}
 
-			switch (result)
+			switch (result.Status)
 			{
-				case AccessResult.Succeeded:
+				case AccessStatus.Succeeded:
 					RaisePropertyChanged(nameof(Brightness));
 					OnSucceeded();
 					return true;
 
-				case AccessResult.NoLongerExist:
-					_controller.OnMonitorsChangeFound();
-					goto default;
-
 				default:
+					_controller.OnMonitorAccessFailed(result);
+
+					switch (result.Status)
+					{
+						case AccessStatus.NoLongerExist:
+							_controller.OnMonitorsChangeFound();
+							break;
+					}
 					OnFailed();
 					return false;
 			}

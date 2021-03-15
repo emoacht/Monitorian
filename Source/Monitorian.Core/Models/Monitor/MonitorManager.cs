@@ -219,7 +219,7 @@ namespace Monitorian.Core.Models.Monitor
 			private void TestBrightness()
 			{
 				var (getResult, minimum, current, maximum) = MonitorConfiguration.GetBrightness(Handle, IsHighLevelSupported);
-				var isGetSuccess = (getResult == AccessResult.Succeeded);
+				var isGetSuccess = (getResult.Status == AccessStatus.Succeeded);
 				var isValid = (minimum < maximum) && (minimum <= current) && (current <= maximum);
 				GetBrightness = $"Success: {isGetSuccess}" + (isGetSuccess ? $", Valid: {isValid} (Minimum: {minimum}, Current: {current}, Maximum: {maximum})" : string.Empty);
 
@@ -232,7 +232,7 @@ namespace Monitorian.Core.Models.Monitor
 				}
 
 				var setResult = MonitorConfiguration.SetBrightness(Handle, expected, IsHighLevelSupported);
-				var isSetSuccess = (setResult == AccessResult.Succeeded);
+				var isSetSuccess = (setResult.Status == AccessStatus.Succeeded);
 				var (_, _, actual, _) = MonitorConfiguration.GetBrightness(Handle, IsHighLevelSupported);
 				SetBrightness = $"Success: {isSetSuccess}" + (isSetSuccess ? $", Match: {expected == actual} (Expected: {expected}, Actual: {actual})" : string.Empty);
 

@@ -581,6 +581,7 @@
 						<Grid.RowDefinitions>
 							<RowDefinition Height="Auto"/>
 							<RowDefinition Height="Auto"/>
+							<RowDefinition Height="Auto"/>
 						</Grid.RowDefinitions>
 
 						<!-- Name -->
@@ -592,7 +593,6 @@
 
 						<!-- Brightness -->
 						<Grid Grid.Row="1"
-							  x:Name="BrightnessBox"
 							  Margin="0,0,0,6"
 							  Visibility="{Binding IsControllable, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverterKey}}">
 							<Grid.ColumnDefinitions>
@@ -670,15 +670,15 @@
 										  Visibility="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Path=DataContext.Settings.ChangesRange, Converter={StaticResource BooleanToVisibilityConverterKey}}"/>
 						</Grid>
 
-						<!-- Controllability -->
-						<Grid Grid.Row="1"
-							  Visibility="{Binding ElementName=BrightnessBox, Path=Visibility, Mode=OneWay, Converter={StaticResource VisibilityInverseConverterKey}}">
-							<Border Margin="6,4"
+						<!-- Message -->
+						<Grid Grid.Row="2"
+							  Visibility="{Binding Message, Mode=OneWay, Converter={StaticResource StringToVisibilityConverterKey}}">
+							<Border Margin="6,0,6,6"
 									Padding="3"
 									BorderBrush="{StaticResource App.Foreground.Invalid}" BorderThickness="1">
 								<TextBlock Foreground="{StaticResource App.Foreground.Invalid}"
 										   TextWrapping="Wrap"
-										   Text="{Binding Status, Mode=OneWay}"/>
+										   Text="{Binding Message, Mode=OneWay}"/>
 							</Border>
 						</Grid>
 					</Grid>

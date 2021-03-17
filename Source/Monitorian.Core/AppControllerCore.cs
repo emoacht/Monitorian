@@ -277,7 +277,7 @@ namespace Monitorian.Core
 					var maxMonitorsCount = await GetMaxMonitorsCountAsync();
 
 					var updateResults = await Task.WhenAll(Monitors
-						.Where(x => x.IsLikelyControllable)
+						.Where(x => x.IsReachable)
 						.Select((x, index) =>
 						{
 							if (index < maxMonitorsCount)

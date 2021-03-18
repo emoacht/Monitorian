@@ -12,6 +12,14 @@
 
     <Property Id="VEM" Value="yes"/>
 
+    <!-- UI -->
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR"/>
+    <UIRef Id="WixUI_InstallDir"/>
+    <UIRef Id="WixUI_ErrorProgressText"/>
+    <WixVariable Id="WixUIBannerBmp" Value="Resources\banner.png"/>
+    <WixVariable Id="WixUIDialogBmp" Value="Resources\dialog.png"/>
+    <WixVariable Id="WixUILicenseRtf" Value="Resources\License.rtf"/>
+
     <Directory Id="TARGETDIR" Name="SourceDir">
       <!-- Program Files -->
       <Directory Id="ProgramFilesFolder">

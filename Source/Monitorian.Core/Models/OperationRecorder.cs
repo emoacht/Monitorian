@@ -11,20 +11,24 @@ namespace Monitorian.Core.Models
 {
 	public class OperationRecorder
 	{
-		/// <summary>
-		/// The number of entries that operation log file can contain
-		/// </summary>
-		public static int Capacity { get; set; } = 128;
+		private OperationRecorder()
+		{ }
 
-		public OperationRecorder(string message) => LogService.RecordOperation(message, Capacity);
+		public static async Task<OperationRecorder> CreateAsync(string message)
+		{
+			await LogService.PrepareOperationAsync();
+			await LogService.RecordOperationAsync(message);
 
-		public void Record(string content) => LogService.RecordOperation(content, Capacity);
+			return new();
+		}
+
+		public Task RecordAsync(string content) => LogService.RecordOperationAsync(content);
 
 		#region Line
 
 		private readonly Lazy<Throttle<string>> _record = new(() => new(
 			TimeSpan.FromSeconds(1),
-			async queue => await Task.Run(() => LogService.RecordOperation(string.Join(Environment.NewLine, queue), Capacity))));
+			async queue => await LogService.RecordOperationAsync(string.Join(Environment.NewLine, queue))));
 
 		private readonly Lazy<ConcurrentDictionary<string, List<string>>> _actionLines = new(() => new());
 
@@ -76,7 +80,7 @@ namespace Monitorian.Core.Models
 		{
 			var groupsStrings = _actionGroups.Value.GroupBy(x => x.groupName).Select(x => (x.Key, (object)x.Select(y => y.item))).ToArray();
 
-			await Task.Run(() => LogService.RecordOperation($"{_actionName}{Environment.NewLine}{SimpleSerialization.Serialize(groupsStrings)}", Capacity));
+			await LogService.RecordOperationAsync($"{_actionName}{Environment.NewLine}{SimpleSerialization.Serialize(groupsStrings)}");
 
 			_actionName = null;
 			_actionGroups.Value.Clear();

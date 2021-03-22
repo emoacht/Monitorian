@@ -99,6 +99,8 @@ namespace Monitorian.Core.Models
 
 		#endregion
 
+		protected Type[] KnownTypes { get; set; }
+
 		private const string SettingsFileName = "settings.xml";
 		private readonly string _fileName;
 
@@ -130,7 +132,7 @@ namespace Monitorian.Core.Models
 		{
 			try
 			{
-				AppDataService.Load(instance, _fileName);
+				AppDataService.Load(instance, _fileName, KnownTypes);
 			}
 			catch (Exception ex)
 			{
@@ -143,7 +145,7 @@ namespace Monitorian.Core.Models
 		{
 			try
 			{
-				AppDataService.Save(instance, _fileName);
+				AppDataService.Save(instance, _fileName, KnownTypes);
 			}
 			catch (Exception ex)
 			{

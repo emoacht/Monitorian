@@ -79,7 +79,7 @@ namespace Monitorian.Core.Models
 
 		#region Load/Save
 
-		public static void Load<T>(T instance, string fileName) where T : class
+		public static void Load<T>(T instance, string fileName, IEnumerable<Type> knownTypes = null) where T : class
 		{
 			var filePath = Path.Combine(FolderPath, fileName);
 			var fileInfo = new FileInfo(filePath);
@@ -92,7 +92,7 @@ namespace Monitorian.Core.Models
 				using var xr = XmlReader.Create(sr);
 
 				var type = instance.GetType(); // GetType method works in derived class.
-				var serializer = new DataContractSerializer(type);
+				var serializer = new DataContractSerializer(type, knownTypes);
 				var loaded = (T)serializer.ReadObject(xr);
 
 				type.GetProperties(BindingFlags.Public | BindingFlags.Instance)
@@ -110,7 +110,7 @@ namespace Monitorian.Core.Models
 			}
 		}
 
-		public static void Save<T>(T instance, string fileName) where T : class
+		public static void Save<T>(T instance, string fileName, IEnumerable<Type> knownTypes = null) where T : class
 		{
 			AssureFolder();
 
@@ -120,7 +120,7 @@ namespace Monitorian.Core.Models
 			using var xw = XmlWriter.Create(sw, new XmlWriterSettings { Indent = true });
 
 			var type = instance.GetType(); // GetType method works in derived class.
-			var serializer = new DataContractSerializer(type);
+			var serializer = new DataContractSerializer(type, knownTypes);
 			serializer.WriteObject(xw, instance);
 			xw.Flush();
 		}

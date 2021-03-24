@@ -314,8 +314,8 @@ namespace Monitorian.Core.ViewModels
 
 				var reason = _monitor switch
 				{
-					DdcMonitorItem _ => Resources.StatusReasonDdcFailing,
-					UnreachableMonitorItem { IsInternal: false } _ => Resources.StatusReasonDdcNotEnabled,
+					DdcMonitorItem => Resources.StatusReasonDdcFailing,
+					UnreachableMonitorItem { IsInternal: false } => Resources.StatusReasonDdcNotEnabled,
 					_ => null,
 				};
 

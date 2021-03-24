@@ -49,8 +49,7 @@ namespace Monitorian.Supplement
 
 			using var key = Registry.CurrentUser.OpenSubKey(keyName);
 
-			return (key?.GetValue(valueName) is int value)
-				&& (value == 1);
+			return (key?.GetValue(valueName) is 1);
 		}
 
 		private static readonly object _lock = new object();

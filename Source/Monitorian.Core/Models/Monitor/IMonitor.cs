@@ -35,7 +35,7 @@ namespace Monitorian.Core.Models.Monitor
 		public AccessStatus Status { get; }
 		public string Message { get; }
 
-		public AccessResult(AccessStatus status, string message) => (Status, Message) = (status, message);
+		public AccessResult(AccessStatus status, string message) => (this.Status, this.Message) = (status, message);
 
 		public static readonly AccessResult Succeeded = new(AccessStatus.Succeeded, null);
 		public static readonly AccessResult Failed = new(AccessStatus.Failed, null);

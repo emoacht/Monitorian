@@ -35,7 +35,7 @@ Additional languages:
 [Monitorian](https://www.microsoft.com/store/apps/9nw33j738bl0) (Microsoft Store)
 
  * Other:<br>
-:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/2.13.3-Installer/MonitorianInstaller2133.zip) | :floppy_disk: [Executables](https://github.com/emoacht/Monitorian/releases/download/2.13.3-Executables/Monitorian2133.zip)
+:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/2.14.0-Installer/MonitorianInstaller2140.zip)
 
 ## Install/Uninstall
 
@@ -70,7 +70,7 @@ You can use command-line options to get/set the brigtness.
 | Set brightness of a specified monitor. | /set [Device Instance ID] [Brightness] |
 | Set brightness of all monitors.        | /set all [Brightness]                  |
 
-The brightness ranges from 0 to 100%. It can be specified with brightness itself (e.g. 20), increase (e.g. +10) or decrease (e.g. -10). The device instance ID is an unique identifier given by the OS to each monitor.
+If this app is called with `/get` option, it will return [Device Instance ID] [Monitor name] [Brightness]. The device instance ID is an nique identifier given by the OS to each monitor. The brightness ranges from 0 to 100%. It can be specified with brightness itself (e.g. 20), increase (e.g. +10) or decrease (e.g. -10) when you use `/set` option.
 
 You can call this app by its name `Monitorian` in command prompt or bat file. From Task Scheduler, it can be performed by the path to its alias `%LOCALAPPDATA%\Microsoft\WindowsApps\Monitorian.exe`. For example, to increase brightness of all monitors by 30%, the Action will be the following:
 
@@ -81,6 +81,12 @@ The code for add-on features is not included in this repository.
 ## Development
 
 This app is a WPF app developed and tested with Surface Pro 4.
+
+### Reporting
+
+The controllability of an external monitor depends on whether the monitor successfully responds to DDC/CI commands. Even if a monitor is expected to be DDC/CI compatible, it may fail to respond (a) if the monitor is weird, (b) if its connection to the system is problematic, or (c) when the system starts or resumes. If an issue is case (a) or (b), this app cannot help it. If case (c), this app may be able to handle it.
+
+In any case, reporting on the controllability of a monitor MUST include probe.log and operation.log described below. The logs will be the starting point to look into the issue.
 
 ### Probe
 
@@ -122,6 +128,10 @@ An alternative language can be shown by adding a Resources (.resx) file into `/S
 `Resources.ja-JP.resx` (for Japanese) would be a good example for this purpose.
 
 ## History
+
+Ver 2.14 2021-3-26
+
+- Improve internal processes
 
 Ver 2.13 2021-2-13
 

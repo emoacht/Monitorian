@@ -15,9 +15,9 @@ namespace Monitorian.Models
 		public Settings() : base(null)
 		{ }
 
-		protected override void Initiate()
+		protected override Task InitiateAsync()
 		{
-			base.Initiate();
+			return base.InitiateAsync();
 		}
 	}
 }

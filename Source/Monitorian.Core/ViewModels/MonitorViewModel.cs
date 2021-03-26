@@ -28,17 +28,17 @@ namespace Monitorian.Core.ViewModels
 
 		internal void Replace(IMonitor monitor)
 		{
-			if (monitor is null)
-				return;
-
-			lock (_lock)
+			if (monitor?.IsReachable is true)
 			{
-				// If IsReachable property is changed to true, reset _controllableCount.
-				if (!this._monitor.IsReachable && monitor.IsReachable)
-					_controllableCount = InitialCount;
-
-				this._monitor.Dispose();
-				this._monitor = monitor;
+				lock (_lock)
+				{
+					this._monitor.Dispose();
+					this._monitor = monitor;
+				}
+			}
+			else
+			{
+				monitor?.Dispose();
 			}
 		}
 
@@ -146,20 +146,24 @@ namespace Monitorian.Core.ViewModels
 				result = _monitor.UpdateBrightness(brightness);
 			}
 
-			switch (result)
+			switch (result.Status)
 			{
-				case AccessResult.Succeeded:
+				case AccessStatus.Succeeded:
 					RaisePropertyChanged(nameof(BrightnessSystemChanged)); // This must be prior to Brightness.
 					RaisePropertyChanged(nameof(Brightness));
 					RaisePropertyChanged(nameof(BrightnessSystemAdjusted));
 					OnSucceeded();
 					return true;
 
-				case AccessResult.NoLongerExist:
-					_controller.OnMonitorsChangeFound();
-					goto default;
-
 				default:
+					_controller.OnMonitorAccessFailed(result);
+
+					switch (result.Status)
+					{
+						case AccessStatus.NoLongerExist:
+							_controller.OnMonitorsChangeFound();
+							break;
+					}
 					OnFailed();
 					return false;
 			}
@@ -223,18 +227,23 @@ namespace Monitorian.Core.ViewModels
 				result = _monitor.SetBrightness(brightness);
 			}
 
-			switch (result)
+			switch (result.Status)
 			{
-				case AccessResult.Succeeded:
+				case AccessStatus.Succeeded:
 					RaisePropertyChanged(nameof(Brightness));
 					OnSucceeded();
 					return true;
 
-				case AccessResult.NoLongerExist:
-					_controller.OnMonitorsChangeFound();
-					goto default;
-
 				default:
+					_controller.OnMonitorAccessFailed(result);
+
+					switch (result.Status)
+					{
+						case AccessStatus.DdcFailed:
+						case AccessStatus.NoLongerExist:
+							_controller.OnMonitorsChangeFound();
+							break;
+					}
 					OnFailed();
 					return false;
 			}
@@ -244,10 +253,10 @@ namespace Monitorian.Core.ViewModels
 
 		#region Controllable
 
-		public bool IsControllable => _monitor.IsReachable && (0 < _controllableCount);
+		public bool IsReachable => _monitor.IsReachable;
 
-		public bool IsLikelyControllable => IsControllable || _hasSucceeded;
-		private bool _hasSucceeded;
+		public bool IsControllable => IsReachable && ((0 < _controllableCount) || _isConfirmed);
+		private bool _isConfirmed;
 
 		// This count is for determining IsControllable property.
 		// To set this count, the following points need to be taken into account: 
@@ -257,13 +266,13 @@ namespace Monitorian.Core.ViewModels
 		// - The initial count is intended to give allowance for failures before the first success.
 		//   If the count has been consumed without any success, the monitor will be regarded as
 		//   uncontrollable at all.
-		// - _hasSucceeded field indicates that the monitor has succeeded at least once. It will be
+		// - _isConfirmed field indicates that the monitor has succeeded at least once. It will be
 		//   set true at the first success and at a succeeding success after a failure.
 		// - The normal count gives allowance for failures after the first and succeeding successes.
 		//   As long as the monitor continues to succeed, the count will stay at the normal count.
 		//   Each time the monitor fails, the count decreases. The decreased count will be reverted
 		//   to the normal count when the monitor succeeds again.
-		// - The initial count must be smaller than the normal count so that _hasSucceeded field
+		// - The initial count must be smaller than the normal count so that _isConfirmed field
 		//   will be set at the first success while reducing unnecessary access to the field.
 		private short _controllableCount = InitialCount;
 		private const short InitialCount = 3;
@@ -278,10 +287,10 @@ namespace Monitorian.Core.ViewModels
 				if (formerCount <= 0)
 				{
 					RaisePropertyChanged(nameof(IsControllable));
-					RaisePropertyChanged(nameof(Status));
+					RaisePropertyChanged(nameof(Message));
 				}
 
-				_hasSucceeded = true;
+				_isConfirmed = true;
 			}
 		}
 
@@ -290,23 +299,23 @@ namespace Monitorian.Core.ViewModels
 			if (--_controllableCount == 0)
 			{
 				RaisePropertyChanged(nameof(IsControllable));
-				RaisePropertyChanged(nameof(Status));
+				RaisePropertyChanged(nameof(Message));
 			}
 		}
 
-		public string Status
+		public string Message
 		{
 			get
 			{
-				if (IsControllable)
+				if (0 < _controllableCount)
 					return null;
 
 				LanguageService.Switch();
 
 				var reason = _monitor switch
 				{
-					DdcMonitorItem _ => Resources.StatusReasonDdcFailing,
-					UnreachableMonitorItem { IsInternal: false } _ => Resources.StatusReasonDdcNotEnabled,
+					DdcMonitorItem => Resources.StatusReasonDdcFailing,
+					UnreachableMonitorItem { IsInternal: false } => Resources.StatusReasonDdcNotEnabled,
 					_ => null,
 				};
 
@@ -358,7 +367,7 @@ namespace Monitorian.Core.ViewModels
 				(nameof(Name), Name),
 				(nameof(IsUnison), IsUnison),
 				(nameof(IsControllable), IsControllable),
-				(nameof(IsLikelyControllable), IsLikelyControllable),
+				("IsConfirmed", _isConfirmed),
 				("ControllableCount", _controllableCount),
 				(nameof(IsByKey), IsByKey),
 				(nameof(IsSelected), IsSelected),

@@ -60,7 +60,7 @@ namespace Monitorian.Core
 
 		public virtual async Task InitiateAsync()
 		{
-			Settings.Initiate();
+			await Settings.InitiateAsync();
 			Settings.MonitorCustomizations.AbsoluteCapacity = MaxKnownMonitorsCount;
 			Settings.PropertyChanged += OnSettingsChanged;
 
@@ -145,13 +145,13 @@ namespace Monitorian.Core
 			window.Show();
 		}
 
-		protected virtual void OnSettingsInitiated()
+		protected virtual async void OnSettingsInitiated()
 		{
 			if (Settings.MakesOperationLog)
-				Recorder = new("Initiated");
+				Recorder = await OperationRecorder.CreateAsync("Initiated");
 		}
 
-		protected virtual void OnSettingsChanged(object sender, PropertyChangedEventArgs e)
+		protected virtual async void OnSettingsChanged(object sender, PropertyChangedEventArgs e)
 		{
 			switch (e.PropertyName)
 			{
@@ -160,7 +160,7 @@ namespace Monitorian.Core
 					break;
 
 				case nameof(Settings.MakesOperationLog):
-					Recorder = Settings.MakesOperationLog ? new("Enabled") : null;
+					Recorder = Settings.MakesOperationLog ? await OperationRecorder.CreateAsync("Enabled") : null;
 					break;
 			}
 		}
@@ -169,7 +169,7 @@ namespace Monitorian.Core
 
 		protected virtual async void OnMonitorsChangeInferred(object sender = null, PowerModes mode = default, int? count = null)
 		{
-			Recorder?.Record($"{nameof(OnMonitorsChangeInferred)} ({sender}{(mode == default ? string.Empty : $"- {mode} {count}")})");
+			await (Recorder?.RecordAsync($"{nameof(OnMonitorsChangeInferred)} ({sender}{(mode == default ? string.Empty : $"- {mode} {count}")})") ?? Task.CompletedTask);
 
 			if (count == 0)
 				return;
@@ -177,11 +177,18 @@ namespace Monitorian.Core
 			await ScanAsync(TimeSpan.FromSeconds(3));
 		}
 
-		protected internal virtual void OnMonitorsChangeFound()
+		protected internal virtual async void OnMonitorAccessFailed(AccessResult result)
+		{
+			await (Recorder?.RecordAsync($"{nameof(OnMonitorAccessFailed)}" + Environment.NewLine
+				+ $"Status: {result.Status}" + Environment.NewLine
+				+ $"Message: {result.Message}") ?? Task.CompletedTask);
+		}
+
+		protected internal virtual async void OnMonitorsChangeFound()
 		{
 			if (Monitors.Any())
 			{
-				Recorder?.Record($"{nameof(OnMonitorsChangeFound)}");
+				await (Recorder?.RecordAsync($"{nameof(OnMonitorsChangeFound)}") ?? Task.CompletedTask);
 
 				_displayWatcher.RaiseDisplaySettingsChanged();
 			}
@@ -270,7 +277,7 @@ namespace Monitorian.Core
 					var maxMonitorsCount = await GetMaxMonitorsCountAsync();
 
 					var updateResults = await Task.WhenAll(Monitors
-						.Where(x => x.IsLikelyControllable)
+						.Where(x => x.IsReachable)
 						.Select((x, index) =>
 						{
 							if (index < maxMonitorsCount)

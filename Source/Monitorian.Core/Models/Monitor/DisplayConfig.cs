@@ -262,36 +262,41 @@ namespace Monitorian.Core.Models.Monitor
 		#region Type
 
 		[DataContract]
-		public class ConfigItem
+		public class DisplayItem : IDisplayItem
 		{
 			[DataMember(Order = 0)]
 			public string DeviceInstanceId { get; }
 
 			[DataMember(Order = 1)]
-			public string FriendlyName { get; }
+			public string DisplayName { get; }
 
 			[DataMember(Order = 2)]
 			public bool IsInternal { get; }
 
 			[DataMember(Order = 3)]
+			public string ConnectionDescription { get; }
+
+			[DataMember(Order = 4)]
 			public bool IsAvailable { get; }
 
-			public ConfigItem(
+			public DisplayItem(
 				string deviceInstanceId,
-				string friendlyName,
+				string displayName,
 				bool isInternal,
+				string connectionDescription,
 				bool isAvailable)
 			{
 				this.DeviceInstanceId = deviceInstanceId;
-				this.FriendlyName = friendlyName;
+				this.DisplayName = displayName;
 				this.IsInternal = isInternal;
+				this.ConnectionDescription = connectionDescription;
 				this.IsAvailable = isAvailable;
 			}
 		}
 
 		#endregion
 
-		public static IEnumerable<ConfigItem> EnumerateDisplayConfigs()
+		public static IEnumerable<DisplayItem> EnumerateDisplayConfigs()
 		{
 			if (GetDisplayConfigBufferSizes(
 				QDC_ONLY_ACTIVE_PATHS,
@@ -330,12 +335,40 @@ namespace Monitorian.Core.Models.Monitor
 
 				var deviceInstanceId = DeviceConversion.ConvertToDeviceInstanceId(deviceName.monitorDevicePath);
 
-				yield return new ConfigItem(
+				yield return new DisplayItem(
 					deviceInstanceId: deviceInstanceId,
-					friendlyName: deviceName.monitorFriendlyDeviceName,
+					displayName: deviceName.monitorFriendlyDeviceName,
 					isInternal: (deviceName.outputTechnology == DISPLAYCONFIG_VIDEO_OUTPUT_TECHNOLOGY.DISPLAYCONFIG_OUTPUT_TECHNOLOGY_INTERNAL),
+					connectionDescription: GetConnectionDescription(deviceName.outputTechnology),
 					isAvailable: displayPath.targetInfo.targetAvailable);
 			}
+		}
+
+		private static string GetConnectionDescription(DISPLAYCONFIG_VIDEO_OUTPUT_TECHNOLOGY outputTechnology)
+		{
+			return outputTechnology switch
+			{
+				DISPLAYCONFIG_VIDEO_OUTPUT_TECHNOLOGY.DISPLAYCONFIG_OUTPUT_TECHNOLOGY_OTHER => "Other",
+				DISPLAYCONFIG_VIDEO_OUTPUT_TECHNOLOGY.DISPLAYCONFIG_OUTPUT_TECHNOLOGY_HD15 => "VGA",
+				DISPLAYCONFIG_VIDEO_OUTPUT_TECHNOLOGY.DISPLAYCONFIG_OUTPUT_TECHNOLOGY_SVIDEO or
+				DISPLAYCONFIG_VIDEO_OUTPUT_TECHNOLOGY.DISPLAYCONFIG_OUTPUT_TECHNOLOGY_COMPOSITE_VIDEO or
+				DISPLAYCONFIG_VIDEO_OUTPUT_TECHNOLOGY.DISPLAYCONFIG_OUTPUT_TECHNOLOGY_COMPONENT_VIDEO or
+				DISPLAYCONFIG_VIDEO_OUTPUT_TECHNOLOGY.DISPLAYCONFIG_OUTPUT_TECHNOLOGY_D_JPN => "AnalogTV",
+				DISPLAYCONFIG_VIDEO_OUTPUT_TECHNOLOGY.DISPLAYCONFIG_OUTPUT_TECHNOLOGY_DVI => "DVI",
+				DISPLAYCONFIG_VIDEO_OUTPUT_TECHNOLOGY.DISPLAYCONFIG_OUTPUT_TECHNOLOGY_HDMI => "HDMI",
+				DISPLAYCONFIG_VIDEO_OUTPUT_TECHNOLOGY.DISPLAYCONFIG_OUTPUT_TECHNOLOGY_LVDS => "LVDS",
+				DISPLAYCONFIG_VIDEO_OUTPUT_TECHNOLOGY.DISPLAYCONFIG_OUTPUT_TECHNOLOGY_SDI => "SDI",
+				DISPLAYCONFIG_VIDEO_OUTPUT_TECHNOLOGY.DISPLAYCONFIG_OUTPUT_TECHNOLOGY_DISPLAYPORT_EXTERNAL or
+				DISPLAYCONFIG_VIDEO_OUTPUT_TECHNOLOGY.DISPLAYCONFIG_OUTPUT_TECHNOLOGY_DISPLAYPORT_EMBEDDED => "DisplayPort",
+				DISPLAYCONFIG_VIDEO_OUTPUT_TECHNOLOGY.DISPLAYCONFIG_OUTPUT_TECHNOLOGY_UDI_EXTERNAL or
+				DISPLAYCONFIG_VIDEO_OUTPUT_TECHNOLOGY.DISPLAYCONFIG_OUTPUT_TECHNOLOGY_UDI_EMBEDDED => "UDI",
+				DISPLAYCONFIG_VIDEO_OUTPUT_TECHNOLOGY.DISPLAYCONFIG_OUTPUT_TECHNOLOGY_SDTVDONGLE => "SDTV",
+				DISPLAYCONFIG_VIDEO_OUTPUT_TECHNOLOGY.DISPLAYCONFIG_OUTPUT_TECHNOLOGY_MIRACAST => "Miracast",
+				DISPLAYCONFIG_VIDEO_OUTPUT_TECHNOLOGY.DISPLAYCONFIG_OUTPUT_TECHNOLOGY_INDIRECT_WIRED => "Wired",
+				DISPLAYCONFIG_VIDEO_OUTPUT_TECHNOLOGY.DISPLAYCONFIG_OUTPUT_TECHNOLOGY_INDIRECT_VIRTUAL => "Virtual",
+				DISPLAYCONFIG_VIDEO_OUTPUT_TECHNOLOGY.DISPLAYCONFIG_OUTPUT_TECHNOLOGY_INTERNAL => "Internal",
+				_ => null
+			};
 		}
 	}
 }

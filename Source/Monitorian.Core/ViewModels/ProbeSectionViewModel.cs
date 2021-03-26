@@ -40,7 +40,7 @@ namespace Monitorian.Core.ViewModels
 
 		public void PerformCopy()
 		{
-			Task.Run(() => LogService.CopyOperation());
+			Task.Run(() => LogService.CopyOperationAsync());
 		}
 
 		public void PerformRescan()

@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
 
+using ScreenFrame.Helper;
+
 namespace ScreenFrame.Movers
 {
 	/// <summary>
@@ -78,11 +80,14 @@ namespace ScreenFrame.Movers
 
 			if (NotifyIconHelper.TryGetNotifyIconRect(_notifyIcon, out Rect iconRect))
 			{
-				if (taskbarRect.Contains(iconRect))
+				if (taskbarRect.Contains(
+					iconRect.X + iconRect.Width / 2D,
+					iconRect.Y + iconRect.Height / 2D))
 				{
 					iconPlacement = IconPlacement.InTaskbar;
 				}
-				else if (WindowHelper.TryGetOverflowAreaRect(out overflowAreaRect))
+				else if (WindowHelper.TryGetOverflowAreaRect(out overflowAreaRect)
+					&& overflowAreaRect.Contains(iconRect))
 				{
 					iconPlacement = IconPlacement.InOverflowArea;
 				}
@@ -90,6 +95,8 @@ namespace ScreenFrame.Movers
 
 			if (!WindowHelper.TryGetDwmWindowMargin(_window, out Thickness windowMargin))
 				windowMargin = new Thickness(0); // Fallback
+
+			var isLeftToRight = !CultureInfoAddition.UserDefaultUICulture.TextInfo.IsRightToLeft;
 
 			double x = 0, y = 0;
 
@@ -99,21 +106,21 @@ namespace ScreenFrame.Movers
 				case TaskbarAlignment.Bottom:
 					x = iconPlacement switch
 					{
-						IconPlacement.InTaskbar => iconRect.Right,
-						IconPlacement.InOverflowArea => overflowAreaRect.Left,
-						_ => taskbarRect.Right,// Fallback
+						IconPlacement.InTaskbar => isLeftToRight ? iconRect.Right : iconRect.Left,
+						IconPlacement.InOverflowArea => isLeftToRight ? overflowAreaRect.Left : overflowAreaRect.Right,
+						_ => isLeftToRight ? taskbarRect.Right : taskbarRect.Left, // Fallback
 					};
-					x -= (windowWidth - windowMargin.Right);
+					x -= isLeftToRight ? (windowWidth - windowMargin.Right) : windowMargin.Left;
 
 					switch (taskbarAlignment)
 					{
 						case TaskbarAlignment.Top:
 							y = taskbarRect.Bottom - windowMargin.Top;
-							PivotAlignment = PivotAlignment.TopRight;
+							PivotAlignment = isLeftToRight ? PivotAlignment.TopRight : PivotAlignment.TopLeft;
 							break;
 						case TaskbarAlignment.Bottom:
 							y = taskbarRect.Top - (windowHeight - windowMargin.Bottom);
-							PivotAlignment = PivotAlignment.BottomRight;
+							PivotAlignment = isLeftToRight ? PivotAlignment.BottomRight : PivotAlignment.BottomLeft;
 							break;
 					}
 					break;
@@ -135,7 +142,7 @@ namespace ScreenFrame.Movers
 					{
 						IconPlacement.InTaskbar => iconRect.Bottom,
 						IconPlacement.InOverflowArea => overflowAreaRect.Top,
-						_ => taskbarRect.Bottom,// Fallback
+						_ => taskbarRect.Bottom, // Fallback
 					};
 					y -= (windowHeight - windowMargin.Bottom);
 					break;

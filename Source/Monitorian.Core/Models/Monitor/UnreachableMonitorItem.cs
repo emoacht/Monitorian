@@ -25,7 +25,7 @@ namespace Monitorian.Core.Models.Monitor
 			this.IsInternal = isInternal;
 		}
 
-		public override AccessResult UpdateBrightness(int brightness = -1) => default;
-		public override AccessResult SetBrightness(int brightness) => default;
+		public override AccessResult UpdateBrightness(int brightness = -1) => AccessResult.Failed;
+		public override AccessResult SetBrightness(int brightness) => AccessResult.Failed;
 	}
 }

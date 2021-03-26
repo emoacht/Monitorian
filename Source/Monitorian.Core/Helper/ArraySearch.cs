@@ -26,7 +26,7 @@ namespace Monitorian.Core.Helper
 
 		public static int GetNearestIndex<T>(T[] array, T target, Func<T, T, T> measure) where T : IComparable
 		{
-			if ((array is null) || (array.Length == 0))
+			if (array is null or { Length: 0 })
 				throw new ArgumentNullException(nameof(array));
 
 			// The source array must be sorted beforehand.

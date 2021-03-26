@@ -348,7 +348,7 @@ namespace Monitorian.Core.Models.Monitor
 		/// Gets raw brightnesses not represented in percentage.
 		/// </summary>
 		/// <param name="physicalMonitorHandle">Physical monitor handle</param>
-		/// <param name="useLowLevel">Whether to use low level function</param>
+		/// <param name="useHighLevel">Whether to use high level function</param>
 		/// <returns>
 		/// <para>result: Result</para>
 		/// <para>minimum: Raw minimum brightness (not always 0)</para>
@@ -361,7 +361,7 @@ namespace Monitorian.Core.Models.Monitor
 		/// in percentage using those values. They are used to convert brightness in percentage
 		/// back to raw brightness when settings brightness as well.
 		/// </remarks>
-		public static (AccessResult result, uint minimum, uint current, uint maximum) GetBrightness(SafePhysicalMonitorHandle physicalMonitorHandle, bool useLowLevel = false)
+		public static (AccessResult result, uint minimum, uint current, uint maximum) GetBrightness(SafePhysicalMonitorHandle physicalMonitorHandle, bool useHighLevel = true)
 		{
 			if (physicalMonitorHandle is null)
 				throw new ArgumentNullException(nameof(physicalMonitorHandle));
@@ -372,7 +372,7 @@ namespace Monitorian.Core.Models.Monitor
 				return (result: AccessResult.Failed, 0, 0, 0);
 			}
 
-			if (!useLowLevel)
+			if (useHighLevel)
 			{
 				if (GetMonitorBrightness(
 					physicalMonitorHandle,
@@ -385,9 +385,9 @@ namespace Monitorian.Core.Models.Monitor
 						current: currentBrightness,
 						maximum: maximumBrightness);
 				}
-				var (message, errorCode) = Error.GetMessageCode();
+				var (errorCode, message) = Error.GetCodeMessage();
 				Debug.WriteLine($"Failed to get brightnesses (High level). {message}");
-				return (result: GetResult(errorCode), 0, 0, 0);
+				return (result: new AccessResult(GetStatus(errorCode), $"High level, {message}"), 0, 0, 0);
 			}
 			else
 			{
@@ -403,9 +403,9 @@ namespace Monitorian.Core.Models.Monitor
 						current: currentValue,
 						maximum: maximumValue);
 				}
-				var (message, errorCode) = Error.GetMessageCode();
+				var (errorCode, message) = Error.GetCodeMessage();
 				Debug.WriteLine($"Failed to get brightnesses (Low level). {message}");
-				return (result: GetResult(errorCode), 0, 0, 0);
+				return (result: new AccessResult(GetStatus(errorCode), $"Low level, {message}"), 0, 0, 0);
 			}
 		}
 
@@ -414,9 +414,9 @@ namespace Monitorian.Core.Models.Monitor
 		/// </summary>
 		/// <param name="physicalMonitorHandle">Physical monitor handle</param>
 		/// <param name="brightness">Raw brightness (not always 0 to 100)</param>
-		/// <param name="useLowLevel">Whether to use low level function</param>
+		/// <param name="useHighLevel">Whether to use high level function</param>
 		/// <returns>Result</returns>
-		public static AccessResult SetBrightness(SafePhysicalMonitorHandle physicalMonitorHandle, uint brightness, bool useLowLevel = false)
+		public static AccessResult SetBrightness(SafePhysicalMonitorHandle physicalMonitorHandle, uint brightness, bool useHighLevel = true)
 		{
 			if (physicalMonitorHandle is null)
 				throw new ArgumentNullException(nameof(physicalMonitorHandle));
@@ -427,7 +427,7 @@ namespace Monitorian.Core.Models.Monitor
 				return AccessResult.Failed;
 			}
 
-			if (!useLowLevel)
+			if (useHighLevel)
 			{
 				// SetMonitorBrightness function may return true even when it actually failed.
 				if (SetMonitorBrightness(
@@ -436,9 +436,9 @@ namespace Monitorian.Core.Models.Monitor
 				{
 					return AccessResult.Succeeded;
 				}
-				var (message, errorCode) = Error.GetMessageCode();
+				var (errorCode, message) = Error.GetCodeMessage();
 				Debug.WriteLine($"Failed to set brightness (High level). {message}");
-				return GetResult(errorCode);
+				return new AccessResult(GetStatus(errorCode), $"High level {message}");
 			}
 			else
 			{
@@ -449,9 +449,9 @@ namespace Monitorian.Core.Models.Monitor
 				{
 					return AccessResult.Succeeded;
 				}
-				var (message, errorCode) = Error.GetMessageCode();
+				var (errorCode, message) = Error.GetCodeMessage();
 				Debug.WriteLine($"Failed to set brightness (Low level). {message}");
-				return GetResult(errorCode);
+				return new AccessResult(GetStatus(errorCode), $"Low level, {message}");
 			}
 		}
 
@@ -465,7 +465,7 @@ namespace Monitorian.Core.Models.Monitor
 		private const uint ERROR_GRAPHICS_DDCCI_INVALID_MESSAGE_CHECKSUM = 0xC026258B;
 		private const uint ERROR_GRAPHICS_MONITOR_NO_LONGER_EXISTS = 0xC026258D;
 
-		private static AccessResult GetResult(int errorCode)
+		private static AccessStatus GetStatus(int errorCode)
 		{
 			return unchecked((uint)errorCode) switch
 			{
@@ -473,9 +473,9 @@ namespace Monitorian.Core.Models.Monitor
 				ERROR_GRAPHICS_DDCCI_INVALID_DATA or
 				ERROR_GRAPHICS_DDCCI_INVALID_MESSAGE_COMMAND or
 				ERROR_GRAPHICS_DDCCI_INVALID_MESSAGE_LENGTH or
-				ERROR_GRAPHICS_DDCCI_INVALID_MESSAGE_CHECKSUM => AccessResult.DdcFailed,
-				ERROR_GRAPHICS_MONITOR_NO_LONGER_EXISTS => AccessResult.NoLongerExist,
-				_ => AccessResult.Failed
+				ERROR_GRAPHICS_DDCCI_INVALID_MESSAGE_CHECKSUM => AccessStatus.DdcFailed,
+				ERROR_GRAPHICS_MONITOR_NO_LONGER_EXISTS => AccessStatus.NoLongerExist,
+				_ => AccessStatus.Failed
 			};
 		}
 

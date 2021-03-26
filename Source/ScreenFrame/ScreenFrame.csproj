@@ -48,6 +48,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Helper\CultureInfoAddition.cs" />
     <Compile Include="Helper\DpiScaleExtension.cs" />
     <Compile Include="Helper\OsVersion.cs" />
     <Compile Include="Movers\WindowMover.cs" />

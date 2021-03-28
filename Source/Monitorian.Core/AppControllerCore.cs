@@ -122,10 +122,7 @@ namespace Monitorian.Core
 		protected virtual void ShowMainWindow()
 		{
 			var window = (MainWindow)_current.MainWindow;
-			if (!window.CanBeShown)
-				return;
-
-			if ((window.Visibility == Visibility.Visible) && window.IsForeground)
+			if (window is { CanBeShown: false } or { Visibility: Visibility.Visible, IsForeground: true })
 				return;
 
 			window.ShowForeground();

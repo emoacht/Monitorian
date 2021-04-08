@@ -97,8 +97,8 @@ namespace ScreenFrame
 			{
 				return new RECT
 				{
-					left = (int)rect.X,
-					top = (int)rect.Y,
+					left = (int)rect.Left,
+					top = (int)rect.Top,
 					right = (int)rect.Right,
 					bottom = (int)rect.Bottom
 				};

@@ -96,8 +96,10 @@ namespace Monitorian.Core.Models.Monitor
 			if (deviceItems?.Any() is not true)
 				yield break;
 
+			var handleItems = DeviceContext.GetMonitorHandles();
+
 			// Obtained by DDC/CI
-			foreach (var handleItem in DeviceContext.GetMonitorHandles())
+			foreach (var handleItem in handleItems)
 			{
 				foreach (var physicalItem in MonitorConfiguration.EnumeratePhysicalMonitors(handleItem.MonitorHandle))
 				{
@@ -121,6 +123,7 @@ namespace Monitorian.Core.Models.Monitor
 						description: deviceItem.AlternateDescription,
 						displayIndex: deviceItem.DisplayIndex,
 						monitorIndex: deviceItem.MonitorIndex,
+						monitorRect: handleItem.MonitorRect,
 						handle: physicalItem.Handle,
 						useHighLevel: physicalItem.IsHighLevelSupported);
 
@@ -133,27 +136,31 @@ namespace Monitorian.Core.Models.Monitor
 			// Obtained by WMI
 			foreach (var desktopItem in MSMonitor.EnumerateDesktopMonitors())
 			{
-				int index = -1;
-				if (desktopItem.BrightnessLevels.Any())
-				{
-					index = deviceItems.FindIndex(x =>
-						string.Equals(x.DeviceInstanceId, desktopItem.DeviceInstanceId, StringComparison.OrdinalIgnoreCase));
-				}
-				if (index < 0)
+				if (!desktopItem.BrightnessLevels.Any())
 					continue;
 
-				var deviceItem = deviceItems[index];
-				yield return new WmiMonitorItem(
-					deviceInstanceId: deviceItem.DeviceInstanceId,
-					description: deviceItem.AlternateDescription,
-					displayIndex: deviceItem.DisplayIndex,
-					monitorIndex: deviceItem.MonitorIndex,
-					isInternal: deviceItem.IsInternal,
-					brightnessLevels: desktopItem.BrightnessLevels);
+				foreach (var handleItem in handleItems)
+				{
+					int index = deviceItems.FindIndex(x =>
+						(x.DisplayIndex == handleItem.DisplayIndex) &&
+						string.Equals(x.DeviceInstanceId, desktopItem.DeviceInstanceId, StringComparison.OrdinalIgnoreCase));
+					if (index < 0)
+						continue;
 
-				deviceItems.RemoveAt(index);
-				if (deviceItems.Count == 0)
-					yield break;
+					var deviceItem = deviceItems[index];
+					yield return new WmiMonitorItem(
+						deviceInstanceId: deviceItem.DeviceInstanceId,
+						description: deviceItem.AlternateDescription,
+						displayIndex: deviceItem.DisplayIndex,
+						monitorIndex: deviceItem.MonitorIndex,
+						monitorRect: handleItem.MonitorRect,
+						isInternal: deviceItem.IsInternal,
+						brightnessLevels: desktopItem.BrightnessLevels);
+
+					deviceItems.RemoveAt(index);
+					if (deviceItems.Count == 0)
+						yield break;
+				}
 			}
 
 			// Unreachable neither by DDC/CI nor by WMI

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Monitorian.Core.Models.Monitor
 {
@@ -20,12 +21,14 @@ namespace Monitorian.Core.Models.Monitor
 			string description,
 			byte displayIndex,
 			byte monitorIndex,
+			Rect monitorRect,
 			SafePhysicalMonitorHandle handle,
 			bool useHighLevel = true) : base(
 				deviceInstanceId: deviceInstanceId,
 				description: description,
 				displayIndex: displayIndex,
 				monitorIndex: monitorIndex,
+				monitorRect: monitorRect,
 				isReachable: true)
 		{
 			this._handle = handle ?? throw new ArgumentNullException(nameof(handle));

@@ -14,6 +14,7 @@ namespace Monitorian.Core.Models
 		{
 			{ "/en", "en-US" },
 			{ "/ja", "ja-JP" },
+			{ "/ko", "ko-KR" },
 			{ "/pl", "pl-PL" },
 			{ "/ru", "ru-RU" },
 			{ "/zh", "zh-Hans" },

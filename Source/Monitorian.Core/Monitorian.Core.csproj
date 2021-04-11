@@ -133,7 +133,6 @@
     <Compile Include="Views\ProbeSection.xaml.cs">
       <DependentUpon>ProbeSection.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\UserInteraction.cs" />
     <Compile Include="Views\WindowEffect.cs" />
   </ItemGroup>
   <ItemGroup>

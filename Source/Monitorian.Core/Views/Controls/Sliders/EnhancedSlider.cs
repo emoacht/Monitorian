@@ -32,9 +32,6 @@ namespace Monitorian.Core.Views.Controls
 			_track = this.GetTemplateChild("PART_Track") as Track;
 			_thumb = _track?.Thumb;
 			CheckCanDrag();
-
-			if (UserInteraction.IsValueDeferred)
-				MakeValueDeferred();
 		}
 
 		protected virtual bool UpdateValue(double value)
@@ -115,7 +112,7 @@ namespace Monitorian.Core.Views.Controls
 		{
 			base.OnPreviewMouseUp(e);
 
-			UpdateValueDeferred();
+			UpdateSourceDeferred();
 		}
 
 		// OnPreviewStylusDown covers the case of OnPreviewTouchDown.
@@ -292,7 +289,7 @@ namespace Monitorian.Core.Views.Controls
 		{
 			base.OnManipulationCompleted(e);
 
-			UpdateValueDeferred();
+			UpdateSourceDeferred();
 		}
 
 		#endregion
@@ -324,18 +321,40 @@ namespace Monitorian.Core.Views.Controls
 			// Mouse.MouseWheelDeltaForOneLine should be casted to double in case the delta is smaller than 120.
 			var newValue = this.Value + (e.Delta / (double)Mouse.MouseWheelDeltaForOneLine * WheelFactor);
 			UpdateValue(newValue);
-			UpdateValueDeferred();
+			UpdateSourceDeferred();
 		}
 
 		#endregion
 
 		#region Deferral
 
+		public bool IsUpdateSourceDeferred
+		{
+			get { return (bool)GetValue(IsUpdateSourceDeferredProperty); }
+			set { SetValue(IsUpdateSourceDeferredProperty, value); }
+		}
+		public static readonly DependencyProperty IsUpdateSourceDeferredProperty =
+			DependencyProperty.Register(
+				"IsUpdateSourceDeferred",
+				typeof(bool),
+				typeof(EnhancedSlider),
+				new PropertyMetadata(
+					false,
+					(d, e) => ((EnhancedSlider)d).PrepareSourceDeferred((bool)e.NewValue)));
+
 		private BindingExpression _valuePropertyExpression;
 
-		protected virtual void MakeValueDeferred()
+		protected virtual void PrepareSourceDeferred(bool isDeferred)
 		{
-			_valuePropertyExpression = ReplaceBinding(this, ValueProperty, BindingMode.TwoWay, UpdateSourceTrigger.Explicit);
+			if (isDeferred)
+			{
+				_valuePropertyExpression = ReplaceBinding(this, ValueProperty, BindingMode.TwoWay, UpdateSourceTrigger.Explicit);
+			}
+			else if (_valuePropertyExpression is not null)
+			{
+				ReplaceBinding(this, ValueProperty, BindingMode.TwoWay, UpdateSourceTrigger.PropertyChanged);
+				_valuePropertyExpression = null;
+			}
 
 			static BindingExpression ReplaceBinding(DependencyObject target, DependencyProperty dp, BindingMode mode, UpdateSourceTrigger trigger)
 			{
@@ -354,7 +373,7 @@ namespace Monitorian.Core.Views.Controls
 			}
 		}
 
-		protected virtual void UpdateValueDeferred()
+		protected virtual void UpdateSourceDeferred()
 		{
 			_valuePropertyExpression?.UpdateSource();
 		}

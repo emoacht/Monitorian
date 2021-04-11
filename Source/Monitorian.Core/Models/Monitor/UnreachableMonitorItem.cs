@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Monitorian.Core.Models.Monitor
 {
@@ -20,6 +21,7 @@ namespace Monitorian.Core.Models.Monitor
 				description: description,
 				displayIndex: displayIndex,
 				monitorIndex: monitorIndex,
+				monitorRect: Rect.Empty,
 				isReachable: false)
 		{
 			this.IsInternal = isInternal;

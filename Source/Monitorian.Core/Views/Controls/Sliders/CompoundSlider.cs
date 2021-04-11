@@ -95,13 +95,13 @@ namespace Monitorian.Core.Views.Controls
 			}
 			else
 			{
-				base.UpdateValueDeferred();
+				base.UpdateSourceDeferred();
 			}
 		}
 
-		protected override void UpdateValueDeferred()
+		protected override void UpdateSourceDeferred()
 		{
-			base.UpdateValueDeferred();
+			base.UpdateSourceDeferred();
 
 			Moved?.Invoke(this, 0D);
 		}

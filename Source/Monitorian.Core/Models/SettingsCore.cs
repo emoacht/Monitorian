@@ -13,12 +13,12 @@ using Monitorian.Core.Helper;
 namespace Monitorian.Core.Models
 {
 	/// <summary>
-	/// Persistent settings
+	/// Settings
 	/// </summary>
 	[DataContract]
 	public class SettingsCore : BindableBase
 	{
-		#region Settings
+		#region Settings (persistent)
 
 		/// <summary>
 		/// Whether to use large elements
@@ -96,6 +96,26 @@ namespace Monitorian.Core.Models
 			set => SetPropertyValue(ref _makesOperationLog, value);
 		}
 		private bool _makesOperationLog;
+
+		#endregion
+
+		#region Settings (non-persistent)
+
+		public static IReadOnlyCollection<string> Options => new[] { DeferOption, GeometricOption };
+
+		/// <summary>
+		/// Whether to defer update of brightness
+		/// </summary>
+		public bool DefersUpdate => _defersUpdate ??= AppKeeper.DefinedArguments.Contains(DeferOption);
+		private bool? _defersUpdate;
+		private const string DeferOption = "/defer";
+
+		/// <summary>
+		/// Whether to order in geometric arrangement
+		/// </summary>
+		public bool OrdersGeometric => _ordersGeometric ??= AppKeeper.DefinedArguments.Contains(GeometricOption);
+		private bool? _ordersGeometric;
+		private const string GeometricOption = "/geometric";
 
 		#endregion
 

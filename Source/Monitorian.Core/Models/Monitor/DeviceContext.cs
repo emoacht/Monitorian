@@ -6,6 +6,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Monitorian.Core.Models.Monitor
 {
@@ -53,6 +54,29 @@ namespace Monitorian.Core.Models.Monitor
 			public int top;
 			public int right;
 			public int bottom;
+
+			public static implicit operator Rect(RECT rect)
+			{
+				if ((rect.right < rect.left) || (rect.bottom < rect.top))
+					return Rect.Empty;
+
+				return new Rect(
+					rect.left,
+					rect.top,
+					rect.right - rect.left,
+					rect.bottom - rect.top);
+			}
+
+			public static implicit operator RECT(Rect rect)
+			{
+				return new RECT
+				{
+					left = (int)rect.Left,
+					top = (int)rect.Top,
+					right = (int)rect.Right,
+					bottom = (int)rect.Bottom
+				};
+			}
 		}
 
 		[DllImport("User32.dll", EntryPoint = "EnumDisplayDevicesA")]
@@ -199,13 +223,18 @@ namespace Monitorian.Core.Models.Monitor
 			[DataMember]
 			public int DisplayIndex { get; }
 
+			[DataMember]
+			public Rect MonitorRect { get; }
+
 			public IntPtr MonitorHandle { get; }
 
 			public HandleItem(
 				int displayIndex,
+				Rect monitorRect,
 				IntPtr monitorHandle)
 			{
 				this.DisplayIndex = displayIndex;
+				this.MonitorRect = monitorRect;
 				this.MonitorHandle = monitorHandle;
 			}
 		}
@@ -299,8 +328,9 @@ namespace Monitorian.Core.Models.Monitor
 					if (TryGetDisplayIndex(monitorInfo.szDevice, out byte displayIndex))
 					{
 						handleItems.Add(new HandleItem(
-							monitorHandle: monitorHandle,
-							displayIndex: displayIndex));
+							displayIndex: displayIndex,
+							monitorRect: monitorInfo.rcMonitor,
+							monitorHandle: monitorHandle));
 					}
 				}
 				return true;

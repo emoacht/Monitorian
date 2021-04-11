@@ -46,6 +46,7 @@ namespace Monitorian.Core.ViewModels
 		public string Description => _monitor.Description;
 		public byte DisplayIndex => _monitor.DisplayIndex;
 		public byte MonitorIndex => _monitor.MonitorIndex;
+		public double MonitorTop => _monitor.MonitorRect.Top;
 
 		#region Customization
 

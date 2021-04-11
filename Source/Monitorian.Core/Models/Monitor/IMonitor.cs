@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Monitorian.Core.Models.Monitor
 {
@@ -12,6 +13,7 @@ namespace Monitorian.Core.Models.Monitor
 		string Description { get; }
 		byte DisplayIndex { get; }
 		byte MonitorIndex { get; }
+		Rect MonitorRect { get; }
 		bool IsReachable { get; }
 
 		int Brightness { get; }

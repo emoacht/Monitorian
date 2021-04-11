@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 using Monitorian.Core.Helper;
 
@@ -21,12 +22,14 @@ namespace Monitorian.Core.Models.Monitor
 			string description,
 			byte displayIndex,
 			byte monitorIndex,
+			Rect monitorRect,
 			bool isInternal,
 			IEnumerable<byte> brightnessLevels) : base(
 				deviceInstanceId: deviceInstanceId,
 				description: description,
 				displayIndex: displayIndex,
 				monitorIndex: monitorIndex,
+				monitorRect: monitorRect,
 				isReachable: true)
 		{
 			this._isInternal = isInternal;

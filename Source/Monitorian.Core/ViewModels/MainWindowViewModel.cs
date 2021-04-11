@@ -29,6 +29,10 @@ namespace Monitorian.Core.ViewModels
 				if (_monitorsView is null)
 				{
 					_monitorsView = new ListCollectionView(_controller.Monitors);
+					if (Settings.OrdersGeometric)
+					{
+						_monitorsView.SortDescriptions.Add(new SortDescription(nameof(MonitorViewModel.MonitorTop), ListSortDirection.Ascending));
+					}
 					_monitorsView.SortDescriptions.Add(new SortDescription(nameof(MonitorViewModel.DisplayIndex), ListSortDirection.Ascending));
 					_monitorsView.SortDescriptions.Add(new SortDescription(nameof(MonitorViewModel.MonitorIndex), ListSortDirection.Ascending));
 					_monitorsView.Filter = x => ((MonitorViewModel)x).IsTarget;

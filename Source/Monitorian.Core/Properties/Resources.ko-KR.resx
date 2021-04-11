@@ -53,6 +53,7 @@
     value   : The object must be serialized with 
             : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
             : and then encoded with base64 encoding.
+
     mimetype: application/x-microsoft.net.object.bytearray.base64
     value   : The object must be serialized into a byte array 
             : using a System.ComponentModel.TypeConverter
@@ -131,9 +132,6 @@
   <data name="EnableUnison" xml:space="preserve">
     <value>동시에 이동을 활성화합니다</value>
   </data>
-  <data name="License" xml:space="preserve">
-    <value>라이센스</value>
-  </data>
   <data name="MakeOperation" xml:space="preserve">
     <value>작업 로그 만들기</value>
   </data>
@@ -151,9 +149,6 @@
   </data>
   <data name="ShowAdjusted" xml:space="preserve">
     <value>조정된 밝기를 표시합니다</value>
-  </data>
-  <data name="Site" xml:space="preserve">
-    <value>사이트</value>
   </data>
   <data name="SiteUrl" xml:space="preserve">
     <value>https://github.com/emoacht/Monitorian</value>

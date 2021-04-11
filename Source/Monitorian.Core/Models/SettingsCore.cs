@@ -101,7 +101,7 @@ namespace Monitorian.Core.Models
 
 		#region Settings (non-persistent)
 
-		public static IReadOnlyCollection<string> Options => new[] { DeferOption };
+		public static IReadOnlyCollection<string> Options => new[] { DeferOption, GeometricOption };
 
 		/// <summary>
 		/// Whether to defer update of brightness
@@ -109,6 +109,13 @@ namespace Monitorian.Core.Models
 		public bool DefersUpdate => _defersUpdate ??= AppKeeper.DefinedArguments.Contains(DeferOption);
 		private bool? _defersUpdate;
 		private const string DeferOption = "/defer";
+
+		/// <summary>
+		/// Whether to order in geometric arrangement
+		/// </summary>
+		public bool OrdersGeometric => _ordersGeometric ??= AppKeeper.DefinedArguments.Contains(GeometricOption);
+		private bool? _ordersGeometric;
+		private const string GeometricOption = "/geometric";
 
 		#endregion
 

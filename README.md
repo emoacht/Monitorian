@@ -18,6 +18,7 @@ In addition, the user can change the adjustable range of brightness for each mon
 Additional languages:
 
 - ja-JP (Japanese) by @emoacht
+- ko-KR (Korean) by @VenusGirl
 - pl-PL (Polish) by @Daxxxis
 - ru-RU (Russian) by @SigmaTel71
 - zh-Hans (Simplified Chinese) by @ComMouse
@@ -35,7 +36,7 @@ Additional languages:
 [Monitorian](https://www.microsoft.com/store/apps/9nw33j738bl0) (Microsoft Store)
 
  * Other:<br>
-:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/2.15.0-Installer/MonitorianInstaller2150.zip)
+:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/2.16.0-Installer/MonitorianInstaller2160.zip)
 
 ## Install/Uninstall
 
@@ -135,9 +136,9 @@ An alternative language can be shown by adding a Resources (.resx) file into `/S
 
 ## History
 
-Ver 2.15 2021-4-11
+Ver 2.16 2021-4-11
 
-- Add command-line option
+- Add ko-KR (Korean) language. Thanks to @VenusGirl!
 
 Ver 2.14 2021-3-26
 

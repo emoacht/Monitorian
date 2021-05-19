@@ -17,6 +17,7 @@ In addition, the user can change the adjustable range of brightness for each mon
 
 Additional languages:
 
+- fr-FR (French) by @AlexZeGamer
 - ja-JP (Japanese) by @emoacht
 - ko-KR (Korean) by @VenusGirl
 - pl-PL (Polish) by @Daxxxis
@@ -36,7 +37,7 @@ Additional languages:
 [Monitorian](https://www.microsoft.com/store/apps/9nw33j738bl0) (Microsoft Store)
 
  * Other:<br>
-:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/2.16.0-Installer/MonitorianInstaller2160.zip)
+:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/2.17.0-Installer/MonitorianInstaller2170.zip)
 
 ## Install/Uninstall
 
@@ -135,6 +136,10 @@ An alternative language can be shown by adding a Resources (.resx) file into `/S
 `Resources.ja-JP.resx` (for Japanese) would be a good example for this purpose.
 
 ## History
+
+Ver 2.17 2021-5-19
+
+- Add fr-FR (French) language. Thanks to @AlexZeGamer!
 
 Ver 2.16 2021-4-11
 

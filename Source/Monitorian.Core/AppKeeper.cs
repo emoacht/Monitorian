@@ -127,7 +127,7 @@ namespace Monitorian.Core
 			if (ConsoleService.Write(exception, exceptionName))
 				return;
 
-			LogService.RecordException(exception);
+			Logger.RecordException(exception);
 		}
 
 		#endregion

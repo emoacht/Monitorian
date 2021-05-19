@@ -156,6 +156,10 @@ namespace Monitorian.Core
 					OnSettingsEnablesUnisonChanged();
 					break;
 
+				case nameof(Settings.ChangesRange):
+					OnSettingsChangesRangeChanged();
+					break;
+
 				case nameof(Settings.MakesOperationLog):
 					Recorder = Settings.MakesOperationLog ? await OperationRecorder.CreateAsync("Enabled") : null;
 					break;
@@ -388,6 +392,15 @@ namespace Monitorian.Core
 
 			foreach (var m in Monitors)
 				m.IsUnison = false;
+		}
+
+		private void OnSettingsChangesRangeChanged()
+		{
+			if (Settings.ChangesRange)
+				return;
+
+			foreach (var m in Monitors)
+				m.IsRangeChanging = false;
 		}
 
 		protected internal virtual bool TryLoadCustomization(string deviceInstanceId, ref string name, ref bool isUnison, ref byte lowest, ref byte highest)

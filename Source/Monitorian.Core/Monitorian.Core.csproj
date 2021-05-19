@@ -89,7 +89,7 @@
     <Compile Include="Models\ConsoleService.cs" />
     <Compile Include="Models\DocumentService.cs" />
     <Compile Include="Models\LanguageService.cs" />
-    <Compile Include="Models\LogService.cs" />
+    <Compile Include="Models\Logger.cs" />
     <Compile Include="Models\OperationRecorder.cs" />
     <Compile Include="Models\ProductInfo.cs" />
     <Compile Include="Models\SettingsCore.cs" />

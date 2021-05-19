@@ -14,7 +14,7 @@ using Monitorian.Core.Properties;
 
 namespace Monitorian.Core.Models
 {
-	public class LogService
+	public class Logger
 	{
 		private const string HeaderStart = "[Date:";
 		private static string ComposeHeader() => $"{HeaderStart} {DateTime.Now} Ver: {ProductInfo.Version}]";

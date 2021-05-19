@@ -131,6 +131,7 @@
   </data>
   <data name="EnableUnison" xml:space="preserve">
     <value>Activer le déplacement à l'unisson</value>
+  </data>
   <data name="MakeOperation" xml:space="preserve">
     <value>Créer un journal des opérations</value>
   </data>

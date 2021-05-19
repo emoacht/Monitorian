@@ -131,10 +131,6 @@
   </data>
   <data name="EnableUnison" xml:space="preserve">
     <value>Activer le déplacement à l'unisson</value>
-  </data>
-  <data name="License" xml:space="preserve">
-    <value>Licence</value>
-  </data>
   <data name="MakeOperation" xml:space="preserve">
     <value>Créer un journal des opérations</value>
   </data>
@@ -152,12 +148,6 @@
   </data>
   <data name="ShowAdjusted" xml:space="preserve">
     <value>Afficher la luminosité ajustée</value>
-  </data>
-  <data name="Site" xml:space="preserve">
-    <value>Site</value>
-  </data>
-  <data name="SiteUrl" xml:space="preserve">
-    <value>https://github.com/emoacht/Monitorian</value>
   </data>
   <data name="StartSignIn" xml:space="preserve">
     <value>Exécuter au démarrage</value>

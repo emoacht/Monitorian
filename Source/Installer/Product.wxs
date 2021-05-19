@@ -82,6 +82,12 @@
       </Component>
 
       <!-- Language resources -->
+      <Directory Id="ResourcesFolder_frFR" Name="fr-FR"
+                 FileSource="$(var.Monitorian.TargetDir)fr-FR">
+        <Component Id="CoreResourcesLibrary_frFR" Guid="{B7502D66-6FE8-4E0F-A8D0-42AFFBE82895}">
+          <File Id="CoreResourcesLibrary_frFR" Name="$(var.Monitorian.TargetName).Core.resources.dll" KeyPath="yes"/>
+        </Component>
+      </Directory>
       <Directory Id="ResourcesFolder_jaJP" Name="ja-JP"
                  FileSource="$(var.Monitorian.TargetDir)ja-JP">
         <Component Id="CoreResourcesLibrary_jaJP" Guid="{AFE32597-13D8-40D0-887E-9C2B5AB0F9B6}">
@@ -150,6 +156,7 @@
       <ComponentRef Id="AgencyLibrary"/>
       <ComponentRef Id="BridgeLibrary"/>
       <ComponentRef Id="VisualManifest"/>
+      <ComponentRef Id="CoreResourcesLibrary_frFR"/>
       <ComponentRef Id="CoreResourcesLibrary_jaJP"/>
       <ComponentRef Id="CoreResourcesLibrary_koKR"/>
       <ComponentRef Id="CoreResourcesLibrary_plPL"/>

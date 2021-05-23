@@ -123,7 +123,4 @@
   <data name="Site" xml:space="preserve">
     <value>Site</value>
   </data>
-  <data name="SiteUrl" xml:space="preserve">
-    <value>https://github.com/emoacht/Monitorian</value>
-  </data>
 </root>

@@ -77,14 +77,5 @@ namespace Monitorian.Core.Properties {
                 return ResourceManager.GetString("Site", resourceCulture);
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to https://github.com/emoacht/Monitorian.
-        /// </summary>
-        public static string SiteUrl {
-            get {
-                return ResourceManager.GetString("SiteUrl", resourceCulture);
-            }
-        }
     }
 }

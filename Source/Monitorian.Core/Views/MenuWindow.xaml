@@ -29,7 +29,7 @@
 					 Text="{x:Static properties:Invariant.Site}">
 					<i:Interaction.Triggers>
 						<i:EventTrigger EventName="MouseDown">
-							<i:LaunchUriOrFileAction Path="{x:Static properties:Invariant.SiteUrl}"/>
+							<i:LaunchUriOrFileAction Path="{x:Static models:ProductInfo.ProjectUrl}"/>
 						</i:EventTrigger>
 					</i:Interaction.Triggers>
 				</Run>

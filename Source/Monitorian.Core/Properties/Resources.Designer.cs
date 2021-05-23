@@ -106,15 +106,6 @@ namespace Monitorian.Core.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to License.
-        /// </summary>
-        public static string License {
-            get {
-                return ResourceManager.GetString("License", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Make operation log.
         /// </summary>
         public static string MakeOperation {
@@ -165,24 +156,6 @@ namespace Monitorian.Core.Properties {
         public static string ShowAdjusted {
             get {
                 return ResourceManager.GetString("ShowAdjusted", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Site.
-        /// </summary>
-        public static string Site {
-            get {
-                return ResourceManager.GetString("Site", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to https://github.com/emoacht/Monitorian.
-        /// </summary>
-        public static string SiteUrl {
-            get {
-                return ResourceManager.GetString("SiteUrl", resourceCulture);
             }
         }
         

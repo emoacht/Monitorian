@@ -88,10 +88,10 @@
           <File Id="CoreResourcesLibrary_de" Name="$(var.Monitorian.TargetName).Core.resources.dll" KeyPath="yes"/>
         </Component>
       </Directory>
-      <Directory Id="ResourcesFolder_frFR" Name="fr-FR"
-                 FileSource="$(var.Monitorian.TargetDir)fr-FR">
-        <Component Id="CoreResourcesLibrary_frFR" Guid="{B7502D66-6FE8-4E0F-A8D0-42AFFBE82895}">
-          <File Id="CoreResourcesLibrary_frFR" Name="$(var.Monitorian.TargetName).Core.resources.dll" KeyPath="yes"/>
+      <Directory Id="ResourcesFolder_fr" Name="fr"
+                 FileSource="$(var.Monitorian.TargetDir)fr">
+        <Component Id="CoreResourcesLibrary_fr" Guid="{B7502D66-6FE8-4E0F-A8D0-42AFFBE82895}">
+          <File Id="CoreResourcesLibrary_fr" Name="$(var.Monitorian.TargetName).Core.resources.dll" KeyPath="yes"/>
         </Component>
       </Directory>
       <Directory Id="ResourcesFolder_jaJP" Name="ja-JP"
@@ -163,7 +163,7 @@
       <ComponentRef Id="BridgeLibrary"/>
       <ComponentRef Id="VisualManifest"/>
       <ComponentRef Id="CoreResourcesLibrary_de"/>
-      <ComponentRef Id="CoreResourcesLibrary_frFR"/>
+      <ComponentRef Id="CoreResourcesLibrary_fr"/>
       <ComponentRef Id="CoreResourcesLibrary_jaJP"/>
       <ComponentRef Id="CoreResourcesLibrary_koKR"/>
       <ComponentRef Id="CoreResourcesLibrary_plPL"/>

@@ -15,7 +15,6 @@ namespace Monitorian.Core.Models
 
 		private static readonly Lazy<CultureInfo> _culture = new(() =>
 		{
-			var supportedCultureNames = new HashSet<string>(CultureInfo.GetCultures(CultureTypes.AllCultures).Select(x => x.Name));
 			var arguments = AppKeeper.DefinedArguments;
 
 			int i = 0;
@@ -23,11 +22,9 @@ namespace Monitorian.Core.Models
 			{
 				if (string.Equals(arguments[i], Option, StringComparison.OrdinalIgnoreCase))
 				{
-					var cultureName = supportedCultureNames.FirstOrDefault(x => string.Equals(x, arguments[i + 1], StringComparison.OrdinalIgnoreCase));
-					if (cultureName is not null)
-						return new CultureInfo(cultureName);
-
-					break;
+					var cultureName = arguments[i + 1];
+					return CultureInfo.GetCultures(CultureTypes.AllCultures)
+						.FirstOrDefault(x => string.Equals(x.Name, cultureName, StringComparison.OrdinalIgnoreCase));
 				}
 				i++;
 			}

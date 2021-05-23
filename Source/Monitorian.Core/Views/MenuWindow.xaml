@@ -26,17 +26,17 @@
 				<Run Text="|"/>
 				<Run Foreground="{StaticResource App.Foreground.Shadow}"
 					 TextDecorations="Underline" Cursor="Hand"
-					 Text="{x:Static properties:Resources.Site}">
+					 Text="{x:Static properties:Invariant.Site}">
 					<i:Interaction.Triggers>
 						<i:EventTrigger EventName="MouseDown">
-							<i:LaunchUriOrFileAction Path="{x:Static properties:Resources.SiteUrl}"/>
+							<i:LaunchUriOrFileAction Path="{x:Static properties:Invariant.SiteUrl}"/>
 						</i:EventTrigger>
 					</i:Interaction.Triggers>
 				</Run>
 				<Run Text="|"/>
 				<Run Foreground="{StaticResource App.Foreground.Shadow}"
 					 TextDecorations="Underline" Cursor="Hand"
-					 Text="{x:Static properties:Resources.License}">
+					 Text="{x:Static properties:Invariant.License}">
 					<i:Interaction.Triggers>
 						<i:EventTrigger EventName="MouseDown">
 							<i:CallMethodAction TargetObject="{Binding}"

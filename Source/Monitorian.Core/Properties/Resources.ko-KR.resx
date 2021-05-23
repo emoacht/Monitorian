@@ -150,9 +150,6 @@
   <data name="ShowAdjusted" xml:space="preserve">
     <value>조정된 밝기를 표시합니다</value>
   </data>
-  <data name="SiteUrl" xml:space="preserve">
-    <value>https://github.com/emoacht/Monitorian</value>
-  </data>
   <data name="StartSignIn" xml:space="preserve">
     <value>로그인 시 시작합니다.</value>
   </data>

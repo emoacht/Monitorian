@@ -132,9 +132,6 @@
   <data name="EnableUnison" xml:space="preserve">
     <value>Regler synchron verschieben</value>
   </data>
-  <data name="License" xml:space="preserve">
-    <value>Lizenz</value>
-  </data>
   <data name="MakeOperation" xml:space="preserve">
     <value>Anwendungsprotokoll erstellen</value>
   </data>
@@ -152,12 +149,6 @@
   </data>
   <data name="ShowAdjusted" xml:space="preserve">
     <value>Eingestellte Helligkeit anzeigen</value>
-  </data>
-  <data name="Site" xml:space="preserve">
-    <value>Seite</value>
-  </data>
-  <data name="SiteUrl" xml:space="preserve">
-    <value>https://github.com/emoacht/Monitorian</value>
   </data>
   <data name="StartSignIn" xml:space="preserve">
     <value>Beim Anmelden starten</value>

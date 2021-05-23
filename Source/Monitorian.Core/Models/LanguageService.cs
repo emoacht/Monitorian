@@ -10,30 +10,28 @@ namespace Monitorian.Core.Models
 {
 	public class LanguageService
 	{
-		private static IReadOnlyDictionary<string, string> PreparedCulturePairs => new Dictionary<string, string>
-		{
-			{ "/en", "en-US" },
-			{ "/fr" ,"fr-FR" },
-			{ "/ja", "ja-JP" },			
-			{ "/ko", "ko-KR" },
-			{ "/pl", "pl-PL" },
-			{ "/ru", "ru-RU" },
-			{ "/zh", "zh-Hans" },
-		};
+		public static IReadOnlyCollection<string> Options => new[] { Option };
+		private const string Option = "/lang";
 
-		public static IReadOnlyCollection<string> Options => PreparedCulturePairs.Keys.ToArray();
-
-		private static readonly Lazy<CultureInfo> _culture = new Lazy<CultureInfo>(() =>
+		private static readonly Lazy<CultureInfo> _culture = new(() =>
 		{
-			var preparedCulturePairs = PreparedCulturePairs;
 			var supportedCultureNames = new HashSet<string>(CultureInfo.GetCultures(CultureTypes.AllCultures).Select(x => x.Name));
+			var arguments = AppKeeper.DefinedArguments;
 
-			return AppKeeper.DefinedArguments
-				.Where(x => !string.IsNullOrWhiteSpace(x))
-				.Select(x => (Success: preparedCulturePairs.TryGetValue(x.ToLower(), out string value) && supportedCultureNames.Contains(value), CultureName: value))
-				.Where(x => x.Success)
-				.Select(x => new CultureInfo(x.CultureName))
-				.FirstOrDefault();
+			int i = 0;
+			while (i < arguments.Count - 1)
+			{
+				if (string.Equals(arguments[i], Option, StringComparison.OrdinalIgnoreCase))
+				{
+					var cultureName = supportedCultureNames.FirstOrDefault(x => string.Equals(x, arguments[i + 1], StringComparison.OrdinalIgnoreCase));
+					if (cultureName is not null)
+						return new CultureInfo(cultureName);
+
+					break;
+				}
+				i++;
+			}
+			return null;
 		});
 
 		/// <summary>

@@ -241,6 +241,7 @@ namespace Monitorian.Core.ViewModels
 					switch (result.Status)
 					{
 						case AccessStatus.DdcFailed:
+						case AccessStatus.TransmissionFailed:
 						case AccessStatus.NoLongerExist:
 							_controller.OnMonitorsChangeFound();
 							break;

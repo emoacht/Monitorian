@@ -29,6 +29,7 @@ namespace Monitorian.Core.Models.Monitor
 		Succeeded,
 		Failed,
 		DdcFailed,
+		TransmissionFailed,
 		NoLongerExist
 	}
 

@@ -129,6 +129,9 @@
     <Compile Include="Views\Converters\StringToVisibilityConverter.cs" />
     <Compile Include="Views\Converters\VisibilityInverseConverter.cs" />
     <Compile Include="Views\Converters\VisibilityToBooleanFilterConverter.cs" />
+    <Compile Include="Views\Touchpad\TouchpadContact.cs" />
+    <Compile Include="Views\Touchpad\TouchpadHelper.cs" />
+    <Compile Include="Views\Touchpad\TouchpadTracker.cs" />
     <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>

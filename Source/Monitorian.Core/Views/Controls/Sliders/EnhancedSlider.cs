@@ -34,6 +34,13 @@ namespace Monitorian.Core.Views.Controls
 			CheckCanDrag();
 		}
 
+		public bool ChangeValue(double changeSize)
+		{
+			return UpdateValue(this.Value + changeSize);
+		}
+
+		public void EnsureUpdateSource() => ExecuteUpdateSource();
+
 		protected virtual bool UpdateValue(double value)
 		{
 			// Slider.SnapToTick property will not be reflected like Slider.UpdateValue method.

@@ -641,7 +641,7 @@
 													 Style="{StaticResource SliderHorizontal}"
 													 Minimum="0" Maximum="100"
 													 Value="{Binding Brightness, Mode=TwoWay, Delay=50}"
-													 IsUpdateSourceDeferred="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Path=DataContext.Settings.DefersUpdate, Mode=OneWay}"
+													 DefersUpdateSource="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Path=DataContext.Settings.DefersUpdate, Mode=OneWay}"
 													 IsShadowVisible="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Path=DataContext.Settings.ShowsAdjusted}"
 													 ValueShadow="{Binding BrightnessSystemAdjusted, Mode=OneWay}"
 													 IsUnison="{Binding IsUnison, Mode=TwoWay}"

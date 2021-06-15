@@ -187,12 +187,7 @@ namespace Monitorian.Core.ViewModels
 			var count = Math.Floor((Brightness - RangeLowest) / size);
 			int brightness = RangeLowest + (int)Math.Ceiling((count + 1) * size);
 
-			if (brightness < RangeLowest)
-				brightness = RangeLowest;
-			else if (RangeHighest < brightness)
-				brightness = isCycle ? RangeLowest : RangeHighest;
-
-			SetBrightness(brightness);
+			SetBrightness(brightness, isCycle);
 		}
 
 		public void DecrementBrightness()
@@ -212,10 +207,15 @@ namespace Monitorian.Core.ViewModels
 			var count = Math.Ceiling((Brightness - RangeLowest) / size);
 			int brightness = RangeLowest + (int)Math.Floor((count - 1) * size);
 
+			SetBrightness(brightness, isCycle);
+		}
+
+		private void SetBrightness(int brightness, bool isCycle)
+		{
 			if (brightness < RangeLowest)
 				brightness = isCycle ? RangeHighest : RangeLowest;
 			else if (RangeHighest < brightness)
-				brightness = RangeHighest;
+				brightness = isCycle ? RangeLowest : RangeHighest;
 
 			SetBrightness(brightness);
 		}

@@ -77,10 +77,8 @@ namespace Monitorian.Core.Views.Touchpad
 
 		private async void Check(TouchpadContact contact)
 		{
-			if ((contact.ContactId != 0) || (_contact == contact))
-				return;
-
-			if (_contact == default)
+			if ((_contact == default) ||
+				(_contact.ContactId != contact.ContactId))
 			{
 				_contact = contact;
 				return;

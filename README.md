@@ -38,7 +38,7 @@ Additional languages:
 [Monitorian](https://www.microsoft.com/store/apps/9nw33j738bl0) (Microsoft Store)
 
  * Other:<br>
-:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/2.18.1-Installer/MonitorianInstaller2181.zip)
+:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/2.19.0-Installer/MonitorianInstaller2190.zip)
 
 ## Install/Uninstall
 
@@ -137,6 +137,10 @@ An alternative language can be shown by adding a Resources (.resx) file into `/S
 `Resources.ja-JP.resx` (for Japanese) would be a good example for this purpose.
 
 ## History
+
+Ver 2.19 2021-6-16
+
+- Enable to adjust brightness by precision touchpad
 
 Ver 2.18 2021-5-23
 

@@ -34,6 +34,13 @@ namespace Monitorian.Core.Views.Controls
 			CheckCanDrag();
 		}
 
+		public bool ChangeValue(double changeSize)
+		{
+			return UpdateValue(this.Value + changeSize);
+		}
+
+		public void EnsureUpdateSource() => ExecuteUpdateSource();
+
 		protected virtual bool UpdateValue(double value)
 		{
 			// Slider.SnapToTick property will not be reflected like Slider.UpdateValue method.
@@ -112,7 +119,7 @@ namespace Monitorian.Core.Views.Controls
 		{
 			base.OnPreviewMouseUp(e);
 
-			UpdateSourceDeferred();
+			ExecuteUpdateSource();
 		}
 
 		// OnPreviewStylusDown covers the case of OnPreviewTouchDown.
@@ -289,7 +296,7 @@ namespace Monitorian.Core.Views.Controls
 		{
 			base.OnManipulationCompleted(e);
 
-			UpdateSourceDeferred();
+			ExecuteUpdateSource();
 		}
 
 		#endregion
@@ -321,32 +328,32 @@ namespace Monitorian.Core.Views.Controls
 			// Mouse.MouseWheelDeltaForOneLine should be casted to double in case the delta is smaller than 120.
 			var newValue = this.Value + (e.Delta / (double)Mouse.MouseWheelDeltaForOneLine * WheelFactor);
 			UpdateValue(newValue);
-			UpdateSourceDeferred();
+			ExecuteUpdateSource();
 		}
 
 		#endregion
 
 		#region Deferral
 
-		public bool IsUpdateSourceDeferred
+		public bool DefersUpdateSource
 		{
-			get { return (bool)GetValue(IsUpdateSourceDeferredProperty); }
-			set { SetValue(IsUpdateSourceDeferredProperty, value); }
+			get { return (bool)GetValue(DefersUpdateSourceProperty); }
+			set { SetValue(DefersUpdateSourceProperty, value); }
 		}
-		public static readonly DependencyProperty IsUpdateSourceDeferredProperty =
+		public static readonly DependencyProperty DefersUpdateSourceProperty =
 			DependencyProperty.Register(
-				"IsUpdateSourceDeferred",
+				"DefersUpdateSource",
 				typeof(bool),
 				typeof(EnhancedSlider),
 				new PropertyMetadata(
 					false,
-					(d, e) => ((EnhancedSlider)d).PrepareSourceDeferred((bool)e.NewValue)));
+					(d, e) => ((EnhancedSlider)d).PrepareUpdateSource((bool)e.NewValue)));
 
 		private BindingExpression _valuePropertyExpression;
 
-		protected virtual void PrepareSourceDeferred(bool isDeferred)
+		protected virtual void PrepareUpdateSource(bool defer)
 		{
-			if (isDeferred)
+			if (defer)
 			{
 				_valuePropertyExpression = ReplaceBinding(this, ValueProperty, BindingMode.TwoWay, UpdateSourceTrigger.Explicit);
 			}
@@ -373,7 +380,7 @@ namespace Monitorian.Core.Views.Controls
 			}
 		}
 
-		protected virtual void UpdateSourceDeferred()
+		protected virtual void ExecuteUpdateSource()
 		{
 			_valuePropertyExpression?.UpdateSource();
 		}

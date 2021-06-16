@@ -220,11 +220,18 @@ namespace Monitorian.Core.Models.Monitor
 		[DataContract]
 		public class HandleItem
 		{
-			[DataMember]
+			[DataMember(Order = 0)]
 			public int DisplayIndex { get; }
 
-			[DataMember]
 			public Rect MonitorRect { get; }
+			[DataMember(Order = 1, Name = nameof(MonitorRect))]
+			private string _monitorRectString;
+
+			[OnSerializing]
+			private void OnSerializing(StreamingContext context)
+			{
+				_monitorRectString = $"Location:{MonitorRect.Location}, Size:{MonitorRect.Size}";
+			}
 
 			public IntPtr MonitorHandle { get; }
 

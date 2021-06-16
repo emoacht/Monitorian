@@ -25,8 +25,15 @@ namespace Monitorian.Core.Models.Monitor
 			[DataMember(Order = 1)]
 			public string Description { get; }
 
-			[DataMember(Order = 2)]
 			public byte[] BrightnessLevels { get; }
+			[DataMember(Order = 2, Name = nameof(BrightnessLevels))]
+			private string _brightnessLevelsString;
+
+			[OnSerializing]
+			private void OnSerializing(StreamingContext context)
+			{
+				_brightnessLevelsString = string.Join(" ", BrightnessLevels ?? Array.Empty<byte>());
+			}
 
 			public DesktopItem(
 				string deviceInstanceId,

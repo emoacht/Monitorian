@@ -463,6 +463,7 @@ namespace Monitorian.Core.Models.Monitor
 		private const uint ERROR_GRAPHICS_DDCCI_INVALID_MESSAGE_COMMAND = 0xC0262589;
 		private const uint ERROR_GRAPHICS_DDCCI_INVALID_MESSAGE_LENGTH = 0xC026258A;
 		private const uint ERROR_GRAPHICS_DDCCI_INVALID_MESSAGE_CHECKSUM = 0xC026258B;
+		private const uint ERROR_GRAPHICS_I2C_ERROR_TRANSMITTING_DATA = 0xC0262582;
 		private const uint ERROR_GRAPHICS_MONITOR_NO_LONGER_EXISTS = 0xC026258D;
 
 		private static AccessStatus GetStatus(int errorCode)
@@ -474,6 +475,7 @@ namespace Monitorian.Core.Models.Monitor
 				ERROR_GRAPHICS_DDCCI_INVALID_MESSAGE_COMMAND or
 				ERROR_GRAPHICS_DDCCI_INVALID_MESSAGE_LENGTH or
 				ERROR_GRAPHICS_DDCCI_INVALID_MESSAGE_CHECKSUM => AccessStatus.DdcFailed,
+				ERROR_GRAPHICS_I2C_ERROR_TRANSMITTING_DATA => AccessStatus.TransmissionFailed,
 				ERROR_GRAPHICS_MONITOR_NO_LONGER_EXISTS => AccessStatus.NoLongerExist,
 				_ => AccessStatus.Failed
 			};

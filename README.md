@@ -55,7 +55,8 @@ In such case, please note the following:
 
 ## Remarks
 
- - The monitor name shown in main window can be changed for easier identification of monitors. To change the name, press and hold it until it turns to be editable.
+ - The monitor name shown in main window can be changed to distinguish monitors easily. To change the name, press and hold it until it turns to be editable.
+ - To adjust the brightness by a touchpad, place two fingers on it and swipe horizontally. The touchpad must be a precision touchpad.
  - The number of monitors shown at a time is up to 4.
 
 ## Add-on Features

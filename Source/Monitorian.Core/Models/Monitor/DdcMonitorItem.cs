@@ -14,7 +14,7 @@ namespace Monitorian.Core.Models.Monitor
 	internal class DdcMonitorItem : MonitorItem
 	{
 		private readonly SafePhysicalMonitorHandle _handle;
-		private readonly bool _useHighLevel;
+		private readonly MonitorCapability _capability;
 
 		public DdcMonitorItem(
 			string deviceInstanceId,
@@ -23,7 +23,7 @@ namespace Monitorian.Core.Models.Monitor
 			byte monitorIndex,
 			Rect monitorRect,
 			SafePhysicalMonitorHandle handle,
-			bool useHighLevel = true) : base(
+			MonitorCapability capability) : base(
 				deviceInstanceId: deviceInstanceId,
 				description: description,
 				displayIndex: displayIndex,
@@ -32,7 +32,7 @@ namespace Monitorian.Core.Models.Monitor
 				isReachable: true)
 		{
 			this._handle = handle ?? throw new ArgumentNullException(nameof(handle));
-			this._useHighLevel = useHighLevel;
+			this._capability = capability ?? throw new ArgumentNullException(nameof(capability));
 		}
 
 		private uint _minimum = 0; // Raw minimum brightness (not always 0)
@@ -40,7 +40,7 @@ namespace Monitorian.Core.Models.Monitor
 
 		public override AccessResult UpdateBrightness(int brightness = -1)
 		{
-			var (result, minimum, current, maximum) = MonitorConfiguration.GetBrightness(_handle, _useHighLevel);
+			var (result, minimum, current, maximum) = MonitorConfiguration.GetBrightness(_handle, _capability.IsHighLevelBrightnessSupported);
 
 			if ((result.Status == AccessStatus.Succeeded) && (minimum < maximum) && (minimum <= current) && (current <= maximum))
 			{
@@ -62,7 +62,7 @@ namespace Monitorian.Core.Models.Monitor
 
 			var buffer = (uint)Math.Round(brightness / 100D * (_maximum - _minimum) + _minimum, MidpointRounding.AwayFromZero);
 
-			var result = MonitorConfiguration.SetBrightness(_handle, buffer, _useHighLevel);
+			var result = MonitorConfiguration.SetBrightness(_handle, buffer, _capability.IsHighLevelBrightnessSupported);
 
 			if (result.Status == AccessStatus.Succeeded)
 			{

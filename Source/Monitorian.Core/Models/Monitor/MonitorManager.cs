@@ -65,26 +65,23 @@ namespace Monitorian.Core.Models.Monitor
 				foreach (var deviceItem in deviceItems)
 				{
 					var displayItem = displayItems.FirstOrDefault(x => string.Equals(deviceItem.DeviceInstanceId, x.DeviceInstanceId, StringComparison.OrdinalIgnoreCase));
-					if (displayItem is not null)
+					if (displayItem is null)
 					{
-						var isDescriptionNullOrWhiteSpace = string.IsNullOrWhiteSpace(deviceItem.Description);
-						if (isDescriptionNullOrWhiteSpace ||
-							Regex.IsMatch(deviceItem.Description, "^Generic (?:PnP|Non-PnP) Monitor$", RegexOptions.IgnoreCase))
-						{
-							if (!string.IsNullOrWhiteSpace(displayItem.DisplayName))
-							{
-								yield return new DeviceItemPlus(deviceItem, displayItem.DisplayName, displayItem.IsInternal);
-								continue;
-							}
-							if (!isDescriptionNullOrWhiteSpace &&
-								!string.IsNullOrWhiteSpace(displayItem.ConnectionDescription))
-							{
-								yield return new DeviceItemPlus(deviceItem, $"{deviceItem.Description} ({displayItem.ConnectionDescription})", displayItem.IsInternal);
-								continue;
-							}
-						}
+						yield return new DeviceItemPlus(deviceItem);
 					}
-					yield return new DeviceItemPlus(deviceItem);
+					else if (!string.IsNullOrWhiteSpace(displayItem.DisplayName))
+					{
+						yield return new DeviceItemPlus(deviceItem, displayItem.DisplayName, displayItem.IsInternal);
+					}
+					else if (Regex.IsMatch(deviceItem.Description, "^Generic (?:PnP|Non-PnP) Monitor$", RegexOptions.IgnoreCase)
+						&& !string.IsNullOrWhiteSpace(displayItem.ConnectionDescription))
+					{
+						yield return new DeviceItemPlus(deviceItem, $"{deviceItem.Description} ({displayItem.ConnectionDescription})", displayItem.IsInternal);
+					}
+					else
+					{
+						yield return new DeviceItemPlus(deviceItem, null, displayItem.IsInternal);
+					}
 				}
 			}
 

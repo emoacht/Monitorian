@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ChangeContrast" xml:space="preserve">
+    <value>コントラストを変更する</value>
+  </data>
   <data name="ChangeRange" xml:space="preserve">
     <value>調整可能な幅を変更する</value>
   </data>
@@ -126,20 +129,50 @@
   <data name="CopyOperation" xml:space="preserve">
     <value>動作ログをコピーする</value>
   </data>
+  <data name="CopyOperationMessage" xml:space="preserve">
+    <value>動作ログをデスクトップに保存しますか?</value>
+  </data>
+  <data name="DeferChange" xml:space="preserve">
+    <value>止まるまで変更を遅らせる</value>
+  </data>
+  <data name="EnableContrast" xml:space="preserve">
+    <value>コントラストを変更可能にする</value>
+  </data>
+  <data name="EnableRange" xml:space="preserve">
+    <value>調整可能な幅を変更可能にする</value>
+  </data>
   <data name="EnableUnison" xml:space="preserve">
     <value>一斉に動かせるようにする</value>
   </data>
   <data name="MakeOperation" xml:space="preserve">
     <value>動作ログを作成する</value>
   </data>
+  <data name="MoveUnison" xml:space="preserve">
+    <value>一斉に動かす</value>
+  </data>
+  <data name="OrderArrangement" xml:space="preserve">
+    <value>モニター配置に従って並べる</value>
+  </data>
   <data name="Probe" xml:space="preserve">
     <value>モニターを調査する</value>
+  </data>
+  <data name="RecordExceptionMessage" xml:space="preserve">
+    <value>予期しない問題が発生しました。例外ログをデスクトップに保存しますか?</value>
+  </data>
+  <data name="RecordProbeMessage" xml:space="preserve">
+    <value>調査ログをデスクトップに保存しますか?</value>
   </data>
   <data name="Rescan" xml:space="preserve">
     <value>モニターを再探索する</value>
   </data>
+  <data name="Settings" xml:space="preserve">
+    <value>設定</value>
+  </data>
   <data name="ShowAdjusted" xml:space="preserve">
     <value>調整後の明るさを表示する</value>
+  </data>
+  <data name="ShowNumber" xml:space="preserve">
+    <value>現在の数字を表示する</value>
   </data>
   <data name="StartSignIn" xml:space="preserve">
     <value>サインイン時に起動する</value>
@@ -154,6 +187,6 @@
     <value>DDC/CIがサポートされていないか有効になっていません。</value>
   </data>
   <data name="UseLargeElements" xml:space="preserve">
-    <value>大きいボタンを使う</value>
+    <value>大きいスライダーを使う</value>
   </data>
 </root>

@@ -49,7 +49,7 @@
 
 		<Separator Style="{StaticResource MenuSeparatorStyle}"/>
 
-		<StackPanel x:Name="MenuItems"/>
+		<StackPanel x:Name="MenuItemsTop"/>
 
 		<ContentControl Style="{StaticResource MenuItemStyle}">
 			<ToggleButton Padding="8,4"
@@ -99,6 +99,8 @@
 						  Content="{x:Static properties:Resources.OrderArrangement}"
 						  IsChecked="{Binding Settings.OrdersArrangement}"/>
 		</ContentControl>
+
+		<StackPanel x:Name="MenuItemsMiddle"/>
 
 		<Separator Style="{StaticResource MenuSeparatorStyle}"/>
 

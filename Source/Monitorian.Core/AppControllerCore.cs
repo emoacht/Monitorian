@@ -152,12 +152,22 @@ namespace Monitorian.Core
 		{
 			switch (e.PropertyName)
 			{
-				case nameof(Settings.EnablesUnison):
-					OnSettingsEnablesUnisonChanged();
+				case nameof(Settings.EnablesUnison) when !Settings.EnablesUnison:
+					foreach (var m in Monitors)
+						m.IsUnison = false;
+
 					break;
 
-				case nameof(Settings.ChangesRange):
-					OnSettingsChangesRangeChanged();
+				case nameof(Settings.EnablesRange) when !Settings.EnablesRange:
+					foreach (var m in Monitors)
+						m.IsRangeChanging = false;
+
+					break;
+
+				case nameof(Settings.EnablesContrast) when !Settings.EnablesContrast:
+					foreach (var m in Monitors)
+						m.IsContrastChanging = false;
+
 					break;
 
 				case nameof(Settings.MakesOperationLog):
@@ -384,24 +394,6 @@ namespace Monitorian.Core
 		#endregion
 
 		#region Customization
-
-		private void OnSettingsEnablesUnisonChanged()
-		{
-			if (Settings.EnablesUnison)
-				return;
-
-			foreach (var m in Monitors)
-				m.IsUnison = false;
-		}
-
-		private void OnSettingsChangesRangeChanged()
-		{
-			if (Settings.ChangesRange)
-				return;
-
-			foreach (var m in Monitors)
-				m.IsRangeChanging = false;
-		}
 
 		protected internal virtual bool TryLoadCustomization(string deviceInstanceId, ref string name, ref bool isUnison, ref byte lowest, ref byte highest)
 		{

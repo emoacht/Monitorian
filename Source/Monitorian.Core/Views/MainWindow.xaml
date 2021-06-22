@@ -635,7 +635,7 @@
 													 Style="{StaticResource SliderHorizontal}"
 													 Minimum="0" Maximum="100"
 													 Value="{Binding Brightness, Mode=TwoWay, Delay=50}"
-													 DefersUpdateSource="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Path=DataContext.Settings.DefersUpdate, Mode=OneWay}"
+													 DefersUpdateSource="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Path=DataContext.Settings.DefersChange, Mode=OneWay}"
 													 IsShadowVisible="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Path=DataContext.Settings.ShowsAdjusted}"
 													 ValueShadow="{Binding BrightnessSystemAdjusted, Mode=OneWay}"
 													 IsUnison="{Binding IsUnison, Mode=TwoWay}"
@@ -662,7 +662,7 @@
 										  Style="{StaticResource RangeButtonStyle}"
 										  VerticalContentAlignment="Bottom"
 										  IsChecked="{Binding IsRangeChanging, Mode=TwoWay}"
-										  Visibility="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Path=DataContext.Settings.ChangesRange, Converter={StaticResource BooleanToVisibilityConverterKey}}"/>
+										  Visibility="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Path=DataContext.Settings.EnablesRange, Converter={StaticResource BooleanToVisibilityConverterKey}}"/>
 						</Grid>
 
 						<!-- Message -->

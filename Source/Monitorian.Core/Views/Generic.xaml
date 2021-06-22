@@ -24,10 +24,13 @@
 	<SolidColorBrush x:Key="Text.Border.Writable" Color="{StaticResource App.ForegroundColor}"/>
 	<SolidColorBrush x:Key="Text.Background.Writable" Color="#FF5F5F5F"/>
 
-	<Color x:Key="Access.Border.NormalColor">Transparent</Color>
-	<Color x:Key="Access.Border.MouseOverColor">#FF868686</Color>
-	<Color x:Key="Access.Background.NormalColor">#33FFFFFF</Color>
-	<Color x:Key="Access.Background.PressedColor">#FF868686</Color>
+	<Color x:Key="Icon.Foreground.NormalColor">#FF9F9F9F</Color>
+	<Color x:Key="Icon.Foreground.MouseOverColor">White</Color>
+	<Color x:Key="Icon.Background.NormalColor">Transparent</Color>
+	<Color x:Key="Icon.Background.MouseOverColor">#33FFFFFF</Color>
+	<Color x:Key="Icon.Background.PressedColor">#FF868686</Color>
+
+	<SolidColorBrush x:Key="Icon.Foreground.Normal" Color="{StaticResource Icon.Foreground.NormalColor}"/>
 
 	<SolidColorBrush x:Key="Menu.Separator" Color="#FF808080"/>
 	<SolidColorBrush x:Key="Menu.Item.Background.Normal" Color="Transparent"/>

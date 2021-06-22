@@ -347,7 +347,11 @@ namespace Monitorian.Core
 					{
 						await Task.WhenAll(Monitors
 							.Where(x => x.IsTarget)
-							.Select(x => Task.Run(() => x.UpdateBrightness())));
+							.SelectMany(x => new[]
+							{
+								Task.Run(() => x.UpdateBrightness()),
+								(x.IsContrastChanging ? Task.Run(() => x.UpdateContrast()) : Task.CompletedTask),
+							}));
 					}
 				}
 			}

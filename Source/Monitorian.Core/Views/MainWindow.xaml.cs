@@ -93,7 +93,7 @@ namespace Monitorian.Core.Views
 		private void CheckDefaultHeights()
 		{
 			_defaultHeights = this.Resources.Cast<DictionaryEntry>()
-				.Where(x => ((string)x.Key).EndsWith("Height", StringComparison.Ordinal))
+				.Where(x => (x.Key is string key) && key.EndsWith("Height", StringComparison.Ordinal))
 				.Where(x => x.Value is double height and > 0D)
 				.ToDictionary(x => (string)x.Key, x => (double)x.Value);
 		}

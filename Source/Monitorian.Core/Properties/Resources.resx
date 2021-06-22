@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ChangeContrast" xml:space="preserve">
+    <value>Change contrast</value>
+  </data>
   <data name="ChangeRange" xml:space="preserve">
     <value>Change adjustable range</value>
   </data>
@@ -129,17 +132,32 @@
   <data name="CopyOperationMessage" xml:space="preserve">
     <value>Save operation log to Desktop?</value>
   </data>
+  <data name="DeferChange" xml:space="preserve">
+    <value>Defer change until stopped</value>
+  </data>
+  <data name="EnableContrast" xml:space="preserve">
+    <value>Enable changing contrast</value>
+  </data>
+  <data name="EnableRange" xml:space="preserve">
+    <value>Enable changing adjustable range</value>
+  </data>
   <data name="EnableUnison" xml:space="preserve">
     <value>Enable moving in unison</value>
   </data>
   <data name="MakeOperation" xml:space="preserve">
     <value>Make operation log</value>
   </data>
+  <data name="MoveUnison" xml:space="preserve">
+    <value>Move in unison</value>
+  </data>
+  <data name="OrderArrangement" xml:space="preserve">
+    <value>Order by monitors arrangement</value>
+  </data>
   <data name="Probe" xml:space="preserve">
     <value>Probe into monitors</value>
   </data>
   <data name="RecordExceptionMessage" xml:space="preserve">
-    <value>An unexpected problem happened. Save exception log to Desktop?</value>
+    <value>An unexpected problem occurred. Save exception log to Desktop?</value>
   </data>
   <data name="RecordProbeMessage" xml:space="preserve">
     <value>Save probe log to Desktop?</value>
@@ -147,8 +165,14 @@
   <data name="Rescan" xml:space="preserve">
     <value>Rescan monitors</value>
   </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Settings</value>
+  </data>
   <data name="ShowAdjusted" xml:space="preserve">
     <value>Show adjusted brightness</value>
+  </data>
+  <data name="ShowNumber" xml:space="preserve">
+    <value>Show current number</value>
   </data>
   <data name="StartSignIn" xml:space="preserve">
     <value>Start on sign in</value>
@@ -163,6 +187,6 @@
     <value>DDC/CI is not supported or enabled.</value>
   </data>
   <data name="UseLargeElements" xml:space="preserve">
-    <value>Use large buttons</value>
+    <value>Use large sliders</value>
   </data>
 </root>

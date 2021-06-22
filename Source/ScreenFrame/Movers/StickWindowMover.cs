@@ -100,6 +100,10 @@ namespace ScreenFrame.Movers
 
 			double x = 0, y = 0;
 
+			// To avoid a gap between window and taskbar when taskbar alignment is right or bottom
+			// and monitor DPI is 125%, 150%, 175%, the window width and height (in DIP) must be
+			// a multiple of 4. Otherwise, the window width and height multiplied with those DPI
+			// will have a fraction and it will cause a blurry edge looking as if there is a gap.
 			switch (taskbarAlignment)
 			{
 				case TaskbarAlignment.Top:

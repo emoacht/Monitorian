@@ -13,7 +13,7 @@
 		AllowsTransparency="True" WindowStyle="None"
 		Background="{StaticResource App.Background.Plain}">
 	<Window.Resources>
-		<sys:Double x:Key="SliderHeight">54</sys:Double>
+		<sys:Double x:Key="SliderHeight">52</sys:Double>
 		<sys:Double x:Key="ThumbHeight">44</sys:Double>
 		<sys:Double x:Key="BracketHeight">8</sys:Double>
 
@@ -598,7 +598,7 @@
 
 	<Grid Width="340">
 		<!-- Pulse -->
-		<controls:PulseLabel Margin="8,4"
+		<controls:PulseLabel Height="16" Margin="8,4"
 							 Style="{StaticResource PulseLabelStyle}"
 							 Content="{Binding Source={x:Static models:ProductInfo.Title}, Mode=OneTime}"
 							 IsPulsing="{Binding IsScanning, Mode=OneWay}"
@@ -620,7 +620,8 @@
 			</ListView.Template>
 			<ListView.ItemTemplate>
 				<DataTemplate>
-					<Grid Background="Transparent">
+					<Grid Margin="0,0,0,8"
+						  Background="Transparent">
 						<Grid.RowDefinitions>
 							<RowDefinition Height="Auto"/>
 							<RowDefinition Height="Auto"/>
@@ -635,7 +636,7 @@
 
 							<!-- Name -->
 							<controls:SwitchTextBox Grid.Column="0"
-													Margin="8,5,0,5" HorizontalAlignment="Left" VerticalAlignment="Center"
+													Height="22" Margin="8,5,0,5" HorizontalAlignment="Left" VerticalAlignment="Center"
 													Style="{StaticResource NameTextBoxStyle}"
 													TextWrapping="Wrap" MaxLength="96" FontSize="14"
 													Text="{Binding Name, Mode=TwoWay}"/>
@@ -669,7 +670,7 @@
 
 						<Grid Grid.Row="1"
 							  Height="{DynamicResource SliderHeight}"
-							  Margin="0,0,12,6"
+							  Margin="0,0,12,0"
 							  Visibility="{Binding IsControllable, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverterKey}}">
 							<Grid.ColumnDefinitions>
 								<ColumnDefinition Width="4"/>
@@ -744,7 +745,7 @@
 						<!-- Message -->
 						<Grid Grid.Row="2"
 							  Visibility="{Binding Message, Mode=OneWay, Converter={StaticResource StringToVisibilityConverterKey}}">
-							<Border Margin="6,0,6,6"
+							<Border Margin="6,6,6,0"
 									Padding="3"
 									BorderBrush="{StaticResource App.Foreground.Invalid}" BorderThickness="1">
 								<TextBlock Foreground="{StaticResource App.Foreground.Invalid}"

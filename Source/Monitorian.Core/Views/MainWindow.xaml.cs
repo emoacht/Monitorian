@@ -89,6 +89,7 @@ namespace Monitorian.Core.Views
 
 		private const double ShrinkFactor = 0.6;
 		private Dictionary<string, double> _defaultHeights;
+		private const string SliderHeightName = "SliderHeight";
 
 		private void CheckDefaultHeights()
 		{
@@ -122,7 +123,11 @@ namespace Monitorian.Core.Views
 
 						foreach (var (key, value) in window._defaultHeights)
 						{
-							window.Resources[key] = value * factor;
+							var buffer = value * factor;
+							if (key == SliderHeightName)
+								buffer = Math.Ceiling(buffer / 4) * 4;
+
+							window.Resources[key] = buffer;
 						}
 					}));
 

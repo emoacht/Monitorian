@@ -87,7 +87,7 @@ namespace Monitorian.Core.Views
 
 		#region Elements
 
-		private const double ShrinkFactor = 0.6;
+		private const double ShrinkFactor = 0.64;
 		private Dictionary<string, double> _defaultHeights;
 		private const string SliderHeightName = "SliderHeight";
 

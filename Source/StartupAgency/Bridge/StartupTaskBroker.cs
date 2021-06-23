@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 
-namespace StartupBridge
+namespace StartupAgency.Bridge
 {
 	/// <summary>
 	/// StartupTask broker

@@ -47,6 +47,7 @@ namespace Monitorian.Core
 			this.Settings = settings ?? throw new ArgumentNullException(nameof(settings));
 
 			LanguageService.SwitchDefault();
+			WindowEffect.ChangeTheme();
 
 			Monitors = new ObservableCollection<MonitorViewModel>();
 			BindingOperations.EnableCollectionSynchronization(Monitors, _monitorsLock);

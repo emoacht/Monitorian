@@ -11,6 +11,7 @@ using System.Windows.Media;
 using Microsoft.Win32;
 
 using Monitorian.Core.Helper;
+using Monitorian.Supplement;
 
 namespace Monitorian.Core.Views
 {
@@ -137,6 +138,63 @@ namespace Monitorian.Core.Views
 
 		#endregion
 
+		public static IReadOnlyCollection<string> Options => ColorPairs.Keys.Prepend(ThemeOption).ToArray();
+
+		private const string ThemeOption = "/theme";
+
+		public static void ChangeTheme()
+		{
+			//const string DarkThemeUriString = null
+			const string LightThemeUriString = null;
+
+			static ColorTheme? CheckArguments()
+			{
+				var arguments = AppKeeper.DefinedArguments;
+
+				int i = 0;
+				while (i < arguments.Count - 1)
+				{
+					if (arguments[i] == ThemeOption)
+					{
+						return Enum.TryParse(arguments[i + 1], true, out ColorTheme theme)
+							? theme
+							: null;
+					}
+					i++;
+				}
+				return null;
+			}
+
+			if ((CheckArguments() ?? UIInformation.GetWindowsTheme()) == ColorTheme.Light)
+			{
+				ApplyResource(LightThemeUriString);
+			}
+		}
+
+		private static void ApplyResource(string newUriString, string oldUriString = null)
+		{
+			if (!string.IsNullOrWhiteSpace(oldUriString))
+			{
+				var oldDictionary = Application.Current.Resources.MergedDictionaries.FirstOrDefault(x => x.Source.OriginalString == oldUriString);
+				if (oldDictionary is not null)
+					Application.Current.Resources.MergedDictionaries.Remove(oldDictionary);
+			}
+
+			if (!string.IsNullOrWhiteSpace(newUriString))
+			{
+				try
+				{
+					var newDictionary = new ResourceDictionary { Source = new Uri(newUriString, UriKind.RelativeOrAbsolute) };
+					Application.Current.Resources.MergedDictionaries.Add(newDictionary);
+				}
+				catch (Exception ex)
+				{
+					Debug.WriteLine($"Failed to apply resources." + Environment.NewLine
+						+ ex);
+				}
+			}
+		}
+
 		/// <summary>
 		/// Color changeable elements of window
 		/// </summary>
@@ -157,9 +215,7 @@ namespace Monitorian.Core.Views
 			{ "/menu_background", ColorElement.MenuBackground }
 		};
 
-		public static IReadOnlyCollection<string> Options => ColorPairs.Keys.ToArray();
-
-		private static readonly Lazy<Dictionary<ColorElement, Brush>> _colors = new Lazy<Dictionary<ColorElement, Brush>>(() =>
+		private static readonly Lazy<Dictionary<ColorElement, Brush>> _colors = new(() =>
 		{
 			var converter = new BrushConverter();
 			bool TryParse(string source, out Brush brush)

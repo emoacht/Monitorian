@@ -3,6 +3,42 @@
 					xmlns:controls="clr-namespace:Monitorian.Core.Views.Controls"
 					xmlns:converters="clr-namespace:Monitorian.Core.Views.Converters">
 
+	<!-- Theme (Dark theme) -->
+	<Color x:Key="App.ForegroundColor">White</Color>
+	<Color x:Key="App.ShadowColor">LightGray</Color>
+	<Color x:Key="App.TargetColor">LightGray</Color>
+	<Color x:Key="App.OverlayColor">#48000000</Color>
+	<Color x:Key="App.AccentColor">#FF2982CC</Color>
+	<Color x:Key="App.InvalidColor">Red</Color>
+
+	<SolidColorBrush x:Key="App.Foreground" Color="{DynamicResource App.ForegroundColor}"/>
+	<SolidColorBrush x:Key="App.Foreground.Shadow" Color="{DynamicResource App.ShadowColor}"/>
+	<SolidColorBrush x:Key="App.Foreground.Invalid" Color="{StaticResource App.InvalidColor}"/>
+	<SolidColorBrush x:Key="App.Background.Plain" Color="#FF1F1F1F"/>
+	<SolidColorBrush x:Key="App.Background.Translucent" Color="#D3161616"/>
+	<SolidColorBrush x:Key="App.Background.Accent" Color="{StaticResource App.AccentColor}"/>
+
+	<Color x:Key="Icon.Foreground.NormalColor">#FF808080</Color>
+	<Color x:Key="Icon.Background.MouseOverColor">#33FFFFFF</Color>
+	<Color x:Key="Icon.Background.PressedColor">#55FFFFFF</Color>
+
+	<SolidColorBrush x:Key="Icon.Foreground.Normal" Color="{DynamicResource Icon.Foreground.NormalColor}"/>
+
+	<SolidColorBrush x:Key="Menu.Separator" Color="#FF808080"/>
+
+	<SolidColorBrush x:Key="Menu.Item.Background.MouseOver" Color="#FF5F5F5F"/>
+
+	<Color x:Key="Text.Foreground.NormalColor">White</Color>
+	<Color x:Key="Text.Foreground.DisabledColor">#FFC8C8C8</Color>
+	<Color x:Key="Text.Background.NormalColor">#BB848484</Color>
+	<Color x:Key="Text.Background.MouseOverColor">#BB969696</Color>
+	<Color x:Key="Text.Background.PressedColor">#BBA8A8A8</Color>
+
+	<SolidColorBrush x:Key="ScrollBar.Thumb.Normal" Color="#33BCBCBC"/>
+	<SolidColorBrush x:Key="ScrollBar.Thumb.MouseOver" Color="#33EFEFEF"/>
+	<SolidColorBrush x:Key="ScrollBar.Thumb.Pressed" Color="#33EFEFEF"/>
+
+	<!-- Converters -->
 	<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverterKey"/>
 	<converters:BooleanToVisibilityTurnConverter x:Key="BooleanToVisibilityTurnConverterKey"/>
 	<converters:VisibilityToBooleanFilterConverter x:Key="VisibilityToBooleanFilterConverterKey"/>
@@ -10,37 +46,10 @@
 	<converters:VisibilityInverseConverter x:Key="VisibilityInverseConverterKey"/>
 	<converters:StringToVisibilityConverter x:Key="StringToVisibilityConverterKey"/>
 
-	<Color x:Key="App.ForegroundColor">White</Color>
-	<Color x:Key="App.ShadowColor">LightGray</Color>
-	<Color x:Key="App.AccentColor">#FF2982CC</Color>
-	<Color x:Key="App.InvalidColor">Red</Color>
-
-	<SolidColorBrush x:Key="App.Foreground" Color="{StaticResource App.ForegroundColor}"/>
-	<SolidColorBrush x:Key="App.Foreground.Shadow" Color="{StaticResource App.ShadowColor}"/>
-	<SolidColorBrush x:Key="App.Foreground.Invalid" Color="{StaticResource App.InvalidColor}"/>
-	<SolidColorBrush x:Key="App.Background.Accent" Color="{StaticResource App.AccentColor}"/>
-	<SolidColorBrush x:Key="App.Background.Plain" Color="#FF1F1F1F"/>
-	<SolidColorBrush x:Key="App.Background.Translucent" Color="#CC171717"/>
-
-	<SolidColorBrush x:Key="Text.Border.Writable" Color="{StaticResource App.ForegroundColor}"/>
-	<SolidColorBrush x:Key="Text.Background.Writable" Color="#FF5F5F5F"/>
-
-	<Color x:Key="Icon.Foreground.NormalColor">#FF9F9F9F</Color>
-	<Color x:Key="Icon.Foreground.MouseOverColor">White</Color>
-	<Color x:Key="Icon.Background.NormalColor">Transparent</Color>
-	<Color x:Key="Icon.Background.MouseOverColor">#33FFFFFF</Color>
-	<Color x:Key="Icon.Background.PressedColor">#FF868686</Color>
-
-	<SolidColorBrush x:Key="Icon.Foreground.Normal" Color="{StaticResource Icon.Foreground.NormalColor}"/>
-
-	<SolidColorBrush x:Key="Menu.Separator" Color="#FF808080"/>
-	<SolidColorBrush x:Key="Menu.Item.Background.Normal" Color="Transparent"/>
-	<SolidColorBrush x:Key="Menu.Item.Background.MouseOver" Color="#FF5F5F5F"/>
-
 	<!-- Menu separator -->
 	<Style x:Key="MenuSeparatorStyle" TargetType="{x:Type Separator}">
 		<Setter Property="Margin" Value="8,4"/>
-		<Setter Property="Background" Value="{StaticResource Menu.Separator}"/>
+		<Setter Property="Background" Value="{DynamicResource Menu.Separator}"/>
 		<Setter Property="SnapsToDevicePixels" Value="True"/>
 		<Setter Property="UseLayoutRounding" Value="True"/>
 		<Setter Property="controls:FrameworkElementSize.ConsistentHeight" Value="1"/>
@@ -53,7 +62,7 @@
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type ContentControl}">
 					<Grid x:Name="body"
-						  Background="{StaticResource Menu.Item.Background.Normal}"
+						  Background="Transparent"
 						  SnapsToDevicePixels="True" UseLayoutRounding="True">
 						<ContentPresenter x:Name="presenter"
 										  Margin="{TemplateBinding Padding}"
@@ -65,7 +74,7 @@
 							<Setter Property="FocusManager.FocusedElement" TargetName="presenter" Value="{Binding ElementName=presenter, Path=Content}"/>
 						</Trigger>
 						<Trigger Property="IsKeyboardFocusWithin" Value="True">
-							<Setter Property="Background" TargetName="body" Value="{StaticResource Menu.Item.Background.MouseOver}"/>
+							<Setter Property="Background" TargetName="body" Value="{DynamicResource Menu.Item.Background.MouseOver}"/>
 						</Trigger>
 					</ControlTemplate.Triggers>
 				</ControlTemplate>

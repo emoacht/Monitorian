@@ -48,13 +48,13 @@
 		<Color x:Key="Slider.Background.Contrast.PressedColor">Orchid</Color>
 		<Color x:Key="Slider.Background.DisabledColor">#FFF0F0F0</Color>
 		<Color x:Key="Slider.Background.VacantColor">#FF999999</Color>
-		<Color x:Key="Slider.Background.OverlayColor">#48000000</Color>
 
 		<SolidColorBrush x:Key="Slider.Background.Main.Static" Color="{StaticResource Slider.Background.Main.StaticColor}"/>
 		<SolidColorBrush x:Key="Slider.Background.Range.Static" Color="{StaticResource Slider.Background.Range.StaticColor}"/>
 		<SolidColorBrush x:Key="Slider.Background.Contrast.Static" Color="{StaticResource Slider.Background.Contrast.StaticColor}"/>
 		<SolidColorBrush x:Key="Slider.Background.Vacant" Color="{StaticResource Slider.Background.VacantColor}"/>
-		<SolidColorBrush x:Key="Slider.Background.Overlay" Color="{StaticResource Slider.Background.OverlayColor}"/>
+		<SolidColorBrush x:Key="Slider.Background.Bracket" Color="{StaticResource App.TargetColor}"/>
+		<SolidColorBrush x:Key="Slider.Background.Overlay" Color="{StaticResource App.OverlayColor}"/>
 
 		<Style x:Key="MainSliderHorizontal" TargetType="{x:Type controls:CompoundSlider}">
 			<Setter Property="Stylus.IsPressAndHoldEnabled" Value="False"/>
@@ -203,7 +203,7 @@
 								<Setter Property="Visibility" TargetName="PART_SelectionRange" Value="Visible"/>
 							</Trigger>
 							<Trigger Property="IsUnison" Value="True">
-								<Setter Property="Background" TargetName="thumb" Value="{StaticResource App.Foreground.Shadow}"/>
+								<Setter Property="Background" TargetName="thumb" Value="{StaticResource Slider.Background.Bracket}"/>
 							</Trigger>
 						</ControlTemplate.Triggers>
 					</ControlTemplate>
@@ -484,8 +484,8 @@
 						</Border>
 						<ControlTemplate.Triggers>
 							<Trigger Property="IsReadOnly" Value="False">
-								<Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Text.Border.Writable}"/>
-								<Setter Property="Background" TargetName="border" Value="{StaticResource Text.Background.Writable}"/>
+								<Setter Property="BorderBrush" TargetName="border" Value="{StaticResource App.Foreground.Shadow}"/>
+								<Setter Property="Background" TargetName="border" Value="{StaticResource App.Background.Plain}"/>
 							</Trigger>
 						</ControlTemplate.Triggers>
 					</ControlTemplate>
@@ -507,11 +507,8 @@
 				<Setter.Value>
 					<ControlTemplate TargetType="{x:Type controls:IconButton}">
 						<Grid>
-							<Border x:Name="border">
-								<Border.Background>
-									<SolidColorBrush Color="{StaticResource Icon.Background.NormalColor}"/>
-								</Border.Background>
-
+							<Border x:Name="border"
+									Background="Transparent">
 								<Grid Height="{Binding RelativeSource={RelativeSource Self}, Path=ActualWidth}"
 									  Margin="7,6" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
 									  RenderOptions.EdgeMode="Aliased">

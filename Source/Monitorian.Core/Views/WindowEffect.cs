@@ -188,8 +188,8 @@ namespace Monitorian.Core.Views
 
 		public static void ChangeTheme()
 		{
-			//const string DarkThemeUriString = null;
-			const string LightThemeUriString = null;
+			//const string DarkThemeUriString = @"/Monitorian.Core;component/Views/Themes/DarkTheme.xaml";
+			const string LightThemeUriString = @"/Monitorian.Core;component/Views/Themes/LightTheme.xaml";
 
 			ColorTheme? theme = null;
 

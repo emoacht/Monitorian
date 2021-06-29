@@ -54,17 +54,6 @@ namespace Monitorian.Core.Models
 		private bool _showsNumber = true; // default
 
 		/// <summary>
-		/// Whether to defer change until stopped
-		/// </summary>
-		[DataMember]
-		public bool DefersChange
-		{
-			get => _defersChange;
-			set => SetPropertyValue(ref _defersChange, value);
-		}
-		private bool _defersChange;
-
-		/// <summary>
 		/// Whether to order by monitors arrangement
 		/// </summary>
 		[DataMember]
@@ -74,6 +63,17 @@ namespace Monitorian.Core.Models
 			set => SetPropertyValue(ref _ordersArrangement, value);
 		}
 		private bool _ordersArrangement = true; // default
+
+		/// <summary>
+		/// Whether to defer change until stopped
+		/// </summary>
+		[DataMember]
+		public bool DefersChange
+		{
+			get => _defersChange;
+			set => SetPropertyValue(ref _defersChange, value);
+		}
+		private bool _defersChange;
 
 		/// <summary>
 		/// Whether to enable moving in unison

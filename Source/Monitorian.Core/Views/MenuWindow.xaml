@@ -88,16 +88,16 @@
 			<ToggleButton Padding="8,4"
 						  Style="{StaticResource CheckButtonItemStyle}"
 						  FontSize="13"
-						  Content="{x:Static properties:Resources.DeferChange}"
-						  IsChecked="{Binding Settings.DefersChange}"/>
+						  Content="{x:Static properties:Resources.OrderArrangement}"
+						  IsChecked="{Binding Settings.OrdersArrangement}"/>
 		</ContentControl>
 
 		<ContentControl Style="{StaticResource MenuItemStyle}">
 			<ToggleButton Padding="8,4"
 						  Style="{StaticResource CheckButtonItemStyle}"
 						  FontSize="13"
-						  Content="{x:Static properties:Resources.OrderArrangement}"
-						  IsChecked="{Binding Settings.OrdersArrangement}"/>
+						  Content="{x:Static properties:Resources.DeferChange}"
+						  IsChecked="{Binding Settings.DefersChange}"/>
 		</ContentControl>
 
 		<StackPanel x:Name="MenuItemsMiddle"/>

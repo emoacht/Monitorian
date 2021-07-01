@@ -10,10 +10,11 @@ The user can change the brightness of monitors, including external ones, either 
 ![Screenshot](Images/Screenshot_unison.png)<br>
 (DPI: 100%)
 
-In addition, the user can change the adjustable range of brightness for each monitor seamlessly.
+In addition, the user can change the adjustable range of brightness and contrast for each monitor seamlessly.
 
 ![Screenshot](Images/Screenshot_range.png)<br>
-(DPI: 100%)
+
+![Screenshot](Images/Screenshot_contrast.png)<br>
 
 Additional languages:
 
@@ -28,7 +29,7 @@ Additional languages:
 ## Requirements
 
  * Windows 7 or newer
- * .NET Framework __4.7.2__
+ * .NET Framework __4.8__
  * An external monitor must be DDC/CI enabled.
 ![OSD](Images/Dell_ddcci.jpg)
 
@@ -38,7 +39,7 @@ Additional languages:
 [Monitorian](https://www.microsoft.com/store/apps/9nw33j738bl0) (Microsoft Store)
 
  * Other:<br>
-:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/2.19.0-Installer/MonitorianInstaller2190.zip)
+:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/3.0.0-Installer/MonitorianInstaller300.zip)
 
 ## Install/Uninstall
 
@@ -138,6 +139,10 @@ An alternative language can be shown by adding a Resources (.resx) file into `/S
 `Resources.ja-JP.resx` (for Japanese) would be a good example for this purpose.
 
 ## History
+
+Ver 3.0 2021-7-1
+
+- Change UI
 
 Ver 2.19 2021-6-16
 

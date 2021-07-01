@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Threading;
-using Microsoft.Win32;
 
 using Monitorian.Core.Models;
 using Monitorian.Core.Models.Monitor;
@@ -36,6 +35,7 @@ namespace Monitorian.Core
 		public NotifyIconContainer NotifyIconContainer { get; }
 
 		private readonly DisplayWatcher _displayWatcher;
+		private readonly SessionWatcher _sessionWatcher;
 		private readonly PowerWatcher _powerWatcher;
 		private readonly BrightnessWatcher _brightnessWatcher;
 
@@ -55,6 +55,7 @@ namespace Monitorian.Core
 			NotifyIconContainer = new NotifyIconContainer();
 
 			_displayWatcher = new DisplayWatcher();
+			_sessionWatcher = new SessionWatcher();
 			_powerWatcher = new PowerWatcher();
 			_brightnessWatcher = new BrightnessWatcher();
 		}
@@ -83,7 +84,8 @@ namespace Monitorian.Core
 			NotifyIconContainer.MouseRightButtonClick += OnMenuWindowShowRequested;
 
 			_displayWatcher.Subscribe(() => OnMonitorsChangeInferred(nameof(DisplayWatcher)));
-			_powerWatcher.Subscribe((e) => OnMonitorsChangeInferred(nameof(PowerWatcher), e.Mode, e.Count), PowerManagement.GetOnPowerSettingChanged());
+			_sessionWatcher.Subscribe((e) => OnMonitorsChangeInferred(nameof(SessionWatcher), e));
+			_powerWatcher.Subscribe((e) => OnMonitorsChangeInferred(nameof(PowerWatcher), e), PowerManagement.GetOnPowerSettingChanged());
 			_brightnessWatcher.Subscribe((instanceName, brightness) => Update(instanceName, brightness));
 		}
 
@@ -179,11 +181,11 @@ namespace Monitorian.Core
 
 		#region Monitors
 
-		protected virtual async void OnMonitorsChangeInferred(object sender = null, PowerModes mode = default, int? count = null)
+		protected virtual async void OnMonitorsChangeInferred(object sender = null, ICountEventArgs e = null)
 		{
-			await (Recorder?.RecordAsync($"{nameof(OnMonitorsChangeInferred)} ({sender}{(mode == default ? string.Empty : $"- {mode} {count}")})") ?? Task.CompletedTask);
+			await (Recorder?.RecordAsync($"{nameof(OnMonitorsChangeInferred)} ({sender}{e?.Description})") ?? Task.CompletedTask);
 
-			if (count == 0)
+			if (e?.Count == 0)
 				return;
 
 			await ScanAsync(TimeSpan.FromSeconds(3));

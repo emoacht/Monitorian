@@ -9,11 +9,11 @@ namespace Monitorian.Core.Models.Watcher
 {
 	internal class PowerWatcher : IDisposable
 	{
-		private Action<PowerModeCountChangedEventArgs> _onPowerModeChanged;
+		private Action<PowerModeChangedCountEventArgs> _onPowerModeChanged;
 		private Action<PowerSettingChangedEventArgs> _onPowerSettingChanged;
 
 		private void RaisePowerModeChanged(PowerModes mode, int count) =>
-			_onPowerModeChanged?.Invoke(new PowerModeCountChangedEventArgs(mode, count));
+			_onPowerModeChanged?.Invoke(new PowerModeChangedCountEventArgs(mode, count));
 
 		private SystemEventsComplement _complement;
 
@@ -45,13 +45,13 @@ namespace Monitorian.Core.Models.Watcher
 			_statusWatcher = new PowerModeWatcher(this, 1, 4);
 		}
 
-		public void Subscribe(Action<PowerModeCountChangedEventArgs> onPowerModeChanged)
+		public void Subscribe(Action<PowerModeChangedCountEventArgs> onPowerModeChanged)
 		{
 			this._onPowerModeChanged = onPowerModeChanged ?? throw new ArgumentNullException(nameof(onPowerModeChanged));
 			SystemEvents.PowerModeChanged += OnPowerModeChanged;
 		}
 
-		public void Subscribe(Action<PowerModeCountChangedEventArgs> onPowerModeChanged, (IReadOnlyCollection<Guid> guids, Action<PowerSettingChangedEventArgs> action) onPowerSettingChanged)
+		public void Subscribe(Action<PowerModeChangedCountEventArgs> onPowerModeChanged, (IReadOnlyCollection<Guid> guids, Action<PowerSettingChangedEventArgs> action) onPowerSettingChanged)
 		{
 			Subscribe(onPowerModeChanged);
 
@@ -111,10 +111,9 @@ namespace Monitorian.Core.Models.Watcher
 		#endregion
 	}
 
-	public class PowerModeCountChangedEventArgs : PowerModeChangedEventArgs
+	public class PowerModeChangedCountEventArgs : CountEventArgs<PowerModes>
 	{
-		public int Count { get; }
-
-		public PowerModeCountChangedEventArgs(PowerModes mode, int count) : base(mode) => this.Count = count;
+		public PowerModeChangedCountEventArgs(PowerModes mode, int count) : base(mode, count)
+		{ }
 	}
 }

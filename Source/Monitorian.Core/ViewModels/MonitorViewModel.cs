@@ -14,6 +14,8 @@ namespace Monitorian.Core.ViewModels
 	public class MonitorViewModel : ViewModelBase
 	{
 		private readonly AppControllerCore _controller;
+		public SettingsCore Settings => _controller.Settings;
+
 		private IMonitor _monitor;
 
 		public MonitorViewModel(AppControllerCore controller, IMonitor monitor)
@@ -78,6 +80,16 @@ namespace Monitorian.Core.ViewModels
 		private bool _isUnison;
 
 		/// <summary>
+		/// Whether the range of brightness is changing
+		/// </summary>
+		public bool IsRangeChanging
+		{
+			get => _isRangeChanging;
+			set => SetPropertyValue(ref _isRangeChanging, value);
+		}
+		private bool _isRangeChanging = false;
+
+		/// <summary>
 		/// Lowest brightness in the range of brightness
 		/// </summary>
 		public int RangeLowest
@@ -106,16 +118,6 @@ namespace Monitorian.Core.ViewModels
 		private byte _rangeHighest = 100;
 
 		private double GetRangeRate() => Math.Abs(RangeHighest - RangeLowest) / 100D;
-
-		/// <summary>
-		/// Whether the range of brightness is changing
-		/// </summary>
-		public bool IsRangeChanging
-		{
-			get => _isRangeChanging;
-			set => SetPropertyValue(ref _isRangeChanging, value);
-		}
-		private bool _isRangeChanging = false;
 
 		#endregion
 
@@ -232,6 +234,98 @@ namespace Monitorian.Core.ViewModels
 			{
 				case AccessStatus.Succeeded:
 					RaisePropertyChanged(nameof(Brightness));
+					OnSucceeded();
+					return true;
+
+				default:
+					_controller.OnMonitorAccessFailed(result);
+
+					switch (result.Status)
+					{
+						case AccessStatus.DdcFailed:
+						case AccessStatus.TransmissionFailed:
+						case AccessStatus.NoLongerExist:
+							_controller.OnMonitorsChangeFound();
+							break;
+					}
+					OnFailed();
+					return false;
+			}
+		}
+
+		#endregion
+
+		#region Contrast
+
+		public bool IsContrastSupported => _monitor.IsContrastSupported;
+
+		public bool IsContrastChanging
+		{
+			get => IsContrastSupported && _isContrastChanging;
+			set
+			{
+				if (SetPropertyValue(ref _isContrastChanging, value) && value)
+					UpdateContrast();
+			}
+		}
+		private bool _isContrastChanging = false;
+
+		public int Contrast
+		{
+			get => _monitor.Contrast;
+			set
+			{
+				if (_monitor.Contrast == value)
+					return;
+
+				SetContrast(value);
+
+				if (IsSelected)
+					_controller.SaveMonitorUserChanged(this);
+			}
+		}
+
+		public bool UpdateContrast()
+		{
+			AccessResult result;
+			lock (_lock)
+			{
+				result = _monitor.UpdateContrast();
+			}
+
+			switch (result.Status)
+			{
+				case AccessStatus.Succeeded:
+					RaisePropertyChanged(nameof(Contrast));
+					OnSucceeded();
+					return true;
+
+				default:
+					_controller.OnMonitorAccessFailed(result);
+
+					switch (result.Status)
+					{
+						case AccessStatus.NoLongerExist:
+							_controller.OnMonitorsChangeFound();
+							break;
+					}
+					OnFailed();
+					return false;
+			}
+		}
+
+		private bool SetContrast(int contrast)
+		{
+			AccessResult result;
+			lock (_lock)
+			{
+				result = _monitor.SetContrast(contrast);
+			}
+
+			switch (result.Status)
+			{
+				case AccessStatus.Succeeded:
+					RaisePropertyChanged(nameof(Contrast));
 					OnSucceeded();
 					return true;
 

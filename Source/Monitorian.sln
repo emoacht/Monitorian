@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2020
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31410.357
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Monitorian", "Monitorian\Monitorian.csproj", "{A4CC5362-9B08-465B-AD64-5CFABC72A4C7}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -26,8 +26,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScreenFrame", "ScreenFrame\ScreenFrame.csproj", "{EDD1C1B9-C241-4D89-8334-0D29F95C2445}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StartupAgency", "StartupAgency\StartupAgency.csproj", "{F44EA754-E653-4696-8A12-C86224292908}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StartupBridge", "StartupBridge\StartupBridge.csproj", "{735EEF09-EA89-4022-828C-575B73981165}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -97,14 +95,6 @@ Global
 		{F44EA754-E653-4696-8A12-C86224292908}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F44EA754-E653-4696-8A12-C86224292908}.Release|x86.ActiveCfg = Release|Any CPU
 		{F44EA754-E653-4696-8A12-C86224292908}.Release|x86.Build.0 = Release|Any CPU
-		{735EEF09-EA89-4022-828C-575B73981165}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{735EEF09-EA89-4022-828C-575B73981165}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{735EEF09-EA89-4022-828C-575B73981165}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{735EEF09-EA89-4022-828C-575B73981165}.Debug|x86.Build.0 = Debug|Any CPU
-		{735EEF09-EA89-4022-828C-575B73981165}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{735EEF09-EA89-4022-828C-575B73981165}.Release|Any CPU.Build.0 = Release|Any CPU
-		{735EEF09-EA89-4022-828C-575B73981165}.Release|x86.ActiveCfg = Release|Any CPU
-		{735EEF09-EA89-4022-828C-575B73981165}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

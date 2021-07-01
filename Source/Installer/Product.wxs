@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <Product Id="*" Name="Monitorian" Manufacturer="emoacht" Version="2.19.0"
+  <Product Id="*" Name="Monitorian" Manufacturer="emoacht" Version="3.0.0"
            Language="1033" Codepage="1252" UpgradeCode="{81A4D148-75D3-462E-938D-8C208FB48E3C}">
     <Package Id="*" InstallerVersion="500" Compressed="yes"
              InstallScope="perMachine" InstallPrivileges="elevated"
@@ -66,13 +66,9 @@
               Source="$(var.Monitorian.TargetDir)" Name="ScreenFrame.dll" KeyPath="yes"/>
       </Component>
 
-      <Component Id="AgencyLibrary" Guid="{BF5542A0-B74B-4CBA-9945-C001342759A6}">
-        <File Id="AgencyLibrary"
+      <Component Id="StartupLibrary" Guid="{BF5542A0-B74B-4CBA-9945-C001342759A6}">
+        <File Id="StartupLibrary"
               Source="$(var.Monitorian.TargetDir)" Name="StartupAgency.dll" KeyPath="yes"/>
-      </Component>
-      <Component Id="BridgeLibrary" Guid="{6B9D6399-5B5A-4AFF-99B0-9892B8C237B8}">
-        <File Id="BridgeLibrary"
-              Source="$(var.Monitorian.TargetDir)" Name="StartupBridge.dll" KeyPath="yes"/>
       </Component>
 
       <Component Id="VisualManifest" Guid="{69BD7D13-0EA9-46F3-9575-EBEEF24A839D}">
@@ -159,8 +155,7 @@
       <ComponentRef Id="CoreLibrary"/>
       <ComponentRef Id="SupplementLibrary"/>
       <ComponentRef Id="FrameLibrary"/>
-      <ComponentRef Id="AgencyLibrary"/>
-      <ComponentRef Id="BridgeLibrary"/>
+      <ComponentRef Id="StartupLibrary"/>
       <ComponentRef Id="VisualManifest"/>
       <ComponentRef Id="CoreResourcesLibrary_de"/>
       <ComponentRef Id="CoreResourcesLibrary_fr"/>

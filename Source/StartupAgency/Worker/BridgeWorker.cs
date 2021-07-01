@@ -6,7 +6,7 @@ using System.Management;
 using System.Text;
 using System.Threading.Tasks;
 
-using StartupBridge;
+using StartupAgency.Bridge;
 
 namespace StartupAgency.Worker
 {

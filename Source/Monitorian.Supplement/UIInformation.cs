@@ -39,17 +39,32 @@ namespace Monitorian.Supplement
 		}
 
 		/// <summary>
-		/// Determines whether light theme is used by the system.
+		/// Gets the color theme for Windows.
 		/// </summary>
-		/// <returns>True if light theme is used</returns>
-		public static bool IsLightThemeUsed()
+		/// <returns>Color theme</returns>
+		public static ColorTheme GetWindowsTheme() => GetTheme(SystemValueName);
+
+		/// <summary>
+		/// Gets the color theme for applications.
+		/// </summary>
+		/// <returns>Color theme</returns>
+		public static ColorTheme GetAppTheme() => GetTheme(AppValueName);
+
+		private const string SystemValueName = "SystemUsesLightTheme";
+		private const string AppValueName = "AppsUseLightTheme";
+
+		private static ColorTheme GetTheme(string valueName)
 		{
 			const string keyName = @"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize"; // HKCU
-			const string valueName = "SystemUsesLightTheme";
 
 			using var key = Registry.CurrentUser.OpenSubKey(keyName);
 
-			return (key?.GetValue(valueName) is 1);
+			return key?.GetValue(valueName, 1) switch
+			{
+				0 => ColorTheme.Dark,
+				1 => ColorTheme.Light,
+				_ => ColorTheme.Unknown
+			};
 		}
 
 		private static readonly object _lock = new object();
@@ -94,5 +109,26 @@ namespace Monitorian.Supplement
 		{
 			_colorsChanged?.Invoke(sender, EventArgs.Empty);
 		}
+	}
+
+	/// <summary>
+	/// Color theme
+	/// </summary>
+	public enum ColorTheme
+	{
+		/// <summary>
+		/// Unknown
+		/// </summary>
+		Unknown = 0,
+
+		/// <summary>
+		/// Dark mode
+		/// </summary>
+		Dark,
+
+		/// <summary>
+		/// Light mode
+		/// </summary>
+		Light
 	}
 }

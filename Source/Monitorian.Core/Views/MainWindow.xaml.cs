@@ -87,13 +87,14 @@ namespace Monitorian.Core.Views
 
 		#region Elements
 
-		private const double ShrinkFactor = 0.6;
+		private const double ShrinkFactor = 0.64;
 		private Dictionary<string, double> _defaultHeights;
+		private const string SliderHeightName = "SliderHeight";
 
 		private void CheckDefaultHeights()
 		{
 			_defaultHeights = this.Resources.Cast<DictionaryEntry>()
-				.Where(x => ((string)x.Key).EndsWith("Height", StringComparison.Ordinal))
+				.Where(x => (x.Key is string key) && key.EndsWith("Height", StringComparison.Ordinal))
 				.Where(x => x.Value is double height and > 0D)
 				.ToDictionary(x => (string)x.Key, x => (double)x.Value);
 		}
@@ -122,7 +123,11 @@ namespace Monitorian.Core.Views
 
 						foreach (var (key, value) in window._defaultHeights)
 						{
-							window.Resources[key] = value * factor;
+							var buffer = value * factor;
+							if (key == SliderHeightName)
+								buffer = Math.Ceiling(buffer / 4) * 4;
+
+							window.Resources[key] = buffer;
 						}
 					}));
 

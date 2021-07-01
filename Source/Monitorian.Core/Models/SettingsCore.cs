@@ -40,7 +40,40 @@ namespace Monitorian.Core.Models
 			get => _showsAdjusted;
 			set => SetPropertyValue(ref _showsAdjusted, value);
 		}
-		private bool _showsAdjusted = true;
+		private bool _showsAdjusted = true; // default
+
+		/// <summary>
+		/// Whether to show current number
+		/// </summary>
+		[DataMember]
+		public bool ShowsNumber
+		{
+			get => _showsNumber;
+			set => SetPropertyValue(ref _showsNumber, value);
+		}
+		private bool _showsNumber = true; // default
+
+		/// <summary>
+		/// Whether to order by monitors arrangement
+		/// </summary>
+		[DataMember]
+		public bool OrdersArrangement
+		{
+			get => _ordersArrangement;
+			set => SetPropertyValue(ref _ordersArrangement, value);
+		}
+		private bool _ordersArrangement = true; // default
+
+		/// <summary>
+		/// Whether to defer change until stopped
+		/// </summary>
+		[DataMember]
+		public bool DefersChange
+		{
+			get => _defersChange;
+			set => SetPropertyValue(ref _defersChange, value);
+		}
+		private bool _defersChange;
 
 		/// <summary>
 		/// Whether to enable moving in unison
@@ -51,18 +84,29 @@ namespace Monitorian.Core.Models
 			get => _enablesUnison;
 			set => SetPropertyValue(ref _enablesUnison, value);
 		}
-		private bool _enablesUnison = false;
+		private bool _enablesUnison;
 
 		/// <summary>
-		/// Whether to change adjustable range
+		/// Whether to enable changing adjustable range
 		/// </summary>
 		[DataMember]
-		public bool ChangesRange
+		public bool EnablesRange
 		{
-			get => _changesRange;
-			set => SetPropertyValue(ref _changesRange, value);
+			get => _enablesRange;
+			set => SetPropertyValue(ref _enablesRange, value);
 		}
-		private bool _changesRange;
+		private bool _enablesRange;
+
+		/// <summary>
+		/// Whether to enable changing contrast
+		/// </summary>
+		[DataMember]
+		public bool EnablesContrast
+		{
+			get => _enablesContrast;
+			set => SetPropertyValue(ref _enablesContrast, value);
+		}
+		private bool _enablesContrast;
 
 		/// <summary>
 		/// Monitor customizations by user
@@ -96,26 +140,6 @@ namespace Monitorian.Core.Models
 			set => SetPropertyValue(ref _makesOperationLog, value);
 		}
 		private bool _makesOperationLog;
-
-		#endregion
-
-		#region Settings (non-persistent)
-
-		public static IReadOnlyCollection<string> Options => new[] { DeferOption, GeometricOption };
-
-		/// <summary>
-		/// Whether to defer update of brightness
-		/// </summary>
-		public bool DefersUpdate => _defersUpdate ??= AppKeeper.DefinedArguments.Contains(DeferOption);
-		private bool? _defersUpdate;
-		private const string DeferOption = "/defer";
-
-		/// <summary>
-		/// Whether to order in geometric arrangement
-		/// </summary>
-		public bool OrdersGeometric => _ordersGeometric ??= AppKeeper.DefinedArguments.Contains(GeometricOption);
-		private bool? _ordersGeometric;
-		private const string GeometricOption = "/geometric";
 
 		#endregion
 

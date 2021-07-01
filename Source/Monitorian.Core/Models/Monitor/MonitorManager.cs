@@ -65,26 +65,23 @@ namespace Monitorian.Core.Models.Monitor
 				foreach (var deviceItem in deviceItems)
 				{
 					var displayItem = displayItems.FirstOrDefault(x => string.Equals(deviceItem.DeviceInstanceId, x.DeviceInstanceId, StringComparison.OrdinalIgnoreCase));
-					if (displayItem is not null)
+					if (displayItem is null)
 					{
-						var isDescriptionNullOrWhiteSpace = string.IsNullOrWhiteSpace(deviceItem.Description);
-						if (isDescriptionNullOrWhiteSpace ||
-							Regex.IsMatch(deviceItem.Description, "^Generic (?:PnP|Non-PnP) Monitor$", RegexOptions.IgnoreCase))
-						{
-							if (!string.IsNullOrWhiteSpace(displayItem.DisplayName))
-							{
-								yield return new DeviceItemPlus(deviceItem, displayItem.DisplayName, displayItem.IsInternal);
-								continue;
-							}
-							if (!isDescriptionNullOrWhiteSpace &&
-								!string.IsNullOrWhiteSpace(displayItem.ConnectionDescription))
-							{
-								yield return new DeviceItemPlus(deviceItem, $"{deviceItem.Description} ({displayItem.ConnectionDescription})", displayItem.IsInternal);
-								continue;
-							}
-						}
+						yield return new DeviceItemPlus(deviceItem);
 					}
-					yield return new DeviceItemPlus(deviceItem);
+					else if (!string.IsNullOrWhiteSpace(displayItem.DisplayName))
+					{
+						yield return new DeviceItemPlus(deviceItem, displayItem.DisplayName, displayItem.IsInternal);
+					}
+					else if (Regex.IsMatch(deviceItem.Description, "^Generic (?:PnP|Non-PnP) Monitor$", RegexOptions.IgnoreCase)
+						&& !string.IsNullOrWhiteSpace(displayItem.ConnectionDescription))
+					{
+						yield return new DeviceItemPlus(deviceItem, $"{deviceItem.Description} ({displayItem.ConnectionDescription})", displayItem.IsInternal);
+					}
+					else
+					{
+						yield return new DeviceItemPlus(deviceItem, null, displayItem.IsInternal);
+					}
 				}
 			}
 
@@ -104,7 +101,7 @@ namespace Monitorian.Core.Models.Monitor
 				foreach (var physicalItem in MonitorConfiguration.EnumeratePhysicalMonitors(handleItem.MonitorHandle))
 				{
 					int index = -1;
-					if (physicalItem.IsSupported)
+					if (physicalItem.Capability.IsBrightnessSupported)
 					{
 						index = deviceItems.FindIndex(x =>
 							(x.DisplayIndex == handleItem.DisplayIndex) &&
@@ -125,7 +122,7 @@ namespace Monitorian.Core.Models.Monitor
 						monitorIndex: deviceItem.MonitorIndex,
 						monitorRect: handleItem.MonitorRect,
 						handle: physicalItem.Handle,
-						useHighLevel: physicalItem.IsHighLevelSupported);
+						capability: physicalItem.Capability);
 
 					deviceItems.RemoveAt(index);
 					if (deviceItems.Count == 0)
@@ -215,17 +212,14 @@ namespace Monitorian.Core.Models.Monitor
 					description: item.Description,
 					monitorIndex: item.MonitorIndex,
 					handle: item.Handle,
-					isHighLevelSupported: item.IsHighLevelSupported,
-					isLowLevelSupported: item.IsLowLevelSupported,
-					capabilitiesString: item.CapabilitiesString,
-					capabilitiesReport: item.CapabilitiesReport)
+					capability: item.Capability)
 			{
 				TestBrightness();
 			}
 
 			private void TestBrightness()
 			{
-				var (getResult, minimum, current, maximum) = MonitorConfiguration.GetBrightness(Handle, IsHighLevelSupported);
+				var (getResult, minimum, current, maximum) = MonitorConfiguration.GetBrightness(Handle, Capability.IsHighLevelBrightnessSupported);
 				var isGetSuccess = (getResult.Status == AccessStatus.Succeeded);
 				var isValid = (minimum < maximum) && (minimum <= current) && (current <= maximum);
 				GetBrightness = $"Success: {isGetSuccess}" + (isGetSuccess ? $", Valid: {isValid} (Minimum: {minimum}, Current: {current}, Maximum: {maximum})" : string.Empty);
@@ -238,13 +232,13 @@ namespace Monitorian.Core.Models.Monitor
 					expected = Math.Min(maximum, Math.Max(minimum, expected));
 				}
 
-				var setResult = MonitorConfiguration.SetBrightness(Handle, expected, IsHighLevelSupported);
+				var setResult = MonitorConfiguration.SetBrightness(Handle, expected, Capability.IsHighLevelBrightnessSupported);
 				var isSetSuccess = (setResult.Status == AccessStatus.Succeeded);
-				var (_, _, actual, _) = MonitorConfiguration.GetBrightness(Handle, IsHighLevelSupported);
+				var (_, _, actual, _) = MonitorConfiguration.GetBrightness(Handle, Capability.IsHighLevelBrightnessSupported);
 				SetBrightness = $"Success: {isSetSuccess}" + (isSetSuccess ? $", Match: {expected == actual} (Expected: {expected}, Actual: {actual})" : string.Empty);
 
 				if (isSetSuccess)
-					MonitorConfiguration.SetBrightness(Handle, current, IsHighLevelSupported);
+					MonitorConfiguration.SetBrightness(Handle, current, Capability.IsHighLevelBrightnessSupported);
 			}
 		}
 

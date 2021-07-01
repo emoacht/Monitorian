@@ -15,12 +15,19 @@ namespace Monitorian.Core.Models.Monitor
 		byte MonitorIndex { get; }
 		Rect MonitorRect { get; }
 		bool IsReachable { get; }
+		bool IsBrightnessSupported { get; }
+		bool IsContrastSupported { get; }
 
 		int Brightness { get; }
 		int BrightnessSystemAdjusted { get; }
 
 		AccessResult UpdateBrightness(int brightness = -1);
 		AccessResult SetBrightness(int brightness);
+
+		int Contrast { get; }
+
+		AccessResult UpdateContrast();
+		AccessResult SetContrast(int contrast);
 	}
 
 	public enum AccessStatus
@@ -30,7 +37,8 @@ namespace Monitorian.Core.Models.Monitor
 		Failed,
 		DdcFailed,
 		TransmissionFailed,
-		NoLongerExist
+		NoLongerExist,
+		NotSupported
 	}
 
 	public class AccessResult
@@ -42,5 +50,6 @@ namespace Monitorian.Core.Models.Monitor
 
 		public static readonly AccessResult Succeeded = new(AccessStatus.Succeeded, null);
 		public static readonly AccessResult Failed = new(AccessStatus.Failed, null);
+		public static readonly AccessResult NotSupported = new(AccessStatus.NotSupported, null);
 	}
 }

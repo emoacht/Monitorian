@@ -163,6 +163,6 @@
     <value>DDC/CI ist deaktiviert oder wird nicht unterstützt.</value>
   </data>
   <data name="UseLargeElements" xml:space="preserve">
-    <value>Große Schalter verwenden</value>
+    <value>Große Schieberegler verwenden</value>
   </data>
 </root>

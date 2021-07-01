@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Threading;
-using Microsoft.Win32;
 
 using Monitorian.Core.Models;
 using Monitorian.Core.Models.Monitor;
@@ -36,6 +35,7 @@ namespace Monitorian.Core
 		public NotifyIconContainer NotifyIconContainer { get; }
 
 		private readonly DisplayWatcher _displayWatcher;
+		private readonly SessionWatcher _sessionWatcher;
 		private readonly PowerWatcher _powerWatcher;
 		private readonly BrightnessWatcher _brightnessWatcher;
 
@@ -47,6 +47,7 @@ namespace Monitorian.Core
 			this.Settings = settings ?? throw new ArgumentNullException(nameof(settings));
 
 			LanguageService.SwitchDefault();
+			WindowEffect.ChangeTheme();
 
 			Monitors = new ObservableCollection<MonitorViewModel>();
 			BindingOperations.EnableCollectionSynchronization(Monitors, _monitorsLock);
@@ -54,6 +55,7 @@ namespace Monitorian.Core
 			NotifyIconContainer = new NotifyIconContainer();
 
 			_displayWatcher = new DisplayWatcher();
+			_sessionWatcher = new SessionWatcher();
 			_powerWatcher = new PowerWatcher();
 			_brightnessWatcher = new BrightnessWatcher();
 		}
@@ -82,7 +84,8 @@ namespace Monitorian.Core
 			NotifyIconContainer.MouseRightButtonClick += OnMenuWindowShowRequested;
 
 			_displayWatcher.Subscribe(() => OnMonitorsChangeInferred(nameof(DisplayWatcher)));
-			_powerWatcher.Subscribe((e) => OnMonitorsChangeInferred(nameof(PowerWatcher), e.Mode, e.Count), PowerManagement.GetOnPowerSettingChanged());
+			_sessionWatcher.Subscribe((e) => OnMonitorsChangeInferred(nameof(SessionWatcher), e));
+			_powerWatcher.Subscribe((e) => OnMonitorsChangeInferred(nameof(PowerWatcher), e), PowerManagement.GetOnPowerSettingChanged());
 			_brightnessWatcher.Subscribe((instanceName, brightness) => Update(instanceName, brightness));
 		}
 
@@ -138,7 +141,7 @@ namespace Monitorian.Core
 		{
 			var window = new MenuWindow(this, pivot);
 			window.ViewModel.CloseAppRequested += (sender, e) => _current.Shutdown();
-			window.AddMenuItem(new ProbeSection(this));
+			window.MenuSectionTop.Add(new ProbeSection(this));
 			window.Show();
 		}
 
@@ -152,12 +155,22 @@ namespace Monitorian.Core
 		{
 			switch (e.PropertyName)
 			{
-				case nameof(Settings.EnablesUnison):
-					OnSettingsEnablesUnisonChanged();
+				case nameof(Settings.EnablesUnison) when !Settings.EnablesUnison:
+					foreach (var m in Monitors)
+						m.IsUnison = false;
+
 					break;
 
-				case nameof(Settings.ChangesRange):
-					OnSettingsChangesRangeChanged();
+				case nameof(Settings.EnablesRange) when !Settings.EnablesRange:
+					foreach (var m in Monitors)
+						m.IsRangeChanging = false;
+
+					break;
+
+				case nameof(Settings.EnablesContrast) when !Settings.EnablesContrast:
+					foreach (var m in Monitors)
+						m.IsContrastChanging = false;
+
 					break;
 
 				case nameof(Settings.MakesOperationLog):
@@ -168,11 +181,11 @@ namespace Monitorian.Core
 
 		#region Monitors
 
-		protected virtual async void OnMonitorsChangeInferred(object sender = null, PowerModes mode = default, int? count = null)
+		protected virtual async void OnMonitorsChangeInferred(object sender = null, ICountEventArgs e = null)
 		{
-			await (Recorder?.RecordAsync($"{nameof(OnMonitorsChangeInferred)} ({sender}{(mode == default ? string.Empty : $"- {mode} {count}")})") ?? Task.CompletedTask);
+			await (Recorder?.RecordAsync($"{nameof(OnMonitorsChangeInferred)} ({sender}{e?.Description})") ?? Task.CompletedTask);
 
-			if (count == 0)
+			if (e?.Count == 0)
 				return;
 
 			await ScanAsync(TimeSpan.FromSeconds(3));
@@ -337,7 +350,11 @@ namespace Monitorian.Core
 					{
 						await Task.WhenAll(Monitors
 							.Where(x => x.IsTarget)
-							.Select(x => Task.Run(() => x.UpdateBrightness())));
+							.SelectMany(x => new[]
+							{
+								Task.Run(() => x.UpdateBrightness()),
+								(x.IsContrastChanging ? Task.Run(() => x.UpdateContrast()) : Task.CompletedTask),
+							}));
 					}
 				}
 			}
@@ -384,24 +401,6 @@ namespace Monitorian.Core
 		#endregion
 
 		#region Customization
-
-		private void OnSettingsEnablesUnisonChanged()
-		{
-			if (Settings.EnablesUnison)
-				return;
-
-			foreach (var m in Monitors)
-				m.IsUnison = false;
-		}
-
-		private void OnSettingsChangesRangeChanged()
-		{
-			if (Settings.ChangesRange)
-				return;
-
-			foreach (var m in Monitors)
-				m.IsRangeChanging = false;
-		}
 
 		protected internal virtual bool TryLoadCustomization(string deviceInstanceId, ref string name, ref bool isUnison, ref byte lowest, ref byte highest)
 		{

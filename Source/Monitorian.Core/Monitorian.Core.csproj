@@ -9,7 +9,8 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Monitorian.Core</RootNamespace>
     <AssemblyName>Monitorian.Core</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
   </PropertyGroup>
@@ -57,6 +58,7 @@
     <Compile Include="Collections\ObservableKeyedList.cs" />
     <Compile Include="Common\BindableBase.cs" />
     <Compile Include="Helper\ArraySearch.cs" />
+    <Compile Include="Helper\ColorExtension.cs" />
     <Compile Include="Helper\EnumerableExtension.cs" />
     <Compile Include="Helper\ExceptionExtension.cs" />
     <Compile Include="Helper\KeyValuePairExtension.cs" />
@@ -82,7 +84,9 @@
     <Compile Include="Models\Monitor\WmiMonitorItem.cs" />
     <Compile Include="Models\Watcher\BrightnessWatcher.cs" />
     <Compile Include="Models\Watcher\DisplayWatcher.cs" />
+    <Compile Include="Models\Watcher\ICountEventArgs.cs" />
     <Compile Include="Models\Watcher\PowerWatcher.cs" />
+    <Compile Include="Models\Watcher\SessionWatcher.cs" />
     <Compile Include="Models\Watcher\SystemEventsComplement.cs" />
     <Compile Include="Models\Watcher\TimerWatcher.cs" />
     <Compile Include="Models\AppDataService.cs" />
@@ -121,6 +125,8 @@
     <Compile Include="Views\Controls\Sliders\RangeSlider.cs" />
     <Compile Include="Views\Controls\Sliders\ShadowSlider.cs" />
     <Compile Include="Views\Controls\FrameworkElementMargin.cs" />
+    <Compile Include="Views\Controls\FrameworkElementSize.cs" />
+    <Compile Include="Views\Controls\IconButton.cs" />
     <Compile Include="Views\Controls\PulseLabel.cs" />
     <Compile Include="Views\Controls\ReversalLabel.cs" />
     <Compile Include="Views\Controls\SwitchTextBox.cs" />
@@ -213,6 +219,14 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\ProbeSection.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Themes\DarkTheme.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Themes\LightTheme.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

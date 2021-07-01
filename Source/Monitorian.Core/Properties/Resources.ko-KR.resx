@@ -163,6 +163,6 @@
     <value>DDC/CI가 지원되지 않거나 사용할 수 없습니다.</value>
   </data>
   <data name="UseLargeElements" xml:space="preserve">
-    <value>큰 버튼 사용</value>
+    <value>큰 슬라이더 사용</value>
   </data>
 </root>

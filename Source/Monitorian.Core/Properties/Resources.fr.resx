@@ -163,6 +163,6 @@
     <value>Le DDC/CI n'est pas supporté ou pas activé.</value>
   </data>
   <data name="UseLargeElements" xml:space="preserve">
-    <value>Utiliser des boutons larges</value>
+    <value>Utiliser de grands curseurs</value>
   </data>
 </root>

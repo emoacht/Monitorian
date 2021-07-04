@@ -39,7 +39,7 @@ Additional languages:
 [Monitorian](https://www.microsoft.com/store/apps/9nw33j738bl0) (Microsoft Store)
 
  * Other:<br>
-:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/3.0.0-Installer/MonitorianInstaller300.zip)
+:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/3.0.1-Installer/MonitorianInstaller301.zip)
 
 ## Install/Uninstall
 

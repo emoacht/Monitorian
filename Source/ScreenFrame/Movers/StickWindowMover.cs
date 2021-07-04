@@ -69,7 +69,7 @@ namespace ScreenFrame.Movers
 		/// <returns>True if successfully gets</returns>
 		protected bool TryGetAdjacentLocationToTaskbar(double windowWidth, double windowHeight, out Rect location)
 		{
-			if (!WindowHelper.TryGetTaskbar(out Rect taskbarRect, out TaskbarAlignment taskbarAlignment))
+			if (!WindowHelper.TryGetTaskbar(out Rect taskbarRect, out TaskbarAlignment taskbarAlignment, out bool isShown))
 			{
 				location = default;
 				return false;
@@ -119,11 +119,11 @@ namespace ScreenFrame.Movers
 					switch (taskbarAlignment)
 					{
 						case TaskbarAlignment.Top:
-							y = taskbarRect.Bottom - windowMargin.Top;
+							y = (isShown ? taskbarRect.Bottom : taskbarRect.Top) - windowMargin.Top;
 							PivotAlignment = isLeftToRight ? PivotAlignment.TopRight : PivotAlignment.TopLeft;
 							break;
 						case TaskbarAlignment.Bottom:
-							y = taskbarRect.Top - (windowHeight - windowMargin.Bottom);
+							y = (isShown ? taskbarRect.Top : taskbarRect.Bottom) - (windowHeight - windowMargin.Bottom);
 							PivotAlignment = isLeftToRight ? PivotAlignment.BottomRight : PivotAlignment.BottomLeft;
 							break;
 					}
@@ -133,11 +133,11 @@ namespace ScreenFrame.Movers
 					switch (taskbarAlignment)
 					{
 						case TaskbarAlignment.Left:
-							x = taskbarRect.Right - windowMargin.Left;
+							x = (isShown ? taskbarRect.Right : taskbarRect.Left) - windowMargin.Left;
 							PivotAlignment = PivotAlignment.BottomLeft;
 							break;
 						case TaskbarAlignment.Right:
-							x = taskbarRect.Left - (windowWidth - windowMargin.Right);
+							x = (isShown ? taskbarRect.Left : taskbarRect.Right) - (windowWidth - windowMargin.Right);
 							PivotAlignment = PivotAlignment.BottomRight;
 							break;
 					}

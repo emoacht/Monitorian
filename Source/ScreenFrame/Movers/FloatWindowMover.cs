@@ -50,7 +50,7 @@ namespace ScreenFrame.Movers
 		/// <returns>True if successfully gets</returns>
 		protected bool TryGetAdjacentLocationToPivot(double windowWidth, double windowHeight, out Rect location)
 		{
-			if (!WindowHelper.TryGetTaskbar(out _, out TaskbarAlignment taskbarAlignment))
+			if (!WindowHelper.TryGetTaskbar(out _, out TaskbarAlignment taskbarAlignment, out _))
 			{
 				location = default;
 				return false;

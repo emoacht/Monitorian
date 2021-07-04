@@ -708,7 +708,13 @@
 									   Style="{StaticResource NumberLabel}"
 									   FontSize="16"
 									   Content="{Binding Brightness, Mode=OneWay}"
-									   Visibility="{Binding IsRangeChanging, Mode=OneWay, Converter={StaticResource BooleanToVisibilityTurnConverterKey}, ConverterParameter=True}"/>
+									   Visibility="{Binding IsRangeChanging, Mode=OneWay, Converter={StaticResource BooleanToVisibilityTurnConverterKey}, ConverterParameter=True}">
+									<i:Interaction.Triggers>
+										<i:EventTrigger EventName="MouseDown">
+											<i:CallMethodAction TargetObject="{Binding}" MethodName="IncrementBrightness"/>
+										</i:EventTrigger>
+									</i:Interaction.Triggers>
+								</Label>
 
 								<Label Width="48" Margin="0,0,4,0"
 									   Style="{StaticResource NumberLabel}"

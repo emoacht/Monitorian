@@ -212,11 +212,11 @@ namespace ScreenFrame
 		private static extern IntPtr GetForegroundWindow();
 
 		[DllImport("Shell32.dll", SetLastError = true)]
-		[return: MarshalAs(UnmanagedType.Bool)]
-		private static extern bool SHAppBarMessage(
-			uint dwMessage, // ABM_GETTASKBARPOS
+		private static extern uint SHAppBarMessage(
+			uint dwMessage,
 			ref APPBARDATA pData);
 
+		private const uint ABM_GETSTATE = 0x00000004;
 		private const uint ABM_GETTASKBARPOS = 0x00000005;
 
 		[StructLayout(LayoutKind.Sequential)]
@@ -236,6 +236,13 @@ namespace ScreenFrame
 			ABE_TOP = 1,
 			ABE_RIGHT = 2,
 			ABE_BOTTOM = 3
+		}
+
+		private enum ABS : uint
+		{
+			ABS_NORMAL = 0x0000000, // Undocumented name
+			ABS_AUTOHIDE = 0x0000001,
+			ABS_ALWAYSONTOP = 0x0000002
 		}
 
 		[DllImport("User32.dll", SetLastError = true)]
@@ -409,6 +416,16 @@ namespace ScreenFrame
 
 		#region Taskbar
 
+		public static bool IsTaskbarAutoHide()
+		{
+			var data = new APPBARDATA { cbSize = (uint)Marshal.SizeOf<APPBARDATA>() };
+
+			var result = SHAppBarMessage(
+				ABM_GETSTATE,
+				ref data);
+			return (result == (uint)ABS.ABS_AUTOHIDE);
+		}
+
 		/// <summary>
 		/// Attempts to get the information on primary taskbar.
 		/// </summary>
@@ -420,9 +437,10 @@ namespace ScreenFrame
 		{
 			var data = new APPBARDATA { cbSize = (uint)Marshal.SizeOf<APPBARDATA>() };
 
-			if (SHAppBarMessage(
+			var result = SHAppBarMessage(
 				ABM_GETTASKBARPOS,
-				ref data))
+				ref data);
+			if (Convert.ToBoolean(result))
 			{
 				taskbarRect = data.rc;
 				taskbarAlignment = ConvertToTaskbarAlignment(data.uEdge);

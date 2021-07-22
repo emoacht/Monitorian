@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -53,7 +53,6 @@
     value   : The object must be serialized with 
             : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
             : and then encoded with base64 encoding.
-
     mimetype: application/x-microsoft.net.object.bytearray.base64
     value   : The object must be serialized into a byte array 
             : using a System.ComponentModel.TypeConverter
@@ -117,6 +116,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ChangeContrast" xml:space="preserve">
+    <value>Изменить контрастность</value>
+  </data>
   <data name="ChangeRange" xml:space="preserve">
     <value>Изменить диапазон регулировки</value>
   </data>
@@ -129,11 +131,26 @@
   <data name="CopyOperationMessage" xml:space="preserve">
     <value>Сохранить журнал действий на рабочий стол?</value>
   </data>
+  <data name="DeferChange" xml:space="preserve">
+    <value>Не изменять яркость до остановки</value>
+  </data>
+  <data name="EnableContrast" xml:space="preserve">
+    <value>Включить настройку контрастности</value>
+  </data>
+  <data name="EnableRange" xml:space="preserve">
+    <value>Включить ограничение диапазона регулировки</value>
+  </data>
   <data name="EnableUnison" xml:space="preserve">
     <value>Включить одновременную регулировку</value>
   </data>
   <data name="MakeOperation" xml:space="preserve">
     <value>Создать журнал действий</value>
+  </data>
+  <data name="MoveUnison" xml:space="preserve">
+    <value>Регулировать одновременно</value>
+  </data>
+  <data name="OrderArrangement" xml:space="preserve">
+    <value>Упорядочить по расположению мониторов</value>
   </data>
   <data name="Probe" xml:space="preserve">
     <value>Протестировать мониторы</value>
@@ -147,8 +164,14 @@
   <data name="Rescan" xml:space="preserve">
     <value>Найти мониторы</value>
   </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Настройки</value>
+  </data>
   <data name="ShowAdjusted" xml:space="preserve">
     <value>Показывать подстроенную яркость</value>
+  </data>
+  <data name="ShowNumber" xml:space="preserve">
+    <value>Показывать текущую яркость</value>
   </data>
   <data name="StartSignIn" xml:space="preserve">
     <value>Запускать при входе в систему</value>

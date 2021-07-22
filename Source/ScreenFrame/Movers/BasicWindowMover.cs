@@ -44,7 +44,7 @@ namespace ScreenFrame.Movers
 
 			if ((0 < width) && (0 < height) &&
 				TryGetAdjacentLocation(width, height, out Rect adjacentLocation) &&
-				TryConfirmLocation(adjacentLocation))
+				TryConfirmLocation(ref adjacentLocation))
 			{
 				position.x = (int)adjacentLocation.X;
 				position.y = (int)adjacentLocation.Y;
@@ -71,9 +71,7 @@ namespace ScreenFrame.Movers
 		/// Handles Display change event.
 		/// </summary>
 		protected override void HandleDisplayChange(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
-		{
-			_monitorRects = null;
-		}
+		{ }
 
 		/// <summary>
 		/// Attempts to get the adjacent location using specified window width and height.
@@ -84,8 +82,6 @@ namespace ScreenFrame.Movers
 		/// <returns>True if successfully gets</returns>
 		protected abstract bool TryGetAdjacentLocation(double windowWidth, double windowHeight, out Rect location);
 
-		private static Rect[] _monitorRects; // Static field
-
 		/// <summary>
 		/// Attempts to confirm that a specified location is not completely outside of monitors.
 		/// </summary>
@@ -94,15 +90,24 @@ namespace ScreenFrame.Movers
 		/// <remarks>
 		/// The specified location and the current location are not necessarily in the same monitor.
 		/// </remarks>
-		protected virtual bool TryConfirmLocation(Rect location)
+		protected virtual bool TryConfirmLocation(ref Rect location)
 		{
-			return (_monitorRects ??= WindowHelper.GetMonitorRects()).Any(x =>
-			{
-				// Rect.IntersectsWith method is not enough because it will return true when two rectangles
-				// share only the outline.
-				var intersection = Rect.Intersect(x, location);
-				return (intersection.Width * intersection.Height > 0);
-			});
+			if (!WindowHelper.TryGetMonitorRect(location, out Rect monitorRect, out _))
+				return false;
+
+			if (monitorRect.Contains(location))
+				return true;
+
+			// Rect.IntersectsWith method is not enough to check intersection because it will return
+			// true when two rectangles share only the outline.
+			// If intersection is Rect.Empty, its width and height will be double.NegativeInfinity.	
+			if (Rect.Intersect(location, monitorRect).IsEmpty)
+				return false;
+
+			var left = Math.Max(monitorRect.Left, Math.Min(monitorRect.Right, location.Right) - location.Width);
+			var top = Math.Max(monitorRect.Top, Math.Min(monitorRect.Bottom, location.Bottom) - location.Height);
+			location = new Rect(left, top, location.Width, location.Height);
+			return true;
 		}
 	}
 }

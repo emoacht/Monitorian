@@ -7,7 +7,7 @@ using System.Windows;
 
 namespace Monitorian.Core.Views.Controls
 {
-	public class FrameworkElementMargin
+	public static class FrameworkElementMargin
 	{
 		public static double GetHorizontal(DependencyObject obj)
 		{

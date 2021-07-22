@@ -8,15 +8,15 @@ using System.Threading.Tasks;
 using Windows.Foundation.Collections;
 using Windows.Storage;
 
-namespace StartupBridge.Storage
+namespace StartupAgency.Storage
 {
 	/// <summary>
 	/// Accessor to <see cref="Windows.Storage.ApplicationData.LocalSettings"/> or <see cref="Windows.Storage.ApplicationData.RoamingSettings"/>
 	/// </summary>
 	/// <remarks>
-	/// Usable data types are shown at:
+	/// Data types that can be stored/retrieved are shown at:
 	/// https://docs.microsoft.com/en-us/windows/uwp/design/app-settings/store-and-retrieve-app-data#types-of-app-data
-	/// plus byte[] and Enum.
+	/// byte[] and Enum are also usable.
 	/// </remarks>
 	internal class SettingsAccessor
 	{

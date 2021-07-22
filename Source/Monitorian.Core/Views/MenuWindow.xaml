@@ -26,17 +26,17 @@
 				<Run Text="|"/>
 				<Run Foreground="{StaticResource App.Foreground.Shadow}"
 					 TextDecorations="Underline" Cursor="Hand"
-					 Text="{x:Static properties:Resources.Site}">
+					 Text="{x:Static properties:Invariant.Site}">
 					<i:Interaction.Triggers>
 						<i:EventTrigger EventName="MouseDown">
-							<i:LaunchUriOrFileAction Path="{x:Static properties:Resources.SiteUrl}"/>
+							<i:LaunchUriOrFileAction Path="{x:Static models:ProductInfo.ProjectUrl}"/>
 						</i:EventTrigger>
 					</i:Interaction.Triggers>
 				</Run>
 				<Run Text="|"/>
 				<Run Foreground="{StaticResource App.Foreground.Shadow}"
 					 TextDecorations="Underline" Cursor="Hand"
-					 Text="{x:Static properties:Resources.License}">
+					 Text="{x:Static properties:Invariant.License}">
 					<i:Interaction.Triggers>
 						<i:EventTrigger EventName="MouseDown">
 							<i:CallMethodAction TargetObject="{Binding}"
@@ -49,7 +49,7 @@
 
 		<Separator Style="{StaticResource MenuSeparatorStyle}"/>
 
-		<StackPanel x:Name="MenuItems"/>
+		<StackPanel x:Name="MenuItemsTop"/>
 
 		<ContentControl Style="{StaticResource MenuItemStyle}">
 			<ToggleButton Padding="8,4"
@@ -80,6 +80,34 @@
 			<ToggleButton Padding="8,4"
 						  Style="{StaticResource CheckButtonItemStyle}"
 						  FontSize="13"
+						  Content="{x:Static properties:Resources.ShowNumber}"
+						  IsChecked="{Binding Settings.ShowsNumber}"/>
+		</ContentControl>
+
+		<ContentControl Style="{StaticResource MenuItemStyle}">
+			<ToggleButton Padding="8,4"
+						  Style="{StaticResource CheckButtonItemStyle}"
+						  FontSize="13"
+						  Content="{x:Static properties:Resources.OrderArrangement}"
+						  IsChecked="{Binding Settings.OrdersArrangement}"/>
+		</ContentControl>
+
+		<ContentControl Style="{StaticResource MenuItemStyle}">
+			<ToggleButton Padding="8,4"
+						  Style="{StaticResource CheckButtonItemStyle}"
+						  FontSize="13"
+						  Content="{x:Static properties:Resources.DeferChange}"
+						  IsChecked="{Binding Settings.DefersChange}"/>
+		</ContentControl>
+
+		<StackPanel x:Name="MenuItemsMiddle"/>
+
+		<Separator Style="{StaticResource MenuSeparatorStyle}"/>
+
+		<ContentControl Style="{StaticResource MenuItemStyle}">
+			<ToggleButton Padding="8,4"
+						  Style="{StaticResource CheckButtonItemStyle}"
+						  FontSize="13"
 						  Content="{x:Static properties:Resources.EnableUnison}"
 						  IsChecked="{Binding Settings.EnablesUnison}"/>
 		</ContentControl>
@@ -88,8 +116,16 @@
 			<ToggleButton Padding="8,4"
 						  Style="{StaticResource CheckButtonItemStyle}"
 						  FontSize="13"
-						  Content="{x:Static properties:Resources.ChangeRange}"
-						  IsChecked="{Binding Settings.ChangesRange}"/>
+						  Content="{x:Static properties:Resources.EnableRange}"
+						  IsChecked="{Binding Settings.EnablesRange}"/>
+		</ContentControl>
+
+		<ContentControl Style="{StaticResource MenuItemStyle}">
+			<ToggleButton Padding="8,4"
+						  Style="{StaticResource CheckButtonItemStyle}"
+						  FontSize="13"
+						  Content="{x:Static properties:Resources.EnableContrast}"
+						  IsChecked="{Binding Settings.EnablesContrast}"/>
 		</ContentControl>
 
 		<Separator Style="{StaticResource MenuSeparatorStyle}"/>

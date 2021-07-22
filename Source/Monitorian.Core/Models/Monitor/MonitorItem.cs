@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 using Monitorian.Core.Helper;
 
@@ -14,16 +15,18 @@ namespace Monitorian.Core.Models.Monitor
 		public string Description { get; }
 		public byte DisplayIndex { get; }
 		public byte MonitorIndex { get; }
+		public Rect MonitorRect { get; }
 		public bool IsReachable { get; }
 
-		public int Brightness { get; protected set; } = -1;
-		public int BrightnessSystemAdjusted { get; protected set; } = -1;
+		public virtual bool IsBrightnessSupported => IsReachable;
+		public virtual bool IsContrastSupported => false;
 
 		public MonitorItem(
 			string deviceInstanceId,
 			string description,
 			byte displayIndex,
 			byte monitorIndex,
+			Rect monitorRect,
 			bool isReachable)
 		{
 			if (string.IsNullOrWhiteSpace(deviceInstanceId))
@@ -35,11 +38,20 @@ namespace Monitorian.Core.Models.Monitor
 			this.Description = description;
 			this.DisplayIndex = displayIndex;
 			this.MonitorIndex = monitorIndex;
+			this.MonitorRect = monitorRect;
 			this.IsReachable = isReachable;
 		}
 
-		public abstract bool UpdateBrightness(int brightness = -1);
-		public abstract bool SetBrightness(int brightness);
+		public int Brightness { get; protected set; } = -1;
+		public int BrightnessSystemAdjusted { get; protected set; } = -1;
+
+		public abstract AccessResult UpdateBrightness(int brightness = -1);
+		public abstract AccessResult SetBrightness(int brightness);
+
+		public int Contrast { get; protected set; } = -1;
+
+		public virtual AccessResult UpdateContrast() => AccessResult.NotSupported;
+		public virtual AccessResult SetContrast(int contrast) => AccessResult.NotSupported;
 
 		public override string ToString()
 		{
@@ -49,9 +61,13 @@ namespace Monitorian.Core.Models.Monitor
 				(nameof(Description), Description),
 				(nameof(DisplayIndex), DisplayIndex),
 				(nameof(MonitorIndex), MonitorIndex),
+				(nameof(MonitorRect), MonitorRect),
 				(nameof(IsReachable), IsReachable),
+				(nameof(IsBrightnessSupported), IsBrightnessSupported),
+				(nameof(IsContrastSupported), IsContrastSupported),
 				(nameof(Brightness), Brightness),
-				(nameof(BrightnessSystemAdjusted), BrightnessSystemAdjusted));
+				(nameof(BrightnessSystemAdjusted), BrightnessSystemAdjusted),
+				(nameof(Contrast), Contrast));
 		}
 
 		#region IDisposable

@@ -20,6 +20,7 @@ namespace Monitorian.Core.ViewModels
 		{
 			this._controller = controller ?? throw new ArgumentNullException(nameof(controller));
 			this._controller.ScanningChanged += OnScanningChanged;
+			Settings.PropertyChanged += OnSettingsChanged;
 		}
 
 		public ListCollectionView MonitorsView
@@ -29,6 +30,10 @@ namespace Monitorian.Core.ViewModels
 				if (_monitorsView is null)
 				{
 					_monitorsView = new ListCollectionView(_controller.Monitors);
+					if (Settings.OrdersArrangement)
+					{
+						_monitorsView.SortDescriptions.Add(new SortDescription(nameof(MonitorViewModel.MonitorTop), ListSortDirection.Ascending));
+					}
 					_monitorsView.SortDescriptions.Add(new SortDescription(nameof(MonitorViewModel.DisplayIndex), ListSortDirection.Ascending));
 					_monitorsView.SortDescriptions.Add(new SortDescription(nameof(MonitorViewModel.MonitorIndex), ListSortDirection.Ascending));
 					_monitorsView.Filter = x => ((MonitorViewModel)x).IsTarget;
@@ -77,5 +82,32 @@ namespace Monitorian.Core.ViewModels
 		}
 
 		public bool IsScanning { get; private set; }
+
+		private void OnSettingsChanged(object sender, PropertyChangedEventArgs e)
+		{
+			switch (e.PropertyName)
+			{
+				case nameof(Settings.OrdersArrangement):
+					var orderDescription = MonitorsView.SortDescriptions.FirstOrDefault(x => x.PropertyName == nameof(MonitorViewModel.MonitorTop));
+
+					if (Settings.OrdersArrangement)
+					{
+						if (orderDescription != default)
+							return;
+
+						MonitorsView.SortDescriptions.Insert(0, new SortDescription(nameof(MonitorViewModel.MonitorTop), ListSortDirection.Ascending));
+					}
+					else
+					{
+						if (orderDescription == default)
+							return;
+
+						MonitorsView.SortDescriptions.Remove(orderDescription);
+					}
+
+					MonitorsView.Refresh();
+					break;
+			}
+		}
 	}
 }

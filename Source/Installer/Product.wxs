@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <Product Id="*" Name="Monitorian" Manufacturer="emoacht" Version="2.11.2"
+  <Product Id="*" Name="Monitorian" Manufacturer="emoacht" Version="3.0.1"
            Language="1033" Codepage="1252" UpgradeCode="{81A4D148-75D3-462E-938D-8C208FB48E3C}">
     <Package Id="*" InstallerVersion="500" Compressed="yes"
              InstallScope="perMachine" InstallPrivileges="elevated"
@@ -11,6 +11,14 @@
     <Media Id="1" Cabinet="source.cab" EmbedCab="yes"/>
 
     <Property Id="VEM" Value="yes"/>
+
+    <!-- UI -->
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR"/>
+    <UIRef Id="WixUI_InstallDir"/>
+    <UIRef Id="WixUI_ErrorProgressText"/>
+    <WixVariable Id="WixUIBannerBmp" Value="Resources\banner.png"/>
+    <WixVariable Id="WixUIDialogBmp" Value="Resources\dialog.png"/>
+    <WixVariable Id="WixUILicenseRtf" Value="Resources\License.rtf"/>
 
     <Directory Id="TARGETDIR" Name="SourceDir">
       <!-- Program Files -->
@@ -58,13 +66,9 @@
               Source="$(var.Monitorian.TargetDir)" Name="ScreenFrame.dll" KeyPath="yes"/>
       </Component>
 
-      <Component Id="AgencyLibrary" Guid="{BF5542A0-B74B-4CBA-9945-C001342759A6}">
-        <File Id="AgencyLibrary"
+      <Component Id="StartupLibrary" Guid="{BF5542A0-B74B-4CBA-9945-C001342759A6}">
+        <File Id="StartupLibrary"
               Source="$(var.Monitorian.TargetDir)" Name="StartupAgency.dll" KeyPath="yes"/>
-      </Component>
-      <Component Id="BridgeLibrary" Guid="{6B9D6399-5B5A-4AFF-99B0-9892B8C237B8}">
-        <File Id="BridgeLibrary"
-              Source="$(var.Monitorian.TargetDir)" Name="StartupBridge.dll" KeyPath="yes"/>
       </Component>
 
       <Component Id="VisualManifest" Guid="{69BD7D13-0EA9-46F3-9575-EBEEF24A839D}">
@@ -74,10 +78,28 @@
       </Component>
 
       <!-- Language resources -->
+      <Directory Id="ResourcesFolder_de" Name="de"
+           FileSource="$(var.Monitorian.TargetDir)de">
+        <Component Id="CoreResourcesLibrary_de" Guid="{4BE0F7FF-08C3-461E-9FED-4037D40BEB45}">
+          <File Id="CoreResourcesLibrary_de" Name="$(var.Monitorian.TargetName).Core.resources.dll" KeyPath="yes"/>
+        </Component>
+      </Directory>
+      <Directory Id="ResourcesFolder_fr" Name="fr"
+                 FileSource="$(var.Monitorian.TargetDir)fr">
+        <Component Id="CoreResourcesLibrary_fr" Guid="{B7502D66-6FE8-4E0F-A8D0-42AFFBE82895}">
+          <File Id="CoreResourcesLibrary_fr" Name="$(var.Monitorian.TargetName).Core.resources.dll" KeyPath="yes"/>
+        </Component>
+      </Directory>
       <Directory Id="ResourcesFolder_jaJP" Name="ja-JP"
                  FileSource="$(var.Monitorian.TargetDir)ja-JP">
         <Component Id="CoreResourcesLibrary_jaJP" Guid="{AFE32597-13D8-40D0-887E-9C2B5AB0F9B6}">
           <File Id="CoreResourcesLibrary_jaJP" Name="$(var.Monitorian.TargetName).Core.resources.dll" KeyPath="yes"/>
+        </Component>
+      </Directory>
+      <Directory Id="ResourcesFolder_koKR" Name="ko-KR"
+           FileSource="$(var.Monitorian.TargetDir)ko-KR">
+        <Component Id="CoreResourcesLibrary_koKR" Guid="{F2C43EB4-5522-4A42-A63F-0C229DB356A5}">
+          <File Id="CoreResourcesLibrary_koKR" Name="$(var.Monitorian.TargetName).Core.resources.dll" KeyPath="yes"/>
         </Component>
       </Directory>
       <Directory Id="ResourcesFolder_plPL" Name="pl-PL"
@@ -133,10 +155,12 @@
       <ComponentRef Id="CoreLibrary"/>
       <ComponentRef Id="SupplementLibrary"/>
       <ComponentRef Id="FrameLibrary"/>
-      <ComponentRef Id="AgencyLibrary"/>
-      <ComponentRef Id="BridgeLibrary"/>
+      <ComponentRef Id="StartupLibrary"/>
       <ComponentRef Id="VisualManifest"/>
+      <ComponentRef Id="CoreResourcesLibrary_de"/>
+      <ComponentRef Id="CoreResourcesLibrary_fr"/>
       <ComponentRef Id="CoreResourcesLibrary_jaJP"/>
+      <ComponentRef Id="CoreResourcesLibrary_koKR"/>
       <ComponentRef Id="CoreResourcesLibrary_plPL"/>
       <ComponentRef Id="CoreResourcesLibrary_ruRU"/>
       <ComponentRef Id="CoreResourcesLibrary_zhHans"/>

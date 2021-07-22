@@ -15,6 +15,8 @@ using System.Windows.Media.Imaging;
 using Monitorian.Core.Helper;
 using Monitorian.Core.Models;
 using Monitorian.Core.ViewModels;
+using Monitorian.Core.Views.Controls;
+using Monitorian.Core.Views.Touchpad;
 using ScreenFrame.Movers;
 
 namespace Monitorian.Core.Views
@@ -22,6 +24,7 @@ namespace Monitorian.Core.Views
 	public partial class MainWindow : Window
 	{
 		private readonly StickWindowMover _mover;
+		private readonly TouchpadTracker _tracker;
 		public MainWindowViewModel ViewModel => (MainWindowViewModel)this.DataContext;
 
 		public MainWindow(AppControllerCore controller)
@@ -33,6 +36,18 @@ namespace Monitorian.Core.Views
 			this.DataContext = new MainWindowViewModel(controller);
 
 			_mover = new StickWindowMover(this, controller.NotifyIconContainer.NotifyIcon);
+
+			_tracker = new TouchpadTracker(this);
+			_tracker.ManipulationDelta += (_, delta) =>
+			{
+				var slider = FocusManager.GetFocusedElement(this) as EnhancedSlider;
+				slider?.ChangeValue(delta);
+			};
+			_tracker.ManipulationCompleted += (_, _) =>
+			{
+				var slider = FocusManager.GetFocusedElement(this) as EnhancedSlider;
+				slider?.EnsureUpdateSource();
+			};
 		}
 
 		protected override void OnSourceInitialized(EventArgs e)
@@ -72,13 +87,14 @@ namespace Monitorian.Core.Views
 
 		#region Elements
 
-		private const double ShrinkFactor = 0.6;
+		private const double ShrinkFactor = 0.64;
 		private Dictionary<string, double> _defaultHeights;
+		private const string SliderHeightName = "SliderHeight";
 
 		private void CheckDefaultHeights()
 		{
 			_defaultHeights = this.Resources.Cast<DictionaryEntry>()
-				.Where(x => ((string)x.Key).EndsWith("Height", StringComparison.Ordinal))
+				.Where(x => (x.Key is string key) && key.EndsWith("Height", StringComparison.Ordinal))
 				.Where(x => x.Value is double height and > 0D)
 				.ToDictionary(x => (string)x.Key, x => (double)x.Value);
 		}
@@ -107,7 +123,11 @@ namespace Monitorian.Core.Views
 
 						foreach (var (key, value) in window._defaultHeights)
 						{
-							window.Resources[key] = value * factor;
+							var buffer = value * factor;
+							if (key == SliderHeightName)
+								buffer = Math.Ceiling(buffer / 4) * 4;
+
+							window.Resources[key] = buffer;
 						}
 					}));
 

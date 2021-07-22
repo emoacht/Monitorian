@@ -61,6 +61,15 @@ namespace Monitorian.Core.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Change contrast.
+        /// </summary>
+        public static string ChangeContrast {
+            get {
+                return ResourceManager.GetString("ChangeContrast", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Change adjustable range.
         /// </summary>
         public static string ChangeRange {
@@ -97,20 +106,38 @@ namespace Monitorian.Core.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Defer change until stopped.
+        /// </summary>
+        public static string DeferChange {
+            get {
+                return ResourceManager.GetString("DeferChange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enable changing contrast.
+        /// </summary>
+        public static string EnableContrast {
+            get {
+                return ResourceManager.GetString("EnableContrast", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enable changing adjustable range.
+        /// </summary>
+        public static string EnableRange {
+            get {
+                return ResourceManager.GetString("EnableRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enable moving in unison.
         /// </summary>
         public static string EnableUnison {
             get {
                 return ResourceManager.GetString("EnableUnison", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to License.
-        /// </summary>
-        public static string License {
-            get {
-                return ResourceManager.GetString("License", resourceCulture);
             }
         }
         
@@ -124,6 +151,24 @@ namespace Monitorian.Core.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Move in unison.
+        /// </summary>
+        public static string MoveUnison {
+            get {
+                return ResourceManager.GetString("MoveUnison", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Order by monitors arrangement.
+        /// </summary>
+        public static string OrderArrangement {
+            get {
+                return ResourceManager.GetString("OrderArrangement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Probe into monitors.
         /// </summary>
         public static string Probe {
@@ -133,7 +178,7 @@ namespace Monitorian.Core.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to An unexpected problem happened. Save exception log to Desktop?.
+        ///   Looks up a localized string similar to An unexpected problem occurred. Save exception log to Desktop?.
         /// </summary>
         public static string RecordExceptionMessage {
             get {
@@ -160,6 +205,15 @@ namespace Monitorian.Core.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Settings.
+        /// </summary>
+        public static string Settings {
+            get {
+                return ResourceManager.GetString("Settings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show adjusted brightness.
         /// </summary>
         public static string ShowAdjusted {
@@ -169,20 +223,11 @@ namespace Monitorian.Core.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Site.
+        ///   Looks up a localized string similar to Show current number.
         /// </summary>
-        public static string Site {
+        public static string ShowNumber {
             get {
-                return ResourceManager.GetString("Site", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to https://github.com/emoacht/Monitorian.
-        /// </summary>
-        public static string SiteUrl {
-            get {
-                return ResourceManager.GetString("SiteUrl", resourceCulture);
+                return ResourceManager.GetString("ShowNumber", resourceCulture);
             }
         }
         
@@ -223,7 +268,7 @@ namespace Monitorian.Core.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Use large buttons.
+        ///   Looks up a localized string similar to Use large sliders.
         /// </summary>
         public static string UseLargeElements {
             get {

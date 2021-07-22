@@ -10,9 +10,9 @@ using System.Threading.Tasks;
 namespace Monitorian.Core.Models.Monitor
 {
 	/// <summary>
-	/// Device Installation Functions
+	/// Device Information Functions
 	/// </summary>
-	internal class DeviceInstallation
+	internal class DeviceInformation
 	{
 		#region Win32
 
@@ -22,6 +22,9 @@ namespace Monitorian.Core.Models.Monitor
 			IntPtr Enumerator, // Null
 			IntPtr hwndParent, // Null
 			DIGCF Flags);
+
+		private const int INVALID_HANDLE_VALUE = -1;
+		private const int ERROR_NO_MORE_ITEMS = 259;
 
 		[DllImport("Setupapi.dll", SetLastError = true)]
 		[return: MarshalAs(UnmanagedType.Bool)]
@@ -156,8 +159,6 @@ namespace Monitorian.Core.Models.Monitor
 			CM_DEVCAP_NONDYNAMIC = 0x00000200
 		}
 
-		private const int ERROR_NO_MORE_ITEMS = 259;
-
 		#endregion
 
 		#region Type
@@ -196,10 +197,10 @@ namespace Monitorian.Core.Models.Monitor
 			{
 				deviceInfoSet = SetupDiGetClassDevs(
 					GUID_DEVINTERFACE_MONITOR,
-					IntPtr.Zero,
+					IntPtr.Zero, // DISPLAY
 					IntPtr.Zero,
 					DIGCF.DIGCF_DEVICEINTERFACE | DIGCF.DIGCF_PRESENT);
-				if (deviceInfoSet == IntPtr.Zero)
+				if (deviceInfoSet.ToInt32() == INVALID_HANDLE_VALUE) // Assuming 32bit process
 				{
 					Debug.WriteLine($"Failed to get device information list. {Error.GetMessage()}");
 					yield break;
@@ -251,36 +252,31 @@ namespace Monitorian.Core.Models.Monitor
 
 		private static string GetDeviceInstanceId(IntPtr DeviceInfoSet, SP_DEVINFO_DATA DeviceInfoData)
 		{
-			StringBuilder buffer = null;
-			uint bufferSize = 0;
-
 			SetupDiGetDeviceInstanceId(
 				DeviceInfoSet,
 				ref DeviceInfoData,
-				buffer,
-				bufferSize,
+				null,
+				0,
 				out uint requiredSize);
 
-			buffer = new StringBuilder((int)requiredSize);
-			bufferSize = requiredSize;
+			var buffer = new StringBuilder((int)requiredSize);
 
-			if (!SetupDiGetDeviceInstanceId(
+			if (SetupDiGetDeviceInstanceId(
 				DeviceInfoSet,
 				ref DeviceInfoData,
 				buffer,
-				bufferSize,
+				requiredSize,
 				out _))
 			{
-				return string.Empty;
+				return buffer.ToString();
 			}
-
-			return buffer.ToString();
+			return string.Empty;
 		}
 
 		private static string GetDevicePropertyString(IntPtr DeviceInfoSet, SP_DEVINFO_DATA DeviceInfoData, SPDRP property)
 		{
 			var buffer = GetDevicePropertyBytes(DeviceInfoSet, DeviceInfoData, property);
-			if (buffer.Length == 0)
+			if (buffer is null)
 				return string.Empty;
 
 			return Encoding.Unicode.GetString(buffer).TrimEnd((char)0);
@@ -289,7 +285,7 @@ namespace Monitorian.Core.Models.Monitor
 		private static uint GetDevicePropertyUInt(IntPtr DeviceInfoSet, SP_DEVINFO_DATA DeviceInfoData, SPDRP property)
 		{
 			var buffer = GetDevicePropertyBytes(DeviceInfoSet, DeviceInfoData, property);
-			if (buffer.Length == 0)
+			if (buffer is null)
 				return 0;
 
 			return BitConverter.ToUInt32(buffer, 0);
@@ -297,34 +293,29 @@ namespace Monitorian.Core.Models.Monitor
 
 		private static byte[] GetDevicePropertyBytes(IntPtr DeviceInfoSet, SP_DEVINFO_DATA DeviceInfoData, SPDRP property)
 		{
-			byte[] buffer = null;
-			uint bufferSize = 0;
-
 			SetupDiGetDeviceRegistryProperty(
 				DeviceInfoSet,
 				ref DeviceInfoData,
 				property,
 				out _,
-				buffer,
-				bufferSize,
+				null,
+				0,
 				out uint requiredSize);
 
-			buffer = new byte[requiredSize];
-			bufferSize = requiredSize;
+			var buffer = new byte[requiredSize];
 
-			if (!SetupDiGetDeviceRegistryProperty(
+			if (SetupDiGetDeviceRegistryProperty(
 				DeviceInfoSet,
 				ref DeviceInfoData,
 				property,
 				out _,
 				buffer,
-				bufferSize,
+				requiredSize,
 				out _))
 			{
-				return Array.Empty<byte>();
+				return buffer;
 			}
-
-			return buffer;
+			return null;
 		}
 	}
 }

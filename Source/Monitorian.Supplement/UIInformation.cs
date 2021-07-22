@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
+using Microsoft.Win32;
 using Windows.UI.ViewManagement;
 
 namespace Monitorian.Supplement
@@ -17,17 +18,55 @@ namespace Monitorian.Supplement
 	/// </remarks>
 	public class UIInformation
 	{
+		private static UISettings _uiSettings;
+
 		/// <summary>
-		/// Gets accent color.
+		/// Gets the system accent color.
 		/// </summary>
 		/// <returns></returns>
-		public static Color GetAccentColor()
+		public static Color GetAccentColor() => GetUIColor(UIColorType.Accent);
+
+		/// <summary>
+		/// Gets the system background color.
+		/// </summary>
+		/// <returns></returns>
+		public static Color GetBackgroundColor() => GetUIColor(UIColorType.Background);
+
+		private static Color GetUIColor(UIColorType colorType)
 		{
-			var value = (_uiSettings ?? new UISettings()).GetColorValue(UIColorType.Accent);
+			var value = (_uiSettings ?? new UISettings()).GetColorValue(colorType);
 			return Color.FromArgb(value.A, value.R, value.G, value.B);
 		}
 
-		private static UISettings _uiSettings;
+		/// <summary>
+		/// Gets the color theme for Windows.
+		/// </summary>
+		/// <returns>Color theme</returns>
+		public static ColorTheme GetWindowsTheme() => GetTheme(SystemValueName);
+
+		/// <summary>
+		/// Gets the color theme for applications.
+		/// </summary>
+		/// <returns>Color theme</returns>
+		public static ColorTheme GetAppTheme() => GetTheme(AppValueName);
+
+		private const string SystemValueName = "SystemUsesLightTheme";
+		private const string AppValueName = "AppsUseLightTheme";
+
+		private static ColorTheme GetTheme(string valueName)
+		{
+			const string keyName = @"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize"; // HKCU
+
+			using var key = Registry.CurrentUser.OpenSubKey(keyName);
+
+			return key?.GetValue(valueName, 1) switch
+			{
+				0 => ColorTheme.Dark,
+				1 => ColorTheme.Light,
+				_ => ColorTheme.Unknown
+			};
+		}
+
 		private static readonly object _lock = new object();
 
 		/// <summary>
@@ -70,5 +109,26 @@ namespace Monitorian.Supplement
 		{
 			_colorsChanged?.Invoke(sender, EventArgs.Empty);
 		}
+	}
+
+	/// <summary>
+	/// Color theme
+	/// </summary>
+	public enum ColorTheme
+	{
+		/// <summary>
+		/// Unknown
+		/// </summary>
+		Unknown = 0,
+
+		/// <summary>
+		/// Dark mode
+		/// </summary>
+		Dark,
+
+		/// <summary>
+		/// Light mode
+		/// </summary>
+		Light
 	}
 }

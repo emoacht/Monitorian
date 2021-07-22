@@ -141,10 +141,6 @@ namespace Monitorian.Core.Models.Monitor
 			MC_SET_PARAMETER
 		}
 
-		private const byte LuminanceCode = 0x10; // VCP Code of Luminance
-		private const byte ContrastCode = 0x12;
-		private const byte SpeakerVolumeCode = 0x62;
-
 		#endregion
 
 		#region Type
@@ -160,40 +156,32 @@ namespace Monitorian.Core.Models.Monitor
 
 			public SafePhysicalMonitorHandle Handle { get; }
 
-			public bool IsSupported => IsHighLevelSupported || IsLowLevelSupported;
-
 			[DataMember(Order = 2)]
-			public bool IsHighLevelSupported { get; }
-
-			[DataMember(Order = 3)]
-			public bool IsLowLevelSupported { get; }
-
-			[DataMember(Order = 4)]
-			public string CapabilitiesString { get; }
-
-			[DataMember(Order = 5)]
-			public string CapabilitiesReport { get; }
+			public MonitorCapability Capability { get; }
 
 			public PhysicalItem(
 				string description,
 				int monitorIndex,
 				SafePhysicalMonitorHandle handle,
-				bool isHighLevelSupported,
-				bool isLowLevelSupported = false,
-				string capabilitiesString = null,
-				string capabilitiesReport = null)
+				MonitorCapability capability)
 			{
 				this.Description = description;
 				this.MonitorIndex = monitorIndex;
 				this.Handle = handle;
-				this.IsHighLevelSupported = isHighLevelSupported;
-				this.IsLowLevelSupported = isLowLevelSupported;
-				this.CapabilitiesString = capabilitiesString;
-				this.CapabilitiesReport = capabilitiesReport;
+				this.Capability = capability;
 			}
 		}
 
 		#endregion
+
+		private enum VcpCode : byte
+		{
+			None = 0x0,
+			Luminance = 0x10,
+			Contrast = 0x12,
+			SpeakerVolume = 0x62,
+			PowerMode = 0xD6,
+		}
 
 		public static IEnumerable<PhysicalItem> EnumeratePhysicalMonitors(IntPtr monitorHandle, bool verbose = false)
 		{
@@ -228,48 +216,14 @@ namespace Monitorian.Core.Models.Monitor
 				{
 					var handle = new SafePhysicalMonitorHandle(physicalMonitor.hPhysicalMonitor);
 
-					bool isHighLevelSupported = GetMonitorCapabilities(
-						handle,
-						out MC_CAPS caps,
-						out _)
-						&& caps.HasFlag(MC_CAPS.MC_CAPS_BRIGHTNESS);
-
-					bool isLowLevelSupported = false;
-					string capabilitiesString = null;
-
-					if (!isHighLevelSupported || verbose)
-					{
-						if (GetCapabilitiesStringLength(
-							handle,
-							out uint capabilitiesStringLength))
-						{
-							var buffer = new StringBuilder((int)capabilitiesStringLength);
-
-							if (CapabilitiesRequestAndCapabilitiesReply(
-								handle,
-								buffer,
-								capabilitiesStringLength))
-							{
-								capabilitiesString = buffer.ToString();
-								isLowLevelSupported = IsLowLevelSupported(capabilitiesString);
-							}
-						}
-					}
-
 					//Debug.WriteLine($"Description: {physicalMonitor.szPhysicalMonitorDescription}");
 					//Debug.WriteLine($"Handle: {physicalMonitor.hPhysicalMonitor}");
-					//Debug.WriteLine($"IsHighLevelSupported: {isHighLevelSupported}");
-					//Debug.WriteLine($"IsLowLevelSupported: {isLowLevelSupported}");
-					//Debug.WriteLine($"CapabilitiesString: {capabilitiesString}");
 
 					yield return new PhysicalItem(
 						description: physicalMonitor.szPhysicalMonitorDescription,
 						monitorIndex: monitorIndex,
 						handle: handle,
-						isHighLevelSupported: isHighLevelSupported,
-						isLowLevelSupported: isLowLevelSupported,
-						capabilitiesString: (verbose ? capabilitiesString : null),
-						capabilitiesReport: (verbose ? MakeCapabilitiesReport(capabilitiesString) : null));
+						capability: GetMonitorCapability(handle, verbose));
 
 					monitorIndex++;
 				}
@@ -280,15 +234,48 @@ namespace Monitorian.Core.Models.Monitor
 			}
 		}
 
-		private static bool IsLowLevelSupported(string source)
+		private static MonitorCapability GetMonitorCapability(SafePhysicalMonitorHandle physicalMonitorHandle, bool verbose)
 		{
-			return EnumerateVcpCodes(source).Contains(LuminanceCode);
-		}
+			bool isHighLevelSupported = GetMonitorCapabilities(
+				physicalMonitorHandle,
+				out MC_CAPS caps,
+				out _)
+				&& caps.HasFlag(MC_CAPS.MC_CAPS_BRIGHTNESS);
 
-		private static string MakeCapabilitiesReport(string source)
-		{
-			var codes = EnumerateVcpCodes(source).ToArray();
-			return $"Luminance: {codes.Contains(LuminanceCode)}, Contrast: {codes.Contains(ContrastCode)}, Speaker Volume: {codes.Contains(SpeakerVolumeCode)}";
+			if (GetCapabilitiesStringLength(
+				physicalMonitorHandle,
+				out uint capabilitiesStringLength))
+			{
+				var buffer = new StringBuilder((int)capabilitiesStringLength);
+
+				if (CapabilitiesRequestAndCapabilitiesReply(
+					physicalMonitorHandle,
+					buffer,
+					capabilitiesStringLength))
+				{
+					var capabilitiesString = buffer.ToString();
+					var vcpCodes = EnumerateVcpCodes(capabilitiesString).ToArray();
+
+					return new MonitorCapability(
+						isHighLevelBrightnessSupported: isHighLevelSupported,
+						isLowLevelBrightnessSupported: vcpCodes.Contains((byte)VcpCode.Luminance),
+						isContrastSupported: vcpCodes.Contains((byte)VcpCode.Contrast),
+						capabilitiesString: (verbose ? capabilitiesString : null),
+						capabilitiesReport: (verbose ? MakeCapabilitiesReport(vcpCodes) : null));
+				}
+			}
+			return new MonitorCapability(
+				isHighLevelBrightnessSupported: isHighLevelSupported,
+				isLowLevelBrightnessSupported: false,
+				isContrastSupported: false);
+
+			static string MakeCapabilitiesReport(byte[] vcpCodes)
+			{
+				return $"Luminance: {vcpCodes.Contains((byte)VcpCode.Luminance)}, " +
+					   $"Contrast: {vcpCodes.Contains((byte)VcpCode.Contrast)}, " +
+					   $"Speaker Volume: {vcpCodes.Contains((byte)VcpCode.SpeakerVolume)}, " +
+					   $"Power Mode: {vcpCodes.Contains((byte)VcpCode.PowerMode)}";
+			}
 		}
 
 		private static IEnumerable<byte> EnumerateVcpCodes(string source)
@@ -348,9 +335,9 @@ namespace Monitorian.Core.Models.Monitor
 		/// Gets raw brightnesses not represented in percentage.
 		/// </summary>
 		/// <param name="physicalMonitorHandle">Physical monitor handle</param>
-		/// <param name="useLowLevel">Whether to use low level function</param>
+		/// <param name="isHighLevelBrightnessSupported">Whether high level function is supported</param>
 		/// <returns>
-		/// <para>success: True if successfully gets</para>
+		/// <para>result: Result</para>
 		/// <para>minimum: Raw minimum brightness (not always 0)</para>
 		/// <para>current: Raw current brightness (not always 0 to 100)</para>
 		/// <para>maximum: Raw maximum brightness (not always 100)</para>
@@ -361,50 +348,65 @@ namespace Monitorian.Core.Models.Monitor
 		/// in percentage using those values. They are used to convert brightness in percentage
 		/// back to raw brightness when settings brightness as well.
 		/// </remarks>
-		public static (bool success, uint minimum, uint current, uint maximum) GetBrightness(SafePhysicalMonitorHandle physicalMonitorHandle, bool useLowLevel = false)
+		public static (AccessResult result, uint minimum, uint current, uint maximum) GetBrightness(SafePhysicalMonitorHandle physicalMonitorHandle, bool isHighLevelBrightnessSupported = true)
 		{
-			if (physicalMonitorHandle is null)
-				throw new ArgumentNullException(nameof(physicalMonitorHandle));
+			if (!isHighLevelBrightnessSupported)
+				return GetVcpValue(physicalMonitorHandle, VcpCode.Luminance);
 
-			if (physicalMonitorHandle.IsClosed)
-			{
-				Debug.WriteLine("Failed to get brightnesses. The physical monitor handle has been closed.");
-				return (success: false, 0, 0, 0);
-			}
+			if (!EnsurePhysicalMonitorHandle(physicalMonitorHandle))
+				return (result: AccessResult.Failed, 0, 0, 0);
 
-			if (!useLowLevel)
+			if (GetMonitorBrightness(
+				physicalMonitorHandle,
+				out uint minimumBrightness,
+				out uint currentBrightness,
+				out uint maximumBrightness))
 			{
-				if (!GetMonitorBrightness(
-					physicalMonitorHandle,
-					out uint minimumBrightness,
-					out uint currentBrightness,
-					out uint maximumBrightness))
-				{
-					Debug.WriteLine($"Failed to get brightnesses (High level). {Error.GetMessage()}");
-					return (success: false, 0, 0, 0);
-				}
-				return (success: true,
+				return (result: AccessResult.Succeeded,
 					minimum: minimumBrightness,
 					current: currentBrightness,
 					maximum: maximumBrightness);
 			}
-			else
+			var (errorCode, message) = Error.GetCodeMessage();
+			Debug.WriteLine($"Failed to get brightnesses. {message}");
+			return (result: new AccessResult(GetStatus(errorCode), $"High level, {message}"), 0, 0, 0);
+		}
+
+		/// <summary>
+		/// Gets raw contrast not represented in percentage.
+		/// </summary>
+		/// <param name="physicalMonitorHandle">Physical monitor handle</param>
+		/// <returns>
+		/// <para>result: Result</para>
+		/// <para>minimum: Raw minimum contrast (0)</para>
+		/// <para>current: Raw current contrast (not always 0 to 100)</para>
+		/// <para>maximum: Raw maximum contrast (not always 100)</para>
+		/// </returns>
+		public static (AccessResult result, uint minimum, uint current, uint maximum) GetContrast(SafePhysicalMonitorHandle physicalMonitorHandle)
+		{
+			return GetVcpValue(physicalMonitorHandle, VcpCode.Contrast);
+		}
+
+		private static (AccessResult result, uint minimum, uint current, uint maximum) GetVcpValue(SafePhysicalMonitorHandle physicalMonitorHandle, VcpCode vcpCode)
+		{
+			if (!EnsurePhysicalMonitorHandle(physicalMonitorHandle))
+				return (result: AccessResult.Failed, 0, 0, 0);
+
+			if (GetVCPFeatureAndVCPFeatureReply(
+				physicalMonitorHandle,
+				(byte)vcpCode,
+				out _,
+				out uint currentValue,
+				out uint maximumValue))
 			{
-				if (!GetVCPFeatureAndVCPFeatureReply(
-					physicalMonitorHandle,
-					LuminanceCode,
-					out _,
-					out uint currentValue,
-					out uint maximumValue))
-				{
-					Debug.WriteLine($"Failed to get brightnesses (Low level). {Error.GetMessage()}");
-					return (success: false, 0, 0, 0);
-				}
-				return (success: true,
+				return (result: AccessResult.Succeeded,
 					minimum: 0,
 					current: currentValue,
 					maximum: maximumValue);
 			}
+			var (errorCode, message) = Error.GetCodeMessage();
+			Debug.WriteLine($"Failed to get VCP value ({vcpCode}). {message}");
+			return (result: new AccessResult(GetStatus(errorCode), $"Low level, {message}"), 0, 0, 0);
 		}
 
 		/// <summary>
@@ -412,42 +414,130 @@ namespace Monitorian.Core.Models.Monitor
 		/// </summary>
 		/// <param name="physicalMonitorHandle">Physical monitor handle</param>
 		/// <param name="brightness">Raw brightness (not always 0 to 100)</param>
-		/// <param name="useLowLevel">Whether to use low level function</param>
-		/// <returns>True if successfully sets</returns>
-		public static bool SetBrightness(SafePhysicalMonitorHandle physicalMonitorHandle, uint brightness, bool useLowLevel = false)
+		/// <param name="isHighLevelBrightnessSupported">Whether high level function is supported</param>
+		/// <returns>Result</returns>
+		public static AccessResult SetBrightness(SafePhysicalMonitorHandle physicalMonitorHandle, uint brightness, bool isHighLevelBrightnessSupported = true)
+		{
+			if (!isHighLevelBrightnessSupported)
+				return SetVcpValue(physicalMonitorHandle, VcpCode.Luminance, brightness);
+
+			if (!EnsurePhysicalMonitorHandle(physicalMonitorHandle))
+				return AccessResult.Failed;
+
+			// SetMonitorBrightness function may return true even when it actually failed.
+			if (SetMonitorBrightness(
+				physicalMonitorHandle,
+				brightness))
+			{
+				return AccessResult.Succeeded;
+			}
+			var (errorCode, message) = Error.GetCodeMessage();
+			Debug.WriteLine($"Failed to set brightness. {message}");
+			return new AccessResult(GetStatus(errorCode), $"High level {message}");
+		}
+
+		/// <summary>
+		/// Sets raw contrast not represented in percentage.
+		/// </summary>
+		/// <param name="physicalMonitorHandle">Physical monitor handle</param>
+		/// <param name="contrast">Raw contrast (not always 0 to 100)</param>
+		/// <returns>Result</returns>
+		public static AccessResult SetContrast(SafePhysicalMonitorHandle physicalMonitorHandle, uint contrast)
+		{
+			return SetVcpValue(physicalMonitorHandle, VcpCode.Contrast, contrast);
+		}
+
+		private static AccessResult SetVcpValue(SafePhysicalMonitorHandle physicalMonitorHandle, VcpCode vcpCode, uint value)
+		{
+			if (!EnsurePhysicalMonitorHandle(physicalMonitorHandle))
+				return AccessResult.Failed;
+
+			if (SetVCPFeature(
+				physicalMonitorHandle,
+				(byte)vcpCode,
+				value))
+			{
+				return AccessResult.Succeeded;
+			}
+			var (errorCode, message) = Error.GetCodeMessage();
+			Debug.WriteLine($"Failed to set VCP value ({vcpCode}). {message}");
+			return new AccessResult(GetStatus(errorCode), $"Low level, {message}");
+		}
+
+		private static bool EnsurePhysicalMonitorHandle(SafePhysicalMonitorHandle physicalMonitorHandle)
 		{
 			if (physicalMonitorHandle is null)
 				throw new ArgumentNullException(nameof(physicalMonitorHandle));
 
 			if (physicalMonitorHandle.IsClosed)
 			{
-				Debug.WriteLine("Failed to set brightness. The physical monitor handle has been closed.");
+				Debug.WriteLine("The physical monitor handle has been closed.");
 				return false;
 			}
-
-			if (!useLowLevel)
-			{
-				// SetMonitorBrightness function may return true even when it actually failed.
-				if (!SetMonitorBrightness(
-					physicalMonitorHandle,
-					brightness))
-				{
-					Debug.WriteLine($"Failed to set brightness (High level). {Error.GetMessage()}");
-					return false;
-				}
-			}
-			else
-			{
-				if (!SetVCPFeature(
-					physicalMonitorHandle,
-					LuminanceCode,
-					brightness))
-				{
-					Debug.WriteLine($"Failed to set brightness (Low level). {Error.GetMessage()}");
-					return false;
-				}
-			}
 			return true;
+		}
+
+		#region Error
+
+		// Derived from winerror.h
+		private const uint ERROR_GRAPHICS_DDCCI_VCP_NOT_SUPPORTED = 0xC0262584;
+		private const uint ERROR_GRAPHICS_DDCCI_INVALID_DATA = 0xC0262585;
+		private const uint ERROR_GRAPHICS_DDCCI_INVALID_MESSAGE_COMMAND = 0xC0262589;
+		private const uint ERROR_GRAPHICS_DDCCI_INVALID_MESSAGE_LENGTH = 0xC026258A;
+		private const uint ERROR_GRAPHICS_DDCCI_INVALID_MESSAGE_CHECKSUM = 0xC026258B;
+		private const uint ERROR_GRAPHICS_I2C_ERROR_TRANSMITTING_DATA = 0xC0262582;
+		private const uint ERROR_GRAPHICS_MONITOR_NO_LONGER_EXISTS = 0xC026258D;
+
+		private static AccessStatus GetStatus(int errorCode)
+		{
+			return unchecked((uint)errorCode) switch
+			{
+				ERROR_GRAPHICS_DDCCI_VCP_NOT_SUPPORTED or
+				ERROR_GRAPHICS_DDCCI_INVALID_DATA or
+				ERROR_GRAPHICS_DDCCI_INVALID_MESSAGE_COMMAND or
+				ERROR_GRAPHICS_DDCCI_INVALID_MESSAGE_LENGTH or
+				ERROR_GRAPHICS_DDCCI_INVALID_MESSAGE_CHECKSUM => AccessStatus.DdcFailed,
+				ERROR_GRAPHICS_I2C_ERROR_TRANSMITTING_DATA => AccessStatus.TransmissionFailed,
+				ERROR_GRAPHICS_MONITOR_NO_LONGER_EXISTS => AccessStatus.NoLongerExist,
+				_ => AccessStatus.Failed
+			};
+		}
+
+		#endregion
+	}
+
+	[DataContract]
+	internal class MonitorCapability
+	{
+		public bool IsBrightnessSupported => IsHighLevelBrightnessSupported || IsLowLevelBrightnessSupported;
+
+		[DataMember(Order = 0)]
+		public bool IsHighLevelBrightnessSupported { get; }
+
+		[DataMember(Order = 1)]
+		public bool IsLowLevelBrightnessSupported { get; }
+
+		[DataMember(Order = 2)]
+		public bool IsContrastSupported { get; }
+
+		[DataMember(Order = 3)]
+		public string CapabilitiesString { get; }
+
+		[DataMember(Order = 4)]
+		public string CapabilitiesReport { get; }
+
+		public MonitorCapability(
+			bool isHighLevelBrightnessSupported,
+			bool isLowLevelBrightnessSupported,
+			bool isContrastSupported,
+			string capabilitiesString = null,
+			string capabilitiesReport = null)
+		{
+			this.IsHighLevelBrightnessSupported = isHighLevelBrightnessSupported;
+			this.IsLowLevelBrightnessSupported = isLowLevelBrightnessSupported;
+			this.IsContrastSupported = isContrastSupported;
+			this.CapabilitiesString = capabilitiesString;
+			this.CapabilitiesReport = capabilitiesReport;
 		}
 	}
 }

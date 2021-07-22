@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
 
+using ScreenFrame.Helper;
+
 namespace ScreenFrame.Movers
 {
 	/// <summary>
@@ -67,7 +69,7 @@ namespace ScreenFrame.Movers
 		/// <returns>True if successfully gets</returns>
 		protected bool TryGetAdjacentLocationToTaskbar(double windowWidth, double windowHeight, out Rect location)
 		{
-			if (!WindowHelper.TryGetTaskbar(out Rect taskbarRect, out TaskbarAlignment taskbarAlignment))
+			if (!WindowHelper.TryGetTaskbar(out Rect taskbarRect, out TaskbarAlignment taskbarAlignment, out bool isShown))
 			{
 				location = default;
 				return false;
@@ -78,11 +80,14 @@ namespace ScreenFrame.Movers
 
 			if (NotifyIconHelper.TryGetNotifyIconRect(_notifyIcon, out Rect iconRect))
 			{
-				if (taskbarRect.Contains(iconRect))
+				if (taskbarRect.Contains(
+					iconRect.X + iconRect.Width / 2D,
+					iconRect.Y + iconRect.Height / 2D))
 				{
 					iconPlacement = IconPlacement.InTaskbar;
 				}
-				else if (WindowHelper.TryGetOverflowAreaRect(out overflowAreaRect))
+				else if (WindowHelper.TryGetOverflowAreaRect(out overflowAreaRect)
+					&& overflowAreaRect.Contains(iconRect))
 				{
 					iconPlacement = IconPlacement.InOverflowArea;
 				}
@@ -91,29 +96,35 @@ namespace ScreenFrame.Movers
 			if (!WindowHelper.TryGetDwmWindowMargin(_window, out Thickness windowMargin))
 				windowMargin = new Thickness(0); // Fallback
 
+			var isLeftToRight = !CultureInfoAddition.UserDefaultUICulture.TextInfo.IsRightToLeft;
+
 			double x = 0, y = 0;
 
+			// To avoid a gap between window and taskbar when taskbar alignment is right or bottom
+			// and monitor DPI is 125%, 150%, 175%, the window width and height (in DIP) must be
+			// a multiple of 4. Otherwise, the window width and height multiplied with those DPI
+			// will have a fraction and it will cause a blurry edge looking as if there is a gap.
 			switch (taskbarAlignment)
 			{
 				case TaskbarAlignment.Top:
 				case TaskbarAlignment.Bottom:
 					x = iconPlacement switch
 					{
-						IconPlacement.InTaskbar => iconRect.Right,
-						IconPlacement.InOverflowArea => overflowAreaRect.Left,
-						_ => taskbarRect.Right,// Fallback
+						IconPlacement.InTaskbar => isLeftToRight ? iconRect.Right : iconRect.Left,
+						IconPlacement.InOverflowArea => isLeftToRight ? overflowAreaRect.Left : overflowAreaRect.Right,
+						_ => isLeftToRight ? taskbarRect.Right : taskbarRect.Left, // Fallback
 					};
-					x -= (windowWidth - windowMargin.Right);
+					x -= isLeftToRight ? (windowWidth - windowMargin.Right) : windowMargin.Left;
 
 					switch (taskbarAlignment)
 					{
 						case TaskbarAlignment.Top:
-							y = taskbarRect.Bottom - windowMargin.Top;
-							PivotAlignment = PivotAlignment.TopRight;
+							y = (isShown ? taskbarRect.Bottom : taskbarRect.Top) - windowMargin.Top;
+							PivotAlignment = isLeftToRight ? PivotAlignment.TopRight : PivotAlignment.TopLeft;
 							break;
 						case TaskbarAlignment.Bottom:
-							y = taskbarRect.Top - (windowHeight - windowMargin.Bottom);
-							PivotAlignment = PivotAlignment.BottomRight;
+							y = (isShown ? taskbarRect.Top : taskbarRect.Bottom) - (windowHeight - windowMargin.Bottom);
+							PivotAlignment = isLeftToRight ? PivotAlignment.BottomRight : PivotAlignment.BottomLeft;
 							break;
 					}
 					break;
@@ -122,11 +133,11 @@ namespace ScreenFrame.Movers
 					switch (taskbarAlignment)
 					{
 						case TaskbarAlignment.Left:
-							x = taskbarRect.Right - windowMargin.Left;
+							x = (isShown ? taskbarRect.Right : taskbarRect.Left) - windowMargin.Left;
 							PivotAlignment = PivotAlignment.BottomLeft;
 							break;
 						case TaskbarAlignment.Right:
-							x = taskbarRect.Left - (windowWidth - windowMargin.Right);
+							x = (isShown ? taskbarRect.Left : taskbarRect.Right) - (windowWidth - windowMargin.Right);
 							PivotAlignment = PivotAlignment.BottomRight;
 							break;
 					}
@@ -135,7 +146,7 @@ namespace ScreenFrame.Movers
 					{
 						IconPlacement.InTaskbar => iconRect.Bottom,
 						IconPlacement.InOverflowArea => overflowAreaRect.Top,
-						_ => taskbarRect.Bottom,// Fallback
+						_ => taskbarRect.Bottom, // Fallback
 					};
 					y -= (windowHeight - windowMargin.Bottom);
 					break;

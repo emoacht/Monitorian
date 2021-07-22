@@ -34,13 +34,13 @@ namespace Monitorian.Core.ViewModels
 			Task.Run(async () =>
 			{
 				var log = await MonitorManager.ProbeMonitorsAsync();
-				LogService.RecordProbe(log);
+				Logger.RecordProbe(log);
 			});
 		}
 
 		public void PerformCopy()
 		{
-			Task.Run(() => LogService.CopyOperation());
+			Task.Run(() => Logger.CopyOperationAsync());
 		}
 
 		public void PerformRescan()

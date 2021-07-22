@@ -7,33 +7,56 @@
 		xmlns:behaviors="clr-namespace:Monitorian.Core.Views.Behaviors"
 		xmlns:controls="clr-namespace:Monitorian.Core.Views.Controls"
 		xmlns:properties="clr-namespace:Monitorian.Core.Properties"
-		Width="360" Height="200"
+		Width="340" Height="200"
 		ResizeMode="NoResize" SizeToContent="WidthAndHeight"
 		ShowInTaskbar="False"
 		AllowsTransparency="True" WindowStyle="None"
 		Background="{StaticResource App.Background.Plain}">
 	<Window.Resources>
-		<sys:Double x:Key="ButtonHeight">60</sys:Double>
+		<sys:Double x:Key="SliderHeight">52</sys:Double>
 		<sys:Double x:Key="ThumbHeight">44</sys:Double>
 		<sys:Double x:Key="BracketHeight">8</sys:Double>
 
+		<Style TargetType="{x:Type ToolTip}">
+			<Setter Property="OverridesDefaultStyle" Value="True"/>
+			<Setter Property="Padding" Value="5,3"/>
+			<Setter Property="Background" Value="{StaticResource App.Background.Plain}"/>
+			<Setter Property="Foreground" Value="{StaticResource App.Foreground}"/>
+			<Setter Property="FontSize" Value="13"/>
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="{x:Type ToolTip}">
+						<Border Width="{TemplateBinding Width}" Height="{TemplateBinding Height}"
+								BorderThickness="0"
+								Background="{TemplateBinding Background}">
+							<ContentPresenter Margin="{TemplateBinding Padding}"/>
+						</Border>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
+
 		<!-- Slider -->
-		<Color x:Key="Slider.Background.Filled.StaticColor">#FF2982CC</Color>
-		<Color x:Key="Slider.Background.Filled.MouseOverColor">#FF1A5280</Color>
-		<Color x:Key="Slider.Background.Filled.PressedColor">#FF5CA4DE</Color>
+		<Color x:Key="Slider.Background.Main.StaticColor">#FF2982CC</Color>
+		<Color x:Key="Slider.Background.Main.MouseOverColor">#FF5CA4DE</Color>
+		<Color x:Key="Slider.Background.Main.PressedColor">#FF5CA4DE</Color>
 		<Color x:Key="Slider.Background.Range.StaticColor">#FFFFA500</Color>
-		<Color x:Key="Slider.Background.Range.MouseOverColor">#FFFF8C00</Color>
+		<Color x:Key="Slider.Background.Range.MouseOverColor">#FFFFC400</Color>
 		<Color x:Key="Slider.Background.Range.PressedColor">#FFFFC400</Color>
+		<Color x:Key="Slider.Background.Contrast.StaticColor">MediumOrchid</Color>
+		<Color x:Key="Slider.Background.Contrast.MouseOverColor">Orchid</Color>
+		<Color x:Key="Slider.Background.Contrast.PressedColor">Orchid</Color>
 		<Color x:Key="Slider.Background.DisabledColor">#FFF0F0F0</Color>
 		<Color x:Key="Slider.Background.VacantColor">#FF999999</Color>
-		<Color x:Key="Slider.Background.OverlayColor">#48000000</Color>
 
-		<SolidColorBrush x:Key="Slider.Background.Filled.Static" Color="{StaticResource Slider.Background.Filled.StaticColor}"/>
+		<SolidColorBrush x:Key="Slider.Background.Main.Static" Color="{StaticResource Slider.Background.Main.StaticColor}"/>
 		<SolidColorBrush x:Key="Slider.Background.Range.Static" Color="{StaticResource Slider.Background.Range.StaticColor}"/>
+		<SolidColorBrush x:Key="Slider.Background.Contrast.Static" Color="{StaticResource Slider.Background.Contrast.StaticColor}"/>
 		<SolidColorBrush x:Key="Slider.Background.Vacant" Color="{StaticResource Slider.Background.VacantColor}"/>
-		<SolidColorBrush x:Key="Slider.Background.Overlay" Color="{StaticResource Slider.Background.OverlayColor}"/>
+		<SolidColorBrush x:Key="Slider.Background.Bracket" Color="{StaticResource App.TargetColor}"/>
+		<SolidColorBrush x:Key="Slider.Background.Overlay" Color="{StaticResource App.OverlayColor}"/>
 
-		<Style x:Key="SliderHorizontal" TargetType="{x:Type controls:CompoundSlider}">
+		<Style x:Key="MainSliderHorizontal" TargetType="{x:Type controls:CompoundSlider}">
 			<Setter Property="Stylus.IsPressAndHoldEnabled" Value="False"/>
 			<Setter Property="FocusVisualStyle" Value="{x:Null}"/>
 			<Setter Property="Background" Value="Transparent"/>
@@ -66,7 +89,7 @@
 														   Width="{TemplateBinding Width}" Height="{TemplateBinding Height}"
 														   Margin="2">
 													<Rectangle.Fill>
-														<SolidColorBrush Color="{StaticResource Slider.Background.Filled.StaticColor}"/>
+														<SolidColorBrush Color="{StaticResource Slider.Background.Main.StaticColor}"/>
 													</Rectangle.Fill>
 												</Rectangle>
 
@@ -78,7 +101,7 @@
 																<ColorAnimation	Storyboard.TargetName="grip"
 																				Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)"
 																				Duration="0:0:0.1"
-																				To="{StaticResource Slider.Background.Filled.MouseOverColor}"/>
+																				To="{StaticResource Slider.Background.Main.MouseOverColor}"/>
 															</Storyboard>
 														</VisualState>
 														<VisualState x:Name="Pressed">
@@ -86,7 +109,7 @@
 																<ColorAnimation	Storyboard.TargetName="grip"
 																				Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)"
 																				Duration="0:0:0.1"
-																				To="{StaticResource Slider.Background.Filled.PressedColor}"/>
+																				To="{StaticResource Slider.Background.Main.PressedColor}"/>
 															</Storyboard>
 														</VisualState>
 														<VisualState x:Name="Disabled">
@@ -129,7 +152,7 @@
 										   Fill="{StaticResource Slider.Background.Vacant}"/>
 								<Rectangle Width="{Binding ElementName=TrackLeft, Path=ActualWidth}"
 										   Height="3" Margin="7.5,0" HorizontalAlignment="Left" VerticalAlignment="Center"
-										   Fill="{StaticResource Slider.Background.Filled.Static}"/>
+										   Fill="{StaticResource Slider.Background.Main.Static}"/>
 
 								<Canvas VerticalAlignment="center"
 										IsHitTestVisible="False">
@@ -180,7 +203,7 @@
 								<Setter Property="Visibility" TargetName="PART_SelectionRange" Value="Visible"/>
 							</Trigger>
 							<Trigger Property="IsUnison" Value="True">
-								<Setter Property="Background" TargetName="thumb" Value="{StaticResource App.Foreground.Shadow}"/>
+								<Setter Property="Background" TargetName="thumb" Value="{StaticResource Slider.Background.Bracket}"/>
 							</Trigger>
 						</ControlTemplate.Triggers>
 					</ControlTemplate>
@@ -288,27 +311,106 @@
 					</Setter>
 				</Trigger>
 			</Style.Triggers>
+		</Style>
 
-			<Style.Resources>
-				<Style TargetType="{x:Type ToolTip}">
-					<Setter Property="OverridesDefaultStyle" Value="True"/>
-					<Setter Property="Padding" Value="5,3"/>
-					<Setter Property="Background" Value="{StaticResource App.Background.Plain}"/>
-					<Setter Property="Foreground" Value="{StaticResource App.Foreground}"/>
-					<Setter Property="FontSize" Value="13"/>
-					<Setter Property="Template">
-						<Setter.Value>
-							<ControlTemplate TargetType="{x:Type ToolTip}">
-								<Border Width="{TemplateBinding Width}" Height="{TemplateBinding Height}"
-										BorderThickness="0"
-										Background="{TemplateBinding Background}">
-									<ContentPresenter Margin="{TemplateBinding Padding}"/>
-								</Border>
-							</ControlTemplate>
-						</Setter.Value>
-					</Setter>
-				</Style>
-			</Style.Resources>
+		<Style x:Key="SubSliderHorizontal" TargetType="{x:Type controls:EnhancedSlider}">
+			<Setter Property="Stylus.IsPressAndHoldEnabled" Value="False"/>
+			<Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+			<Setter Property="Background" Value="Transparent"/>
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="{x:Type controls:EnhancedSlider}">
+						<ControlTemplate.Resources>
+							<Style x:Key="SliderButtonHorizontal" TargetType="{x:Type RepeatButton}">
+								<Setter Property="OverridesDefaultStyle" Value="True"/>
+								<Setter Property="Focusable" Value="False"/>
+								<Setter Property="IsTabStop" Value="False"/>
+							</Style>
+
+							<Style x:Key="SliderThumbHorizontal" TargetType="{x:Type Thumb}">
+								<Setter Property="OverridesDefaultStyle" Value="True"/>
+								<Setter Property="Focusable" Value="False"/>
+								<Setter Property="Background" Value="Transparent"/>
+								<Setter Property="Template">
+									<Setter.Value>
+										<ControlTemplate TargetType="{x:Type Thumb}">
+											<Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+												<Rectangle x:Name="grip"
+														   Width="{TemplateBinding Width}" Height="{TemplateBinding Height}"
+														   Margin="2">
+													<Rectangle.Fill>
+														<SolidColorBrush Color="{StaticResource Slider.Background.Contrast.StaticColor}"/>
+													</Rectangle.Fill>
+												</Rectangle>
+
+												<VisualStateManager.VisualStateGroups>
+													<VisualStateGroup x:Name="CommonStates">
+														<VisualState x:Name="Normal"/>
+														<VisualState x:Name="MouseOver">
+															<Storyboard>
+																<ColorAnimation	Storyboard.TargetName="grip"
+																				Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)"
+																				Duration="0:0:0.1"
+																				To="{StaticResource Slider.Background.Contrast.MouseOverColor}"/>
+															</Storyboard>
+														</VisualState>
+														<VisualState x:Name="Pressed">
+															<Storyboard>
+																<ColorAnimation	Storyboard.TargetName="grip"
+																				Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)"
+																				Duration="0:0:0.1"
+																				To="{StaticResource Slider.Background.Contrast.PressedColor}"/>
+															</Storyboard>
+														</VisualState>
+														<VisualState x:Name="Disabled">
+															<Storyboard>
+																<ColorAnimation Storyboard.TargetName="grip"
+																				Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)"
+																				Duration="0:0:0.1"
+																				To="{StaticResource Slider.Background.DisabledColor}"/>
+															</Storyboard>
+														</VisualState>
+													</VisualStateGroup>
+												</VisualStateManager.VisualStateGroups>
+											</Grid>
+										</ControlTemplate>
+									</Setter.Value>
+								</Setter>
+							</Style>
+						</ControlTemplate.Resources>
+
+						<Border x:Name="border"
+								Background="{TemplateBinding Background}"
+								SnapsToDevicePixels="True" UseLayoutRounding="True">
+							<Grid>
+								<Rectangle Height="3" Margin="7.5,0" VerticalAlignment="Center"
+										   Fill="{StaticResource Slider.Background.Vacant}"/>
+								<Rectangle Width="{Binding ElementName=TrackLeft, Path=ActualWidth}"
+										   Height="3" Margin="7.5,0" HorizontalAlignment="Left" VerticalAlignment="Center"
+										   Fill="{StaticResource Slider.Background.Contrast.Static}"/>
+
+								<Track x:Name="PART_Track">
+									<Track.DecreaseRepeatButton>
+										<RepeatButton x:Name="TrackLeft"
+													  Style="{StaticResource SliderButtonHorizontal}"
+													  Command="{x:Static Slider.DecreaseLarge}"/>
+									</Track.DecreaseRepeatButton>
+									<Track.IncreaseRepeatButton>
+										<RepeatButton x:Name="TrackRight"
+													  Style="{StaticResource SliderButtonHorizontal}"
+													  Command="{x:Static Slider.IncreaseLarge}"/>
+									</Track.IncreaseRepeatButton>
+									<Track.Thumb>
+										<Thumb x:Name="thumb"
+											   Width="15" Height="{DynamicResource ThumbHeight}"
+											   Style="{StaticResource SliderThumbHorizontal}"/>
+									</Track.Thumb>
+								</Track>
+							</Grid>
+						</Border>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
 		</Style>
 
 		<!-- Pulse Label -->
@@ -382,8 +484,8 @@
 						</Border>
 						<ControlTemplate.Triggers>
 							<Trigger Property="IsReadOnly" Value="False">
-								<Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Text.Border.Writable}"/>
-								<Setter Property="Background" TargetName="border" Value="{StaticResource Text.Background.Writable}"/>
+								<Setter Property="BorderBrush" TargetName="border" Value="{StaticResource App.Foreground.Shadow}"/>
+								<Setter Property="Background" TargetName="border" Value="{StaticResource App.Background.Plain}"/>
 							</Trigger>
 						</ControlTemplate.Triggers>
 					</ControlTemplate>
@@ -391,171 +493,109 @@
 			</Setter>
 		</Style>
 
-		<!-- Brightness Button -->
-		<Style x:Key="BrightnessButtonStyle" TargetType="{x:Type Button}">
+		<!-- Icon Button -->
+		<Style x:Key="IconButtonStyle" TargetType="{x:Type controls:IconButton}">
 			<Setter Property="Focusable" Value="False"/>
+			<Setter Property="Width" Value="28"/>
+			<Setter Property="Height" Value="30"/>
+			<Setter Property="Foreground" Value="{StaticResource Icon.Foreground.Normal}"/>
+			<Setter Property="VerticalContentAlignment" Value="Center"/>
+			<Setter Property="SnapsToDevicePixels" Value="True"/>
+			<Setter Property="UseLayoutRounding" Value="True"/>
+			<Setter Property="ToolTipService.InitialShowDelay" Value="1000"/>
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="{x:Type controls:IconButton}">
+						<Grid>
+							<Border x:Name="border"
+									Background="Transparent">
+								<Grid Height="{Binding RelativeSource={RelativeSource Self}, Path=ActualWidth}"
+									  Margin="7,6" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+									  RenderOptions.EdgeMode="Aliased">
+									<Path x:Name="StrokeIcon"
+										  Data="{TemplateBinding StrokeIconData}" Stretch="Uniform"
+										  Stroke="{TemplateBinding Foreground}" StrokeThickness="1"/>
+									<Path x:Name="FillIcon"
+										  Data="{TemplateBinding FillIconData}" Stretch="Uniform"
+										  Fill="{TemplateBinding Foreground}"/>
+								</Grid>
+							</Border>
+
+							<VisualStateManager.VisualStateGroups>
+								<VisualStateGroup x:Name="CommonStates">
+									<VisualState x:Name="Normal"/>
+									<VisualState x:Name="MouseOver">
+										<Storyboard>
+											<ColorAnimation Storyboard.TargetName="border"
+															Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)"
+															Duration="0:0:0.1"
+															To="{StaticResource Icon.Background.MouseOverColor}"/>
+											<ColorAnimation Storyboard.TargetName="StrokeIcon"
+															Storyboard.TargetProperty="(Shape.Stroke).(SolidColorBrush.Color)"
+															Duration="0:0:0.1"
+															To="{StaticResource App.ForegroundColor}"/>
+											<ColorAnimation Storyboard.TargetName="FillIcon"
+															Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)"
+															Duration="0:0:0.1"
+															To="{StaticResource App.ForegroundColor}"/>
+										</Storyboard>
+									</VisualState>
+									<VisualState x:Name="Pressed">
+										<Storyboard>
+											<ColorAnimation Storyboard.TargetName="border"
+															Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)"
+															Duration="0"
+															To="{StaticResource Icon.Background.PressedColor}"/>
+											<ColorAnimation Storyboard.TargetName="StrokeIcon"
+															Storyboard.TargetProperty="(Shape.Stroke).(SolidColorBrush.Color)"
+															Duration="0"
+															To="{StaticResource App.ForegroundColor}"/>
+											<ColorAnimation Storyboard.TargetName="FillIcon"
+															Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)"
+															Duration="0"
+															To="{StaticResource App.ForegroundColor}"/>
+										</Storyboard>
+									</VisualState>
+									<VisualState x:Name="Disabled"/>
+								</VisualStateGroup>
+							</VisualStateManager.VisualStateGroups>
+						</Grid>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
+
+		<Style x:Key="UnisonButtonStyle" TargetType="{x:Type controls:IconButton}" BasedOn="{StaticResource IconButtonStyle}">
+			<Setter Property="StrokeIconData" Value="M 0,3 L 0,0 10,0 10,3 M 0,7 L 0,10 10,10 10,7"/>
+		</Style>
+
+		<Style x:Key="RangeButtonStyle" TargetType="{x:Type controls:IconButton}" BasedOn="{StaticResource IconButtonStyle}">
+			<Setter Property="StrokeIconData" Value="M 0,2 L 0,8 M 0,5 L 10,5 M 10,2 L 10,8"/>
+		</Style>
+
+		<Style x:Key="ContrastButtonStyle" TargetType="{x:Type controls:IconButton}" BasedOn="{StaticResource IconButtonStyle}">
+			<Setter Property="StrokeIconData" Value="M 0,0 L 0,10 10,10 10,0 Z"/>
+			<Setter Property="FillIconData" Value="M 0,0 L 0,10 5,10 5,0 Z M 10,0 L 10,10"/>
+			<Setter Property="Visibility" Value="Hidden"/>
+			<Style.Triggers>
+				<Trigger Property="IsEnabled" Value="True">
+					<Setter Property="Visibility" Value="Visible"/>
+				</Trigger>
+			</Style.Triggers>
+		</Style>
+
+		<!-- Number Label -->
+		<Style x:Key="NumberLabel" TargetType="{x:Type Label}">
+			<Setter Property="Padding" Value="0"/>
+			<Setter Property="HorizontalContentAlignment" Value="Right"/>
+			<Setter Property="VerticalAlignment" Value="Center"/>
 			<Setter Property="Foreground" Value="{StaticResource App.Foreground}"/>
-			<Setter Property="Template">
-				<Setter.Value>
-					<ControlTemplate TargetType="{x:Type Button}">
-						<Grid>
-							<Grid x:Name="base">
-								<Grid.Background>
-									<SolidColorBrush Color="{StaticResource Access.Background.NormalColor}"/>
-								</Grid.Background>
-								<Border x:Name="border"
-										BorderThickness="2">
-									<Border.BorderBrush>
-										<SolidColorBrush Color="{StaticResource Access.Border.NormalColor}"/>
-									</Border.BorderBrush>
-									<ContentPresenter Content="{TemplateBinding Content}"/>
-								</Border>
-							</Grid>
-
-							<VisualStateManager.VisualStateGroups>
-								<VisualStateGroup x:Name="CommonStates">
-									<VisualState x:Name="Normal"/>
-									<VisualState x:Name="MouseOver">
-										<Storyboard>
-											<ColorAnimation Storyboard.TargetName="border"
-															Storyboard.TargetProperty="(Border.BorderBrush).(SolidColorBrush.Color)"
-															Duration="0"
-															To="{StaticResource Access.Border.MouseOverColor}"/>
-										</Storyboard>
-									</VisualState>
-									<VisualState x:Name="Pressed">
-										<Storyboard>
-											<ColorAnimation Storyboard.TargetName="base"
-															Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)"
-															Duration="0"
-															To="{StaticResource Access.Background.PressedColor}"/>
-										</Storyboard>
-									</VisualState>
-									<VisualState x:Name="Disabled"/>
-								</VisualStateGroup>
-							</VisualStateManager.VisualStateGroups>
-						</Grid>
-					</ControlTemplate>
-				</Setter.Value>
-			</Setter>
-		</Style>
-
-		<!-- Unison Button -->
-		<Style x:Key="UnisonButtonStyle" TargetType="{x:Type ToggleButton}">
-			<Setter Property="Focusable" Value="False"/>
-			<Setter Property="Foreground" Value="{StaticResource App.Foreground.Shadow}"/>
-			<Setter Property="SnapsToDevicePixels" Value="True"/>
-			<Setter Property="UseLayoutRounding" Value="True"/>
-			<Setter Property="Template">
-				<Setter.Value>
-					<ControlTemplate TargetType="{x:Type ToggleButton}">
-						<Grid>
-							<Grid x:Name="base">
-								<Grid.Background>
-									<SolidColorBrush Color="{StaticResource Access.Background.NormalColor}"/>
-								</Grid.Background>
-								<Border x:Name="border"
-										BorderThickness="2">
-									<Border.BorderBrush>
-										<SolidColorBrush Color="{StaticResource Access.Border.NormalColor}"/>
-									</Border.BorderBrush>
-									<Grid Height="{Binding RelativeSource={RelativeSource Self}, Path=ActualWidth}"
-										  Margin="1,2" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-										  RenderOptions.EdgeMode="Aliased">
-										<Path Data="M 0,3 L 0,0 10,0 10,3 M 0,7 L 0,10 10,10 10,7" Stretch="Uniform"
-											  Stroke="{TemplateBinding Foreground}" StrokeThickness="1"/>
-									</Grid>
-								</Border>
-							</Grid>
-
-							<VisualStateManager.VisualStateGroups>
-								<VisualStateGroup x:Name="CommonStates">
-									<VisualState x:Name="Normal"/>
-									<VisualState x:Name="MouseOver">
-										<Storyboard>
-											<ColorAnimation Storyboard.TargetName="border"
-															Storyboard.TargetProperty="(Border.BorderBrush).(SolidColorBrush.Color)"
-															Duration="0"
-															To="{StaticResource Access.Border.MouseOverColor}"/>
-										</Storyboard>
-									</VisualState>
-									<VisualState x:Name="Pressed">
-										<Storyboard>
-											<ColorAnimation Storyboard.TargetName="base"
-															Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)"
-															Duration="0"
-															To="{StaticResource Access.Background.PressedColor}"/>
-										</Storyboard>
-									</VisualState>
-									<VisualState x:Name="Disabled"/>
-								</VisualStateGroup>
-							</VisualStateManager.VisualStateGroups>
-						</Grid>
-					</ControlTemplate>
-				</Setter.Value>
-			</Setter>
-		</Style>
-
-		<!-- Range Button -->
-		<Style x:Key="RangeButtonStyle" TargetType="{x:Type ToggleButton}">
-			<Setter Property="Focusable" Value="False"/>
-			<Setter Property="Foreground" Value="{StaticResource App.Foreground.Shadow}"/>
-			<Setter Property="SnapsToDevicePixels" Value="True"/>
-			<Setter Property="UseLayoutRounding" Value="True"/>
-			<Setter Property="Template">
-				<Setter.Value>
-					<ControlTemplate TargetType="{x:Type ToggleButton}">
-						<Grid>
-							<Grid x:Name="base">
-								<Grid.Background>
-									<SolidColorBrush Color="{StaticResource Access.Background.NormalColor}"/>
-								</Grid.Background>
-								<Border x:Name="border"
-										BorderThickness="2">
-									<Border.BorderBrush>
-										<SolidColorBrush Color="{StaticResource Access.Border.NormalColor}"/>
-									</Border.BorderBrush>
-									<Grid Height="{Binding RelativeSource={RelativeSource Self}, Path=ActualWidth}"
-										  Margin="1,2" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-										  RenderOptions.EdgeMode="Aliased">
-										<Path Data="M 0,2 L 0,8 M 0,5 L 10,5 M 10,2 L 10,8" Stretch="Uniform"
-											  Stroke="{TemplateBinding Foreground}" StrokeThickness="1"/>
-									</Grid>
-								</Border>
-							</Grid>
-
-							<VisualStateManager.VisualStateGroups>
-								<VisualStateGroup x:Name="CommonStates">
-									<VisualState x:Name="Normal"/>
-									<VisualState x:Name="MouseOver">
-										<Storyboard>
-											<ColorAnimation Storyboard.TargetName="border"
-															Storyboard.TargetProperty="(Border.BorderBrush).(SolidColorBrush.Color)"
-															Duration="0"
-															To="{StaticResource Access.Border.MouseOverColor}"/>
-										</Storyboard>
-									</VisualState>
-									<VisualState x:Name="Pressed">
-										<Storyboard>
-											<ColorAnimation Storyboard.TargetName="base"
-															Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)"
-															Duration="0"
-															To="{StaticResource Access.Background.PressedColor}"/>
-										</Storyboard>
-									</VisualState>
-									<VisualState x:Name="Disabled"/>
-								</VisualStateGroup>
-							</VisualStateManager.VisualStateGroups>
-						</Grid>
-					</ControlTemplate>
-				</Setter.Value>
-			</Setter>
 		</Style>
 	</Window.Resources>
 
-	<Grid Width="360">
+	<Grid Width="340">
 		<!-- Pulse -->
-		<controls:PulseLabel Margin="6,4"
+		<controls:PulseLabel Height="16" Margin="8,4"
 							 Style="{StaticResource PulseLabelStyle}"
 							 Content="{Binding Source={x:Static models:ProductInfo.Title}, Mode=OneTime}"
 							 IsPulsing="{Binding IsScanning, Mode=OneWay}"
@@ -577,65 +617,78 @@
 			</ListView.Template>
 			<ListView.ItemTemplate>
 				<DataTemplate>
-					<Grid Background="Transparent">
+					<Grid Margin="0,0,0,8"
+						  Background="Transparent">
 						<Grid.RowDefinitions>
+							<RowDefinition Height="Auto"/>
 							<RowDefinition Height="Auto"/>
 							<RowDefinition Height="Auto"/>
 						</Grid.RowDefinitions>
 
-						<!-- Name -->
-						<controls:SwitchTextBox Grid.Row="0"
-												Margin="6,5,2,5" HorizontalAlignment="Left" VerticalAlignment="Center"
-												Style="{StaticResource NameTextBoxStyle}"
-												TextWrapping="Wrap" MaxLength="96"
-												Text="{Binding Name, Mode=TwoWay}"/>
+						<Grid Grid.Row="0">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="*"/>
+								<ColumnDefinition Width="Auto"/>
+							</Grid.ColumnDefinitions>
 
-						<!-- Brightness -->
+							<!-- Name -->
+							<controls:SwitchTextBox Grid.Column="0"
+													Height="22" Margin="8,5,0,5" HorizontalAlignment="Left" VerticalAlignment="Center"
+													Style="{StaticResource NameTextBoxStyle}"
+													TextWrapping="Wrap" MaxLength="96" FontSize="14"
+													Text="{Binding Name, Mode=TwoWay}"/>
+
+							<StackPanel Grid.Column="1"
+										VerticalAlignment="Top"
+										Orientation="Horizontal">
+								<!-- Unison -->
+								<Grid Visibility="{Binding Settings.EnablesUnison, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverterKey}}">
+									<controls:IconButton Style="{StaticResource UnisonButtonStyle}"
+														 ToolTip="{x:Static properties:Resources.MoveUnison}"
+														 IsChecked="{Binding IsUnison, Mode=TwoWay}"/>
+								</Grid>
+
+								<!-- Range -->
+								<Grid Visibility="{Binding Settings.EnablesRange, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverterKey}}">
+									<controls:IconButton Style="{StaticResource RangeButtonStyle}"
+														 ToolTip="{x:Static properties:Resources.ChangeRange}"
+														 IsChecked="{Binding IsRangeChanging, Mode=TwoWay}"/>
+								</Grid>
+
+								<!-- Contrast -->
+								<Grid Visibility="{Binding Settings.EnablesContrast, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverterKey}}">
+									<controls:IconButton Style="{StaticResource ContrastButtonStyle}"
+														 ToolTip="{x:Static properties:Resources.ChangeContrast}"
+														 IsEnabled="{Binding IsContrastSupported, Mode=OneWay}"
+														 IsChecked="{Binding IsContrastChanging, Mode=TwoWay}"/>
+								</Grid>
+							</StackPanel>
+						</Grid>
+
 						<Grid Grid.Row="1"
-							  x:Name="BrightnessBox"
-							  Margin="0,0,0,6"
+							  Height="{DynamicResource SliderHeight}"
+							  Margin="0,0,12,0"
 							  Visibility="{Binding IsControllable, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverterKey}}">
 							<Grid.ColumnDefinitions>
-								<ColumnDefinition Width="3"/>
-								<ColumnDefinition Width="Auto"/>
+								<ColumnDefinition Width="4"/>
 								<ColumnDefinition Width="*"/>
 								<ColumnDefinition Width="Auto"/>
 								<ColumnDefinition Width="Auto"/>
-								<ColumnDefinition Width="4"/>
+								<ColumnDefinition Width="Auto"/>
 							</Grid.ColumnDefinitions>
 
 							<Rectangle Grid.Column="0"
 									   Fill="{StaticResource App.Background.Accent}"
 									   Visibility="{Binding IsSelectedByKey, Converter={StaticResource BooleanToVisibilityConverterKey}}"/>
 
-							<Button Grid.Column="1"
-									Width="80" Height="{DynamicResource ButtonHeight}" Margin="3,0,0,0"
-									Style="{StaticResource BrightnessButtonStyle}">
-								<Grid>
-									<TextBlock Margin="2" HorizontalAlignment="Left" VerticalAlignment="Bottom"
-											   Text="{Binding Brightness, Mode=OneWay, StringFormat={}{0}%}"
-											   Visibility="{Binding IsRangeChanging, Mode=OneWay, Converter={StaticResource BooleanToVisibilityTurnConverterKey}, ConverterParameter=True}"/>
-									<TextBlock Margin="2" HorizontalAlignment="Left" VerticalAlignment="Bottom"
-											   Visibility="{Binding IsRangeChanging, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverterKey}}">
-										<Run Text="{Binding RangeLowest, Mode=OneWay, StringFormat={}{0}-}"/><Run Text="{Binding RangeHighest, Mode=OneWay, StringFormat={}{0}%}"/>
-									</TextBlock>
-								</Grid>
-
-								<i:Interaction.Triggers>
-									<i:EventTrigger EventName="Click">
-										<behaviors:MouseDownParentAction/>
-										<i:CallMethodAction TargetObject="{Binding}"
-															MethodName="IncrementBrightness"/>
-									</i:EventTrigger>
-								</i:Interaction.Triggers>
-							</Button>
-
-							<controls:CompoundSlider Grid.Column="2"
-													 Margin="8,0,6,0" VerticalAlignment="Center"
-													 Style="{StaticResource SliderHorizontal}"
+							<!-- Brightness -->
+							<controls:CompoundSlider Grid.Column="1"
+													 Margin="12,0,4,0" VerticalAlignment="Center"
+													 Style="{StaticResource MainSliderHorizontal}"
 													 Minimum="0" Maximum="100"
 													 Value="{Binding Brightness, Mode=TwoWay, Delay=50}"
-													 IsShadowVisible="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Path=DataContext.Settings.ShowsAdjusted}"
+													 DefersUpdateSource="{Binding Settings.DefersChange, Mode=OneWay}"
+													 IsShadowVisible="{Binding Settings.ShowsAdjusted, Mode=OneWay}"
 													 ValueShadow="{Binding BrightnessSystemAdjusted, Mode=OneWay}"
 													 IsUnison="{Binding IsUnison, Mode=TwoWay}"
 													 ValueUnison="{Binding BrightnessSystemChanged, Mode=OneWay}"
@@ -649,30 +702,58 @@
 								</i:Interaction.Behaviors>
 							</controls:CompoundSlider>
 
-							<ToggleButton Grid.Column="3"
-										  Width="16" Height="{DynamicResource ButtonHeight}" Margin="0,0,2,0"
-										  Style="{StaticResource UnisonButtonStyle}"
-										  VerticalContentAlignment="Bottom"
-										  IsChecked="{Binding IsUnison, Mode=TwoWay}"
-										  Visibility="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Path=DataContext.Settings.EnablesUnison, Converter={StaticResource BooleanToVisibilityConverterKey}}"/>
+							<Grid Grid.Column="2"
+								  Visibility="{Binding Settings.ShowsNumber, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverterKey}}">
+								<Label Width="26" Margin="0,0,4,0"
+									   Style="{StaticResource NumberLabel}"
+									   FontSize="16"
+									   Content="{Binding Brightness, Mode=OneWay}"
+									   Visibility="{Binding IsRangeChanging, Mode=OneWay, Converter={StaticResource BooleanToVisibilityTurnConverterKey}, ConverterParameter=True}">
+									<i:Interaction.Triggers>
+										<i:EventTrigger EventName="MouseDown">
+											<i:CallMethodAction TargetObject="{Binding}" MethodName="IncrementBrightness"/>
+										</i:EventTrigger>
+									</i:Interaction.Triggers>
+								</Label>
 
-							<ToggleButton Grid.Column="4"
-										  Width="16" Height="{DynamicResource ButtonHeight}" Margin="4,0,2,0"
-										  Style="{StaticResource RangeButtonStyle}"
-										  VerticalContentAlignment="Bottom"
-										  IsChecked="{Binding IsRangeChanging, Mode=TwoWay}"
-										  Visibility="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Path=DataContext.Settings.ChangesRange, Converter={StaticResource BooleanToVisibilityConverterKey}}"/>
+								<Label Width="48" Margin="0,0,4,0"
+									   Style="{StaticResource NumberLabel}"
+									   FontSize="15"
+									   Visibility="{Binding IsRangeChanging, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverterKey}}">
+									<TextBlock>
+										<Run Text="{Binding RangeLowest, Mode=OneWay, StringFormat={}{0}-}"/><Run Text="{Binding RangeHighest, Mode=OneWay}"/>
+									</TextBlock>
+								</Label>
+							</Grid>
+
+							<!-- Contrast -->
+							<controls:EnhancedSlider Grid.Column="3"
+													 Width="100" Margin="8,0,4,0" VerticalAlignment="Center"
+													 Style="{StaticResource SubSliderHorizontal}"
+													 Minimum="0" Maximum="100"
+													 Value="{Binding Contrast, Mode=TwoWay, Delay=50}"
+													 DefersUpdateSource="{Binding Settings.DefersChange, Mode=OneWay}"
+													 Visibility="{Binding IsContrastChanging, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverterKey}}"/>
+
+							<Grid Grid.Column="4"
+								  Visibility="{Binding Settings.ShowsNumber, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverterKey}}">
+								<Label Width="26" Margin="0,0,4,0"
+									   Style="{StaticResource NumberLabel}"
+									   FontSize="16"
+									   Content="{Binding Contrast, Mode=OneWay}"
+									   Visibility="{Binding IsContrastChanging, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverterKey}}"/>
+							</Grid>
 						</Grid>
 
-						<!-- Controllability -->
-						<Grid Grid.Row="1"
-							  Visibility="{Binding ElementName=BrightnessBox, Path=Visibility, Mode=OneWay, Converter={StaticResource VisibilityInverseConverterKey}}">
-							<Border Margin="6,4"
+						<!-- Message -->
+						<Grid Grid.Row="2"
+							  Visibility="{Binding Message, Mode=OneWay, Converter={StaticResource StringToVisibilityConverterKey}}">
+							<Border Margin="6,6,6,0"
 									Padding="3"
 									BorderBrush="{StaticResource App.Foreground.Invalid}" BorderThickness="1">
 								<TextBlock Foreground="{StaticResource App.Foreground.Invalid}"
 										   TextWrapping="Wrap"
-										   Text="{Binding Status, Mode=OneWay}"/>
+										   Text="{Binding Message, Mode=OneWay}"/>
 							</Border>
 						</Grid>
 					</Grid>

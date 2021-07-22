@@ -54,9 +54,15 @@ namespace Monitorian.Core.Models.Watcher
 			if (disposing)
 			{
 				// Free any other managed objects here.
-				_watcher.EventArrived -= OnEventArrived;
-				_watcher.Stop();
-				_watcher.Dispose();
+				try
+				{
+					_watcher.EventArrived -= OnEventArrived;
+					_watcher.Stop(); // This may throw InvalidCastException.
+					_watcher.Dispose();
+				}
+				catch (InvalidCastException)
+				{
+				}
 			}
 
 			// Free any unmanaged objects here.

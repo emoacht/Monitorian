@@ -10,28 +10,25 @@ namespace Monitorian.Core.Models
 {
 	public class LanguageService
 	{
-		private static IReadOnlyDictionary<string, string> PreparedCulturePairs => new Dictionary<string, string>
+		public static IReadOnlyCollection<string> Options => new[] { Option };
+		private const string Option = "/lang";
+
+		private static readonly Lazy<CultureInfo> _culture = new(() =>
 		{
-			{ "/en", "en-US" },
-			{ "/ja", "ja-JP" },
-			{ "/pl", "pl-PL" },
-			{ "/ru", "ru-RU" },
-			{ "/zh", "zh-Hans" },
-		};
+			var arguments = AppKeeper.DefinedArguments;
 
-		public static IReadOnlyCollection<string> Options => PreparedCulturePairs.Keys.ToArray();
-
-		private static readonly Lazy<CultureInfo> _culture = new Lazy<CultureInfo>(() =>
-		{
-			var preparedCulturePairs = PreparedCulturePairs;
-			var supportedCultureNames = new HashSet<string>(CultureInfo.GetCultures(CultureTypes.AllCultures).Select(x => x.Name));
-
-			return AppKeeper.DefinedArguments
-				.Where(x => !string.IsNullOrWhiteSpace(x))
-				.Select(x => (Success: preparedCulturePairs.TryGetValue(x.ToLower(), out string value) && supportedCultureNames.Contains(value), CultureName: value))
-				.Where(x => x.Success)
-				.Select(x => new CultureInfo(x.CultureName))
-				.FirstOrDefault();
+			int i = 0;
+			while (i < arguments.Count - 1)
+			{
+				if (string.Equals(arguments[i], Option, StringComparison.OrdinalIgnoreCase))
+				{
+					var cultureName = arguments[i + 1];
+					return CultureInfo.GetCultures(CultureTypes.AllCultures)
+						.FirstOrDefault(x => string.Equals(x.Name, cultureName, StringComparison.OrdinalIgnoreCase));
+				}
+				i++;
+			}
+			return null;
 		});
 
 		/// <summary>

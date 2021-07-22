@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Devices.Display;
@@ -15,7 +14,7 @@ namespace Monitorian.Supplement
 	/// </summary>
 	/// <remarks>
 	/// <see cref="Windows.Devices.Display.DisplayMonitor"/> is only available
-	/// on Windows 10 (Redstone 4, 1803 = version 10.0.17134.0) or newer.
+	/// on Windows 10 (version 10.0.17134.0) or newer.
 	/// </remarks>
 	public class DisplayInformation
 	{
@@ -24,37 +23,31 @@ namespace Monitorian.Supplement
 		/// <summary>
 		/// Display monitor information
 		/// </summary>
-		[DataContract]
 		public class DisplayItem
 		{
 			/// <summary>
 			/// Device ID (Not device interface ID)
 			/// </summary>
-			[DataMember(Order = 0)]
 			public string DeviceInstanceId { get; }
 
 			/// <summary>
 			/// Display name
 			/// </summary>
-			[DataMember(Order = 1)]
 			public string DisplayName { get; }
 
 			/// <summary>
 			/// Whether the display is connected internally
 			/// </summary>
-			[DataMember(Order = 2)]
 			public bool IsInternal { get; }
 
 			/// <summary>
 			/// Connection description
 			/// </summary>
-			[DataMember(Order = 3)]
 			public string ConnectionDescription { get; }
 
 			/// <summary>
 			/// Physical size (diagonal) in inches
 			/// </summary>
-			[DataMember(Order = 4)]
 			public float PhysicalSize { get; }
 
 			internal DisplayItem(
@@ -111,7 +104,6 @@ namespace Monitorian.Supplement
 							continue;
 
 						//Debug.WriteLine($"DeviceInstanceId: {deviceInstanceId}");
-						//Debug.WriteLine($"DeviceName: {device.Name}");
 						//Debug.WriteLine($"DisplayName: {displayMonitor.DisplayName}");
 						//Debug.WriteLine($"ConnectionKind: {displayMonitor.ConnectionKind}");
 						//Debug.WriteLine($"PhysicalConnector: {displayMonitor.PhysicalConnector}");
@@ -148,6 +140,9 @@ namespace Monitorian.Supplement
 				case DisplayMonitorConnectionKind.Wired:
 					switch (connectorKind)
 					{
+						case DisplayMonitorPhysicalConnectorKind.HD15:
+							return "VGA";
+
 						case DisplayMonitorPhysicalConnectorKind.AnalogTV:
 						case DisplayMonitorPhysicalConnectorKind.DisplayPort:
 							return connectorKind.ToString();
@@ -157,9 +152,6 @@ namespace Monitorian.Supplement
 						case DisplayMonitorPhysicalConnectorKind.Lvds:
 						case DisplayMonitorPhysicalConnectorKind.Sdi:
 							return connectorKind.ToString().ToUpper();
-
-						case DisplayMonitorPhysicalConnectorKind.HD15:
-							return "VGA";
 					}
 					break;
 			}

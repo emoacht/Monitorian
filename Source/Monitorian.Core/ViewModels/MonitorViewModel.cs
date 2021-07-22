@@ -14,6 +14,8 @@ namespace Monitorian.Core.ViewModels
 	public class MonitorViewModel : ViewModelBase
 	{
 		private readonly AppControllerCore _controller;
+		public SettingsCore Settings => _controller.Settings;
+
 		private IMonitor _monitor;
 
 		public MonitorViewModel(AppControllerCore controller, IMonitor monitor)
@@ -28,17 +30,17 @@ namespace Monitorian.Core.ViewModels
 
 		internal void Replace(IMonitor monitor)
 		{
-			if (monitor is null)
-				return;
-
-			lock (_lock)
+			if (monitor?.IsReachable is true)
 			{
-				// If IsReachable property is changed to true, reset _controllableCount.
-				if (!this._monitor.IsReachable && monitor.IsReachable)
-					_controllableCount = InitialCount;
-
-				this._monitor.Dispose();
-				this._monitor = monitor;
+				lock (_lock)
+				{
+					this._monitor.Dispose();
+					this._monitor = monitor;
+				}
+			}
+			else
+			{
+				monitor?.Dispose();
 			}
 		}
 
@@ -46,6 +48,7 @@ namespace Monitorian.Core.ViewModels
 		public string Description => _monitor.Description;
 		public byte DisplayIndex => _monitor.DisplayIndex;
 		public byte MonitorIndex => _monitor.MonitorIndex;
+		public double MonitorTop => _monitor.MonitorRect.Top;
 
 		#region Customization
 
@@ -77,6 +80,16 @@ namespace Monitorian.Core.ViewModels
 		private bool _isUnison;
 
 		/// <summary>
+		/// Whether the range of brightness is changing
+		/// </summary>
+		public bool IsRangeChanging
+		{
+			get => _isRangeChanging;
+			set => SetPropertyValue(ref _isRangeChanging, value);
+		}
+		private bool _isRangeChanging = false;
+
+		/// <summary>
 		/// Lowest brightness in the range of brightness
 		/// </summary>
 		public int RangeLowest
@@ -106,16 +119,6 @@ namespace Monitorian.Core.ViewModels
 
 		private double GetRangeRate() => Math.Abs(RangeHighest - RangeLowest) / 100D;
 
-		/// <summary>
-		/// Whether the range of brightness is changing
-		/// </summary>
-		public bool IsRangeChanging
-		{
-			get => _isRangeChanging;
-			set => SetPropertyValue(ref _isRangeChanging, value);
-		}
-		private bool _isRangeChanging = false;
-
 		#endregion
 
 		#region Brightness
@@ -140,23 +143,33 @@ namespace Monitorian.Core.ViewModels
 
 		public bool UpdateBrightness(int brightness = -1)
 		{
-			var isSuccess = false;
+			AccessResult result;
 			lock (_lock)
 			{
-				isSuccess = _monitor.UpdateBrightness(brightness);
+				result = _monitor.UpdateBrightness(brightness);
 			}
-			if (isSuccess)
+
+			switch (result.Status)
 			{
-				RaisePropertyChanged(nameof(BrightnessSystemChanged)); // This must be prior to Brightness.
-				RaisePropertyChanged(nameof(Brightness));
-				RaisePropertyChanged(nameof(BrightnessSystemAdjusted));
-				OnSuccess();
+				case AccessStatus.Succeeded:
+					RaisePropertyChanged(nameof(BrightnessSystemChanged)); // This must be prior to Brightness.
+					RaisePropertyChanged(nameof(Brightness));
+					RaisePropertyChanged(nameof(BrightnessSystemAdjusted));
+					OnSucceeded();
+					return true;
+
+				default:
+					_controller.OnMonitorAccessFailed(result);
+
+					switch (result.Status)
+					{
+						case AccessStatus.NoLongerExist:
+							_controller.OnMonitorsChangeFound();
+							break;
+					}
+					OnFailed();
+					return false;
 			}
-			else
-			{
-				OnFailure();
-			}
-			return isSuccess;
 		}
 
 		public void IncrementBrightness()
@@ -176,12 +189,15 @@ namespace Monitorian.Core.ViewModels
 			var count = Math.Floor((Brightness - RangeLowest) / size);
 			int brightness = RangeLowest + (int)Math.Ceiling((count + 1) * size);
 
-			if (brightness < RangeLowest)
-				brightness = RangeLowest;
-			else if (RangeHighest < brightness)
-				brightness = isCycle ? RangeLowest : RangeHighest;
+			SetBrightness(brightness, isCycle);
+		}
 
-			SetBrightness(brightness);
+		public void DecrementBrightness()
+		{
+			DecrementBrightness(10);
+
+			if (IsSelected)
+				_controller.SaveMonitorUserChanged(this);
 		}
 
 		public void DecrementBrightness(int tickSize, bool isCycle = true)
@@ -193,41 +209,150 @@ namespace Monitorian.Core.ViewModels
 			var count = Math.Ceiling((Brightness - RangeLowest) / size);
 			int brightness = RangeLowest + (int)Math.Floor((count - 1) * size);
 
+			SetBrightness(brightness, isCycle);
+		}
+
+		private void SetBrightness(int brightness, bool isCycle)
+		{
 			if (brightness < RangeLowest)
 				brightness = isCycle ? RangeHighest : RangeLowest;
 			else if (RangeHighest < brightness)
-				brightness = RangeHighest;
+				brightness = isCycle ? RangeLowest : RangeHighest;
 
 			SetBrightness(brightness);
 		}
 
 		private bool SetBrightness(int brightness)
 		{
-			var isSuccess = false;
+			AccessResult result;
 			lock (_lock)
 			{
-				isSuccess = _monitor.SetBrightness(brightness);
+				result = _monitor.SetBrightness(brightness);
 			}
-			if (isSuccess)
+
+			switch (result.Status)
 			{
-				RaisePropertyChanged(nameof(Brightness));
-				OnSuccess();
+				case AccessStatus.Succeeded:
+					RaisePropertyChanged(nameof(Brightness));
+					OnSucceeded();
+					return true;
+
+				default:
+					_controller.OnMonitorAccessFailed(result);
+
+					switch (result.Status)
+					{
+						case AccessStatus.DdcFailed:
+						case AccessStatus.TransmissionFailed:
+						case AccessStatus.NoLongerExist:
+							_controller.OnMonitorsChangeFound();
+							break;
+					}
+					OnFailed();
+					return false;
 			}
-			else
+		}
+
+		#endregion
+
+		#region Contrast
+
+		public bool IsContrastSupported => _monitor.IsContrastSupported;
+
+		public bool IsContrastChanging
+		{
+			get => IsContrastSupported && _isContrastChanging;
+			set
 			{
-				OnFailure();
+				if (SetPropertyValue(ref _isContrastChanging, value) && value)
+					UpdateContrast();
 			}
-			return isSuccess;
+		}
+		private bool _isContrastChanging = false;
+
+		public int Contrast
+		{
+			get => _monitor.Contrast;
+			set
+			{
+				if (_monitor.Contrast == value)
+					return;
+
+				SetContrast(value);
+
+				if (IsSelected)
+					_controller.SaveMonitorUserChanged(this);
+			}
+		}
+
+		public bool UpdateContrast()
+		{
+			AccessResult result;
+			lock (_lock)
+			{
+				result = _monitor.UpdateContrast();
+			}
+
+			switch (result.Status)
+			{
+				case AccessStatus.Succeeded:
+					RaisePropertyChanged(nameof(Contrast));
+					OnSucceeded();
+					return true;
+
+				default:
+					_controller.OnMonitorAccessFailed(result);
+
+					switch (result.Status)
+					{
+						case AccessStatus.NoLongerExist:
+							_controller.OnMonitorsChangeFound();
+							break;
+					}
+					OnFailed();
+					return false;
+			}
+		}
+
+		private bool SetContrast(int contrast)
+		{
+			AccessResult result;
+			lock (_lock)
+			{
+				result = _monitor.SetContrast(contrast);
+			}
+
+			switch (result.Status)
+			{
+				case AccessStatus.Succeeded:
+					RaisePropertyChanged(nameof(Contrast));
+					OnSucceeded();
+					return true;
+
+				default:
+					_controller.OnMonitorAccessFailed(result);
+
+					switch (result.Status)
+					{
+						case AccessStatus.DdcFailed:
+						case AccessStatus.TransmissionFailed:
+						case AccessStatus.NoLongerExist:
+							_controller.OnMonitorsChangeFound();
+							break;
+					}
+					OnFailed();
+					return false;
+			}
 		}
 
 		#endregion
 
 		#region Controllable
 
-		public bool IsControllable => _monitor.IsReachable && (_controllableCount > 0);
+		public bool IsReachable => _monitor.IsReachable;
 
-		public bool IsLikelyControllable => IsControllable || _isSuccessCalled;
-		private bool _isSuccessCalled;
+		public bool IsControllable => IsReachable && ((0 < _controllableCount) || _isConfirmed);
+		private bool _isConfirmed;
 
 		// This count is for determining IsControllable property.
 		// To set this count, the following points need to be taken into account: 
@@ -237,19 +362,19 @@ namespace Monitorian.Core.ViewModels
 		// - The initial count is intended to give allowance for failures before the first success.
 		//   If the count has been consumed without any success, the monitor will be regarded as
 		//   uncontrollable at all.
-		// - _isSuccessCalled field indicates that the monitor has succeeded at least once.
-		//   It essentially needs to be changed only once at the first success.
+		// - _isConfirmed field indicates that the monitor has succeeded at least once. It will be
+		//   set true at the first success and at a succeeding success after a failure.
 		// - The normal count gives allowance for failures after the first and succeeding successes.
 		//   As long as the monitor continues to succeed, the count will stay at the normal count.
 		//   Each time the monitor fails, the count decreases. The decreased count will be reverted
 		//   to the normal count when the monitor succeeds again.
-		// - The initial count must be smaller than the normal count so that _isSuccessCalled field
+		// - The initial count must be smaller than the normal count so that _isConfirmed field
 		//   will be set at the first success while reducing unnecessary access to the field.
 		private short _controllableCount = InitialCount;
 		private const short InitialCount = 3;
 		private const short NormalCount = 5;
 
-		private void OnSuccess()
+		private void OnSucceeded()
 		{
 			if (_controllableCount < NormalCount)
 			{
@@ -258,35 +383,35 @@ namespace Monitorian.Core.ViewModels
 				if (formerCount <= 0)
 				{
 					RaisePropertyChanged(nameof(IsControllable));
-					RaisePropertyChanged(nameof(Status));
+					RaisePropertyChanged(nameof(Message));
 				}
 
-				_isSuccessCalled = true;
+				_isConfirmed = true;
 			}
 		}
 
-		private void OnFailure()
+		private void OnFailed()
 		{
 			if (--_controllableCount == 0)
 			{
 				RaisePropertyChanged(nameof(IsControllable));
-				RaisePropertyChanged(nameof(Status));
+				RaisePropertyChanged(nameof(Message));
 			}
 		}
 
-		public string Status
+		public string Message
 		{
 			get
 			{
-				if (IsControllable)
+				if (0 < _controllableCount)
 					return null;
 
 				LanguageService.Switch();
 
 				var reason = _monitor switch
 				{
-					DdcMonitorItem _ => Resources.StatusReasonDdcFailing,
-					UnreachableMonitorItem { IsInternal: false } _ => Resources.StatusReasonDdcNotEnabled,
+					DdcMonitorItem => Resources.StatusReasonDdcFailing,
+					UnreachableMonitorItem { IsInternal: false } => Resources.StatusReasonDdcNotEnabled,
 					_ => null,
 				};
 
@@ -338,7 +463,7 @@ namespace Monitorian.Core.ViewModels
 				(nameof(Name), Name),
 				(nameof(IsUnison), IsUnison),
 				(nameof(IsControllable), IsControllable),
-				(nameof(IsLikelyControllable), IsLikelyControllable),
+				("IsConfirmed", _isConfirmed),
 				("ControllableCount", _controllableCount),
 				(nameof(IsByKey), IsByKey),
 				(nameof(IsSelected), IsSelected),

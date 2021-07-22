@@ -152,6 +152,6 @@ namespace Monitorian.Core.Models.Watcher
 		public Guid Guid { get; }
 		public int Data { get; }
 
-		public PowerSettingChangedEventArgs(Guid guid, int data) => (Guid, Data) = (guid, data);
+		public PowerSettingChangedEventArgs(Guid guid, int data) => (this.Guid, this.Data) = (guid, data);
 	}
 }

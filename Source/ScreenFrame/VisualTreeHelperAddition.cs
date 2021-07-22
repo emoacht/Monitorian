@@ -27,7 +27,7 @@ namespace ScreenFrame
 			string lpszClass,
 			string lpszWindow);
 
-		[DllImport("User32.dll", SetLastError = true)]
+		[DllImport("User32.dll")]
 		private static extern IntPtr MonitorFromWindow(
 			IntPtr hwnd,
 			MONITOR_DEFAULTTO dwFlags);
@@ -50,14 +50,6 @@ namespace ScreenFrame
 			MONITOR_DEFAULTTONEAREST = 0x00000002,
 		}
 
-		[DllImport("Gdi32.dll", SetLastError = true)]
-		private static extern int GetDeviceCaps(
-			IntPtr hdc,
-			int nIndex);
-
-		private const int LOGPIXELSX = 88;
-		private const int LOGPIXELSY = 90;
-
 		[DllImport("User32.dll", SetLastError = true)]
 		private static extern IntPtr GetDC(IntPtr hWnd);
 
@@ -67,7 +59,15 @@ namespace ScreenFrame
 			IntPtr hWnd,
 			IntPtr hDC);
 
-		[DllImport("Shcore.dll", SetLastError = true)]
+		[DllImport("Gdi32.dll", SetLastError = true)]
+		private static extern int GetDeviceCaps(
+			IntPtr hdc,
+			int nIndex);
+
+		private const int LOGPIXELSX = 88;
+		private const int LOGPIXELSY = 90;
+
+		[DllImport("Shcore.dll")]
 		private static extern int GetDpiForMonitor(
 			IntPtr hmonitor,
 			MONITOR_DPI_TYPE dpiType,

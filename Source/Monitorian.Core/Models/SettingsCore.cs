@@ -13,12 +13,12 @@ using Monitorian.Core.Helper;
 namespace Monitorian.Core.Models
 {
 	/// <summary>
-	/// Persistent settings
+	/// Settings
 	/// </summary>
 	[DataContract]
 	public class SettingsCore : BindableBase
 	{
-		#region Settings
+		#region Settings (persistent)
 
 		/// <summary>
 		/// Whether to use large elements
@@ -40,7 +40,40 @@ namespace Monitorian.Core.Models
 			get => _showsAdjusted;
 			set => SetPropertyValue(ref _showsAdjusted, value);
 		}
-		private bool _showsAdjusted = true;
+		private bool _showsAdjusted = true; // default
+
+		/// <summary>
+		/// Whether to show current number
+		/// </summary>
+		[DataMember]
+		public bool ShowsNumber
+		{
+			get => _showsNumber;
+			set => SetPropertyValue(ref _showsNumber, value);
+		}
+		private bool _showsNumber = true; // default
+
+		/// <summary>
+		/// Whether to order by monitors arrangement
+		/// </summary>
+		[DataMember]
+		public bool OrdersArrangement
+		{
+			get => _ordersArrangement;
+			set => SetPropertyValue(ref _ordersArrangement, value);
+		}
+		private bool _ordersArrangement = true; // default
+
+		/// <summary>
+		/// Whether to defer change until stopped
+		/// </summary>
+		[DataMember]
+		public bool DefersChange
+		{
+			get => _defersChange;
+			set => SetPropertyValue(ref _defersChange, value);
+		}
+		private bool _defersChange;
 
 		/// <summary>
 		/// Whether to enable moving in unison
@@ -51,18 +84,29 @@ namespace Monitorian.Core.Models
 			get => _enablesUnison;
 			set => SetPropertyValue(ref _enablesUnison, value);
 		}
-		private bool _enablesUnison = false;
+		private bool _enablesUnison;
 
 		/// <summary>
-		/// Whether to change adjustable range
+		/// Whether to enable changing adjustable range
 		/// </summary>
 		[DataMember]
-		public bool ChangesRange
+		public bool EnablesRange
 		{
-			get => _changesRange;
-			set => SetPropertyValue(ref _changesRange, value);
+			get => _enablesRange;
+			set => SetPropertyValue(ref _enablesRange, value);
 		}
-		private bool _changesRange;
+		private bool _enablesRange;
+
+		/// <summary>
+		/// Whether to enable changing contrast
+		/// </summary>
+		[DataMember]
+		public bool EnablesContrast
+		{
+			get => _enablesContrast;
+			set => SetPropertyValue(ref _enablesContrast, value);
+		}
+		private bool _enablesContrast;
 
 		/// <summary>
 		/// Monitor customizations by user
@@ -99,6 +143,8 @@ namespace Monitorian.Core.Models
 
 		#endregion
 
+		protected Type[] KnownTypes { get; set; }
+
 		private const string SettingsFileName = "settings.xml";
 		private readonly string _fileName;
 
@@ -112,9 +158,9 @@ namespace Monitorian.Core.Models
 
 		private Throttle _save;
 
-		protected internal virtual void Initiate()
+		protected internal virtual async Task InitiateAsync()
 		{
-			Load(this);
+			await Task.Run(() => Load(this));
 
 			_save = new Throttle(
 				TimeSpan.FromMilliseconds(100),
@@ -130,7 +176,7 @@ namespace Monitorian.Core.Models
 		{
 			try
 			{
-				AppDataService.Load(instance, _fileName);
+				AppDataService.Load(instance, _fileName, KnownTypes);
 			}
 			catch (Exception ex)
 			{
@@ -143,7 +189,7 @@ namespace Monitorian.Core.Models
 		{
 			try
 			{
-				AppDataService.Save(instance, _fileName);
+				AppDataService.Save(instance, _fileName, KnownTypes);
 			}
 			catch (Exception ex)
 			{

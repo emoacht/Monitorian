@@ -9,7 +9,8 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Monitorian.Core</RootNamespace>
     <AssemblyName>Monitorian.Core</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
   </PropertyGroup>
@@ -57,6 +58,7 @@
     <Compile Include="Collections\ObservableKeyedList.cs" />
     <Compile Include="Common\BindableBase.cs" />
     <Compile Include="Helper\ArraySearch.cs" />
+    <Compile Include="Helper\ColorExtension.cs" />
     <Compile Include="Helper\EnumerableExtension.cs" />
     <Compile Include="Helper\ExceptionExtension.cs" />
     <Compile Include="Helper\KeyValuePairExtension.cs" />
@@ -66,7 +68,10 @@
     <Compile Include="Helper\Throttle.cs" />
     <Compile Include="Models\Monitor\DdcMonitorItem.cs" />
     <Compile Include="Models\Monitor\DeviceContext.cs" />
-    <Compile Include="Models\Monitor\DeviceInstallation.cs" />
+    <Compile Include="Models\Monitor\DeviceConversion.cs" />
+    <Compile Include="Models\Monitor\DeviceInformation.cs" />
+    <Compile Include="Models\Monitor\DisplayConfig.cs" />
+    <Compile Include="Models\Monitor\DisplayMonitor.cs" />
     <Compile Include="Models\Monitor\Error.cs" />
     <Compile Include="Models\Monitor\IMonitor.cs" />
     <Compile Include="Models\Monitor\LightSensor.cs" />
@@ -79,18 +84,25 @@
     <Compile Include="Models\Monitor\WmiMonitorItem.cs" />
     <Compile Include="Models\Watcher\BrightnessWatcher.cs" />
     <Compile Include="Models\Watcher\DisplayWatcher.cs" />
+    <Compile Include="Models\Watcher\ICountEventArgs.cs" />
     <Compile Include="Models\Watcher\PowerWatcher.cs" />
+    <Compile Include="Models\Watcher\SessionWatcher.cs" />
     <Compile Include="Models\Watcher\SystemEventsComplement.cs" />
     <Compile Include="Models\Watcher\TimerWatcher.cs" />
     <Compile Include="Models\AppDataService.cs" />
     <Compile Include="Models\ConsoleService.cs" />
     <Compile Include="Models\DocumentService.cs" />
     <Compile Include="Models\LanguageService.cs" />
-    <Compile Include="Models\LogService.cs" />
+    <Compile Include="Models\Logger.cs" />
     <Compile Include="Models\OperationRecorder.cs" />
     <Compile Include="Models\ProductInfo.cs" />
     <Compile Include="Models\SettingsCore.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Invariant.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Invariant.resx</DependentUpon>
+    </Compile>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -106,12 +118,15 @@
     <Compile Include="Views\Behaviors\ItemBehavior.cs" />
     <Compile Include="Views\Behaviors\ItemSelectorBehavior.cs" />
     <Compile Include="Views\Behaviors\ItemSliderBehavior.cs" />
+    <Compile Include="Views\Behaviors\ManipulationCallMethodAction.cs" />
     <Compile Include="Views\Behaviors\MouseDownParentAction.cs" />
     <Compile Include="Views\Controls\Sliders\CompoundSlider.cs" />
     <Compile Include="Views\Controls\Sliders\EnhancedSlider.cs" />
     <Compile Include="Views\Controls\Sliders\RangeSlider.cs" />
     <Compile Include="Views\Controls\Sliders\ShadowSlider.cs" />
     <Compile Include="Views\Controls\FrameworkElementMargin.cs" />
+    <Compile Include="Views\Controls\FrameworkElementSize.cs" />
+    <Compile Include="Views\Controls\IconButton.cs" />
     <Compile Include="Views\Controls\PulseLabel.cs" />
     <Compile Include="Views\Controls\ReversalLabel.cs" />
     <Compile Include="Views\Controls\SwitchTextBox.cs" />
@@ -120,6 +135,9 @@
     <Compile Include="Views\Converters\StringToVisibilityConverter.cs" />
     <Compile Include="Views\Converters\VisibilityInverseConverter.cs" />
     <Compile Include="Views\Converters\VisibilityToBooleanFilterConverter.cs" />
+    <Compile Include="Views\Touchpad\TouchpadContact.cs" />
+    <Compile Include="Views\Touchpad\TouchpadHelper.cs" />
+    <Compile Include="Views\Touchpad\TouchpadTracker.cs" />
     <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
@@ -129,7 +147,6 @@
     <Compile Include="Views\ProbeSection.xaml.cs">
       <DependentUpon>ProbeSection.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\UserInteraction.cs" />
     <Compile Include="Views\WindowEffect.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -147,17 +164,33 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Properties\Invariant.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Invariant.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.de.resx">
+      <DependentUpon>Resources.resx</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.fr.resx">
+      <DependentUpon>Resources.resx</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.ja-JP.resx">
+      <DependentUpon>Resources.resx</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.ko-KR.resx">
       <DependentUpon>Resources.resx</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.pl-PL.resx">
       <DependentUpon>Resources.resx</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.ru-RU.resx">
@@ -186,6 +219,14 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\ProbeSection.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Themes\DarkTheme.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Themes\LightTheme.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

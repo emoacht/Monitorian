@@ -163,6 +163,6 @@
     <value>DDC/CI не включен или не поддерживается.</value>
   </data>
   <data name="UseLargeElements" xml:space="preserve">
-    <value>Использовать большие кнопки</value>
+    <value>Использовать большие ползунки</value>
   </data>
 </root>

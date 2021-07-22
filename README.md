@@ -10,14 +10,18 @@ The user can change the brightness of monitors, including external ones, either 
 ![Screenshot](Images/Screenshot_unison.png)<br>
 (DPI: 100%)
 
-In addition, the user can change the adjustable range of brightness for each monitor seamlessly.
+In addition, the user can change the adjustable range of brightness and contrast for each monitor seamlessly.
 
 ![Screenshot](Images/Screenshot_range.png)<br>
-(DPI: 100%)
+
+![Screenshot](Images/Screenshot_contrast.png)<br>
 
 Additional languages:
 
+- de (German) by @uDEV2019
+- fr (French) by @AlexZeGamer
 - ja-JP (Japanese) by @emoacht
+- ko-KR (Korean) by @VenusGirl
 - pl-PL (Polish) by @Daxxxis
 - ru-RU (Russian) by @SigmaTel71
 - zh-Hans (Simplified Chinese) by @ComMouse
@@ -25,7 +29,7 @@ Additional languages:
 ## Requirements
 
  * Windows 7 or newer
- * .NET Framework __4.7.2__
+ * .NET Framework __4.8__
  * An external monitor must be DDC/CI enabled.
 ![OSD](Images/Dell_ddcci.jpg)
 
@@ -35,18 +39,25 @@ Additional languages:
 [Monitorian](https://www.microsoft.com/store/apps/9nw33j738bl0) (Microsoft Store)
 
  * Other:<br>
-:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/2.11.2-Installer/MonitorianInstaller2112.zip) | :floppy_disk: [Executables](https://github.com/emoacht/Monitorian/releases/download/2.11.2-Executables/Monitorian2112.zip)
+:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/3.0.1-Installer/MonitorianInstaller301.zip)
 
 ## Install/Uninstall
 
-When you use only executables, please note the following:
+If you wish to place executable files on your own, you can extract them from installer file (.msi) by the following command:
+
+```
+msiexec /a [source msi file path] targetdir=[destination folder path (absolute path)] /qn
+```
+
+In such case, please note the following:
 
  - The settings file will be created at: `[system drive]\Users\[user name]\AppData\Local\Monitorian\`
  - When you check [Start on sign in], a registry value will be added to: `HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run`
 
 ## Remarks
 
- - The monitor name shown in main window can be changed for easier identification of monitors. To change the name, press and hold it until it turns to be editable.
+ - The monitor name shown in main window can be changed to distinguish monitors easily. To change the name, press and hold it until it turns to be editable.
+ - To adjust the brightness by a touchpad, place two fingers on it and swipe horizontally. The touchpad must be a precision touchpad.
  - The number of monitors shown at a time is up to 4.
 
 ## Add-on Features
@@ -70,7 +81,7 @@ You can use command-line options to get/set the brigtness.
 | Set brightness of a specified monitor. | /set [Device Instance ID] [Brightness] |
 | Set brightness of all monitors.        | /set all [Brightness]                  |
 
-The brightness ranges from 0 to 100%. It can be specified with brightness itself (e.g. 20), increase (e.g. +10) or decrease (e.g. -10). The device instance ID is an unique identifier given by the OS to each monitor.
+If this app is called with `/get` option, it will return [Device Instance ID] [Monitor name] [Brightness]. The device instance ID is an unique identifier given by the OS to each monitor. The brightness ranges from 0 to 100%. It can be specified with brightness itself (e.g. 20), increase (e.g. +10) or decrease (e.g. -10) when you use `/set` option.
 
 You can call this app by its name `Monitorian` in command prompt or bat file. From Task Scheduler, it can be performed by the path to its alias `%LOCALAPPDATA%\Microsoft\WindowsApps\Monitorian.exe`. For example, to increase brightness of all monitors by 30%, the Action will be the following:
 
@@ -81,6 +92,12 @@ The code for add-on features is not included in this repository.
 ## Development
 
 This app is a WPF app developed and tested with Surface Pro 4.
+
+### Reporting
+
+The controllability of an external monitor depends on whether the monitor successfully responds to DDC/CI commands. Even if a monitor is expected to be DDC/CI compatible, it may fail to respond (a) if the monitor is weird, (b) if its connection to the system is problematic, or (c) when the system starts or resumes. If an issue is case (a) or (b), this app cannot help it. If case (c), this app may be able to handle it.
+
+In any case, reporting on the controllability of a monitor MUST include probe.log and operation.log described below. The logs will be the starting point to look into the issue.
 
 ### Probe
 
@@ -110,6 +127,7 @@ This app is a WPF app developed and tested with Surface Pro 4.
 | Windows 10 SDK (10.0.19041.0)                                   | TargetPlatformVersion  |
 
 3. Load the solution by specifying `/Source/Monitorian.sln`. Then go to the solution explorer and right click the solution name and execute `Restore NuGet Packages`.
+4. To open installer project, install [WiX Toolset Build Tools](https://wixtoolset.org/releases/) and [WiX Toolset Visual Studio Extension](https://marketplace.visualstudio.com/items?itemName=WixToolset.WiXToolset)
 
 ### Globalization
 
@@ -121,6 +139,34 @@ An alternative language can be shown by adding a Resources (.resx) file into `/S
 `Resources.ja-JP.resx` (for Japanese) would be a good example for this purpose.
 
 ## History
+
+Ver 3.0 2021-7-1
+
+- Change UI
+
+Ver 2.19 2021-6-16
+
+- Enable to adjust brightness by precision touchpad
+
+Ver 2.18 2021-5-23
+
+- Add de (German) language. Thanks to @uDEV2019!
+
+Ver 2.17 2021-5-19
+
+- Add fr (French) language. Thanks to @AlexZeGamer!
+
+Ver 2.16 2021-4-11
+
+- Add ko-KR (Korean) language. Thanks to @VenusGirl!
+
+Ver 2.14 2021-3-26
+
+- Improve internal processes
+
+Ver 2.13 2021-2-13
+
+- Improve internal process
 
 Ver 2.11 2021-1-26
 

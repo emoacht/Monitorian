@@ -11,6 +11,7 @@ using System.Windows.Media;
 using Microsoft.Win32;
 
 using Monitorian.Core.Helper;
+using Monitorian.Supplement;
 
 namespace Monitorian.Core.Views
 {
@@ -87,7 +88,7 @@ namespace Monitorian.Core.Views
 		{
 			public AccentState AccentState;
 			public int AccentFlags;
-			public int GradientColor;
+			public uint GradientColor;
 			public int AnimationId;
 		}
 
@@ -137,6 +138,32 @@ namespace Monitorian.Core.Views
 
 		#endregion
 
+		public static IReadOnlyCollection<string> Options => ColorPairs.Keys.Prepend(ThemeOption).Prepend(TextureOption).ToArray();
+
+		private const string ThemeOption = "/theme";
+
+		/// <summary>
+		/// Background texture of window
+		/// </summary>
+		private enum Texture
+		{
+			None = 0,
+
+			/// <summary>
+			/// Thin blur texture
+			/// </summary>
+			Thin,
+
+			/// <summary>
+			/// Thick blur (Acrylic) texture
+			/// </summary>
+			Thick
+		}
+
+		private const string TextureOption = "/texture";
+
+		private static Texture _texture = Texture.Thick; // Default
+
 		/// <summary>
 		/// Color changeable elements of window
 		/// </summary>
@@ -157,10 +184,15 @@ namespace Monitorian.Core.Views
 			{ "/menu_background", ColorElement.MenuBackground }
 		};
 
-		public static IReadOnlyCollection<string> Options => ColorPairs.Keys.ToArray();
+		private static Dictionary<ColorElement, Brush> _colors;
 
-		private static readonly Lazy<Dictionary<ColorElement, Brush>> _colors = new Lazy<Dictionary<ColorElement, Brush>>(() =>
+		public static void ChangeTheme()
 		{
+			//const string DarkThemeUriString = @"/Monitorian.Core;component/Views/Themes/DarkTheme.xaml";
+			const string LightThemeUriString = @"/Monitorian.Core;component/Views/Themes/LightTheme.xaml";
+
+			ColorTheme? theme = null;
+
 			var converter = new BrushConverter();
 			bool TryParse(string source, out Brush brush)
 			{
@@ -178,29 +210,71 @@ namespace Monitorian.Core.Views
 
 			var colorPairs = ColorPairs;
 			var colors = new Dictionary<ColorElement, Brush>();
+
 			var arguments = AppKeeper.DefinedArguments;
 
 			int i = 0;
 			while (i < arguments.Count - 1)
 			{
-				if (colorPairs.TryGetValue(arguments[i], out ColorElement key) && TryParse(arguments[i + 1], out Brush value))
+				if (arguments[i] == ThemeOption)
 				{
-					colors[key] = value;
-					i++;
+					if (Enum.TryParse(arguments[i + 1], true, out ColorTheme buffer))
+						theme = buffer;
+				}
+				else if (arguments[i] == TextureOption)
+				{
+					if (Enum.TryParse(arguments[i + 1], true, out Texture buffer))
+						_texture = buffer;
+				}
+				else if (colorPairs.TryGetValue(arguments[i], out ColorElement key))
+				{
+					if (TryParse(arguments[i + 1], out Brush value))
+					{
+						colors[key] = value;
+						i++;
+					}
 				}
 				i++;
 			}
-			return colors.Any() ? colors : null;
-		});
+
+			if ((theme ?? UIInformation.GetWindowsTheme()) == ColorTheme.Light)
+				ApplyResource(LightThemeUriString);
+
+			_colors = colors.Any() ? colors : null;
+		}
+
+		private static void ApplyResource(string newUriString, string oldUriString = null)
+		{
+			if (!string.IsNullOrWhiteSpace(oldUriString))
+			{
+				var oldDictionary = Application.Current.Resources.MergedDictionaries.FirstOrDefault(x => x.Source.OriginalString == oldUriString);
+				if (oldDictionary is not null)
+					Application.Current.Resources.MergedDictionaries.Remove(oldDictionary);
+			}
+
+			if (!string.IsNullOrWhiteSpace(newUriString))
+			{
+				try
+				{
+					var newDictionary = new ResourceDictionary { Source = new Uri(newUriString, UriKind.RelativeOrAbsolute) };
+					Application.Current.Resources.MergedDictionaries.Add(newDictionary);
+				}
+				catch (Exception ex)
+				{
+					Debug.WriteLine($"Failed to apply resources." + Environment.NewLine
+						+ ex);
+				}
+			}
+		}
 
 		private static bool ChangeColors(Window window)
 		{
-			if (_colors.Value is null)
+			if (_colors?.Any() is not true)
 				return false;
 
 			var isBackgroundChanged = false;
 
-			foreach (var (key, value) in _colors.Value)
+			foreach (var (key, value) in _colors)
 			{
 				switch (key, window is MainWindow)
 				{
@@ -220,6 +294,8 @@ namespace Monitorian.Core.Views
 			return isBackgroundChanged;
 		}
 
+		#region Transitions
+
 		public static bool DisableTransitions(Window window)
 		{
 			var windowHandle = new WindowInteropHelper(window).Handle;
@@ -232,9 +308,20 @@ namespace Monitorian.Core.Views
 				(uint)Marshal.SizeOf<bool>()) == S_OK);
 		}
 
+		#endregion
+
+		#region Translucency
+
+		private static readonly Lazy<bool> IsTransparencyEnabledForWin10 = new(() => IsEnableTransparencyOn());
+		private static readonly Lazy<bool> IsTransparencyEnabledForWin7 = new(() => IsColorizationOpaqueBlendOn());
+
+		private const string TranslucentBrushKey = "App.Background.Translucent";
+		private static SolidColorBrush TranslucentBrush;
+		private static Color? TranslucentColor;
+
 		public static bool EnableBackgroundTranslucency(Window window)
 		{
-			if (ChangeColors(window))
+			if (ChangeColors(window) || (_texture == Texture.None))
 				return false;
 
 			if (OsVersion.Is10Threshold1OrNewer)
@@ -243,9 +330,21 @@ namespace Monitorian.Core.Views
 				if (!IsTransparencyEnabledForWin10.Value)
 					return false;
 
-				ChangeBackgroundTranslucent(window);
+				if (TranslucentBrush is null)
+				{
+					TranslucentBrush = (SolidColorBrush)window.FindResource(TranslucentBrushKey);
 
-				return EnableBackgroundBlurForWin10(window);
+					if (_texture == Texture.Thick)
+					{
+						var color = TranslucentBrush.Color;
+						TranslucentBrush = new SolidColorBrush(Color.FromArgb(a: 1, r: color.R, g: color.G, b: color.B));
+						TranslucentColor = Color.FromArgb(a: (byte)Math.Max(0, color.A - 1), r: color.R, g: color.G, b: color.B);
+					}
+				}
+
+				window.Background = TranslucentBrush;
+
+				return EnableBackgroundBlurForWin10(window, TranslucentColor);
 			}
 
 			if (OsVersion.Is8OrNewer)
@@ -260,7 +359,9 @@ namespace Monitorian.Core.Views
 				if (!IsTransparencyEnabledForWin7.Value)
 					return false;
 
-				ChangeBackgroundTranslucent(window);
+				TranslucentBrush ??= (SolidColorBrush)window.FindResource(TranslucentBrushKey);
+
+				window.Background = TranslucentBrush;
 
 				return EnableBackgroundBlurForWin7(window);
 			}
@@ -268,23 +369,19 @@ namespace Monitorian.Core.Views
 			return false;
 		}
 
-		private static readonly Lazy<bool> IsTransparencyEnabledForWin10 = new Lazy<bool>(() => IsEnableTransparencyOn());
-		private static readonly Lazy<bool> IsTransparencyEnabledForWin7 = new Lazy<bool>(() => IsColorizationOpaqueBlendOn());
-
-		private const string TranslucentBrushKey = "App.Background.Translucent";
-		private static SolidColorBrush TranslucentBrush;
-
-		private static void ChangeBackgroundTranslucent(Window window)
-		{
-			TranslucentBrush ??= (SolidColorBrush)window.FindResource(TranslucentBrushKey);
-			window.Background = TranslucentBrush;
-		}
-
-		private static bool EnableBackgroundBlurForWin10(Window window)
+		private static bool EnableBackgroundBlurForWin10(Window window, Color? color = null)
 		{
 			var windowHandle = new WindowInteropHelper(window).Handle;
 
-			var accent = new AccentPolicy { AccentState = AccentState.ACCENT_ENABLE_BLURBEHIND };
+			var accent = (color is null)
+				? new AccentPolicy { AccentState = AccentState.ACCENT_ENABLE_BLURBEHIND }
+				: new AccentPolicy
+				{
+					AccentState = AccentState.ACCENT_ENABLE_ACRYLICBLURBEHIND,
+					AccentFlags = 2,
+					GradientColor = color.Value.ToUInt32()
+				};
+
 			var accentSize = Marshal.SizeOf(accent);
 
 			var accentPointer = IntPtr.Zero;
@@ -297,7 +394,7 @@ namespace Monitorian.Core.Views
 				{
 					Attribute = WindowCompositionAttribute.WCA_ACCENT_POLICY,
 					Data = accentPointer,
-					SizeOfData = accentSize,
+					SizeOfData = accentSize
 				};
 
 				return SetWindowCompositionAttribute(
@@ -334,8 +431,6 @@ namespace Monitorian.Core.Views
 				windowHandle,
 				ref bb) == S_OK);
 		}
-
-		#region Registry
 
 		private static bool IsEnableTransparencyOn()
 		{

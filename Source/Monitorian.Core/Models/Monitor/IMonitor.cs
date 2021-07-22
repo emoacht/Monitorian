@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Monitorian.Core.Models.Monitor
 {
@@ -12,12 +13,43 @@ namespace Monitorian.Core.Models.Monitor
 		string Description { get; }
 		byte DisplayIndex { get; }
 		byte MonitorIndex { get; }
+		Rect MonitorRect { get; }
 		bool IsReachable { get; }
+		bool IsBrightnessSupported { get; }
+		bool IsContrastSupported { get; }
 
 		int Brightness { get; }
 		int BrightnessSystemAdjusted { get; }
 
-		bool UpdateBrightness(int brightness = -1);
-		bool SetBrightness(int brightness);
+		AccessResult UpdateBrightness(int brightness = -1);
+		AccessResult SetBrightness(int brightness);
+
+		int Contrast { get; }
+
+		AccessResult UpdateContrast();
+		AccessResult SetContrast(int contrast);
+	}
+
+	public enum AccessStatus
+	{
+		None = 0,
+		Succeeded,
+		Failed,
+		DdcFailed,
+		TransmissionFailed,
+		NoLongerExist,
+		NotSupported
+	}
+
+	public class AccessResult
+	{
+		public AccessStatus Status { get; }
+		public string Message { get; }
+
+		public AccessResult(AccessStatus status, string message) => (this.Status, this.Message) = (status, message);
+
+		public static readonly AccessResult Succeeded = new(AccessStatus.Succeeded, null);
+		public static readonly AccessResult Failed = new(AccessStatus.Failed, null);
+		public static readonly AccessResult NotSupported = new(AccessStatus.NotSupported, null);
 	}
 }

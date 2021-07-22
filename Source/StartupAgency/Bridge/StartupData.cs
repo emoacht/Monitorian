@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using StartupBridge.Storage;
+using StartupAgency.Storage;
 
-namespace StartupBridge
+namespace StartupAgency.Bridge
 {
 	/// <summary>
 	/// Startup data

@@ -8,9 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
-using System.Windows.Media;
 using System.Windows.Threading;
-using Microsoft.Win32;
 
 using Monitorian.Core.Models;
 using Monitorian.Core.Models.Monitor;
@@ -37,6 +35,7 @@ namespace Monitorian.Core
 		public NotifyIconContainer NotifyIconContainer { get; }
 
 		private readonly DisplayWatcher _displayWatcher;
+		private readonly SessionWatcher _sessionWatcher;
 		private readonly PowerWatcher _powerWatcher;
 		private readonly BrightnessWatcher _brightnessWatcher;
 
@@ -48,6 +47,7 @@ namespace Monitorian.Core
 			this.Settings = settings ?? throw new ArgumentNullException(nameof(settings));
 
 			LanguageService.SwitchDefault();
+			WindowEffect.ChangeTheme();
 
 			Monitors = new ObservableCollection<MonitorViewModel>();
 			BindingOperations.EnableCollectionSynchronization(Monitors, _monitorsLock);
@@ -55,13 +55,14 @@ namespace Monitorian.Core
 			NotifyIconContainer = new NotifyIconContainer();
 
 			_displayWatcher = new DisplayWatcher();
+			_sessionWatcher = new SessionWatcher();
 			_powerWatcher = new PowerWatcher();
 			_brightnessWatcher = new BrightnessWatcher();
 		}
 
 		public virtual async Task InitiateAsync()
 		{
-			Settings.Initiate();
+			await Settings.InitiateAsync();
 			Settings.MonitorCustomizations.AbsoluteCapacity = MaxKnownMonitorsCount;
 			Settings.PropertyChanged += OnSettingsChanged;
 
@@ -77,13 +78,14 @@ namespace Monitorian.Core
 
 			await ScanAsync();
 
-			StartupAgent.Requested += (sender, e) => e.Response = OnRequested(sender, e.Args);
+			StartupAgent.HandleRequestAsync = HandleRequestAsync;
 
 			NotifyIconContainer.MouseLeftButtonClick += OnMainWindowShowRequestedBySelf;
 			NotifyIconContainer.MouseRightButtonClick += OnMenuWindowShowRequested;
 
 			_displayWatcher.Subscribe(() => OnMonitorsChangeInferred(nameof(DisplayWatcher)));
-			_powerWatcher.Subscribe((e) => OnMonitorsChangeInferred(nameof(PowerWatcher), e.Mode, e.Count), PowerManagement.GetOnPowerSettingChanged());
+			_sessionWatcher.Subscribe((e) => OnMonitorsChangeInferred(nameof(SessionWatcher), e));
+			_powerWatcher.Subscribe((e) => OnMonitorsChangeInferred(nameof(PowerWatcher), e), PowerManagement.GetOnPowerSettingChanged());
 			_brightnessWatcher.Subscribe((instanceName, brightness) => Update(instanceName, brightness));
 		}
 
@@ -97,22 +99,22 @@ namespace Monitorian.Core
 			_brightnessWatcher.Dispose();
 		}
 
-		protected virtual object OnRequested(object sender, IReadOnlyCollection<string> args)
+		protected virtual Task<string> HandleRequestAsync(IReadOnlyCollection<string> args)
 		{
-			OnMainWindowShowRequestedByOther(sender, EventArgs.Empty);
-			return null;
+			OnMainWindowShowRequestedByOther(null, EventArgs.Empty);
+			return Task.FromResult<string>(null);
 		}
 
 		protected async void OnMainWindowShowRequestedBySelf(object sender, EventArgs e)
 		{
 			ShowMainWindow();
-			await UpdateAsync();
+			await CheckUpdateAsync();
 		}
 
-		protected void OnMainWindowShowRequestedByOther(object sender, EventArgs e)
+		protected async void OnMainWindowShowRequestedByOther(object sender, EventArgs e)
 		{
 			_current.Dispatcher.Invoke(() => ShowMainWindow());
-			OnMonitorsChangeInferred();
+			await CheckUpdateAsync();
 		}
 
 		protected void OnMenuWindowShowRequested(object sender, Point e)
@@ -123,10 +125,7 @@ namespace Monitorian.Core
 		protected virtual void ShowMainWindow()
 		{
 			var window = (MainWindow)_current.MainWindow;
-			if (!window.CanBeShown)
-				return;
-
-			if ((window.Visibility == Visibility.Visible) && window.IsForeground)
+			if (window is { CanBeShown: false } or { Visibility: Visibility.Visible, IsForeground: true })
 				return;
 
 			window.ShowForeground();
@@ -142,40 +141,71 @@ namespace Monitorian.Core
 		{
 			var window = new MenuWindow(this, pivot);
 			window.ViewModel.CloseAppRequested += (sender, e) => _current.Shutdown();
-			window.AddMenuItem(new ProbeSection(this));
+			window.MenuSectionTop.Add(new ProbeSection(this));
 			window.Show();
 		}
 
-		protected virtual void OnSettingsInitiated()
+		protected virtual async void OnSettingsInitiated()
 		{
 			if (Settings.MakesOperationLog)
-				Recorder = new("Initiated");
+				Recorder = await OperationRecorder.CreateAsync("Initiated");
 		}
 
-		protected virtual void OnSettingsChanged(object sender, PropertyChangedEventArgs e)
+		protected virtual async void OnSettingsChanged(object sender, PropertyChangedEventArgs e)
 		{
 			switch (e.PropertyName)
 			{
-				case nameof(Settings.EnablesUnison):
-					OnSettingsEnablesUnisonChanged();
+				case nameof(Settings.EnablesUnison) when !Settings.EnablesUnison:
+					foreach (var m in Monitors)
+						m.IsUnison = false;
+
+					break;
+
+				case nameof(Settings.EnablesRange) when !Settings.EnablesRange:
+					foreach (var m in Monitors)
+						m.IsRangeChanging = false;
+
+					break;
+
+				case nameof(Settings.EnablesContrast) when !Settings.EnablesContrast:
+					foreach (var m in Monitors)
+						m.IsContrastChanging = false;
+
 					break;
 
 				case nameof(Settings.MakesOperationLog):
-					Recorder = Settings.MakesOperationLog ? new("Enabled") : null;
+					Recorder = Settings.MakesOperationLog ? await OperationRecorder.CreateAsync("Enabled") : null;
 					break;
 			}
 		}
 
 		#region Monitors
 
-		protected virtual async void OnMonitorsChangeInferred(object sender = null, PowerModes mode = default, int? count = null)
+		protected virtual async void OnMonitorsChangeInferred(object sender = null, ICountEventArgs e = null)
 		{
-			Recorder?.Record($"{nameof(OnMonitorsChangeInferred)} ({sender}{(mode == default ? string.Empty : $"- {mode} {count}")})");
+			await (Recorder?.RecordAsync($"{nameof(OnMonitorsChangeInferred)} ({sender}{e?.Description})") ?? Task.CompletedTask);
 
-			if (count == 0)
+			if (e?.Count == 0)
 				return;
 
 			await ScanAsync(TimeSpan.FromSeconds(3));
+		}
+
+		protected internal virtual async void OnMonitorAccessFailed(AccessResult result)
+		{
+			await (Recorder?.RecordAsync($"{nameof(OnMonitorAccessFailed)}" + Environment.NewLine
+				+ $"Status: {result.Status}" + Environment.NewLine
+				+ $"Message: {result.Message}") ?? Task.CompletedTask);
+		}
+
+		protected internal virtual async void OnMonitorsChangeFound()
+		{
+			if (Monitors.Any())
+			{
+				await (Recorder?.RecordAsync($"{nameof(OnMonitorsChangeFound)}") ?? Task.CompletedTask);
+
+				_displayWatcher.RaiseDisplaySettingsChanged();
+			}
 		}
 
 		internal event EventHandler<bool> ScanningChanged;
@@ -261,7 +291,7 @@ namespace Monitorian.Core
 					var maxMonitorsCount = await GetMaxMonitorsCountAsync();
 
 					var updateResults = await Task.WhenAll(Monitors
-						.Where(x => x.IsLikelyControllable)
+						.Where(x => x.IsReachable)
 						.Select((x, index) =>
 						{
 							if (index < maxMonitorsCount)
@@ -301,7 +331,7 @@ namespace Monitorian.Core
 			}
 		}
 
-		protected virtual async Task UpdateAsync()
+		protected virtual async Task CheckUpdateAsync()
 		{
 			if (_scanCount > 0)
 				return;
@@ -312,9 +342,20 @@ namespace Monitorian.Core
 				isEntered = (Interlocked.Increment(ref _updateCount) == 1);
 				if (isEntered)
 				{
-					await Task.WhenAll(Monitors
-						.Where(x => x.IsTarget)
-						.Select(x => Task.Run(() => x.UpdateBrightness())));
+					if (await Task.Run(() => MonitorManager.CheckMonitorsChanged()))
+					{
+						OnMonitorsChangeFound();
+					}
+					else
+					{
+						await Task.WhenAll(Monitors
+							.Where(x => x.IsTarget)
+							.SelectMany(x => new[]
+							{
+								Task.Run(() => x.UpdateBrightness()),
+								(x.IsContrastChanging ? Task.Run(() => x.UpdateContrast()) : Task.CompletedTask),
+							}));
+					}
 				}
 			}
 			finally
@@ -360,15 +401,6 @@ namespace Monitorian.Core
 		#endregion
 
 		#region Customization
-
-		private void OnSettingsEnablesUnisonChanged()
-		{
-			if (Settings.EnablesUnison)
-				return;
-
-			foreach (var m in Monitors)
-				m.IsUnison = false;
-		}
 
 		protected internal virtual bool TryLoadCustomization(string deviceInstanceId, ref string name, ref bool isUnison, ref byte lowest, ref byte highest)
 		{

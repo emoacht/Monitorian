@@ -27,7 +27,6 @@ namespace Monitorian.Core
 			{
 				StartupAgent.Options,
 				LanguageService.Options,
-				UserInteraction.Options,
 				WindowEffect.Options
 			}
 			.SelectMany(x => x)
@@ -83,11 +82,10 @@ namespace Monitorian.Core
 			ConsoleService.EndWrite();
 		}
 
-		public void Write(object content)
+		public void Write(string content)
 		{
-			var buffer = content?.ToString();
-			if (!string.IsNullOrEmpty(buffer))
-				ConsoleService.Write(buffer);
+			if (!string.IsNullOrEmpty(content))
+				ConsoleService.Write(content);
 		}
 
 		#region Exception
@@ -128,7 +126,7 @@ namespace Monitorian.Core
 			if (ConsoleService.Write(exception, exceptionName))
 				return;
 
-			LogService.RecordException(exception);
+			Logger.RecordException(exception);
 		}
 
 		#endregion

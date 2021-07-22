@@ -163,6 +163,6 @@
     <value>DDC/CI 不受支持或未启用。</value>
   </data>
   <data name="UseLargeElements" xml:space="preserve">
-    <value>使用大型按钮</value>
+    <value>使用大型滑块</value>
   </data>
 </root>

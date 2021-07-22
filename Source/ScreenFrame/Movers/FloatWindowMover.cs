@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
+using ScreenFrame.Helper;
+
 namespace ScreenFrame.Movers
 {
 	/// <summary>
@@ -48,37 +50,46 @@ namespace ScreenFrame.Movers
 		/// <returns>True if successfully gets</returns>
 		protected bool TryGetAdjacentLocationToPivot(double windowWidth, double windowHeight, out Rect location)
 		{
+			if (!WindowHelper.TryGetTaskbar(out _, out TaskbarAlignment taskbarAlignment, out _))
+			{
+				location = default;
+				return false;
+			}
+
+			var isLeftToRight = !CultureInfoAddition.UserDefaultUICulture.TextInfo.IsRightToLeft;
+
+			PivotAlignment = (taskbarAlignment, isLeftToRight) switch
+			{
+				(TaskbarAlignment.Top, true) => PivotAlignment.TopRight,
+				(TaskbarAlignment.Top, false) => PivotAlignment.TopLeft,
+				(TaskbarAlignment.Bottom, true) => PivotAlignment.BottomRight,
+				(TaskbarAlignment.Bottom, false) => PivotAlignment.BottomLeft,
+				(TaskbarAlignment.Left, { }) => PivotAlignment.BottomLeft,
+				(TaskbarAlignment.Right, { }) => PivotAlignment.BottomRight,
+				_ => default
+			};
+
 			var x = _pivot.X;
 			var y = _pivot.Y;
 
-			var taskbarAlignment = WindowHelper.GetTaskbarAlignment();
-			switch (taskbarAlignment)
+			switch (PivotAlignment)
 			{
-				case TaskbarAlignment.Left:
-					// Place this window at the top-right of the pivot.
+				case PivotAlignment.TopLeft:
 					x += 1;
-					y += -windowHeight - 1;
-					PivotAlignment = PivotAlignment.BottomLeft;
-					break;
-
-				case TaskbarAlignment.Top:
-					// Place this window at the bottom-left of the pivot.					
-					x += -windowWidth - 1;
 					y += 1;
-					PivotAlignment = PivotAlignment.TopRight;
 					break;
-
-				case TaskbarAlignment.Right:
-				case TaskbarAlignment.Bottom:
-					// Place this window at the top-left of the pivot.
-					x += -windowWidth - 1;
-					y += -windowHeight - 1;
-					PivotAlignment = PivotAlignment.BottomRight;
+				case PivotAlignment.TopRight:
+					x -= (windowWidth + 1);
+					y += 1;
 					break;
-
-				default:
-					location = default;
-					return false;
+				case PivotAlignment.BottomLeft:
+					x += 1;
+					y -= (windowHeight + 1);
+					break;
+				case PivotAlignment.BottomRight:
+					x -= (windowWidth + 1);
+					y -= (windowHeight + 1);
+					break;
 			}
 			location = new Rect(x, y, windowWidth, windowHeight);
 			return true;

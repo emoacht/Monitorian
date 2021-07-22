@@ -51,6 +51,11 @@ namespace Monitorian.Core.Models
 		/// </summary>
 		public static string StartupTaskId => GetAppSettings();
 
+		/// <summary>
+		/// Project Url
+		/// </summary>
+		public static string ProjectUrl => GetAppSettings();
+
 		private static TAttribute GetAttribute<TAttribute>(this Assembly assembly) where TAttribute : Attribute =>
 			(TAttribute)Attribute.GetCustomAttribute(assembly, typeof(TAttribute));
 

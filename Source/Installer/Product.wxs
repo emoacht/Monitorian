@@ -84,6 +84,12 @@
           <File Id="CoreResourcesLibrary_de" Name="$(var.Monitorian.TargetName).Core.resources.dll" KeyPath="yes"/>
         </Component>
       </Directory>
+      <Directory Id="ResourcesFolder_es" Name="es"
+                 FileSource="$(var.Monitorian.TargetDir)es">
+        <Component Id="CoreResourcesLibrary_es" Guid="{4329EAB1-6FC9-41F4-8A6E-77FA6C67B15C}">
+          <File Id="CoreResourcesLibrary_es" Name="$(var.Monitorian.TargetName).Core.resources.dll" KeyPath="yes"/>
+        </Component>
+      </Directory>
       <Directory Id="ResourcesFolder_fr" Name="fr"
                  FileSource="$(var.Monitorian.TargetDir)fr">
         <Component Id="CoreResourcesLibrary_fr" Guid="{B7502D66-6FE8-4E0F-A8D0-42AFFBE82895}">
@@ -164,12 +170,13 @@
       <ComponentRef Id="StartupLibrary"/>
       <ComponentRef Id="VisualManifest"/>
       <ComponentRef Id="CoreResourcesLibrary_de"/>
+      <ComponentRef Id="CoreResourcesLibrary_es"/>
       <ComponentRef Id="CoreResourcesLibrary_fr"/>
       <ComponentRef Id="CoreResourcesLibrary_jaJP"/>
       <ComponentRef Id="CoreResourcesLibrary_koKR"/>
       <ComponentRef Id="CoreResourcesLibrary_plPL"/>
       <ComponentRef Id="CoreResourcesLibrary_ruRU"/>
-			<ComponentRef Id="CoreResourcesLibrary_trTR"/>
+      <ComponentRef Id="CoreResourcesLibrary_trTR"/>
       <ComponentRef Id="CoreResourcesLibrary_zhHans"/>
       <ComponentRef Id="ApplicationShortcut"/>
       <ComponentRef Id="ApplicationWorkingFolder"/>

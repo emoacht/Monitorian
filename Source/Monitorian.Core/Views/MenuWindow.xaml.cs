@@ -49,12 +49,12 @@ namespace Monitorian.Core.Views
 
 		#region Show/Close
 
-		public void DepartFromForegrond()
+		public void DepartFromForeground()
 		{
 			this.Topmost = false;
 		}
 
-		public async void ReturnToForegroud()
+		public async void ReturnToForeground()
 		{
 			// Wait for this window to be able to be activated.
 			await Task.Delay(TimeSpan.FromMilliseconds(100));

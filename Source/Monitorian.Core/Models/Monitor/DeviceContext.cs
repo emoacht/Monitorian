@@ -253,6 +253,8 @@ namespace Monitorian.Core.Models.Monitor
 			foreach (var (_, displayIndex, monitor, monitorIndex) in EnumerateDevices())
 			{
 				var deviceInstanceId = DeviceConversion.ConvertToDeviceInstanceId(monitor.DeviceID);
+				if (string.IsNullOrEmpty(deviceInstanceId))
+					continue;
 
 				//Debug.WriteLine($"DeviceId: {monitor.DeviceID}");
 				//Debug.WriteLine($"DeviceInstanceId: {deviceInstanceId}");

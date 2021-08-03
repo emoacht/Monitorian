@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ChangeContrast" xml:space="preserve">
+    <value>Zmień kontrast</value>
+  </data>
   <data name="ChangeRange" xml:space="preserve">
     <value>Zmień zakres regulacji</value>
   </data>
@@ -129,14 +132,29 @@
   <data name="CopyOperationMessage" xml:space="preserve">
     <value>Zapisać dziennik operacji na pulpicie?</value>
   </data>
+  <data name="DeferChange" xml:space="preserve">
+    <value>Zmień dopiero po puszczeniu</value>
+  </data>
+  <data name="EnableContrast" xml:space="preserve">
+    <value>Włącz zmienianie kontrastu</value>
+  </data>
+  <data name="EnableRange" xml:space="preserve">
+    <value>Włącz dostosowywalny zakres</value>
+  </data>
   <data name="EnableUnison" xml:space="preserve">
     <value>Włącz równoczesne dostosowowywanie</value>
   </data>
   <data name="MakeOperation" xml:space="preserve">
     <value>Utwórz dziennik operacji</value>
   </data>
+  <data name="MoveUnison" xml:space="preserve">
+    <value>Równoczesne dostosowowywanie</value>
+  </data>
+  <data name="OrderArrangement" xml:space="preserve">
+    <value>Sortuj według układu monitorów</value>
+  </data>
   <data name="Probe" xml:space="preserve">
-    <value>Zbadaj monitor</value>
+    <value>Zbadaj monitory</value>
   </data>
   <data name="RecordExceptionMessage" xml:space="preserve">
     <value>Wystąpił nieoczekiwany bład. Zapisać dziennik na pulpicie?</value>
@@ -147,17 +165,23 @@
   <data name="Rescan" xml:space="preserve">
     <value>Szukaj monitorów</value>
   </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Ustawienia</value>
+  </data>
   <data name="ShowAdjusted" xml:space="preserve">
     <value>Pokazuj dostosowaną jasność</value>
   </data>
+  <data name="ShowNumber" xml:space="preserve">
+    <value>Pokaż obecną wartość</value>
+  </data>
   <data name="StartSignIn" xml:space="preserve">
-    <value>Uruchom wraz z systemem Windows</value>
+    <value>Uruchom przy logowaniu</value>
   </data>
   <data name="StatusNotControllable" xml:space="preserve">
     <value>Monitor nie obsługuje kontrolowania.</value>
   </data>
   <data name="StatusReasonDdcFailing" xml:space="preserve">
-    <value>DDC/CI nie działa.</value>
+    <value>DDC/CI wielokrotnie nieudane.</value>
   </data>
   <data name="StatusReasonDdcNotEnabled" xml:space="preserve">
     <value>DDC/CI jest wyłączone lub niewspierane.</value>

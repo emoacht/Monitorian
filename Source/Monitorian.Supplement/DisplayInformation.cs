@@ -75,6 +75,10 @@ namespace Monitorian.Supplement
 		// Error message: A device attached to the system is not functioning.
 		private const uint ERROR_GEN_FAILURE = 0x8007001F;
 
+		// System error code: 0x8002802B
+		// Error message: Element not found.
+		private const uint TYPE_E_ELEMENTNOTFOUND = 0x8002802B;
+
 		/// <summary>
 		/// Gets display monitor information.
 		/// </summary>
@@ -119,10 +123,10 @@ namespace Monitorian.Supplement
 					return items.ToArray();
 				}
 			}
-			catch (ArgumentException ax) when ((uint)ax.HResult == ERROR_INVALID_PARAMETER)
+			catch (ArgumentException ax) when ((uint)ax.HResult is ERROR_INVALID_PARAMETER)
 			{
 			}
-			catch (Exception ex) when ((uint)ex.HResult == ERROR_GEN_FAILURE)
+			catch (Exception ex) when ((uint)ex.HResult is ERROR_GEN_FAILURE or TYPE_E_ELEMENTNOTFOUND)
 			{
 			}
 			return Array.Empty<DisplayItem>();

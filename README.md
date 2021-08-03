@@ -19,11 +19,13 @@ In addition, the user can change the adjustable range of brightness and contrast
 Additional languages:
 
 - de (German) by @uDEV2019
+- es (Spanish) by @josemirm
 - fr (French) by @AlexZeGamer
 - ja-JP (Japanese) by @emoacht
 - ko-KR (Korean) by @VenusGirl
-- pl-PL (Polish) by @Daxxxis
+- pl-PL (Polish) by @Daxxxis and @FakeMichau
 - ru-RU (Russian) by @SigmaTel71
+- tr-TR (Turkish) by @webbudesign
 - zh-Hans (Simplified Chinese) by @ComMouse
 
 ## Requirements
@@ -39,7 +41,7 @@ Additional languages:
 [Monitorian](https://www.microsoft.com/store/apps/9nw33j738bl0) (Microsoft Store)
 
  * Other:<br>
-:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/3.0.1-Installer/MonitorianInstaller301.zip)
+:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/3.1.0-Installer/MonitorianInstaller310.zip)
 
 ## Install/Uninstall
 
@@ -91,7 +93,7 @@ The code for add-on features is not included in this repository.
 
 ## Development
 
-This app is a WPF app developed and tested with Surface Pro 4.
+This app is a WPF app developed and tested with Surface Pro 4 and 7.
 
 ### Reporting
 
@@ -121,10 +123,10 @@ In any case, reporting on the controllability of a monitor MUST include probe.lo
 1. [Install Visual Studio](https://docs.microsoft.com/en-us/visualstudio/install/install-visual-studio).
 2. In Visual Studio Installer, go to the **Individual components** tab and make sure the following components are checked and installed. The version must match the corresponding field of project (.csproj) file of each project.
 
-| Components                                                      | Fields                 |
-|-----------------------------------------------------------------|------------------------|
-| .NET Framework 4.7.2 SDK<br>.NET Framework 4.7.2 targeting pack | TargetFrameworkVersion |
-| Windows 10 SDK (10.0.19041.0)                                   | TargetPlatformVersion  |
+| Components                                                  | Fields                 |
+|-------------------------------------------------------------|------------------------|
+| .NET Framework 4.8 SDK<br>.NET Framework 4.8 targeting pack | TargetFrameworkVersion |
+| Windows 10 SDK (10.0.19041.0)                               | TargetPlatformVersion  |
 
 3. Load the solution by specifying `/Source/Monitorian.sln`. Then go to the solution explorer and right click the solution name and execute `Restore NuGet Packages`.
 4. To open installer project, install [WiX Toolset Build Tools](https://wixtoolset.org/releases/) and [WiX Toolset Visual Studio Extension](https://marketplace.visualstudio.com/items?itemName=WixToolset.WiXToolset)
@@ -139,6 +141,13 @@ An alternative language can be shown by adding a Resources (.resx) file into `/S
 `Resources.ja-JP.resx` (for Japanese) would be a good example for this purpose.
 
 ## History
+
+Ver 3.1 2021-8-4
+
+- Supplement pl-PL (Polish) language. Thanks to @FakeMichau!
+- Add tr-TR (Turkish) language. Thanks to @webbudesign!
+- Supplement ru-RU (Russian) language. Thanks to @SigmaTel71!
+- Add es (Spanish) language. Thanks to @josemirm!
 
 Ver 3.0 2021-7-1
 

@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ChangeContrast" xml:space="preserve">
+    <value>Kontrast ändern</value>
+  </data>
   <data name="ChangeRange" xml:space="preserve">
     <value>Einstellbaren Bereich ändern</value>
   </data>
@@ -129,11 +132,26 @@
   <data name="CopyOperationMessage" xml:space="preserve">
     <value>Anwendungsprotokoll auf Desktop speichern?</value>
   </data>
+  <data name="DeferChange" xml:space="preserve">
+    <value>Änderung aussetzen</value>
+  </data>
+  <data name="EnableContrast" xml:space="preserve">
+    <value>Ändern des Kontrast aktivieren</value>
+  </data>
+  <data name="EnableRange" xml:space="preserve">
+    <value>Ändern des einstellbaren Bereichs aktivieren</value>
+  </data>
   <data name="EnableUnison" xml:space="preserve">
-    <value>Regler synchron verschieben</value>
+    <value>Synchrones Verschieben aktivieren</value>
   </data>
   <data name="MakeOperation" xml:space="preserve">
     <value>Anwendungsprotokoll erstellen</value>
+  </data>
+    <data name="MoveUnison" xml:space="preserve">
+    <value>Regler synchron verschieben/value>
+  </data>
+  <data name="OrderArrangement" xml:space="preserve">
+    <value>Nach Monitoranordnung sortieren</value>
   </data>
   <data name="Probe" xml:space="preserve">
     <value>Monitore untersuchen</value>
@@ -147,8 +165,14 @@
   <data name="Rescan" xml:space="preserve">
     <value>Monitore neu abfragen</value>
   </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Einstellungen</value>
+  </data>
   <data name="ShowAdjusted" xml:space="preserve">
     <value>Eingestellte Helligkeit anzeigen</value>
+  </data>
+  <data name="ShowNumber" xml:space="preserve">
+    <value>Nummer anzeigen</value>
   </data>
   <data name="StartSignIn" xml:space="preserve">
     <value>Beim Anmelden starten</value>

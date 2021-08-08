@@ -324,7 +324,7 @@ namespace Monitorian.Core.Views
 			if (ChangeColors(window) || (_texture == Texture.None))
 				return false;
 
-			if (OsVersion.Is10Threshold1OrNewer)
+			if (OsVersion.Is10OrGreater)
 			{
 				// For Windows 10
 				if (!IsTransparencyEnabledForWin10.Value)
@@ -347,13 +347,13 @@ namespace Monitorian.Core.Views
 				return EnableBackgroundBlurForWin10(window, TranslucentColor);
 			}
 
-			if (OsVersion.Is8OrNewer)
+			if (OsVersion.Is8OrGreater)
 			{
 				// For Windows 8 and 8.1, no blur effect is available.
 				return false;
 			}
 
-			if (OsVersion.IsVistaOrNewer)
+			if (OsVersion.Is7OrGreater)
 			{
 				// For Windows 7
 				if (!IsTransparencyEnabledForWin7.Value)

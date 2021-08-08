@@ -41,7 +41,7 @@ namespace StartupAgency
 			if (!success)
 				return (success: false, response);
 
-			_worker = (OsVersion.Is10Redstone1OrNewer && IsPackaged)
+			_worker = (OsVersion.Is10Build14393OrGreater && IsPackaged)
 				? (IStartupWorker)new BridgeWorker(taskId: startupTaskId)
 				: (IStartupWorker)new RegistryWorker(name: name, path: Assembly.GetEntryAssembly().Location);
 			return (success: true, null);

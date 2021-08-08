@@ -140,10 +140,10 @@ namespace ScreenFrame
 			if (visual is null)
 				throw new ArgumentNullException(nameof(visual));
 
-			if (!OsVersion.Is81OrNewer)
+			if (!OsVersion.Is8Point1OrGreater)
 				return SystemDpi;
 
-			if (OsVersion.Is10Redstone1OrNewer)
+			if (OsVersion.Is10Build14393OrGreater)
 				return VisualTreeHelper.GetDpi(visual);
 
 			var source = PresentationSource.FromVisual(visual) as HwndSource;
@@ -159,7 +159,7 @@ namespace ScreenFrame
 		/// <returns>DPI information</returns>
 		public static DpiScale GetNotificationAreaDpi()
 		{
-			if (!OsVersion.Is81OrNewer)
+			if (!OsVersion.Is8Point1OrGreater)
 				return SystemDpi;
 
 			var taskbarHandle = FindWindowEx(

@@ -68,7 +68,7 @@ namespace ScreenFrame.Movers
 		/// <param name="dpi">DPI information</param>
 		protected virtual void AdjustWindow(DpiScale dpi)
 		{
-			if (!OsVersion.Is81OrNewer || OsVersion.Is10Redstone1OrNewer)
+			if (!OsVersion.Is8Point1OrGreater || OsVersion.Is10Build14393OrGreater)
 				return;
 
 			if (_window.Content is FrameworkElement content)
@@ -135,7 +135,7 @@ namespace ScreenFrame.Movers
 		/// </summary>
 		protected virtual void HandleDpiChanged(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
 		{
-			if (OsVersion.Is10Redstone1OrNewer)
+			if (OsVersion.Is10Build14393OrGreater)
 				return;
 
 			if (_window.SizeToContent != SizeToContent.WidthAndHeight)

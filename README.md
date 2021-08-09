@@ -41,7 +41,7 @@ Additional languages:
 [Monitorian](https://www.microsoft.com/store/apps/9nw33j738bl0) (Microsoft Store)
 
  * Other:<br>
-:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/3.1.0-Installer/MonitorianInstaller310.zip)
+:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/3.2.0-Installer/MonitorianInstaller320.zip)
 
 ## Install/Uninstall
 
@@ -141,6 +141,10 @@ An alternative language can be shown by adding a Resources (.resx) file into `/S
 `Resources.ja-JP.resx` (for Japanese) would be a good example for this purpose.
 
 ## History
+
+Ver 3.2 2021-8-9
+
+- Supplement de (German) language. Thanks to @uDEV2019!
 
 Ver 3.1 2021-8-4
 

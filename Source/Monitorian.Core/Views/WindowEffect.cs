@@ -26,6 +26,13 @@ namespace Monitorian.Core.Views
 			[In] ref bool pvAttribute, // IntPtr
 			uint cbAttribute);
 
+		[DllImport("Dwmapi.dll", SetLastError = true)]
+		private static extern int DwmSetWindowAttribute(
+			IntPtr hwnd,
+			uint dwAttribute,
+			[In] ref uint pvAttribute, // IntPtr
+			uint cbAttribute);
+
 		private enum DWMWA : uint
 		{
 			DWMWA_NCRENDERING_ENABLED = 1,     // [get] Is non-client rendering enabled/disabled
@@ -43,7 +50,27 @@ namespace Monitorian.Core.Views
 			DWMWA_CLOAK,                       // [set] Cloak or uncloak the window
 			DWMWA_CLOAKED,                     // [get] Gets the cloaked state of the window
 			DWMWA_FREEZE_REPRESENTATION,       // [set] Force this window to freeze the thumbnail without live update
+
+			// Derived from dwmapi.h included in Windows Insider Preview SDK
+			DWMWA_PASSIVE_UPDATE_MODE,            // [set] BOOL, Updates the window only when desktop composition runs for other reasons
+			DWMWA_USE_HOSTBACKDROPBRUSH,          // [set] BOOL, Allows the use of host backdrop brushes for the window.
+			DWMWA_USE_IMMERSIVE_DARK_MODE = 20,   // [set] BOOL, Allows a window to either use the accent color, or dark, according to the user Color Mode preferences.
+			DWMWA_WINDOW_CORNER_PREFERENCE = 33,  // [set] WINDOW_CORNER_PREFERENCE, Controls the policy that rounds top-level window corners
+			DWMWA_BORDER_COLOR,                   // [set] COLORREF, The color of the thin border around a top-level window
+			DWMWA_CAPTION_COLOR,                  // [set] COLORREF, The color of the caption
+			DWMWA_TEXT_COLOR,                     // [set] COLORREF, The color of the caption text
+			DWMWA_VISIBLE_FRAME_BORDER_THICKNESS, // [get] UINT, width of the visible border around a thick frame window
+
 			DWMWA_LAST
+		}
+
+		// Derived from dwmapi.h included in Windows Insider Preview SDK
+		private enum DWMWCP : uint
+		{
+			DWMWCP_DEFAULT = 0,
+			DWMWCP_DONOTROUND = 1,
+			DWMWCP_ROUND = 2,
+			DWMWCP_ROUNDSMALL = 3
 		}
 
 		private const int S_OK = 0x0;
@@ -138,7 +165,7 @@ namespace Monitorian.Core.Views
 
 		#endregion
 
-		public static IReadOnlyCollection<string> Options => ColorPairs.Keys.Prepend(ThemeOption).Prepend(TextureOption).ToArray();
+		public static IReadOnlyCollection<string> Options => new[] { ThemeOption, TextureOption, RoundOption }.Concat(ColorPairs.Keys).ToArray();
 
 		private const string ThemeOption = "/theme";
 
@@ -163,6 +190,10 @@ namespace Monitorian.Core.Views
 		private const string TextureOption = "/texture";
 
 		private static Texture _texture = Texture.Thick; // Default
+
+		private const string RoundOption = "/round";
+
+		private static bool _isRounded;
 
 		/// <summary>
 		/// Color changeable elements of window
@@ -214,24 +245,31 @@ namespace Monitorian.Core.Views
 			var arguments = AppKeeper.DefinedArguments;
 
 			int i = 0;
-			while (i < arguments.Count - 1)
+			while (i < arguments.Count)
 			{
-				if (arguments[i] == ThemeOption)
+				if (arguments[i] == RoundOption)
 				{
-					if (Enum.TryParse(arguments[i + 1], true, out ColorTheme buffer))
-						theme = buffer;
+					_isRounded = true;
 				}
-				else if (arguments[i] == TextureOption)
+				else if (i < arguments.Count - 1)
 				{
-					if (Enum.TryParse(arguments[i + 1], true, out Texture buffer))
-						_texture = buffer;
-				}
-				else if (colorPairs.TryGetValue(arguments[i], out ColorElement key))
-				{
-					if (TryParse(arguments[i + 1], out Brush value))
+					if (arguments[i] == ThemeOption)
 					{
-						colors[key] = value;
-						i++;
+						if (Enum.TryParse(arguments[i + 1], true, out ColorTheme buffer))
+							theme = buffer;
+					}
+					else if (arguments[i] == TextureOption)
+					{
+						if (Enum.TryParse(arguments[i + 1], true, out Texture buffer))
+							_texture = buffer;
+					}
+					else if (colorPairs.TryGetValue(arguments[i], out ColorElement key))
+					{
+						if (TryParse(arguments[i + 1], out Brush value))
+						{
+							colors[key] = value;
+							i++;
+						}
 					}
 				}
 				i++;
@@ -324,7 +362,14 @@ namespace Monitorian.Core.Views
 			if (ChangeColors(window) || (_texture == Texture.None))
 				return false;
 
-			if (OsVersion.Is10Threshold1OrNewer)
+			if (OsVersion.Is11OrGreater)
+			{
+				// For Windows 11
+				if (_isRounded)
+					SetWindowCorner(window);
+			}
+
+			if (OsVersion.Is10OrGreater)
 			{
 				// For Windows 10
 				if (!IsTransparencyEnabledForWin10.Value)
@@ -347,13 +392,13 @@ namespace Monitorian.Core.Views
 				return EnableBackgroundBlurForWin10(window, TranslucentColor);
 			}
 
-			if (OsVersion.Is8OrNewer)
+			if (OsVersion.Is8OrGreater)
 			{
 				// For Windows 8 and 8.1, no blur effect is available.
 				return false;
 			}
 
-			if (OsVersion.IsVistaOrNewer)
+			if (OsVersion.Is7OrGreater)
 			{
 				// For Windows 7
 				if (!IsTransparencyEnabledForWin7.Value)
@@ -367,6 +412,18 @@ namespace Monitorian.Core.Views
 			}
 
 			return false;
+		}
+
+		private static bool SetWindowCorner(Window window)
+		{
+			var windowHandle = new WindowInteropHelper(window).Handle;
+			var value = (uint)DWMWCP.DWMWCP_ROUND;
+
+			return (DwmSetWindowAttribute(
+				windowHandle,
+				(uint)DWMWA.DWMWA_WINDOW_CORNER_PREFERENCE,
+				ref value,
+				(uint)Marshal.SizeOf(value)) == S_OK);
 		}
 
 		private static bool EnableBackgroundBlurForWin10(Window window, Color? color = null)

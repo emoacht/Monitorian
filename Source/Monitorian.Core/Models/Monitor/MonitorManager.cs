@@ -53,7 +53,7 @@ namespace Monitorian.Core.Models.Monitor
 
 		private static async Task<List<DeviceItemPlus>> GetMonitorDevicesAsync()
 		{
-			IDisplayItem[] displayItems = OsVersion.Is10Redstone4OrNewer
+			IDisplayItem[] displayItems = OsVersion.Is10Build17134OrGreater
 				? await DisplayMonitor.GetDisplayMonitorsAsync()
 				: DisplayConfig.EnumerateDisplayConfigs().ToArray();
 
@@ -288,7 +288,7 @@ namespace Monitorian.Core.Models.Monitor
 
 					GetTask(nameof(DisplayMonitorItems), async () =>
 					{
-						if (OsVersion.Is10Redstone4OrNewer)
+						if (OsVersion.Is10Build17134OrGreater)
 							DisplayMonitorItems = await DisplayMonitor.GetDisplayMonitorsAsync();
 					}),
 

@@ -147,8 +147,8 @@
   <data name="MakeOperation" xml:space="preserve">
     <value>Anwendungsprotokoll erstellen</value>
   </data>
-    <data name="MoveUnison" xml:space="preserve">
-    <value>Regler synchron verschieben/value>
+  <data name="MoveUnison" xml:space="preserve">
+    <value>Regler synchron verschieben</value>
   </data>
   <data name="OrderArrangement" xml:space="preserve">
     <value>Nach Monitoranordnung sortieren</value>

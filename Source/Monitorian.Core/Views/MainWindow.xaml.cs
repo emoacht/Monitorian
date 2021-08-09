@@ -36,6 +36,8 @@ namespace Monitorian.Core.Views
 			this.DataContext = new MainWindowViewModel(controller);
 
 			_mover = new StickWindowMover(this, controller.NotifyIconContainer.NotifyIcon);
+			if (OsVersion.Is11OrGreater)
+				_mover.KeepsDistance = true;
 
 			_tracker = new TouchpadTracker(this);
 			_tracker.ManipulationDelta += (_, delta) =>

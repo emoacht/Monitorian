@@ -181,6 +181,8 @@ namespace Monitorian.Core.Views
 			if (this.Visibility != Visibility.Visible)
 				return;
 
+			ViewModel.Deactivate();
+
 			// Set time to prevent this window from being shown unintentionally. 
 			_preventionTime = DateTimeOffset.Now + TimeSpan.FromSeconds(0.2);
 

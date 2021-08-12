@@ -71,7 +71,6 @@ namespace Monitorian.Core
 			NotifyIconContainer.ShowIcon("pack://application:,,,/Monitorian.Core;component/Resources/Icons/TrayIcon.ico", ProductInfo.Title);
 
 			_current.MainWindow = new MainWindow(this);
-			_current.MainWindow.Deactivated += (sender, e) => MonitorsResetByKey();
 
 			if (StartupAgent.IsWindowShowExpected())
 				_current.MainWindow.Show();
@@ -377,14 +376,6 @@ namespace Monitorian.Core
 		{
 			foreach (var m in Monitors)
 				m.Dispose();
-		}
-
-		private void MonitorsResetByKey()
-		{
-			var monitor = Monitors.FirstOrDefault(x => x.IsSelectedByKey);
-
-			if (monitor is not null)
-				monitor.IsByKey = false;
 		}
 
 		protected MonitorViewModel SelectedMonitor { get; private set; }

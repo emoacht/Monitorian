@@ -109,5 +109,12 @@ namespace Monitorian.Core.ViewModels
 					break;
 			}
 		}
+
+		internal void Deactivate()
+		{
+			var monitor = MonitorsView.Cast<MonitorViewModel>().FirstOrDefault(x => x.IsSelectedByKey);
+			if (monitor is not null)
+				monitor.IsByKey = false;
+		}
 	}
 }

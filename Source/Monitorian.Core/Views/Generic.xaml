@@ -14,6 +14,7 @@
 	<SolidColorBrush x:Key="App.Foreground" Color="{DynamicResource App.ForegroundColor}"/>
 	<SolidColorBrush x:Key="App.Foreground.Shadow" Color="{DynamicResource App.ShadowColor}"/>
 	<SolidColorBrush x:Key="App.Foreground.Invalid" Color="{StaticResource App.InvalidColor}"/>
+
 	<SolidColorBrush x:Key="App.Background.Plain" Color="#FF1F1F1F"/>
 	<SolidColorBrush x:Key="App.Background.Translucent" Color="#D3161616"/>
 	<SolidColorBrush x:Key="App.Background.Accent" Color="{StaticResource App.AccentColor}"/>

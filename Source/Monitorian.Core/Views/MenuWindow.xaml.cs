@@ -34,13 +34,8 @@ namespace Monitorian.Core.Views
 			_mover = new FloatWindowMover(this, pivot);
 			_mover.AppDeactivated += OnCloseTriggered;
 			_mover.EscapeKeyDown += OnCloseTriggered;
-		}
 
-		protected override void OnSourceInitialized(EventArgs e)
-		{
-			base.OnSourceInitialized(e);
-
-			WindowEffect.EnableBackgroundTranslucency(this);
+			controller.WindowPainter.Add(this);
 		}
 
 		public UIElementCollection HeadSection => this.HeadItems.Children;

@@ -11,7 +11,7 @@
 		ResizeMode="NoResize" SizeToContent="WidthAndHeight"
 		ShowInTaskbar="False"
 		AllowsTransparency="True" WindowStyle="None"
-		Background="{StaticResource App.Background.Plain}">
+		Background="{DynamicResource App.Background.Plain}">
 	<Window.Resources>
 		<sys:Double x:Key="SliderHeight">52</sys:Double>
 		<sys:Double x:Key="ThumbHeight">44</sys:Double>
@@ -20,7 +20,7 @@
 		<Style TargetType="{x:Type ToolTip}">
 			<Setter Property="OverridesDefaultStyle" Value="True"/>
 			<Setter Property="Padding" Value="5,3"/>
-			<Setter Property="Background" Value="{StaticResource App.Background.Plain}"/>
+			<Setter Property="Background" Value="{DynamicResource App.Background.Plain}"/>
 			<Setter Property="Foreground" Value="{StaticResource App.Foreground}"/>
 			<Setter Property="FontSize" Value="13"/>
 			<Setter Property="Template">
@@ -53,8 +53,8 @@
 		<SolidColorBrush x:Key="Slider.Background.Range.Static" Color="{StaticResource Slider.Background.Range.StaticColor}"/>
 		<SolidColorBrush x:Key="Slider.Background.Contrast.Static" Color="{StaticResource Slider.Background.Contrast.StaticColor}"/>
 		<SolidColorBrush x:Key="Slider.Background.Vacant" Color="{StaticResource Slider.Background.VacantColor}"/>
-		<SolidColorBrush x:Key="Slider.Background.Bracket" Color="{StaticResource App.TargetColor}"/>
-		<SolidColorBrush x:Key="Slider.Background.Overlay" Color="{StaticResource App.OverlayColor}"/>
+		<SolidColorBrush x:Key="Slider.Background.Bracket" Color="{DynamicResource App.TargetColor}"/>
+		<SolidColorBrush x:Key="Slider.Background.Overlay" Color="{DynamicResource App.OverlayColor}"/>
 
 		<Style x:Key="MainSliderHorizontal" TargetType="{x:Type controls:CompoundSlider}">
 			<Setter Property="Stylus.IsPressAndHoldEnabled" Value="False"/>
@@ -425,9 +425,9 @@
 										   Text="{TemplateBinding ContentPresenter.Content}">
 									<TextBlock.Foreground>
 										<LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-											<GradientStop x:Name="head" Color="{StaticResource App.ForegroundColor}" Offset="0.0"/>
-											<GradientStop x:Name="middle" Color="{StaticResource App.ForegroundColor}" Offset="0.0"/>
-											<GradientStop x:Name="tail" Color="{StaticResource App.ForegroundColor}" Offset="0.0"/>
+											<GradientStop x:Name="head" Color="{DynamicResource App.ForegroundColor}" Offset="0.0"/>
+											<GradientStop x:Name="middle" Color="{DynamicResource App.ForegroundColor}" Offset="0.0"/>
+											<GradientStop x:Name="tail" Color="{DynamicResource App.ForegroundColor}" Offset="0.0"/>
 										</LinearGradientBrush>
 									</TextBlock.Foreground>
 								</TextBlock>
@@ -441,7 +441,7 @@
 											<ColorAnimation Storyboard.TargetName="middle"
 															Storyboard.TargetProperty="(GradientStop.Color)"
 															Duration="0"
-															To="{StaticResource App.ShadowColor}"/>
+															To="{DynamicResource App.ShadowColor}"/>
 											<DoubleAnimation Storyboard.TargetName="head"
 															 Storyboard.TargetProperty="(GradientStop.Offset)"
 															 Duration="0:0:1.2"
@@ -485,7 +485,7 @@
 						<ControlTemplate.Triggers>
 							<Trigger Property="IsReadOnly" Value="False">
 								<Setter Property="BorderBrush" TargetName="border" Value="{StaticResource App.Foreground.Shadow}"/>
-								<Setter Property="Background" TargetName="border" Value="{StaticResource App.Background.Plain}"/>
+								<Setter Property="Background" TargetName="border" Value="{DynamicResource App.Background.Plain}"/>
 							</Trigger>
 						</ControlTemplate.Triggers>
 					</ControlTemplate>
@@ -529,15 +529,15 @@
 											<ColorAnimation Storyboard.TargetName="border"
 															Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)"
 															Duration="0:0:0.1"
-															To="{StaticResource Icon.Background.MouseOverColor}"/>
+															To="{DynamicResource Icon.Background.MouseOverColor}"/>
 											<ColorAnimation Storyboard.TargetName="StrokeIcon"
 															Storyboard.TargetProperty="(Shape.Stroke).(SolidColorBrush.Color)"
 															Duration="0:0:0.1"
-															To="{StaticResource App.ForegroundColor}"/>
+															To="{DynamicResource App.ForegroundColor}"/>
 											<ColorAnimation Storyboard.TargetName="FillIcon"
 															Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)"
 															Duration="0:0:0.1"
-															To="{StaticResource App.ForegroundColor}"/>
+															To="{DynamicResource App.ForegroundColor}"/>
 										</Storyboard>
 									</VisualState>
 									<VisualState x:Name="Pressed">
@@ -545,15 +545,15 @@
 											<ColorAnimation Storyboard.TargetName="border"
 															Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)"
 															Duration="0"
-															To="{StaticResource Icon.Background.PressedColor}"/>
+															To="{DynamicResource Icon.Background.PressedColor}"/>
 											<ColorAnimation Storyboard.TargetName="StrokeIcon"
 															Storyboard.TargetProperty="(Shape.Stroke).(SolidColorBrush.Color)"
 															Duration="0"
-															To="{StaticResource App.ForegroundColor}"/>
+															To="{DynamicResource App.ForegroundColor}"/>
 											<ColorAnimation Storyboard.TargetName="FillIcon"
 															Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)"
 															Duration="0"
-															To="{StaticResource App.ForegroundColor}"/>
+															To="{DynamicResource App.ForegroundColor}"/>
 										</Storyboard>
 									</VisualState>
 									<VisualState x:Name="Disabled"/>

@@ -27,7 +27,7 @@ namespace Monitorian.Core
 			{
 				StartupAgent.Options,
 				LanguageService.Options,
-				WindowEffect.Options
+				WindowPainter.Options
 			}
 			.SelectMany(x => x)
 			.ToArray();

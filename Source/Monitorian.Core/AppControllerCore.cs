@@ -33,6 +33,7 @@ namespace Monitorian.Core
 		protected readonly object _monitorsLock = new object();
 
 		public NotifyIconContainer NotifyIconContainer { get; }
+		public WindowPainter WindowPainter { get; }
 
 		private readonly DisplayWatcher _displayWatcher;
 		private readonly SessionWatcher _sessionWatcher;
@@ -47,12 +48,12 @@ namespace Monitorian.Core
 			this.Settings = settings ?? throw new ArgumentNullException(nameof(settings));
 
 			LanguageService.SwitchDefault();
-			WindowEffect.ChangeTheme();
 
 			Monitors = new ObservableCollection<MonitorViewModel>();
 			BindingOperations.EnableCollectionSynchronization(Monitors, _monitorsLock);
 
 			NotifyIconContainer = new NotifyIconContainer();
+			WindowPainter = new WindowPainter();
 
 			_displayWatcher = new DisplayWatcher();
 			_sessionWatcher = new SessionWatcher();
@@ -91,7 +92,9 @@ namespace Monitorian.Core
 		public virtual void End()
 		{
 			MonitorsDispose();
+
 			NotifyIconContainer.Dispose();
+			WindowPainter.Dispose();
 
 			_displayWatcher.Dispose();
 			_sessionWatcher.Dispose();

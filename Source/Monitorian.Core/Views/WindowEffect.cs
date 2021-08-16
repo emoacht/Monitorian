@@ -11,7 +11,6 @@ using System.Windows.Media;
 using Microsoft.Win32;
 
 using Monitorian.Core.Helper;
-using Monitorian.Supplement;
 
 namespace Monitorian.Core.Views
 {
@@ -165,175 +164,6 @@ namespace Monitorian.Core.Views
 
 		#endregion
 
-		public static IReadOnlyCollection<string> Options => new[] { ThemeOption, TextureOption, RoundOption }.Concat(ColorPairs.Keys).ToArray();
-
-		private const string ThemeOption = "/theme";
-
-		/// <summary>
-		/// Background texture of window
-		/// </summary>
-		private enum Texture
-		{
-			None = 0,
-
-			/// <summary>
-			/// Thin blur texture
-			/// </summary>
-			Thin,
-
-			/// <summary>
-			/// Thick blur (Acrylic) texture
-			/// </summary>
-			Thick
-		}
-
-		private const string TextureOption = "/texture";
-
-		private static Texture _texture = Texture.Thick; // Default
-
-		private const string RoundOption = "/round";
-
-		private static bool _isRounded;
-
-		/// <summary>
-		/// Color changeable elements of window
-		/// </summary>
-		private enum ColorElement
-		{
-			None = 0,
-			MainBorder,
-			MainBackground,
-			MenuBorder,
-			MenuBackground
-		}
-
-		private static IReadOnlyDictionary<string, ColorElement> ColorPairs => new Dictionary<string, ColorElement>
-		{
-			{ "/main_border", ColorElement.MainBorder },
-			{ "/main_background", ColorElement.MainBackground },
-			{ "/menu_border", ColorElement.MenuBorder },
-			{ "/menu_background", ColorElement.MenuBackground }
-		};
-
-		private static Dictionary<ColorElement, Brush> _colors;
-
-		public static void ChangeTheme()
-		{
-			//const string DarkThemeUriString = @"/Monitorian.Core;component/Views/Themes/DarkTheme.xaml";
-			const string LightThemeUriString = @"/Monitorian.Core;component/Views/Themes/LightTheme.xaml";
-
-			ColorTheme? theme = null;
-
-			var converter = new BrushConverter();
-			bool TryParse(string source, out Brush brush)
-			{
-				try
-				{
-					brush = (Brush)converter.ConvertFromString(source);
-					return true;
-				}
-				catch
-				{
-					brush = null;
-					return false;
-				}
-			}
-
-			var colorPairs = ColorPairs;
-			var colors = new Dictionary<ColorElement, Brush>();
-
-			var arguments = AppKeeper.DefinedArguments;
-
-			int i = 0;
-			while (i < arguments.Count)
-			{
-				if (arguments[i] == RoundOption)
-				{
-					_isRounded = true;
-				}
-				else if (i < arguments.Count - 1)
-				{
-					if (arguments[i] == ThemeOption)
-					{
-						if (Enum.TryParse(arguments[i + 1], true, out ColorTheme buffer))
-							theme = buffer;
-					}
-					else if (arguments[i] == TextureOption)
-					{
-						if (Enum.TryParse(arguments[i + 1], true, out Texture buffer))
-							_texture = buffer;
-					}
-					else if (colorPairs.TryGetValue(arguments[i], out ColorElement key))
-					{
-						if (TryParse(arguments[i + 1], out Brush value))
-						{
-							colors[key] = value;
-							i++;
-						}
-					}
-				}
-				i++;
-			}
-
-			if ((theme ?? UIInformation.GetWindowsTheme()) == ColorTheme.Light)
-				ApplyResource(LightThemeUriString);
-
-			_colors = colors.Any() ? colors : null;
-		}
-
-		private static void ApplyResource(string newUriString, string oldUriString = null)
-		{
-			if (!string.IsNullOrWhiteSpace(oldUriString))
-			{
-				var oldDictionary = Application.Current.Resources.MergedDictionaries.FirstOrDefault(x => x.Source.OriginalString == oldUriString);
-				if (oldDictionary is not null)
-					Application.Current.Resources.MergedDictionaries.Remove(oldDictionary);
-			}
-
-			if (!string.IsNullOrWhiteSpace(newUriString))
-			{
-				try
-				{
-					var newDictionary = new ResourceDictionary { Source = new Uri(newUriString, UriKind.RelativeOrAbsolute) };
-					Application.Current.Resources.MergedDictionaries.Add(newDictionary);
-				}
-				catch (Exception ex)
-				{
-					Debug.WriteLine($"Failed to apply resources." + Environment.NewLine
-						+ ex);
-				}
-			}
-		}
-
-		private static bool ChangeColors(Window window)
-		{
-			if (_colors?.Any() is not true)
-				return false;
-
-			var isBackgroundChanged = false;
-
-			foreach (var (key, value) in _colors)
-			{
-				switch (key, window is MainWindow)
-				{
-					case (ColorElement.MainBorder, true):
-					case (ColorElement.MenuBorder, false):
-						window.BorderBrush = value;
-						window.BorderThickness = new Thickness(1);
-						break;
-
-					case (ColorElement.MainBackground, true):
-					case (ColorElement.MenuBackground, false):
-						window.Background = value;
-						isBackgroundChanged = true;
-						break;
-				}
-			}
-			return isBackgroundChanged;
-		}
-
-		#region Transitions
-
 		public static bool DisableTransitions(Window window)
 		{
 			var windowHandle = new WindowInteropHelper(window).Handle;
@@ -346,75 +176,7 @@ namespace Monitorian.Core.Views
 				(uint)Marshal.SizeOf<bool>()) == S_OK);
 		}
 
-		#endregion
-
-		#region Translucency
-
-		private static readonly Lazy<bool> IsTransparencyEnabledForWin10 = new(() => IsEnableTransparencyOn());
-		private static readonly Lazy<bool> IsTransparencyEnabledForWin7 = new(() => IsColorizationOpaqueBlendOn());
-
-		private const string TranslucentBrushKey = "App.Background.Translucent";
-		private static SolidColorBrush TranslucentBrush;
-		private static Color? TranslucentColor;
-
-		public static bool EnableBackgroundTranslucency(Window window)
-		{
-			if (ChangeColors(window) || (_texture == Texture.None))
-				return false;
-
-			if (OsVersion.Is11OrGreater)
-			{
-				// For Windows 11
-				if (_isRounded)
-					SetWindowCorner(window);
-			}
-
-			if (OsVersion.Is10OrGreater)
-			{
-				// For Windows 10
-				if (!IsTransparencyEnabledForWin10.Value)
-					return false;
-
-				if (TranslucentBrush is null)
-				{
-					TranslucentBrush = (SolidColorBrush)window.FindResource(TranslucentBrushKey);
-
-					if (_texture == Texture.Thick)
-					{
-						var color = TranslucentBrush.Color;
-						TranslucentBrush = new SolidColorBrush(Color.FromArgb(a: 1, r: color.R, g: color.G, b: color.B));
-						TranslucentColor = Color.FromArgb(a: (byte)Math.Max(0, color.A - 1), r: color.R, g: color.G, b: color.B);
-					}
-				}
-
-				window.Background = TranslucentBrush;
-
-				return EnableBackgroundBlurForWin10(window, TranslucentColor);
-			}
-
-			if (OsVersion.Is8OrGreater)
-			{
-				// For Windows 8 and 8.1, no blur effect is available.
-				return false;
-			}
-
-			if (OsVersion.Is7OrGreater)
-			{
-				// For Windows 7
-				if (!IsTransparencyEnabledForWin7.Value)
-					return false;
-
-				TranslucentBrush ??= (SolidColorBrush)window.FindResource(TranslucentBrushKey);
-
-				window.Background = TranslucentBrush;
-
-				return EnableBackgroundBlurForWin7(window);
-			}
-
-			return false;
-		}
-
-		private static bool SetWindowCorner(Window window)
+		public static bool SetCornersForWin11(Window window)
 		{
 			var windowHandle = new WindowInteropHelper(window).Handle;
 			var value = (uint)DWMWCP.DWMWCP_ROUND;
@@ -426,7 +188,7 @@ namespace Monitorian.Core.Views
 				(uint)Marshal.SizeOf(value)) == S_OK);
 		}
 
-		private static bool EnableBackgroundBlurForWin10(Window window, Color? color = null)
+		public static bool EnableBackgroundBlurForWin10(Window window, Color? color = null)
 		{
 			var windowHandle = new WindowInteropHelper(window).Handle;
 
@@ -470,7 +232,7 @@ namespace Monitorian.Core.Views
 			}
 		}
 
-		private static bool EnableBackgroundBlurForWin7(Window window)
+		public static bool EnableBackgroundBlurForWin7(Window window)
 		{
 			if ((DwmIsCompositionEnabled(out bool isEnabled) != S_OK) || !isEnabled)
 				return false;
@@ -488,6 +250,12 @@ namespace Monitorian.Core.Views
 				windowHandle,
 				ref bb) == S_OK);
 		}
+
+		public static bool IsTransparencyEnabledForWin10 => _isTransparencyEnabledForWin10.Value;
+		private static readonly Lazy<bool> _isTransparencyEnabledForWin10 = new(() => IsEnableTransparencyOn());
+
+		public static bool IsTransparencyEnabledForWin7 => _isTransparencyEnabledForWin7.Value;
+		private static readonly Lazy<bool> _isTransparencyEnabledForWin7 = new(() => IsColorizationOpaqueBlendOn());
 
 		private static bool IsEnableTransparencyOn()
 		{
@@ -518,7 +286,5 @@ namespace Monitorian.Core.Views
 				_ => false
 			};
 		}
-
-		#endregion
 	}
 }

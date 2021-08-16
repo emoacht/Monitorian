@@ -7,12 +7,17 @@
 	<Color x:Key="App.TargetColor">#FFA2A2A2</Color>
 	<Color x:Key="App.OverlayColor">#48FFFFFF</Color>
 
+	<SolidColorBrush x:Key="App.Foreground" Color="{DynamicResource App.ForegroundColor}"/>
+	<SolidColorBrush x:Key="App.Foreground.Shadow" Color="{DynamicResource App.ShadowColor}"/>
+
 	<SolidColorBrush x:Key="App.Background.Plain" Color="#FFE4E4E4"/>
 	<SolidColorBrush x:Key="App.Background.Translucent" Color="#DAE4E4E4"/>
 
 	<Color x:Key="Icon.Foreground.NormalColor">#FF909090</Color>
 	<Color x:Key="Icon.Background.MouseOverColor">#336A6A6A</Color>
 	<Color x:Key="Icon.Background.PressedColor">#556A6A6A</Color>
+
+	<SolidColorBrush x:Key="Icon.Foreground.Normal" Color="{DynamicResource Icon.Foreground.NormalColor}"/>
 
 	<SolidColorBrush x:Key="Menu.Separator" Color="#FF919191"/>
 

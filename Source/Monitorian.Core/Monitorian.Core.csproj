@@ -148,6 +148,7 @@
       <DependentUpon>ProbeSection.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\WindowEffect.cs" />
+    <Compile Include="Views\WindowPainter.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Monitorian.Supplement\Monitorian.Supplement.csproj">

@@ -94,6 +94,7 @@ namespace Monitorian.Core
 			NotifyIconContainer.Dispose();
 
 			_displayWatcher.Dispose();
+			_sessionWatcher.Dispose();
 			_powerWatcher.Dispose();
 			_brightnessWatcher.Dispose();
 		}

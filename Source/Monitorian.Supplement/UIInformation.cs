@@ -72,6 +72,9 @@ namespace Monitorian.Supplement
 		/// <summary>
 		/// Occurs when colors have changed.
 		/// </summary>
+		/// <remarks>
+		/// UISettings.ColorValuesChanged event seems not to fire when this assembly is packaged.
+		/// </remarks>
 		public static event EventHandler ColorsChanged
 		{
 			add

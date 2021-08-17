@@ -57,6 +57,7 @@
     <Compile Include="Movers\FloatWindowMover.cs" />
     <Compile Include="Movers\StickWindowMover.cs" />
     <Compile Include="Movers\SwitchWindowMover.cs" />
+    <Compile Include="LogicalTreeHelperAddition.cs" />
     <Compile Include="NotifyIconContainer.cs" />
     <Compile Include="NotifyIconHelper.cs" />
     <Compile Include="PivotAlignment.cs" />

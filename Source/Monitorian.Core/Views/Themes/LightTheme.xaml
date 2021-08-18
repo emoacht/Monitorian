@@ -4,12 +4,14 @@
 	<!-- Theme (Light theme) -->
 	<Color x:Key="App.ForegroundColor">Black</Color>
 	<Color x:Key="App.ShadowColor">Gray</Color>
+	<Color x:Key="App.LineColor">#FF959595</Color>
 	<Color x:Key="App.TargetColor">#FFA2A2A2</Color>
 	<Color x:Key="App.OverlayColor">#48FFFFFF</Color>
 
 	<SolidColorBrush x:Key="App.Foreground" Color="{DynamicResource App.ForegroundColor}"/>
 	<SolidColorBrush x:Key="App.Foreground.Shadow" Color="{DynamicResource App.ShadowColor}"/>
 
+	<SolidColorBrush x:Key="App.Border.Outline" Color="{DynamicResource App.LineColor}"/>
 	<SolidColorBrush x:Key="App.Background.Plain" Color="#FFE4E4E4"/>
 	<SolidColorBrush x:Key="App.Background.Translucent" Color="#DAE4E4E4"/>
 
@@ -19,7 +21,7 @@
 
 	<SolidColorBrush x:Key="Icon.Foreground.Normal" Color="{DynamicResource Icon.Foreground.NormalColor}"/>
 
-	<SolidColorBrush x:Key="Menu.Separator" Color="#FF919191"/>
+	<SolidColorBrush x:Key="Menu.Separator" Color="{DynamicResource App.LineColor}"/>
 
 	<SolidColorBrush x:Key="Menu.Item.Background.MouseOver" Color="#FFFFFFFF"/>
 

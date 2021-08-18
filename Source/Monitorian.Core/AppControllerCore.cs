@@ -426,5 +426,13 @@ namespace Monitorian.Core
 		}
 
 		#endregion
+
+		#region Arguments
+
+		public Task<string> LoadArgumentsAsync() => _keeper.LoadArgumentsAsync();
+
+		public Task SaveArgumentsAsync(string content) => _keeper.SaveArgumentsAsync(content);
+
+		#endregion
 	}
 }

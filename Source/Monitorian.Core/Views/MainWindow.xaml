@@ -467,32 +467,6 @@
 			</Setter>
 		</Style>
 
-		<!-- Name TextBox -->
-		<Style x:Key="NameTextBoxStyle" TargetType="{x:Type TextBox}" BasedOn="{StaticResource {x:Type TextBox}}">
-			<Setter Property="Foreground" Value="{StaticResource App.Foreground}"/>
-			<Setter Property="CaretBrush" Value="{StaticResource App.Foreground}"/>
-			<Setter Property="Template">
-				<Setter.Value>
-					<ControlTemplate TargetType="{x:Type TextBox}">
-						<Border x:Name="border"
-								BorderBrush="Transparent" BorderThickness="1"
-								Background="Transparent"
-								SnapsToDevicePixels="True">
-							<ScrollViewer x:Name="PART_ContentHost"
-										  VerticalScrollBarVisibility="Hidden"
-										  Focusable="False"/>
-						</Border>
-						<ControlTemplate.Triggers>
-							<Trigger Property="IsReadOnly" Value="False">
-								<Setter Property="BorderBrush" TargetName="border" Value="{StaticResource App.Foreground.Shadow}"/>
-								<Setter Property="Background" TargetName="border" Value="{DynamicResource App.Background.Plain}"/>
-							</Trigger>
-						</ControlTemplate.Triggers>
-					</ControlTemplate>
-				</Setter.Value>
-			</Setter>
-		</Style>
-
 		<!-- Icon Button -->
 		<Style x:Key="IconButtonStyle" TargetType="{x:Type controls:IconButton}">
 			<Setter Property="Focusable" Value="False"/>
@@ -634,7 +608,7 @@
 							<!-- Name -->
 							<controls:SwitchTextBox Grid.Column="0"
 													Height="22" Margin="8,5,0,5" HorizontalAlignment="Left" VerticalAlignment="Center"
-													Style="{StaticResource NameTextBoxStyle}"
+													Style="{StaticResource TextBoxStyle}"
 													TextWrapping="Wrap" MaxLength="96" FontSize="14"
 													Text="{Binding Name, Mode=TwoWay}"/>
 

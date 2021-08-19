@@ -15,6 +15,7 @@ using System.Windows.Media.Imaging;
 
 using Monitorian.Core.Models;
 using Monitorian.Core.ViewModels;
+using Monitorian.Core.Views.Controls;
 using ScreenFrame;
 using ScreenFrame.Movers;
 
@@ -59,9 +60,13 @@ namespace Monitorian.Core.Views
 			var resourceValues = new HashSet<string>(LanguageService.ResourceDictionary.Values);
 
 			foreach (var itemControl in LogicalTreeHelperAddition.EnumerateDescendants<ContentControl>(rootControl)
-				.Where(x => (x.Content is ButtonBase y) && resourceValues.Contains(y.Content)))
+				.Select(x => x.Content as ButtonBase)
+				.Where(x => x is not null))
 			{
-				itemControl.FlowDirection = FlowDirection.RightToLeft;
+				TemplateElement.SetVisibility(itemControl, Visibility.Visible);
+
+				if (resourceValues.Contains(itemControl.Content))
+					itemControl.FlowDirection = FlowDirection.RightToLeft;
 			}
 		}
 

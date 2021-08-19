@@ -14,11 +14,21 @@
 
     <!-- UI -->
     <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR"/>
-    <UIRef Id="WixUI_InstallDir"/>
-    <UIRef Id="WixUI_ErrorProgressText"/>
+
+    <UI>
+      <UIRef Id="WixUI_InstallDir"/>
+      <UIRef Id="WixUI_ErrorProgressText"/>
+
+      <Publish Dialog="ExitDialog" Control="Finish" Event="DoAction"
+               Value="LaunchApplication">WIXUI_EXITDIALOGOPTIONALCHECKBOX = 1 and NOT Installed</Publish>
+    </UI>
+
     <WixVariable Id="WixUIBannerBmp" Value="Resources\banner.png"/>
     <WixVariable Id="WixUIDialogBmp" Value="Resources\dialog.png"/>
     <WixVariable Id="WixUILicenseRtf" Value="Resources\License.rtf"/>
+
+    <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Launch $(var.Monitorian.ProjectName) now"/>
+    <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOX" Value="1"/>
 
     <Directory Id="TARGETDIR" Name="SourceDir">
       <!-- Program Files -->
@@ -188,6 +198,10 @@
       <ComponentRef Id="ApplicationShortcut"/>
       <ComponentRef Id="ApplicationWorkingFolder"/>
     </Feature>
+
+    <!-- Launch after installation -->
+    <Property Id="WixShellExecTarget" Value="$(var.Monitorian.TargetFileName)"/>
+    <CustomAction Id="LaunchApplication" BinaryKey="WixCA" DllEntry="WixShellExec" Impersonate="yes"/>
 
     <!-- Clean Current User Run -->
     <CustomAction Id="CleanCurrentUserRun" Directory="TARGETDIR" Execute="immediate" Return="ignore"

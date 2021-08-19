@@ -78,6 +78,12 @@
       </Component>
 
       <!-- Language resources -->
+      <Directory Id="ResourcesFolder_ar" Name="ar"
+                 FileSource="$(var.Monitorian.TargetDir)ar">
+        <Component Id="CoreResourcesLibrary_ar" Guid="{9C15E424-AE58-4EF0-8CDC-2A590C5C7C2A}">
+          <File Id="CoreResourcesLibrary_ar" Name="$(var.Monitorian.TargetName).Core.resources.dll" KeyPath="yes"/>
+        </Component>
+      </Directory>
       <Directory Id="ResourcesFolder_de" Name="de"
                  FileSource="$(var.Monitorian.TargetDir)de">
         <Component Id="CoreResourcesLibrary_de" Guid="{4BE0F7FF-08C3-461E-9FED-4037D40BEB45}">
@@ -169,6 +175,7 @@
       <ComponentRef Id="FrameLibrary"/>
       <ComponentRef Id="StartupLibrary"/>
       <ComponentRef Id="VisualManifest"/>
+      <ComponentRef Id="CoreResourcesLibrary_ar"/>
       <ComponentRef Id="CoreResourcesLibrary_de"/>
       <ComponentRef Id="CoreResourcesLibrary_es"/>
       <ComponentRef Id="CoreResourcesLibrary_fr"/>

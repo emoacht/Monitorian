@@ -18,6 +18,7 @@ In addition, the user can change the adjustable range of brightness and contrast
 
 Additional languages:
 
+- ar (Arabic) by @MohammadShughri
 - de (German) by @uDEV2019
 - es (Spanish) by @josemirm
 - fr (French) by @AlexZeGamer
@@ -41,7 +42,7 @@ Additional languages:
 [Monitorian](https://www.microsoft.com/store/apps/9nw33j738bl0) (Microsoft Store)
 
  * Other:<br>
-:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/3.2.0-Installer/MonitorianInstaller320.zip)
+:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/3.3.0-Installer/MonitorianInstaller330.zip)
 
 ## Install/Uninstall
 
@@ -114,6 +115,10 @@ In any case, reporting on the controllability of a monitor MUST include probe.lo
 
  - As part of testing, you can record operations to scan monitors and reflect their states. To enable the recording, check `Make operation log` in the hidden menu. After that, __operation.log__ can be copied by `Copy operation log`.
 
+### Command-line arguments
+
+- As part of testing, you can store persistent arguments in `Command-line arguments` in the hidden menu. They will be tested along with current arguments when this app starts.
+
 ### Exceptions
 
  - If anything unexpected happens, __exception.log__ will be saved. It will be useful source of information when looking into an issue.
@@ -138,9 +143,11 @@ An alternative language can be shown by adding a Resources (.resx) file into `/S
  - The file name must be in `Resources.[language-culture].resx` format.
  - The name of a name/value pair must correspond to that in the default `Resources.resx` file to override it.
 
-`Resources.ja-JP.resx` (for Japanese) would be a good example for this purpose.
-
 ## History
+
+Ver 3.3 2021-8-20
+
+- Add ar (Arabic) language. Thanks to @MohammadShughri!
 
 Ver 3.2 2021-8-9
 

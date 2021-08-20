@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <Product Id="*" Name="Monitorian" Manufacturer="emoacht" Version="3.2.0"
+  <Product Id="*" Name="Monitorian" Manufacturer="emoacht" Version="3.3.0"
            Language="1033" Codepage="1252" UpgradeCode="{81A4D148-75D3-462E-938D-8C208FB48E3C}">
     <Package Id="*" InstallerVersion="500" Compressed="yes"
              InstallScope="perMachine" InstallPrivileges="elevated"
@@ -14,11 +14,21 @@
 
     <!-- UI -->
     <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR"/>
-    <UIRef Id="WixUI_InstallDir"/>
-    <UIRef Id="WixUI_ErrorProgressText"/>
+
+    <UI>
+      <UIRef Id="WixUI_InstallDir"/>
+      <UIRef Id="WixUI_ErrorProgressText"/>
+
+      <Publish Dialog="ExitDialog" Control="Finish" Event="DoAction"
+               Value="LaunchApplication">WIXUI_EXITDIALOGOPTIONALCHECKBOX = 1 and NOT Installed</Publish>
+    </UI>
+
     <WixVariable Id="WixUIBannerBmp" Value="Resources\banner.png"/>
     <WixVariable Id="WixUIDialogBmp" Value="Resources\dialog.png"/>
     <WixVariable Id="WixUILicenseRtf" Value="Resources\License.rtf"/>
+
+    <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Launch $(var.Monitorian.ProjectName) now"/>
+    <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOX" Value="1"/>
 
     <Directory Id="TARGETDIR" Name="SourceDir">
       <!-- Program Files -->
@@ -78,6 +88,12 @@
       </Component>
 
       <!-- Language resources -->
+      <Directory Id="ResourcesFolder_ar" Name="ar"
+                 FileSource="$(var.Monitorian.TargetDir)ar">
+        <Component Id="CoreResourcesLibrary_ar" Guid="{9C15E424-AE58-4EF0-8CDC-2A590C5C7C2A}">
+          <File Id="CoreResourcesLibrary_ar" Name="$(var.Monitorian.TargetName).Core.resources.dll" KeyPath="yes"/>
+        </Component>
+      </Directory>
       <Directory Id="ResourcesFolder_de" Name="de"
                  FileSource="$(var.Monitorian.TargetDir)de">
         <Component Id="CoreResourcesLibrary_de" Guid="{4BE0F7FF-08C3-461E-9FED-4037D40BEB45}">
@@ -169,6 +185,7 @@
       <ComponentRef Id="FrameLibrary"/>
       <ComponentRef Id="StartupLibrary"/>
       <ComponentRef Id="VisualManifest"/>
+      <ComponentRef Id="CoreResourcesLibrary_ar"/>
       <ComponentRef Id="CoreResourcesLibrary_de"/>
       <ComponentRef Id="CoreResourcesLibrary_es"/>
       <ComponentRef Id="CoreResourcesLibrary_fr"/>
@@ -181,6 +198,10 @@
       <ComponentRef Id="ApplicationShortcut"/>
       <ComponentRef Id="ApplicationWorkingFolder"/>
     </Feature>
+
+    <!-- Launch after installation -->
+    <Property Id="WixShellExecTarget" Value="$(var.Monitorian.TargetFileName)"/>
+    <CustomAction Id="LaunchApplication" BinaryKey="WixCA" DllEntry="WixShellExec" Impersonate="yes"/>
 
     <!-- Clean Current User Run -->
     <CustomAction Id="CleanCurrentUserRun" Directory="TARGETDIR" Execute="immediate" Return="ignore"

@@ -19,8 +19,8 @@ namespace Monitorian
 		{
 			base.OnStartup(e);
 
-			_keeper = new AppKeeper(e);
-			if (!_keeper.Start())
+			_keeper = new AppKeeper();
+			if (!await _keeper.StartAsync(e))
 			{
 				this.Shutdown(0); // This shutdown is expected behavior.
 				return;

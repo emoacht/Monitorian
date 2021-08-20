@@ -33,6 +33,7 @@ namespace Monitorian.Core
 		protected readonly object _monitorsLock = new object();
 
 		public NotifyIconContainer NotifyIconContainer { get; }
+		public WindowPainter WindowPainter { get; }
 
 		private readonly DisplayWatcher _displayWatcher;
 		private readonly SessionWatcher _sessionWatcher;
@@ -47,12 +48,12 @@ namespace Monitorian.Core
 			this.Settings = settings ?? throw new ArgumentNullException(nameof(settings));
 
 			LanguageService.SwitchDefault();
-			WindowEffect.ChangeTheme();
 
 			Monitors = new ObservableCollection<MonitorViewModel>();
 			BindingOperations.EnableCollectionSynchronization(Monitors, _monitorsLock);
 
 			NotifyIconContainer = new NotifyIconContainer();
+			WindowPainter = new WindowPainter();
 
 			_displayWatcher = new DisplayWatcher();
 			_sessionWatcher = new SessionWatcher();
@@ -71,7 +72,6 @@ namespace Monitorian.Core
 			NotifyIconContainer.ShowIcon("pack://application:,,,/Monitorian.Core;component/Resources/Icons/TrayIcon.ico", ProductInfo.Title);
 
 			_current.MainWindow = new MainWindow(this);
-			_current.MainWindow.Deactivated += (sender, e) => MonitorsResetByKey();
 
 			if (StartupAgent.IsWindowShowExpected())
 				_current.MainWindow.Show();
@@ -92,9 +92,12 @@ namespace Monitorian.Core
 		public virtual void End()
 		{
 			MonitorsDispose();
+
 			NotifyIconContainer.Dispose();
+			WindowPainter.Dispose();
 
 			_displayWatcher.Dispose();
+			_sessionWatcher.Dispose();
 			_powerWatcher.Dispose();
 			_brightnessWatcher.Dispose();
 		}
@@ -379,14 +382,6 @@ namespace Monitorian.Core
 				m.Dispose();
 		}
 
-		private void MonitorsResetByKey()
-		{
-			var monitor = Monitors.FirstOrDefault(x => x.IsSelectedByKey);
-
-			if (monitor is not null)
-				monitor.IsByKey = false;
-		}
-
 		protected MonitorViewModel SelectedMonitor { get; private set; }
 
 		protected internal virtual void SaveMonitorUserChanged(MonitorViewModel monitor)
@@ -429,6 +424,14 @@ namespace Monitorian.Core
 				Settings.MonitorCustomizations.Remove(deviceInstanceId);
 			}
 		}
+
+		#endregion
+
+		#region Arguments
+
+		public Task<string> LoadArgumentsAsync() => _keeper.LoadArgumentsAsync();
+
+		public Task SaveArgumentsAsync(string content) => _keeper.SaveArgumentsAsync(content);
 
 		#endregion
 	}

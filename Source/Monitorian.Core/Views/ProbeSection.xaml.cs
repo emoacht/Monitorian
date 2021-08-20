@@ -60,6 +60,8 @@ namespace Monitorian.Core.Views
 			}
 
 			this.Content = content;
+
+			MenuWindow.EnsureFlowDirection(this);
 		}
 	}
 }

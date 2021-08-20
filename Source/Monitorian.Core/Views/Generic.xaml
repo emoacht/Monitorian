@@ -6,6 +6,7 @@
 	<!-- Theme (Dark theme) -->
 	<Color x:Key="App.ForegroundColor">White</Color>
 	<Color x:Key="App.ShadowColor">LightGray</Color>
+	<Color x:Key="App.LineColor">#FF808080</Color>
 	<Color x:Key="App.TargetColor">LightGray</Color>
 	<Color x:Key="App.OverlayColor">#48000000</Color>
 	<Color x:Key="App.AccentColor">#FF2982CC</Color>
@@ -14,6 +15,8 @@
 	<SolidColorBrush x:Key="App.Foreground" Color="{DynamicResource App.ForegroundColor}"/>
 	<SolidColorBrush x:Key="App.Foreground.Shadow" Color="{DynamicResource App.ShadowColor}"/>
 	<SolidColorBrush x:Key="App.Foreground.Invalid" Color="{StaticResource App.InvalidColor}"/>
+
+	<SolidColorBrush x:Key="App.Border.Outline" Color="{DynamicResource App.LineColor}"/>
 	<SolidColorBrush x:Key="App.Background.Plain" Color="#FF1F1F1F"/>
 	<SolidColorBrush x:Key="App.Background.Translucent" Color="#D3161616"/>
 	<SolidColorBrush x:Key="App.Background.Accent" Color="{StaticResource App.AccentColor}"/>
@@ -24,7 +27,7 @@
 
 	<SolidColorBrush x:Key="Icon.Foreground.Normal" Color="{DynamicResource Icon.Foreground.NormalColor}"/>
 
-	<SolidColorBrush x:Key="Menu.Separator" Color="#FF808080"/>
+	<SolidColorBrush x:Key="Menu.Separator" Color="{DynamicResource App.LineColor}"/>
 
 	<SolidColorBrush x:Key="Menu.Item.Background.MouseOver" Color="#FF5F5F5F"/>
 
@@ -87,6 +90,7 @@
 		<Setter Property="FocusVisualStyle" Value="{x:Null}"/>
 		<Setter Property="Background" Value="Transparent"/>
 		<Setter Property="Foreground" Value="{StaticResource App.Foreground}"/>
+		<Setter Property="controls:TemplateElement.Visibility" Value="Collapsed"/>
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type ToggleButton}">
@@ -96,6 +100,7 @@
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="Auto"/>
 							<ColumnDefinition Width="*"/>
+							<ColumnDefinition Width="Auto"/>
 						</Grid.ColumnDefinitions>
 						<Grid Grid.Column="0"
 							  Width="{Binding RelativeSource={RelativeSource Self}, Path=ActualHeight}">
@@ -108,6 +113,9 @@
 						<ContentPresenter Grid.Column="1"
 										  Margin="3" HorizontalAlignment="Left" VerticalAlignment="Center"
 										  Focusable="False"/>
+						<Grid Grid.Column="2"
+							  Width="{Binding RelativeSource={RelativeSource Self}, Path=ActualHeight}"
+							  Visibility="{TemplateBinding controls:TemplateElement.Visibility}"/>
 					</Grid>
 					<ControlTemplate.Triggers>
 						<Trigger Property="IsChecked" Value="True">
@@ -127,6 +135,7 @@
 		<Setter Property="FocusVisualStyle" Value="{x:Null}"/>
 		<Setter Property="Background" Value="Transparent"/>
 		<Setter Property="Foreground" Value="{StaticResource App.Foreground}"/>
+		<Setter Property="controls:TemplateElement.Visibility" Value="Collapsed"/>
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type ContentControl}">
@@ -136,12 +145,16 @@
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="Auto"/>
 							<ColumnDefinition Width="*"/>
+							<ColumnDefinition Width="Auto"/>
 						</Grid.ColumnDefinitions>
 						<Grid Grid.Column="0"
 							  Width="{Binding RelativeSource={RelativeSource Self}, Path=ActualHeight}"/>
 						<ContentPresenter Grid.Column="1"
 										  Margin="3" HorizontalAlignment="Left" VerticalAlignment="Center"
 										  Focusable="False"/>
+						<Grid Grid.Column="2"
+							  Width="{Binding RelativeSource={RelativeSource Self}, Path=ActualHeight}"
+							  Visibility="{TemplateBinding controls:TemplateElement.Visibility}"/>
 					</Grid>
 				</ControlTemplate>
 			</Setter.Value>
@@ -180,6 +193,32 @@
 										  Margin="3" HorizontalAlignment="Left" VerticalAlignment="Center"
 										  Focusable="False"/>
 					</Grid>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<!-- TextBox -->
+	<Style x:Key="TextBoxStyle" TargetType="{x:Type TextBox}" BasedOn="{StaticResource {x:Type TextBox}}">
+		<Setter Property="Foreground" Value="{StaticResource App.Foreground}"/>
+		<Setter Property="CaretBrush" Value="{StaticResource App.Foreground}"/>
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type TextBox}">
+					<Border x:Name="border"
+							BorderBrush="Transparent" BorderThickness="1"
+							Background="Transparent"
+							SnapsToDevicePixels="True">
+						<ScrollViewer x:Name="PART_ContentHost"
+									  VerticalScrollBarVisibility="Hidden"
+									  Focusable="False"/>
+					</Border>
+					<ControlTemplate.Triggers>
+						<Trigger Property="IsReadOnly" Value="False">
+							<Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource App.Border.Outline}"/>
+							<Setter Property="Background" TargetName="border" Value="{DynamicResource App.Background.Plain}"/>
+						</Trigger>
+					</ControlTemplate.Triggers>
 				</ControlTemplate>
 			</Setter.Value>
 		</Setter>

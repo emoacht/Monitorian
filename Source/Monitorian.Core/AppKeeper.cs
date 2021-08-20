@@ -14,49 +14,16 @@ namespace Monitorian.Core
 {
 	public class AppKeeper
 	{
-		public static IReadOnlyList<string> DefinedArguments => _definedArguments?.ToArray() ?? Array.Empty<string>();
-		private static string[] _definedArguments;
-
-		public static IReadOnlyList<string> OtherArguments => _otherArguments?.ToArray() ?? Array.Empty<string>();
-		private static string[] _otherArguments;
-
 		public StartupAgent StartupAgent { get; }
 
-		public static string[] GetDefinedOptions() =>
-			new[]
-			{
-				StartupAgent.Options,
-				LanguageService.Options,
-				WindowEffect.Options
-			}
-			.SelectMany(x => x)
-			.ToArray();
-
-		public AppKeeper(StartupEventArgs e) : this(e?.Args, GetDefinedOptions())
-		{ }
-
-		public AppKeeper(string[] args, params string[] definedOptions)
+		public AppKeeper()
 		{
-			if (args?.Any() is true)
-			{
-				const char optionMark = '/';
-				var isDefined = false;
-
-				// First element of StartupEventArgs.Args is not executing assembly's path unlike
-				// that of arguments provided by Environment.GetCommandLineArgs method.
-				var buffer = args
-					.Where(x => !string.IsNullOrWhiteSpace(x))
-					.GroupBy(x => (x[0] == optionMark) ? (isDefined = definedOptions.Contains(x.ToLower())) : isDefined)
-					.ToArray();
-
-				_definedArguments = buffer.SingleOrDefault(x => x.Key)?.ToArray();
-				_otherArguments = buffer.SingleOrDefault(x => !x.Key)?.ToArray();
-			}
-
 			StartupAgent = new StartupAgent();
 		}
 
-		public bool Start()
+		public Task<bool> StartAsync(StartupEventArgs e) => StartAsync(e, GetDefinedOptions());
+
+		public async Task<bool> StartAsync(StartupEventArgs e, params string[] definedOptions)
 		{
 #if DEBUG
 			ConsoleService.TryStartWrite();
@@ -64,6 +31,7 @@ namespace Monitorian.Core
 			if (OtherArguments.Any())
 				ConsoleService.TryStartWrite();
 #endif
+			await ParseArgumentsAsync(e, definedOptions);
 
 			SubscribeExceptions();
 
@@ -87,6 +55,56 @@ namespace Monitorian.Core
 			if (!string.IsNullOrEmpty(content))
 				ConsoleService.Write(content);
 		}
+
+		#region Arguments
+
+		public static IReadOnlyList<string> DefinedArguments => _definedArguments?.ToArray() ?? Array.Empty<string>();
+		private static string[] _definedArguments;
+
+		public static IReadOnlyList<string> OtherArguments => _otherArguments?.ToArray() ?? Array.Empty<string>();
+		private static string[] _otherArguments;
+
+		public static string[] GetDefinedOptions() =>
+			new[]
+			{
+				StartupAgent.Options,
+				LanguageService.Options,
+				WindowPainter.Options
+			}
+			.SelectMany(x => x)
+			.ToArray();
+
+		private async Task ParseArgumentsAsync(StartupEventArgs e, string[] definedOptions)
+		{
+			// Load persistent arguments.
+			var args = (await LoadArgumentsAsync())?.Split() ?? Array.Empty<string>();
+
+			// Concatenate current and persistent arguments.
+			// The first element of StartupEventArgs.Args is not executing assembly's path unlike
+			// that of arguments provided by Environment.GetCommandLineArgs method.
+			args = e.Args.Concat(args).ToArray();
+			if (args.Any() is not true)
+				return;
+
+			const char optionMark = '/';
+			var isDefined = false;
+
+			var buffer = args
+				.Where(x => !string.IsNullOrWhiteSpace(x))
+				.GroupBy(x => (x[0] == optionMark) ? (isDefined = definedOptions.Contains(x.ToLower())) : isDefined)
+				.ToArray();
+
+			_definedArguments = buffer.SingleOrDefault(x => x.Key)?.ToArray();
+			_otherArguments = buffer.SingleOrDefault(x => !x.Key)?.ToArray();
+		}
+
+		private const string ArgumentsFileName = "arguments.txt";
+
+		public Task<string> LoadArgumentsAsync() => AppDataService.ReadAsync(ArgumentsFileName);
+
+		public Task SaveArgumentsAsync(string content) => AppDataService.WriteAsync(ArgumentsFileName, false, content);
+
+		#endregion
 
 		#region Exception
 

@@ -39,6 +39,8 @@ namespace Monitorian.Core.Views
 			if (OsVersion.Is11OrGreater)
 				_mover.KeepsDistance = true;
 
+			controller.WindowPainter.Add(this);
+
 			_tracker = new TouchpadTracker(this);
 			_tracker.ManipulationDelta += (_, delta) =>
 			{
@@ -50,14 +52,6 @@ namespace Monitorian.Core.Views
 				var slider = FocusManager.GetFocusedElement(this) as EnhancedSlider;
 				slider?.EnsureUpdateSource();
 			};
-		}
-
-		protected override void OnSourceInitialized(EventArgs e)
-		{
-			base.OnSourceInitialized(e);
-
-			WindowEffect.DisableTransitions(this);
-			WindowEffect.EnableBackgroundTranslucency(this);
 		}
 
 		public override void OnApplyTemplate()
@@ -180,6 +174,8 @@ namespace Monitorian.Core.Views
 
 			if (this.Visibility != Visibility.Visible)
 				return;
+
+			ViewModel.Deactivate();
 
 			// Set time to prevent this window from being shown unintentionally. 
 			_preventionTime = DateTimeOffset.Now + TimeSpan.FromSeconds(0.2);

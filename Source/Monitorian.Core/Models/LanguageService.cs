@@ -1,10 +1,14 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Resources;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+
+using Monitorian.Core.Properties;
 
 namespace Monitorian.Core.Models
 {
@@ -30,6 +34,24 @@ namespace Monitorian.Core.Models
 			}
 			return null;
 		});
+
+		public static IReadOnlyDictionary<string, string> ResourceDictionary => _resourceDictionary.Value;
+		private static readonly Lazy<Dictionary<string, string>> _resourceDictionary = new(() =>
+		{
+			if (_culture.Value is not null)
+			{
+				var resourceSet = new ResourceManager(typeof(Resources)).GetResourceSet(_culture.Value, true, false);
+				if (resourceSet is not null)
+				{
+					return resourceSet.Cast<DictionaryEntry>()
+						.Where(x => x.Key is string)
+						.ToDictionary(x => (string)x.Key, x => x.Value?.ToString());
+				}
+			}
+			return new Dictionary<string, string>();
+		});
+
+		public static bool IsResourceRightToLeft => (_culture.Value?.TextInfo.IsRightToLeft is true);
 
 		/// <summary>
 		/// Switches default and current threads' culture.

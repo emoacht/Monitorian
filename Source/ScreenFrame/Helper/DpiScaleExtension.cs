@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
 
 namespace ScreenFrame.Helper
 {
@@ -17,5 +18,12 @@ namespace ScreenFrame.Helper
 
 		public static bool IsValid(this DpiScale a) =>
 			(0 < a.DpiScaleX) && (0 < a.DpiScaleY);
+
+		public static Matrix ToMatrix(this DpiScale a)
+		{
+			var matrix = Matrix.Identity;
+			matrix.Scale(a.DpiScaleX, a.DpiScaleY);
+			return matrix;
+		}
 	}
 }

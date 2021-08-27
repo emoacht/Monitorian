@@ -129,9 +129,6 @@
   <data name="CopyOperationMessage" xml:space="preserve">
     <value>是否将操作日志保存到桌面？</value>
   </data>
-  <data name="DeferChange" xml:space="preserve">
-    <value>Defer change until stopped</value>
-  </data>
   <data name="EnableContrast" xml:space="preserve">
     <value>启用对比度调节</value>
   </data>

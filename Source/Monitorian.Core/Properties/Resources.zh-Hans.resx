@@ -129,11 +129,26 @@
   <data name="CopyOperationMessage" xml:space="preserve">
     <value>是否将操作日志保存到桌面？</value>
   </data>
+  <data name="DeferChange" xml:space="preserve">
+    <value>Defer change until stopped</value>
+  </data>
+  <data name="EnableContrast" xml:space="preserve">
+    <value>启用对比度调节</value>
+  </data>
+  <data name="EnableRange" xml:space="preserve">
+    <value>启用调节范围设置</value>
+  </data>
   <data name="EnableUnison" xml:space="preserve">
     <value>启用同步调节</value>
   </data>
   <data name="MakeOperation" xml:space="preserve">
     <value>记录操作日志</value>
+  </data>
+  <data name="MoveUnison" xml:space="preserve">
+    <value>同步调节</value>
+  </data>
+  <data name="OrderArrangement" xml:space="preserve">
+    <value>按显示器排布进行排序</value>
   </data>
   <data name="Probe" xml:space="preserve">
     <value>检测显示器</value>
@@ -147,8 +162,14 @@
   <data name="Rescan" xml:space="preserve">
     <value>重新扫描显示器</value>
   </data>
+  <data name="Settings" xml:space="preserve">
+    <value>设置</value>
+  </data>
   <data name="ShowAdjusted" xml:space="preserve">
     <value>显示调整后亮度</value>
+  </data>
+  <data name="ShowNumber" xml:space="preserve">
+    <value>显示当前数值</value>
   </data>
   <data name="StartSignIn" xml:space="preserve">
     <value>开机时启动</value>

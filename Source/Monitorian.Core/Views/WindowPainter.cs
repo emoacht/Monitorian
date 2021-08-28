@@ -183,7 +183,13 @@ namespace Monitorian.Core.Views
 
 			_apply = new Throttle(
 				TimeSpan.FromMilliseconds(200),
-				() => ApplyChangedTheme());
+				() =>
+				{
+					if (ApplyChangedTheme())
+					{
+						ThemeChanged?.Invoke(null, EventArgs.Empty);
+					}
+				});
 		}
 
 		private void RemoveHook()
@@ -211,6 +217,8 @@ namespace Monitorian.Core.Views
 
 		#endregion
 
+		public event EventHandler ThemeChanged;
+
 		private void ApplyInitialTheme()
 		{
 			switch (_theme)
@@ -229,11 +237,11 @@ namespace Monitorian.Core.Views
 			ApplyTheme(_theme);
 		}
 
-		private void ApplyChangedTheme()
+		private bool ApplyChangedTheme()
 		{
 			var theme = UIInformation.GetWindowsTheme();
 			if (_theme == theme)
-				return;
+				return false;
 
 			_theme = theme;
 			ApplyTheme(_theme);
@@ -241,6 +249,7 @@ namespace Monitorian.Core.Views
 			ResetTranslucent();
 
 			_windows.ForEach(x => x.Dispatcher.Invoke(() => PaintBackground(x)));
+			return true;
 		}
 
 		private bool PaintBackground(Window window)
@@ -404,6 +413,7 @@ namespace Monitorian.Core.Views
 			{
 				// Free any other managed objects here.
 				RemoveHook();
+				ThemeChanged = null;
 			}
 
 			// Free any unmanaged objects here.

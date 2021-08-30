@@ -118,7 +118,6 @@
     <Compile Include="Views\Behaviors\ItemBehavior.cs" />
     <Compile Include="Views\Behaviors\ItemSelectorBehavior.cs" />
     <Compile Include="Views\Behaviors\ItemSliderBehavior.cs" />
-    <Compile Include="Views\Behaviors\ManipulationCallMethodAction.cs" />
     <Compile Include="Views\Behaviors\MouseDownParentAction.cs" />
     <Compile Include="Views\Controls\Sliders\CompoundSlider.cs" />
     <Compile Include="Views\Controls\Sliders\EnhancedSlider.cs" />
@@ -196,6 +195,10 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.ko-KR.resx">
+      <DependentUpon>Resources.resx</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.nl-NL.resx">
       <DependentUpon>Resources.resx</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>

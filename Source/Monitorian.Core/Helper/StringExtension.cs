@@ -15,10 +15,7 @@ namespace Monitorian.Core.Helper
 		/// <returns>True if all ASCII characters</returns>
 		public static bool IsAscii(this string source)
 		{
-			if (source is null)
-				throw new ArgumentNullException(nameof(source));
-
-			return source.Select(x => (int)x).All(x => x < 0x80);
+			return source?.All(x => x <= 0x7F) is true;
 		}
 
 		/// <summary>

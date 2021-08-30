@@ -472,8 +472,9 @@
 			<Setter Property="Focusable" Value="False"/>
 			<Setter Property="Width" Value="28"/>
 			<Setter Property="Height" Value="30"/>
+			<Setter Property="Padding" Value="0"/>
+			<Setter Property="IsLastVisibleButton" Value="False"/>
 			<Setter Property="Foreground" Value="{StaticResource Icon.Foreground.Normal}"/>
-			<Setter Property="VerticalContentAlignment" Value="Center"/>
 			<Setter Property="SnapsToDevicePixels" Value="True"/>
 			<Setter Property="UseLayoutRounding" Value="True"/>
 			<Setter Property="ToolTipService.InitialShowDelay" Value="1000"/>
@@ -483,15 +484,17 @@
 						<Grid>
 							<Border x:Name="border"
 									Background="Transparent">
-								<Grid Height="{Binding RelativeSource={RelativeSource Self}, Path=ActualWidth}"
-									  Margin="7,6" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-									  RenderOptions.EdgeMode="Aliased">
-									<Path x:Name="StrokeIcon"
-										  Data="{TemplateBinding StrokeIconData}" Stretch="Uniform"
-										  Stroke="{TemplateBinding Foreground}" StrokeThickness="1"/>
-									<Path x:Name="FillIcon"
-										  Data="{TemplateBinding FillIconData}" Stretch="Uniform"
-										  Fill="{TemplateBinding Foreground}"/>
+								<Grid Margin="{TemplateBinding Padding}">
+									<Grid Height="{Binding RelativeSource={RelativeSource Self}, Path=ActualWidth}"
+										  Margin="7,6" VerticalAlignment="Center"
+										  RenderOptions.EdgeMode="Aliased">
+										<Path x:Name="StrokeIcon"
+											  Data="{TemplateBinding StrokeIconData}" Stretch="Uniform"
+											  Stroke="{TemplateBinding Foreground}" StrokeThickness="1"/>
+										<Path x:Name="FillIcon"
+											  Data="{TemplateBinding FillIconData}" Stretch="Uniform"
+											  Fill="{TemplateBinding Foreground}"/>
+									</Grid>
 								</Grid>
 							</Border>
 
@@ -530,13 +533,26 @@
 															To="{DynamicResource App.ForegroundColor}"/>
 										</Storyboard>
 									</VisualState>
-									<VisualState x:Name="Disabled"/>
+									<VisualState x:Name="Disabled">
+										<Storyboard>
+											<DoubleAnimation Storyboard.TargetName="border"
+															 Storyboard.TargetProperty="Opacity"
+															 Duration="0"
+															 To="0"/>
+										</Storyboard>
+									</VisualState>
 								</VisualStateGroup>
 							</VisualStateManager.VisualStateGroups>
 						</Grid>
 					</ControlTemplate>
 				</Setter.Value>
 			</Setter>
+			<Style.Triggers>
+				<Trigger Property="IsLastVisibleButton" Value="True">
+					<Setter Property="Width" Value="31"/>
+					<Setter Property="Padding" Value="0,0,3,0"/>
+				</Trigger>
+			</Style.Triggers>
 		</Style>
 
 		<Style x:Key="UnisonButtonStyle" TargetType="{x:Type controls:IconButton}" BasedOn="{StaticResource IconButtonStyle}">
@@ -550,12 +566,6 @@
 		<Style x:Key="ContrastButtonStyle" TargetType="{x:Type controls:IconButton}" BasedOn="{StaticResource IconButtonStyle}">
 			<Setter Property="StrokeIconData" Value="M 0,0 L 0,10 10,10 10,0 Z"/>
 			<Setter Property="FillIconData" Value="M 0,0 L 0,10 5,10 5,0 Z M 10,0 L 10,10"/>
-			<Setter Property="Visibility" Value="Hidden"/>
-			<Style.Triggers>
-				<Trigger Property="IsEnabled" Value="True">
-					<Setter Property="Visibility" Value="Visible"/>
-				</Trigger>
-			</Style.Triggers>
 		</Style>
 
 		<!-- Number Label -->
@@ -616,26 +626,23 @@
 										VerticalAlignment="Top"
 										Orientation="Horizontal">
 								<!-- Unison -->
-								<Grid Visibility="{Binding Settings.EnablesUnison, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverterKey}}">
-									<controls:IconButton Style="{StaticResource UnisonButtonStyle}"
-														 ToolTip="{x:Static properties:Resources.MoveUnison}"
-														 IsChecked="{Binding IsUnison, Mode=TwoWay}"/>
-								</Grid>
+								<controls:IconButton Style="{StaticResource UnisonButtonStyle}"
+													 ToolTip="{x:Static properties:Resources.MoveUnison}"
+													 Visibility="{Binding Settings.EnablesUnison, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverterKey}}"
+													 IsChecked="{Binding IsUnison, Mode=TwoWay}"/>
 
 								<!-- Range -->
-								<Grid Visibility="{Binding Settings.EnablesRange, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverterKey}}">
-									<controls:IconButton Style="{StaticResource RangeButtonStyle}"
-														 ToolTip="{x:Static properties:Resources.ChangeRange}"
-														 IsChecked="{Binding IsRangeChanging, Mode=TwoWay}"/>
-								</Grid>
+								<controls:IconButton Style="{StaticResource RangeButtonStyle}"
+													 ToolTip="{x:Static properties:Resources.ChangeRange}"
+													 Visibility="{Binding Settings.EnablesRange, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverterKey}}"
+													 IsChecked="{Binding IsRangeChanging, Mode=TwoWay}"/>
 
 								<!-- Contrast -->
-								<Grid Visibility="{Binding Settings.EnablesContrast, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverterKey}}">
-									<controls:IconButton Style="{StaticResource ContrastButtonStyle}"
-														 ToolTip="{x:Static properties:Resources.ChangeContrast}"
-														 IsEnabled="{Binding IsContrastSupported, Mode=OneWay}"
-														 IsChecked="{Binding IsContrastChanging, Mode=TwoWay}"/>
-								</Grid>
+								<controls:IconButton Style="{StaticResource ContrastButtonStyle}"
+													 ToolTip="{x:Static properties:Resources.ChangeContrast}"
+													 IsEnabled="{Binding IsContrastSupported, Mode=OneWay}"
+													 Visibility="{Binding Settings.EnablesContrast, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverterKey}}"
+													 IsChecked="{Binding IsContrastChanging, Mode=TwoWay}"/>
 							</StackPanel>
 						</Grid>
 

@@ -51,7 +51,6 @@
     <Compile Include="Helper\CultureInfoAddition.cs" />
     <Compile Include="Helper\DpiScaleExtension.cs" />
     <Compile Include="Helper\OsVersion.cs" />
-    <Compile Include="Helper\VectorExtension.cs" />
     <Compile Include="Movers\WindowMover.cs" />
     <Compile Include="Movers\BasicWindowMover.cs" />
     <Compile Include="Movers\FloatWindowMover.cs" />

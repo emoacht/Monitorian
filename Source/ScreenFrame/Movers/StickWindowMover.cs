@@ -109,7 +109,7 @@ namespace ScreenFrame.Movers
 			var isLeftToRight = !CultureInfoAddition.UserDefaultUICulture.TextInfo.IsRightToLeft;
 
 			var distance = KeepsDistance
-				? new Vector(Distance, Distance).Multiply(VisualTreeHelperAddition.GetDpi(_window))
+				? new Vector(Distance, Distance) * VisualTreeHelperAddition.GetDpi(_window).ToMatrix()
 				: new Vector(0, 0);
 
 			double x = 0, y = 0;

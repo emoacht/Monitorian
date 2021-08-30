@@ -8,6 +8,8 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
+using Monitorian.Core.Helper;
+
 namespace Monitorian.Core.Models.Monitor
 {
 	/// <summary>
@@ -76,6 +78,13 @@ namespace Monitorian.Core.Models.Monitor
 			[MarshalAs(UnmanagedType.LPStr)]
 			[Out] StringBuilder pszASCIICapabilitiesString,
 
+			uint dwCapabilitiesStringLengthInCharacters);
+
+		[DllImport("Dxva2.dll", SetLastError = true)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		private static extern bool CapabilitiesRequestAndCapabilitiesReply(
+			SafePhysicalMonitorHandle hMonitor,
+			IntPtr pszASCIICapabilitiesString,
 			uint dwCapabilitiesStringLengthInCharacters);
 
 		[DllImport("Dxva2.dll", SetLastError = true)]
@@ -261,7 +270,8 @@ namespace Monitorian.Core.Models.Monitor
 						isLowLevelBrightnessSupported: vcpCodes.Contains((byte)VcpCode.Luminance),
 						isContrastSupported: vcpCodes.Contains((byte)VcpCode.Contrast),
 						capabilitiesString: (verbose ? capabilitiesString : null),
-						capabilitiesReport: (verbose ? MakeCapabilitiesReport(vcpCodes) : null));
+						capabilitiesReport: (verbose ? MakeCapabilitiesReport(vcpCodes) : null),
+						capabilitiesData: (verbose && !vcpCodes.Any() ? GetCapabilitiesData(physicalMonitorHandle, capabilitiesStringLength) : null));
 				}
 			}
 			return new MonitorCapability(
@@ -276,11 +286,35 @@ namespace Monitorian.Core.Models.Monitor
 					   $"Speaker Volume: {vcpCodes.Contains((byte)VcpCode.SpeakerVolume)}, " +
 					   $"Power Mode: {vcpCodes.Contains((byte)VcpCode.PowerMode)}";
 			}
+
+			static byte[] GetCapabilitiesData(SafePhysicalMonitorHandle physicalMonitorHandle, uint capabilitiesStringLength)
+			{
+				var dataPointer = IntPtr.Zero;
+				try
+				{
+					dataPointer = Marshal.AllocHGlobal((int)capabilitiesStringLength);
+
+					if (CapabilitiesRequestAndCapabilitiesReply(
+						physicalMonitorHandle,
+						dataPointer,
+						capabilitiesStringLength))
+					{
+						var data = new byte[capabilitiesStringLength];
+						Marshal.Copy(dataPointer, data, 0, data.Length);
+						return data;
+					}
+					return null;
+				}
+				finally
+				{
+					Marshal.FreeHGlobal(dataPointer);
+				}
+			}
 		}
 
 		private static IEnumerable<byte> EnumerateVcpCodes(string source)
 		{
-			if (string.IsNullOrEmpty(source))
+			if (string.IsNullOrEmpty(source) || !source.IsAscii())
 				yield break;
 
 			int index = source.IndexOf("vcp", StringComparison.OrdinalIgnoreCase);
@@ -526,18 +560,23 @@ namespace Monitorian.Core.Models.Monitor
 		[DataMember(Order = 4)]
 		public string CapabilitiesReport { get; }
 
+		[DataMember(Order = 5)]
+		public string CapabilitiesData { get; }
+
 		public MonitorCapability(
 			bool isHighLevelBrightnessSupported,
 			bool isLowLevelBrightnessSupported,
 			bool isContrastSupported,
 			string capabilitiesString = null,
-			string capabilitiesReport = null)
+			string capabilitiesReport = null,
+			byte[] capabilitiesData = null)
 		{
 			this.IsHighLevelBrightnessSupported = isHighLevelBrightnessSupported;
 			this.IsLowLevelBrightnessSupported = isLowLevelBrightnessSupported;
 			this.IsContrastSupported = isContrastSupported;
 			this.CapabilitiesString = capabilitiesString;
 			this.CapabilitiesReport = capabilitiesReport;
+			this.CapabilitiesData = (capabilitiesData is not null) ? Convert.ToBase64String(capabilitiesData) : null;
 		}
 	}
 }

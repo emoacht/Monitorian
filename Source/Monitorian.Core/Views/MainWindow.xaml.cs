@@ -40,6 +40,10 @@ namespace Monitorian.Core.Views
 				_mover.KeepsDistance = true;
 
 			controller.WindowPainter.Add(this);
+			controller.WindowPainter.ThemeChanged += (_, _) =>
+			{
+				ViewModel.MonitorsView.Refresh();
+			};
 
 			_tracker = new TouchpadTracker(this);
 			_tracker.ManipulationDelta += (_, delta) =>

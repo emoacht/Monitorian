@@ -24,10 +24,11 @@ Additional languages:
 - fr (French) by @AlexZeGamer
 - ja-JP (Japanese) by @emoacht
 - ko-KR (Korean) by @VenusGirl
+- nl-NL (Dutch) by @JordyEGNL
 - pl-PL (Polish) by @Daxxxis and @FakeMichau
 - ru-RU (Russian) by @SigmaTel71
 - tr-TR (Turkish) by @webbudesign
-- zh-Hans (Simplified Chinese) by @ComMouse
+- zh-Hans (Simplified Chinese) by @ComMouse and @zhujunsan
 
 ## Requirements
 
@@ -42,7 +43,7 @@ Additional languages:
 [Monitorian](https://www.microsoft.com/store/apps/9nw33j738bl0) (Microsoft Store)
 
  * Other:<br>
-:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/3.3.0-Installer/MonitorianInstaller330.zip)
+:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/3.4.0-Installer/MonitorianInstaller340.zip)
 
 ## Install/Uninstall
 
@@ -144,6 +145,11 @@ An alternative language can be shown by adding a Resources (.resx) file into `/S
  - The name of a name/value pair must correspond to that in the default `Resources.resx` file to override it.
 
 ## History
+
+Ver 3.4 2021-8-30
+
+- Add nl-NL (Dutch) language. Thanks to @JordyEGNL!
+- Supplement zh-Hans (Simplified Chinese) language. Thanks to @zhujunsan!
 
 Ver 3.3 2021-8-20
 

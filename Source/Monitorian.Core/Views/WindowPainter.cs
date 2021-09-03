@@ -167,34 +167,47 @@ namespace Monitorian.Core.Views
 
 		private void OnClosed(object sender, EventArgs e)
 		{
-			Remove((Window)sender);
+			var oldWindow = (Window)sender;
+			Remove(oldWindow);
+
+			if (_isThemeAdaptive &&
+				RemoveHook(oldWindow))
+			{
+				var newWindow = _windows.FirstOrDefault(x => x.IsInitialized);
+				if (newWindow is not null)
+					AddHook(newWindow);
+			}
 		}
 
+		private Window _window;
 		private HwndSource _source;
-		private Throttle _apply;
 
 		private void AddHook(Window window)
 		{
-			if (_source is not null)
+			if (_window is not null)
 				return;
 
+			_window = window;
 			_source = PresentationSource.FromVisual(window) as HwndSource;
 			_source?.AddHook(WndProc);
+		}
 
-			_apply = new Throttle(
-				TimeSpan.FromMilliseconds(200),
-				() =>
-				{
-					if (ApplyChangedTheme())
-					{
-						ThemeChanged?.Invoke(null, EventArgs.Empty);
-					}
-				});
+		private bool RemoveHook(Window window)
+		{
+			if ((_window is not null) &&
+				(_window == window))
+			{
+				RemoveHook();
+				return true;
+			}
+			return false;
 		}
 
 		private void RemoveHook()
 		{
+			_window = null;
 			_source?.RemoveHook(WndProc);
+			_source = null;
 		}
 
 		private const int WM_SETTINGCHANGE = 0x001A;
@@ -206,13 +219,27 @@ namespace Monitorian.Core.Views
 				case WM_SETTINGCHANGE:
 					if (string.Equals(Marshal.PtrToStringAuto(lParam), "ImmersiveColorSet"))
 					{
-						Push();
+						OnChanged();
 					}
 					break;
 			}
 			return IntPtr.Zero;
+		}
 
-			async void Push() => await _apply.PushAsync();
+		private Task _throttleTask;
+
+		private async void OnChanged()
+		{
+			var waitTask = Task.Delay(TimeSpan.FromSeconds(1));
+			_throttleTask = waitTask;
+			await waitTask;
+			if (_throttleTask == waitTask)
+			{
+				if (ApplyChangedTheme())
+				{
+					ThemeChanged?.Invoke(null, EventArgs.Empty);
+				}
+			}
 		}
 
 		#endregion

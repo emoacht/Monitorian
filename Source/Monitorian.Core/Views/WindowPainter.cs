@@ -19,11 +19,11 @@ namespace Monitorian.Core.Views
 	{
 		public WindowPainter()
 		{
-			CheckArguments();
+			CheckArguments(AppKeeper.DefinedArguments);
 			ApplyInitialTheme();
 		}
 
-		public static IReadOnlyCollection<string> Options => new[] { ThemeOption, TextureOption, RoundOption }.Concat(ColorPairs.Keys).ToArray();
+		public static IReadOnlyCollection<string> Options => new[] { ThemeOption, TextureOption, CornerOption }.Concat(ColorPairs.Keys).ToArray();
 
 		private const string ThemeOption = "/theme";
 
@@ -52,9 +52,9 @@ namespace Monitorian.Core.Views
 
 		private Texture _texture = Texture.Thick; // Default
 
-		private const string RoundOption = "/round";
+		private const string CornerOption = "/corner";
 
-		private bool _isRounded;
+		private CornerPreference _corner;
 
 		/// <summary>
 		/// Color changeable elements of window
@@ -78,8 +78,11 @@ namespace Monitorian.Core.Views
 
 		private Dictionary<ColorElement, Brush> _colors;
 
-		private void CheckArguments()
+		private void CheckArguments(IReadOnlyList<string> arguments)
 		{
+			if (arguments is null)
+				return;
+
 			var converter = new BrushConverter();
 			bool TryParse(string source, out Brush brush)
 			{
@@ -98,38 +101,35 @@ namespace Monitorian.Core.Views
 			var colorPairs = ColorPairs;
 			var colors = new Dictionary<ColorElement, Brush>();
 
-			var arguments = AppKeeper.DefinedArguments;
-
 			int i = 0;
-			while (i < arguments.Count)
+			while (i < arguments.Count - 1)
 			{
-				if (arguments[i] == RoundOption)
+				switch (arguments[i])
 				{
-					_isRounded = true;
-				}
-				else if (i < arguments.Count - 1)
-				{
-					if (arguments[i] == ThemeOption)
-					{
-						if (Enum.TryParse(arguments[i + 1], true, out ColorTheme buffer))
-						{
-							_theme = buffer;
-							_isThemeAdaptive = false;
-						}
-					}
-					else if (arguments[i] == TextureOption)
-					{
-						if (Enum.TryParse(arguments[i + 1], true, out Texture buffer))
-							_texture = buffer;
-					}
-					else if (colorPairs.TryGetValue(arguments[i], out ColorElement key))
-					{
-						if (TryParse(arguments[i + 1], out Brush value))
+					case ThemeOption when Enum.TryParse(arguments[i + 1], true, out ColorTheme buffer):
+						_theme = buffer;
+						_isThemeAdaptive = false;
+						i++;
+						break;
+
+					case TextureOption when Enum.TryParse(arguments[i + 1], true, out Texture buffer):
+						_texture = buffer;
+						i++;
+						break;
+
+					case CornerOption when Enum.TryParse(arguments[i + 1], true, out CornerPreference buffer):
+						_corner = buffer;
+						i++;
+						break;
+
+					default:
+						if (colorPairs.TryGetValue(arguments[i], out ColorElement key) &&
+							TryParse(arguments[i + 1], out Brush value))
 						{
 							colors[key] = value;
 							i++;
 						}
-					}
+						break;
 				}
 				i++;
 			}
@@ -287,8 +287,8 @@ namespace Monitorian.Core.Views
 			if (OsVersion.Is11OrGreater)
 			{
 				// For Windows 11
-				if (_isRounded)
-					SetCornersForWin11(window);
+				if (_corner == CornerPreference.Round)
+					SetCornersForWin11(window, CornerPreference.Round);
 			}
 
 			if (OsVersion.Is10OrGreater)

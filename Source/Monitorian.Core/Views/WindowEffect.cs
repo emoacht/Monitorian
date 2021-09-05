@@ -176,10 +176,22 @@ namespace Monitorian.Core.Views
 				(uint)Marshal.SizeOf<bool>()) == S_OK);
 		}
 
-		public static bool SetCornersForWin11(Window window)
+		public static bool SetCornersForWin11(Window window, CornerPreference corner)
 		{
 			var windowHandle = new WindowInteropHelper(window).Handle;
-			var value = (uint)DWMWCP.DWMWCP_ROUND;
+
+			uint value;
+			switch (corner)
+			{
+				case CornerPreference.NotRound:
+					value = (uint)DWMWCP.DWMWCP_DONOTROUND;
+					break;
+				case CornerPreference.Round:
+					value = (uint)DWMWCP.DWMWCP_ROUND;
+					break;
+				default:
+					return false;
+			}
 
 			return (DwmSetWindowAttribute(
 				windowHandle,
@@ -286,5 +298,26 @@ namespace Monitorian.Core.Views
 				_ => false
 			};
 		}
+	}
+
+	/// <summary>
+	/// Corner preferences of window
+	/// </summary>
+	public enum CornerPreference
+	{
+		/// <summary>
+		/// None
+		/// </summary>
+		None = 0,
+
+		/// <summary>
+		/// Not round
+		/// </summary>
+		NotRound,
+
+		/// <summary>
+		/// Round
+		/// </summary>
+		Round
 	}
 }

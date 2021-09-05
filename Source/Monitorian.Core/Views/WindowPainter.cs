@@ -293,13 +293,14 @@ namespace Monitorian.Core.Views
 
 			if (OsVersion.Is10OrGreater)
 			{
-				// For Windows 10
+				// For Windows 10 and 11
 				if (!IsTransparencyEnabledForWin10)
 					return false;
 
-				var (brush, color) = GetTranslucent(_texture);
-				window.Background = brush;
+				if (!TryGetTranslucent(_texture, out Brush brush, out Color? color))
+					return false;
 
+				window.Background = brush;
 				return EnableBackgroundBlurForWin10(window, color);
 			}
 
@@ -315,9 +316,10 @@ namespace Monitorian.Core.Views
 				if (!IsTransparencyEnabledForWin7)
 					return false;
 
-				var (brush, _) = GetTranslucent(_texture);
-				window.Background = brush;
+				if (!TryGetTranslucent(Texture.None, out Brush brush, out _))
+					return false;
 
+				window.Background = brush;
 				return EnableBackgroundBlurForWin7(window);
 			}
 
@@ -355,20 +357,31 @@ namespace Monitorian.Core.Views
 		private static SolidColorBrush _translucentBrush;
 		private static Color? _translucentColor;
 
-		private static (Brush brush, Color? color) GetTranslucent(Texture texture)
+		private static bool TryGetTranslucent(Texture texture, out Brush brush, out Color? color)
 		{
 			if (_translucentBrush is null)
 			{
-				_translucentBrush = (SolidColorBrush)Application.Current.FindResource(TranslucentBrushKey);
-
-				if (texture == Texture.Thick)
+				if (Application.Current.TryFindResource(TranslucentBrushKey) is SolidColorBrush buffer)
 				{
-					var color = _translucentBrush.Color;
-					_translucentBrush = new SolidColorBrush(Color.FromArgb(a: 1, r: color.R, g: color.G, b: color.B));
-					_translucentColor = Color.FromArgb(a: (byte)Math.Max(0, color.A - 1), r: color.R, g: color.G, b: color.B);
+					_translucentBrush = buffer;
+
+					if (texture == Texture.Thick)
+					{
+						var value = _translucentBrush.Color;
+						_translucentBrush = new SolidColorBrush(Color.FromArgb(a: 1, r: value.R, g: value.G, b: value.B));
+						_translucentColor = Color.FromArgb(a: (byte)Math.Max(0, value.A - 1), r: value.R, g: value.G, b: value.B);
+					}
+				}
+				else
+				{
+					brush = default;
+					color = default;
+					return false;
 				}
 			}
-			return (_translucentBrush, _translucentColor);
+			brush = _translucentBrush;
+			color = _translucentColor;
+			return true;
 		}
 
 		private static void ResetTranslucent()

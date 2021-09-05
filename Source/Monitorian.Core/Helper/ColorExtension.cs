@@ -15,9 +15,9 @@ namespace Monitorian.Core.Helper
 			return BitConverter.ToUInt32(bytes, 0);
 		}
 
-		public static Color FromUInt32(this Color color, uint source)
+		public static Color FromUInt32(uint value)
 		{
-			var bytes = BitConverter.GetBytes(source);
+			var bytes = BitConverter.GetBytes(value);
 			return Color.FromArgb(bytes[3], bytes[2], bytes[1], bytes[0]);
 		}
 	}

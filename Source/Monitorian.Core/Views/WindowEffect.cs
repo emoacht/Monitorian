@@ -198,7 +198,7 @@ namespace Monitorian.Core.Views
 				{
 					AccentState = AccentState.ACCENT_ENABLE_ACRYLICBLURBEHIND,
 					AccentFlags = 2,
-					GradientColor = color.Value.ToUInt32()
+					GradientColor = color.Value.ToUInt32() // If 0, blur effect will not be added.
 				};
 
 			var accentSize = Marshal.SizeOf(accent);

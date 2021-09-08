@@ -33,9 +33,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.Xaml.Behaviors, Version=1.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Xaml.Behaviors.Wpf.1.1.31\lib\net45\Microsoft.Xaml.Behaviors.dll</HintPath>
-    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
@@ -58,7 +55,6 @@
     <Compile Include="Collections\ObservableKeyedList.cs" />
     <Compile Include="Common\BindableBase.cs" />
     <Compile Include="Helper\ArraySearch.cs" />
-    <Compile Include="Helper\ColorExtension.cs" />
     <Compile Include="Helper\EnumerableExtension.cs" />
     <Compile Include="Helper\ExceptionExtension.cs" />
     <Compile Include="Helper\KeyValuePairExtension.cs" />
@@ -147,7 +143,6 @@
     <Compile Include="Views\ProbeSection.xaml.cs">
       <DependentUpon>ProbeSection.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\WindowEffect.cs" />
     <Compile Include="Views\WindowPainter.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -218,6 +213,10 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.zh-Hant.resx">
+      <DependentUpon>Resources.resx</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Icons\TrayIcon.ico" />
@@ -249,7 +248,9 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf">
+      <Version>1.1.31</Version>
+    </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

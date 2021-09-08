@@ -13,7 +13,7 @@
 
 	<SolidColorBrush x:Key="App.Border.Outline" Color="{DynamicResource App.LineColor}"/>
 	<SolidColorBrush x:Key="App.Background.Plain" Color="#FFE4E4E4"/>
-	<SolidColorBrush x:Key="App.Background.Translucent" Color="#DAE4E4E4"/>
+	<SolidColorBrush x:Key="App.Background.Translucent" Color="#DBE6E6E6"/>
 
 	<Color x:Key="Icon.Foreground.NormalColor">#FF909090</Color>
 	<Color x:Key="Icon.Background.MouseOverColor">#336A6A6A</Color>

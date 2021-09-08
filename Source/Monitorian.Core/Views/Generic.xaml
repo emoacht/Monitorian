@@ -9,17 +9,15 @@
 	<Color x:Key="App.LineColor">#FF808080</Color>
 	<Color x:Key="App.TargetColor">LightGray</Color>
 	<Color x:Key="App.OverlayColor">#48000000</Color>
-	<Color x:Key="App.AccentColor">#FF2982CC</Color>
-	<Color x:Key="App.InvalidColor">Red</Color>
 
 	<SolidColorBrush x:Key="App.Foreground" Color="{DynamicResource App.ForegroundColor}"/>
 	<SolidColorBrush x:Key="App.Foreground.Shadow" Color="{DynamicResource App.ShadowColor}"/>
-	<SolidColorBrush x:Key="App.Foreground.Invalid" Color="{StaticResource App.InvalidColor}"/>
+	<SolidColorBrush x:Key="App.Foreground.Invalid" Color="Red"/>
 
 	<SolidColorBrush x:Key="App.Border.Outline" Color="{DynamicResource App.LineColor}"/>
 	<SolidColorBrush x:Key="App.Background.Plain" Color="#FF1F1F1F"/>
 	<SolidColorBrush x:Key="App.Background.Translucent" Color="#D3161616"/>
-	<SolidColorBrush x:Key="App.Background.Accent" Color="{StaticResource App.AccentColor}"/>
+	<SolidColorBrush x:Key="App.Background.Accent" Color="#FF2982CC"/>
 
 	<Color x:Key="Icon.Foreground.NormalColor">#FF808080</Color>
 	<Color x:Key="Icon.Background.MouseOverColor">#33FFFFFF</Color>

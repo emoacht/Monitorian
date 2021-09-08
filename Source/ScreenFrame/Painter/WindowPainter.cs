@@ -261,7 +261,7 @@ namespace ScreenFrame.Painter
 			if (OsVersion.Is11OrGreater)
 			{
 				// For Windows 11
-				if (_corner == CornerPreference.Round)
+				if (_corner != CornerPreference.NotRound)
 					SetCornersForWin11(window, CornerPreference.Round);
 			}
 

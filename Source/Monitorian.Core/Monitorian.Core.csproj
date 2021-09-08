@@ -55,7 +55,6 @@
     <Compile Include="Collections\ObservableKeyedList.cs" />
     <Compile Include="Common\BindableBase.cs" />
     <Compile Include="Helper\ArraySearch.cs" />
-    <Compile Include="Helper\ColorExtension.cs" />
     <Compile Include="Helper\EnumerableExtension.cs" />
     <Compile Include="Helper\ExceptionExtension.cs" />
     <Compile Include="Helper\KeyValuePairExtension.cs" />
@@ -144,7 +143,6 @@
     <Compile Include="Views\ProbeSection.xaml.cs">
       <DependentUpon>ProbeSection.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\WindowEffect.cs" />
     <Compile Include="Views\WindowPainter.cs" />
   </ItemGroup>
   <ItemGroup>

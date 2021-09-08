@@ -29,6 +29,7 @@ Additional languages:
 - ru-RU (Russian) by @SigmaTel71
 - tr-TR (Turkish) by @webbudesign
 - zh-Hans (Simplified Chinese) by @ComMouse and @zhujunsan
+- zh-Hant (Traditional Chinese) by @toto6038
 
 ## Requirements
 
@@ -43,7 +44,7 @@ Additional languages:
 [Monitorian](https://www.microsoft.com/store/apps/9nw33j738bl0) (Microsoft Store)
 
  * Other:<br>
-:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/3.4.0-Installer/MonitorianInstaller340.zip)
+:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/3.5.0-Installer/MonitorianInstaller350.zip)
 
 ## Install/Uninstall
 
@@ -145,6 +146,11 @@ An alternative language can be shown by adding a Resources (.resx) file into `/S
  - The name of a name/value pair must correspond to that in the default `Resources.resx` file to override it.
 
 ## History
+
+Ver 3.5 2021-9-9
+
+- Make rounded corners default on Windows 11
+- Add zh-Hant (Traditional Chinese) language. Thanks to @toto6038!
 
 Ver 3.4 2021-8-30
 

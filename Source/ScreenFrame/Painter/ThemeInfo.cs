@@ -33,7 +33,7 @@ namespace ScreenFrame.Painter
 
 			using var key = Registry.CurrentUser.OpenSubKey(keyName);
 
-			return key?.GetValue(valueName, 1) switch
+			return key?.GetValue(valueName) switch
 			{
 				0 => ColorTheme.Dark,
 				1 => ColorTheme.Light,

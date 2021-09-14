@@ -136,7 +136,7 @@
     <value>Salvare i log dell'operazione sul Desktop?</value>
   </data>
   <data name="DeferChange" xml:space="preserve">
-    <value>Rinvia modifiche finchè fermato</value>
+    <value>Modifica quando lo slider viene rilasciato</value>
   </data>
   <data name="EnableContrast" xml:space="preserve">
     <value>Abilita modifica contrasto</value>

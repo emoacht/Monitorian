@@ -21,6 +21,11 @@ namespace ScreenFrame
 			string lpszWindow);
 
 		[DllImport("User32.dll")]
+		private static extern IntPtr MonitorFromPoint(
+			POINT pt,
+			MONITOR_DEFAULTTO dwFlags);
+
+		[DllImport("User32.dll")]
 		private static extern IntPtr MonitorFromRect(
 			ref RECT lprc,
 			MONITOR_DEFAULTTO dwFlags);
@@ -266,12 +271,27 @@ namespace ScreenFrame
 
 		#region Monitor
 
+		public static bool TryGetMonitorRect(Point point, out Rect monitorRect, out Rect workRect)
+		{
+			var monitorHandle = MonitorFromPoint(
+				point,
+				MONITOR_DEFAULTTO.MONITOR_DEFAULTTONULL);
+
+			return TryGetMonitorRect(monitorHandle, out monitorRect, out workRect);
+		}
+
 		public static bool TryGetMonitorRect(Rect windowRect, out Rect monitorRect, out Rect workRect)
 		{
 			RECT rect = windowRect;
 			var monitorHandle = MonitorFromRect(
 				ref rect,
 				MONITOR_DEFAULTTO.MONITOR_DEFAULTTONULL);
+
+			return TryGetMonitorRect(monitorHandle, out monitorRect, out workRect);
+		}
+
+		private static bool TryGetMonitorRect(IntPtr monitorHandle, out Rect monitorRect, out Rect workRect)
+		{
 			if (monitorHandle != IntPtr.Zero)
 			{
 				var monitorInfo = new MONITORINFO { cbSize = (uint)Marshal.SizeOf<MONITORINFO>() };

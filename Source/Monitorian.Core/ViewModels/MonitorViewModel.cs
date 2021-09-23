@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 using Monitorian.Core.Helper;
 using Monitorian.Core.Models;
@@ -48,6 +49,7 @@ namespace Monitorian.Core.ViewModels
 		public string Description => _monitor.Description;
 		public byte DisplayIndex => _monitor.DisplayIndex;
 		public byte MonitorIndex => _monitor.MonitorIndex;
+		public Rect MonitorRect => _monitor.MonitorRect;
 		public double MonitorTop => _monitor.MonitorRect.Top;
 
 		#region Customization

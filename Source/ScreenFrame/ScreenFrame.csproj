@@ -53,11 +53,12 @@
 		<Compile Include="Helper\DpiScaleExtension.cs" />
 		<Compile Include="Helper\KeyValuePairExtension.cs" />
 		<Compile Include="Helper\OsVersion.cs" />
-		<Compile Include="Movers\WindowMover.cs" />
 		<Compile Include="Movers\BasicWindowMover.cs" />
 		<Compile Include="Movers\FloatWindowMover.cs" />
+		<Compile Include="Movers\PopupWindowMover.cs" />
 		<Compile Include="Movers\StickWindowMover.cs" />
 		<Compile Include="Movers\SwitchWindowMover.cs" />
+		<Compile Include="Movers\WindowMover.cs" />
 		<Compile Include="Painter\ThemeInfo.cs" />
 		<Compile Include="Painter\WindowEffect.cs" />
 		<Compile Include="Painter\WindowPainter.cs" />

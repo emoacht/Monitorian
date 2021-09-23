@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Data;
 
 namespace Monitorian.Core.Views.Controls
 {
@@ -11,7 +12,9 @@ namespace Monitorian.Core.Views.Controls
 	{
 		#region Unison
 
-		private static event EventHandler<double> Moved; // Static event
+		private static event EventHandler<(object source, double delta)> Moved; // Static event
+
+		private object _source;
 
 		public bool IsUnison
 		{
@@ -28,6 +31,7 @@ namespace Monitorian.Core.Views.Controls
 					(d, e) =>
 					{
 						var instance = (CompoundSlider)d;
+						instance._source ??= BindingOperations.GetBindingExpression(d, IsUnisonProperty).DataItem;
 
 						if ((bool)e.NewValue)
 						{
@@ -57,7 +61,7 @@ namespace Monitorian.Core.Views.Controls
 
 						if (!instance.IsFocused && instance.IsUnison)
 						{
-							Moved?.Invoke(instance, (int)e.NewValue - instance.Value);
+							Moved?.Invoke(instance, (instance._source, (int)e.NewValue - instance.Value));
 						}
 					}));
 
@@ -68,7 +72,7 @@ namespace Monitorian.Core.Views.Controls
 			if (this.IsFocused && IsUnison)
 			{
 				var delta = (newValue - oldValue) / GetRangeRate();
-				Moved?.Invoke(this, delta);
+				Moved?.Invoke(this, (_source, delta));
 			}
 		}
 
@@ -81,15 +85,15 @@ namespace Monitorian.Core.Views.Controls
 			_brightnessProtruded = null; // Reset
 		}
 
-		private void OnMoved(object sender, double delta)
+		private void OnMoved(object sender, (object source, double delta) e)
 		{
-			if (ReferenceEquals(this, sender))
+			if (ReferenceEquals(this, sender) || ReferenceEquals(this._source, e.source))
 				return;
 
-			if (delta != 0D)
+			if (e.delta != 0D)
 			{
 				_brightnessProtruded ??= this.Value;
-				_brightnessProtruded += delta * GetRangeRate();
+				_brightnessProtruded += e.delta * GetRangeRate();
 
 				UpdateValue(_brightnessProtruded.Value);
 			}
@@ -103,7 +107,7 @@ namespace Monitorian.Core.Views.Controls
 		{
 			base.ExecuteUpdateSource();
 
-			Moved?.Invoke(this, 0D);
+			Moved?.Invoke(this, (_source, 0D));
 		}
 
 		#endregion

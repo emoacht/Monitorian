@@ -372,6 +372,18 @@ namespace Monitorian.Core.ViewModels
 		//   to the normal count when the monitor succeeds again.
 		// - The initial count must be smaller than the normal count so that _isConfirmed field
 		//   will be set at the first success while reducing unnecessary access to the field.
+		// - If an unreachable monitor is found and added to monitors collection and if there is no
+		//   controllable monitor, the unreachable monitor will be made to target (IsTarget
+		//   property will be true) to make it appear in view. In such case, the initial value of
+		//   IsControllable property will be false because IsReachable property is false while
+		//   Message property remains null until this count decreases to 0. Since IsReachable
+		//   property is false, scan process will not change this count but update process will do.
+		//   If such monitor is turned to be reachable and succeeds, this count will be normal count
+		//   and IsControllable property will be true. To notify this change to view, this count
+		//   (copied to former count) will have to pass value check inside OnSucceeded method.
+		//   If a monitor is first found unreachable but immediately turned to be reachable before
+		//   this count decreases, this count will remain as initial count. For this reason,
+		//   the value to be compared with this count must not be smaller than initial count.
 		private short _controllableCount = InitialCount;
 		private const short InitialCount = 3;
 		private const short NormalCount = 5;
@@ -382,7 +394,7 @@ namespace Monitorian.Core.ViewModels
 			{
 				var formerCount = _controllableCount;
 				_controllableCount = NormalCount;
-				if (formerCount <= 0)
+				if (formerCount <= InitialCount)
 				{
 					RaisePropertyChanged(nameof(IsControllable));
 					RaisePropertyChanged(nameof(Message));

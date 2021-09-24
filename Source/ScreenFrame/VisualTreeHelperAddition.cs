@@ -28,6 +28,11 @@ namespace ScreenFrame
 			string lpszWindow);
 
 		[DllImport("User32.dll")]
+		private static extern IntPtr MonitorFromPoint(
+			POINT pt,
+			MONITOR_DEFAULTTO dwFlags);
+
+		[DllImport("User32.dll")]
 		private static extern IntPtr MonitorFromWindow(
 			IntPtr hwnd,
 			MONITOR_DEFAULTTO dwFlags);
@@ -128,6 +133,23 @@ namespace ScreenFrame
 				if (handle != IntPtr.Zero)
 					ReleaseDC(IntPtr.Zero, handle);
 			}
+		}
+
+		/// <summary>
+		/// Gets Per-Monitor DPI of the monitor to which a specified point belongs.
+		/// </summary>
+		/// <param name="point">Point</param>
+		/// <returns>DPI information</returns>
+		public static DpiScale GetDpi(Point point)
+		{
+			if (!OsVersion.Is8Point1OrGreater)
+				return SystemDpi;
+
+			var monitorHandle = MonitorFromPoint(
+				point,
+				MONITOR_DEFAULTTO.MONITOR_DEFAULTTOPRIMARY);
+
+			return GetDpi(monitorHandle);
 		}
 
 		/// <summary>

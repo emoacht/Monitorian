@@ -37,7 +37,7 @@ namespace ScreenFrame.Movers
 
 			if (position.flags.HasFlag(WindowHelper.SWP.SWP_SHOWWINDOW))
 			{
-				var dpi = VisualTreeHelperAddition.GetDpi(_window);
+				var dpi = GetDpi();
 				width = _window.ActualWidth * dpi.DpiScaleX;
 				height = _window.ActualHeight * dpi.DpiScaleY;
 			}
@@ -72,6 +72,12 @@ namespace ScreenFrame.Movers
 		/// </summary>
 		protected override void HandleDisplayChange(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
 		{ }
+
+		/// <summary>
+		/// Gets Per-Monitor DPI of the monitor.
+		/// </summary>
+		/// <returns>DPI information</returns>
+		protected virtual DpiScale GetDpi() => VisualTreeHelperAddition.GetDpi(_window);
 
 		/// <summary>
 		/// Attempts to get the adjacent location using specified window width and height.

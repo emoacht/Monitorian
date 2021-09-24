@@ -32,6 +32,12 @@ namespace ScreenFrame.Movers
 		public override PivotAlignment PivotAlignment { get; protected set; }
 
 		/// <summary>
+		/// Gets Per-Monitor DPI of the monitor.
+		/// </summary>
+		/// <returns>DPI information</returns>
+		protected override DpiScale GetDpi() => VisualTreeHelperAddition.GetDpi(_pivot);
+
+		/// <summary>
 		/// Attempts to get the adjacent location using specified window width and height.
 		/// </summary>
 		/// <param name="windowWidth">Window width</param>

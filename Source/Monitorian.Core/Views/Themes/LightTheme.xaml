@@ -10,6 +10,7 @@
 
 	<SolidColorBrush x:Key="App.Foreground" Color="{DynamicResource App.ForegroundColor}"/>
 	<SolidColorBrush x:Key="App.Foreground.Shadow" Color="{DynamicResource App.ShadowColor}"/>
+	<SolidColorBrush x:Key="App.Foreground.Dusk" Color="#FF757575"/>
 
 	<SolidColorBrush x:Key="App.Border.Outline" Color="{DynamicResource App.LineColor}"/>
 	<SolidColorBrush x:Key="App.Background.Plain" Color="#FFE4E4E4"/>

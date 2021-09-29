@@ -624,7 +624,7 @@
 							<!-- Name -->
 							<controls:SwitchTextBox Grid.Column="0"
 													Height="22" Margin="8,5,0,5" HorizontalAlignment="Left" VerticalAlignment="Center"
-													Style="{StaticResource TextBoxStyle}"
+													Style="{StaticResource NameTextBoxStyle}"
 													TextWrapping="Wrap" MaxLength="96" FontSize="14"
 													Text="{Binding Name, Mode=TwoWay}"/>
 

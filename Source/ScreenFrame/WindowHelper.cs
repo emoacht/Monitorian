@@ -217,8 +217,27 @@ namespace ScreenFrame
 		internal const int S_OK = 0x0;
 		internal const int S_FALSE = 0x1;
 
-		[DllImport("User32.dll", SetLastError = true)]
+		[DllImport("User32.dll")]
 		private static extern IntPtr GetForegroundWindow();
+
+		[DllImport("User32.dll")]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		private static extern bool SetForegroundWindow(IntPtr hWnd);
+
+		[DllImport("User32.dll")]
+		private static extern uint GetWindowThreadProcessId(
+			IntPtr hWnd,
+			out uint lpdwProcessId);
+
+		[DllImport("Kernel32.dll")]
+		private static extern uint GetCurrentThreadId();
+
+		[DllImport("User32.dll", SetLastError = true)]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		private static extern bool AttachThreadInput(
+			uint idAttach,
+			uint idAttachTo,
+			bool fAttach);
 
 		[DllImport("Shell32.dll", SetLastError = true)]
 		private static extern uint SHAppBarMessage(
@@ -441,6 +460,9 @@ namespace ScreenFrame
 			return false;
 		}
 
+		internal static IEnumerable<SWP> EnumerateFlags(SWP flags) =>
+			Enum.GetValues(typeof(SWP)).Cast<SWP>().Where(x => flags.HasFlag(x));
+
 		/// <summary>
 		/// Determines if a specified window is foreground.
 		/// </summary>
@@ -452,8 +474,49 @@ namespace ScreenFrame
 			return windowHandle == GetForegroundWindow();
 		}
 
-		internal static IEnumerable<SWP> EnumerateFlags(SWP flags) =>
-			Enum.GetValues(typeof(SWP)).Cast<SWP>().Where(x => flags.HasFlag(x));
+		/// <summary>
+		/// Ensures a specified window is foreground.
+		/// </summary>
+		/// <param name="window">Window to be ensured</param>
+		/// <returns>True if foreground</returns>
+		public static bool EnsureForegroundWindow(Window window)
+		{
+			var windowHandle = new WindowInteropHelper(window).Handle;
+
+			var foregroundHandle = GetForegroundWindow();
+			if (windowHandle == foregroundHandle)
+				return true;
+
+			var currentThreadId = GetCurrentThreadId();
+			var foregroundThreadId = GetWindowThreadProcessId(
+				foregroundHandle,
+				out _);
+
+			try
+			{
+				if (currentThreadId != foregroundThreadId)
+				{
+					AttachThreadInput(
+						currentThreadId,
+						foregroundThreadId,
+						true);
+				}
+
+				SetForegroundWindow(windowHandle);
+			}
+			finally
+			{
+				if (currentThreadId != foregroundThreadId)
+				{
+					AttachThreadInput(
+						currentThreadId,
+						foregroundThreadId,
+						false);
+				}
+			}
+
+			return (windowHandle == GetForegroundWindow());
+		}
 
 		#endregion
 

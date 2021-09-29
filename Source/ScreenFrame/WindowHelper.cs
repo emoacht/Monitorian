@@ -9,7 +9,10 @@ using System.Windows.Interop;
 
 namespace ScreenFrame
 {
-	internal static class WindowHelper
+	/// <summary>
+	/// Utility methods for <see cref="System.Windows.Window"/>
+	/// </summary>
+	public static class WindowHelper
 	{
 		#region Win32
 
@@ -55,12 +58,12 @@ namespace ScreenFrame
 
 		[DllImport("User32.dll", CharSet = CharSet.Unicode)]
 		[return: MarshalAs(UnmanagedType.Bool)]
-		public static extern bool GetMonitorInfo(
+		private static extern bool GetMonitorInfo(
 			IntPtr hMonitor,
 			ref MONITORINFO lpmi);
 
 		[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-		public struct MONITORINFO
+		private struct MONITORINFO
 		{
 			public uint cbSize;
 			public RECT rcMonitor;
@@ -69,7 +72,7 @@ namespace ScreenFrame
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
-		public struct POINT
+		internal struct POINT
 		{
 			public int x;
 			public int y;
@@ -79,7 +82,7 @@ namespace ScreenFrame
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
-		public struct RECT
+		internal struct RECT
 		{
 			public int left;
 			public int top;
@@ -139,7 +142,7 @@ namespace ScreenFrame
 			SWP uFlags);
 
 		[StructLayout(LayoutKind.Sequential)]
-		public struct WINDOWPOS
+		internal struct WINDOWPOS
 		{
 			public IntPtr hwnd;
 			public IntPtr hwndInsertAfter;
@@ -150,7 +153,8 @@ namespace ScreenFrame
 			public SWP flags;
 		}
 
-		public enum SWP : uint
+
+		internal enum SWP : uint
 		{
 			SWP_ASYNCWINDOWPOS = 0x4000,
 			SWP_DEFERERASE = 0x2000,
@@ -210,8 +214,8 @@ namespace ScreenFrame
 			DWMWA_LAST
 		}
 
-		public const int S_OK = 0x0;
-		public const int S_FALSE = 0x1;
+		internal const int S_OK = 0x0;
+		internal const int S_FALSE = 0x1;
 
 		[DllImport("User32.dll", SetLastError = true)]
 		private static extern IntPtr GetForegroundWindow();
@@ -271,6 +275,13 @@ namespace ScreenFrame
 
 		#region Monitor
 
+		/// <summary>
+		/// Attempts to get monitor rectangle which includes a specified point.
+		/// </summary>
+		/// <param name="point">Point to be checked</param>
+		/// <param name="monitorRect">Monitor rectangle</param>
+		/// <param name="workRect">Working area rectangle</param>
+		/// <returns>True if successfully gets</returns>
 		public static bool TryGetMonitorRect(Point point, out Rect monitorRect, out Rect workRect)
 		{
 			var monitorHandle = MonitorFromPoint(
@@ -280,11 +291,18 @@ namespace ScreenFrame
 			return TryGetMonitorRect(monitorHandle, out monitorRect, out workRect);
 		}
 
-		public static bool TryGetMonitorRect(Rect windowRect, out Rect monitorRect, out Rect workRect)
+		/// <summary>
+		/// Attempts to get monitor rectangle which includes a specified rectangle.
+		/// </summary>
+		/// <param name="rect">Rectangle to be checked</param>
+		/// <param name="monitorRect">Monitor rectangle</param>
+		/// <param name="workRect">Working area rectangle</param>
+		/// <returns>True if successfully gets</returns>
+		public static bool TryGetMonitorRect(Rect rect, out Rect monitorRect, out Rect workRect)
 		{
-			RECT rect = windowRect;
+			RECT buffer = rect;
 			var monitorHandle = MonitorFromRect(
-				ref rect,
+				ref buffer,
 				MONITOR_DEFAULTTO.MONITOR_DEFAULTTONULL);
 
 			return TryGetMonitorRect(monitorHandle, out monitorRect, out workRect);
@@ -310,7 +328,7 @@ namespace ScreenFrame
 			return false;
 		}
 
-		public static Rect[] GetMonitorRects()
+		internal static Rect[] GetMonitorRects()
 		{
 			var monitorRects = new List<Rect>();
 
@@ -351,7 +369,7 @@ namespace ScreenFrame
 
 		#region Window
 
-		public static bool SetWindowPosition(Window window, Rect position)
+		internal static bool SetWindowPosition(Window window, Rect position)
 		{
 			var windowHandle = new WindowInteropHelper(window).Handle;
 
@@ -365,7 +383,7 @@ namespace ScreenFrame
 				SWP.SWP_NOZORDER);
 		}
 
-		public static bool TryGetWindowRect(Window window, out Rect windowRect)
+		internal static bool TryGetWindowRect(Window window, out Rect windowRect)
 		{
 			var windowHandle = new WindowInteropHelper(window).Handle;
 
@@ -380,7 +398,7 @@ namespace ScreenFrame
 			return false;
 		}
 
-		public static bool TryGetDwmWindowRect(Window window, out Rect windowRect)
+		internal static bool TryGetDwmWindowRect(Window window, out Rect windowRect)
 		{
 			var windowHandle = new WindowInteropHelper(window).Handle;
 
@@ -397,7 +415,7 @@ namespace ScreenFrame
 			return false;
 		}
 
-		public static bool TryGetDwmWindowMargin(Window window, out Thickness windowMargin)
+		internal static bool TryGetDwmWindowMargin(Window window, out Thickness windowMargin)
 		{
 			var windowHandle = new WindowInteropHelper(window).Handle;
 
@@ -423,20 +441,25 @@ namespace ScreenFrame
 			return false;
 		}
 
+		/// <summary>
+		/// Determines if a specified window is foreground.
+		/// </summary>
+		/// <param name="window">Window to be determined</param>
+		/// <returns>True if foreground</returns>
 		public static bool IsForegroundWindow(Window window)
 		{
 			var windowHandle = new WindowInteropHelper(window).Handle;
 			return windowHandle == GetForegroundWindow();
 		}
 
-		public static IEnumerable<SWP> EnumerateFlags(SWP flags) =>
+		internal static IEnumerable<SWP> EnumerateFlags(SWP flags) =>
 			Enum.GetValues(typeof(SWP)).Cast<SWP>().Where(x => flags.HasFlag(x));
 
 		#endregion
 
 		#region Taskbar
 
-		public static bool IsTaskbarAutoHide()
+		internal static bool IsTaskbarAutoHide()
 		{
 			var data = new APPBARDATA { cbSize = (uint)Marshal.SizeOf<APPBARDATA>() };
 
@@ -453,7 +476,7 @@ namespace ScreenFrame
 		/// <param name="taskbarAlignment">Primary taskbar alignment</param>
 		/// <param name="isShown">Whether primary taskbar is shown or hidden</param>
 		/// <returns>True if successfully gets</returns>
-		public static bool TryGetTaskbar(out Rect taskbarRect, out TaskbarAlignment taskbarAlignment, out bool isShown)
+		internal static bool TryGetTaskbar(out Rect taskbarRect, out TaskbarAlignment taskbarAlignment, out bool isShown)
 		{
 			var data = new APPBARDATA { cbSize = (uint)Marshal.SizeOf<APPBARDATA>() };
 
@@ -525,7 +548,7 @@ namespace ScreenFrame
 		/// <param name="taskbarAlignment">Primary taskbar alignment</param>
 		/// <returns>True if successfully gets</returns>
 		/// <remarks>If primary taskbar is hidden, this method will fail.</remarks>
-		public static bool TryGetPrimaryTaskbar(out Rect taskbarRect, out TaskbarAlignment taskbarAlignment)
+		internal static bool TryGetPrimaryTaskbar(out Rect taskbarRect, out TaskbarAlignment taskbarAlignment)
 		{
 			if (TryGetWindow(PrimaryTaskbarWindowClassName, out IntPtr taskbarHandle, out Rect rect))
 			{
@@ -568,7 +591,7 @@ namespace ScreenFrame
 		/// <param name="taskbarAlignment">Secondary taskbar alignment</param>
 		/// <returns>True if successfully gets</returns>
 		/// <remarks>If secondary taskbar is hidden, this method will fail.</remarks>
-		public static bool TryGetSecondaryTaskbar(Rect monitorRect, out Rect taskbarRect, out TaskbarAlignment taskbarAlignment) =>
+		internal static bool TryGetSecondaryTaskbar(Rect monitorRect, out Rect taskbarRect, out TaskbarAlignment taskbarAlignment) =>
 			TryGetTaskbar(SecondaryTaskbarWindowClassName, monitorRect, out taskbarRect, out taskbarAlignment);
 
 		private static bool TryGetTaskbar(string className, Rect monitorRect, out Rect taskbarRect, out TaskbarAlignment taskbarAlignment)
@@ -636,7 +659,7 @@ namespace ScreenFrame
 			};
 		}
 
-		public static bool TryGetOverflowAreaRect(out Rect overflowAreaRect)
+		internal static bool TryGetOverflowAreaRect(out Rect overflowAreaRect)
 		{
 			// This combination of functions will not produce current location of overflow area
 			// until it is shown in the monitor where primary taskbar currently locates. Thus

@@ -12,6 +12,7 @@
 
 	<SolidColorBrush x:Key="App.Foreground" Color="{DynamicResource App.ForegroundColor}"/>
 	<SolidColorBrush x:Key="App.Foreground.Shadow" Color="{DynamicResource App.ShadowColor}"/>
+	<SolidColorBrush x:Key="App.Foreground.Dusk" Color="#FFACACAC"/>
 	<SolidColorBrush x:Key="App.Foreground.Invalid" Color="Red"/>
 
 	<SolidColorBrush x:Key="App.Border.Outline" Color="{DynamicResource App.LineColor}"/>
@@ -196,25 +197,115 @@
 		</Setter>
 	</Style>
 
-	<!-- TextBox -->
-	<Style x:Key="TextBoxStyle" TargetType="{x:Type TextBox}" BasedOn="{StaticResource {x:Type TextBox}}">
+	<!-- Multi Button -->
+	<Style x:Key="MultiButtonItemStyle" TargetType="{x:Type controls:MultiToggleButton}">
+		<Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+		<Setter Property="Background" Value="Transparent"/>
+		<Setter Property="Foreground" Value="{StaticResource App.Foreground}"/>
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type controls:MultiToggleButton}">
+					<Grid Margin="{TemplateBinding Padding}"
+						  Background="{TemplateBinding Background}"
+						  SnapsToDevicePixels="True" UseLayoutRounding="True">
+						<Grid.RowDefinitions>
+							<RowDefinition Height="Auto"/>
+							<RowDefinition Height="Auto"/>
+						</Grid.RowDefinitions>
+						<Grid Grid.Row="0"
+							  x:Name="upperGrid">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto"/>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
+							<Grid Grid.Column="0"
+								  x:Name="checkGrid"
+								  Width="{Binding RelativeSource={RelativeSource Self}, Path=ActualHeight}">
+								<Polyline x:Name="checkMark"
+										  Margin="3"
+										  Points="0,5 4,9 12,0" Stretch="Uniform"
+										  Stroke="{TemplateBinding Foreground}" StrokeThickness="1"
+										  Opacity="0"/>
+							</Grid>
+							<ContentPresenter Grid.Column="1"
+											  Margin="3" HorizontalAlignment="Left" VerticalAlignment="Center"
+											  Focusable="False"/>
+						</Grid>
+						<!-- Upper and lower grids are divided to set the width of lower grid. -->
+						<Grid Grid.Row="1"
+							  Width="{Binding ElementName=upperGrid, Path=ActualWidth}">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto"/>
+								<ColumnDefinition Width="*"/>
+								<ColumnDefinition Width="Auto"/>
+							</Grid.ColumnDefinitions>
+							<Grid Grid.Column="0"
+								  Width="{Binding ElementName=checkGrid, Path=ActualHeight}"/>
+							<ContentPresenter Grid.Column="1"
+											  Content="{TemplateBinding SubContent}"
+											  Margin="3,2,3,6"
+											  Focusable="False"/>
+							<Grid Grid.Column="2"
+								  Width="{Binding ElementName=checkGrid, Path=ActualHeight}"/>
+						</Grid>
+					</Grid>
+					<ControlTemplate.Triggers>
+						<Trigger Property="IsChecked" Value="True">
+							<Setter Property="Opacity" TargetName="checkMark" Value="1"/>
+						</Trigger>
+						<Trigger Property="IsChecked" Value="{x:Null}">
+							<Setter Property="Opacity" TargetName="checkMark" Value="0"/>
+						</Trigger>
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<!-- Name TextBox -->
+	<Style x:Key="NameTextBoxStyle" TargetType="{x:Type TextBox}" BasedOn="{StaticResource {x:Type TextBox}}">
 		<Setter Property="Foreground" Value="{StaticResource App.Foreground}"/>
 		<Setter Property="CaretBrush" Value="{StaticResource App.Foreground}"/>
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type TextBox}">
 					<Border x:Name="border"
-							BorderBrush="Transparent" BorderThickness="1"
-							Background="Transparent"
+							BorderBrush="{DynamicResource App.Border.Outline}" BorderThickness="1"
+							Background="{DynamicResource App.Background.Plain}"
 							SnapsToDevicePixels="True">
 						<ScrollViewer x:Name="PART_ContentHost"
 									  VerticalScrollBarVisibility="Hidden"
 									  Focusable="False"/>
 					</Border>
 					<ControlTemplate.Triggers>
-						<Trigger Property="IsReadOnly" Value="False">
-							<Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource App.Border.Outline}"/>
-							<Setter Property="Background" TargetName="border" Value="{DynamicResource App.Background.Plain}"/>
+						<Trigger Property="IsReadOnly" Value="True">
+							<Setter Property="BorderBrush" TargetName="border" Value="Transparent"/>
+							<Setter Property="Background" TargetName="border" Value="Transparent"/>
+						</Trigger>
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<!-- Plain TextBox -->
+	<Style x:Key="PlainTextBoxStyle" TargetType="{x:Type TextBox}" BasedOn="{StaticResource {x:Type TextBox}}">
+		<Setter Property="Foreground" Value="{StaticResource App.Foreground}"/>
+		<Setter Property="CaretBrush" Value="{StaticResource App.Foreground}"/>
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type TextBox}">
+					<Border x:Name="border"
+							BorderBrush="{DynamicResource App.Border.Outline}" BorderThickness="1"
+							Background="{DynamicResource App.Background.Plain}"
+							SnapsToDevicePixels="True">
+						<ScrollViewer x:Name="PART_ContentHost"
+									  VerticalScrollBarVisibility="Hidden"
+									  Focusable="False"/>
+					</Border>
+					<ControlTemplate.Triggers>
+						<Trigger Property="IsReadOnly" Value="True">
+							<Setter Property="Foreground" Value="{DynamicResource App.Foreground.Dusk}"/>
 						</Trigger>
 					</ControlTemplate.Triggers>
 				</ControlTemplate>

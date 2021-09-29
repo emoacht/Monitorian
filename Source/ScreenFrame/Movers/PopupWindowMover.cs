@@ -10,9 +10,9 @@ using ScreenFrame.Helper;
 namespace ScreenFrame.Movers
 {
 	/// <summary>
-	/// Mover of <see cref="System.Windows.Window"/> which implements functions for float window
+	/// Mover of <see cref="System.Windows.Window"/> which implements functions for popup window
 	/// </summary>
-	public class FloatWindowMover : BasicWindowMover
+	public class PopupWindowMover : BasicWindowMover
 	{
 		private readonly Point _pivot;
 
@@ -21,7 +21,7 @@ namespace ScreenFrame.Movers
 		/// </summary>
 		/// <param name="window">Window to be moved</param>
 		/// <param name="pivot">Pivot point to be referred</param>
-		public FloatWindowMover(Window window, Point pivot) : base(window)
+		public PopupWindowMover(Window window, Point pivot) : base(window)
 		{
 			this._pivot = pivot;
 		}
@@ -30,6 +30,11 @@ namespace ScreenFrame.Movers
 		/// Alignment of pivot
 		/// </summary>
 		public override PivotAlignment PivotAlignment { get; protected set; }
+
+		/// <summary>
+		/// Whether to make window centered at pivot
+		/// </summary>
+		public virtual bool IsCentered { get; set; }
 
 		/// <summary>
 		/// Gets Per-Monitor DPI of the monitor.
@@ -56,47 +61,51 @@ namespace ScreenFrame.Movers
 		/// <returns>True if successfully gets</returns>
 		protected bool TryGetAdjacentLocationToPivot(double windowWidth, double windowHeight, out Rect location)
 		{
-			if (!WindowHelper.TryGetTaskbar(out _, out TaskbarAlignment taskbarAlignment, out _))
+			if (!WindowHelper.TryGetMonitorRect(_pivot, out _, out Rect workRect))
 			{
 				location = default;
 				return false;
 			}
 
-			var isLeftToRight = !CultureInfoAddition.UserDefaultUICulture.TextInfo.IsRightToLeft;
+			double x, y;
 
-			PivotAlignment = (taskbarAlignment, isLeftToRight) switch
+			if (IsCentered)
 			{
-				(TaskbarAlignment.Top, true) => PivotAlignment.TopRight,
-				(TaskbarAlignment.Top, false) => PivotAlignment.TopLeft,
-				(TaskbarAlignment.Bottom, true) => PivotAlignment.BottomRight,
-				(TaskbarAlignment.Bottom, false) => PivotAlignment.BottomLeft,
-				(TaskbarAlignment.Left, { }) => PivotAlignment.BottomLeft,
-				(TaskbarAlignment.Right, { }) => PivotAlignment.BottomRight,
-				_ => default
-			};
-
-			var x = _pivot.X;
-			var y = _pivot.Y;
-
-			switch (PivotAlignment)
-			{
-				case PivotAlignment.TopLeft:
-					x += 1;
-					y += 1;
-					break;
-				case PivotAlignment.TopRight:
-					x -= (windowWidth + 1);
-					y += 1;
-					break;
-				case PivotAlignment.BottomLeft:
-					x += 1;
-					y -= (windowHeight + 1);
-					break;
-				case PivotAlignment.BottomRight:
-					x -= (windowWidth + 1);
-					y -= (windowHeight + 1);
-					break;
+				x = _pivot.X - windowWidth / 2;
+				y = _pivot.Y - windowHeight / 2;
 			}
+			else
+			{
+				var isLeftToRight = !CultureInfoAddition.UserDefaultUICulture.TextInfo.IsRightToLeft;
+
+				PivotAlignment = isLeftToRight
+					? PivotAlignment.TopLeft
+					: PivotAlignment.TopRight;
+
+				x = _pivot.X;
+				y = _pivot.Y;
+
+				switch (PivotAlignment)
+				{
+					case PivotAlignment.TopLeft:
+						x -= 1;
+						y -= 1;
+						break;
+					case PivotAlignment.TopRight:
+						x -= (windowWidth - 1);
+						y -= 1;
+						break;
+				}
+			}
+
+			// Make sure the right-bottom corner of window is inside the work area of monitor.
+			x = Math.Min(x + windowWidth, workRect.Right) - windowWidth;
+			y = Math.Min(y + windowHeight, workRect.Bottom) - windowHeight;
+
+			// Make sure the left-top corner of window as well.
+			x = Math.Max(x, workRect.Left);
+			y = Math.Max(y, workRect.Top);
+
 			location = new Rect(x, y, windowWidth, windowHeight);
 			return true;
 		}

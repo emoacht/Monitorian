@@ -20,10 +20,6 @@ namespace ScreenFrame
 		[return: MarshalAs(UnmanagedType.Bool)]
 		private static extern bool SetForegroundWindow(IntPtr hWnd);
 
-		[DllImport("User32.dll", SetLastError = true)]
-		[return: MarshalAs(UnmanagedType.Bool)]
-		private static extern bool GetCursorPos(out POINT lpPoint);
-
 		[DllImport("Shell32.dll", SetLastError = true)]
 		private static extern int Shell_NotifyIconGetRect(
 			[In] ref NOTIFYICONIDENTIFIER identifier,
@@ -64,7 +60,7 @@ namespace ScreenFrame
 		{
 			if (TryGetNotifyIconRect(notifyIcon, out Rect iconRect))
 			{
-				if (GetCursorPos(out POINT source))
+				if (CursorHelper.TryGetCursorPoint(out POINT source))
 				{
 					point = source;
 					if (iconRect.Contains(point))

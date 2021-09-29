@@ -17,7 +17,7 @@
 		<sys:Double x:Key="ThumbHeight">44</sys:Double>
 		<sys:Double x:Key="BracketHeight">8</sys:Double>
 
-		<Style TargetType="{x:Type ToolTip}">
+		<Style x:Key="ToolTipStyle" TargetType="{x:Type ToolTip}">
 			<Setter Property="OverridesDefaultStyle" Value="True"/>
 			<Setter Property="Padding" Value="5,3"/>
 			<Setter Property="Background" Value="{DynamicResource App.Background.Plain}"/>
@@ -35,6 +35,8 @@
 				</Setter.Value>
 			</Setter>
 		</Style>
+
+		<Style TargetType="{x:Type ToolTip}" BasedOn="{StaticResource ToolTipStyle}"/>
 
 		<!-- Slider -->
 		<Color x:Key="Slider.Background.Main.StaticColor">#FF2982CC</Color>
@@ -64,6 +66,8 @@
 				<Setter.Value>
 					<ControlTemplate TargetType="{x:Type controls:CompoundSlider}">
 						<ControlTemplate.Resources>
+							<Style TargetType="{x:Type ToolTip}" BasedOn="{StaticResource ToolTipStyle}"/>
+
 							<Style x:Key="SliderButtonHorizontal" TargetType="{x:Type RepeatButton}">
 								<Setter Property="OverridesDefaultStyle" Value="True"/>
 								<Setter Property="Focusable" Value="False"/>
@@ -321,6 +325,8 @@
 				<Setter.Value>
 					<ControlTemplate TargetType="{x:Type controls:EnhancedSlider}">
 						<ControlTemplate.Resources>
+							<Style TargetType="{x:Type ToolTip}" BasedOn="{StaticResource ToolTipStyle}"/>
+
 							<Style x:Key="SliderButtonHorizontal" TargetType="{x:Type RepeatButton}">
 								<Setter Property="OverridesDefaultStyle" Value="True"/>
 								<Setter Property="Focusable" Value="False"/>
@@ -569,7 +575,7 @@
 		</Style>
 
 		<!-- Number Label -->
-		<Style x:Key="NumberLabel" TargetType="{x:Type Label}">
+		<Style x:Key="NumberLabelStyle" TargetType="{x:Type Label}">
 			<Setter Property="Padding" Value="0"/>
 			<Setter Property="HorizontalContentAlignment" Value="Right"/>
 			<Setter Property="VerticalAlignment" Value="Center"/>
@@ -618,7 +624,7 @@
 							<!-- Name -->
 							<controls:SwitchTextBox Grid.Column="0"
 													Height="22" Margin="8,5,0,5" HorizontalAlignment="Left" VerticalAlignment="Center"
-													Style="{StaticResource TextBoxStyle}"
+													Style="{StaticResource NameTextBoxStyle}"
 													TextWrapping="Wrap" MaxLength="96" FontSize="14"
 													Text="{Binding Name, Mode=TwoWay}"/>
 
@@ -686,7 +692,7 @@
 							<Grid Grid.Column="2"
 								  Visibility="{Binding Settings.ShowsNumber, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverterKey}}">
 								<Label Width="26" Margin="0,0,4,0"
-									   Style="{StaticResource NumberLabel}"
+									   Style="{StaticResource NumberLabelStyle}"
 									   FontSize="16"
 									   Content="{Binding Brightness, Mode=OneWay}"
 									   Visibility="{Binding IsRangeChanging, Mode=OneWay, Converter={StaticResource BooleanToVisibilityTurnConverterKey}, ConverterParameter=True}">
@@ -698,7 +704,7 @@
 								</Label>
 
 								<Label Width="48" Margin="0,0,4,0"
-									   Style="{StaticResource NumberLabel}"
+									   Style="{StaticResource NumberLabelStyle}"
 									   FontSize="15"
 									   Visibility="{Binding IsRangeChanging, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverterKey}}">
 									<TextBlock>
@@ -719,7 +725,7 @@
 							<Grid Grid.Column="4"
 								  Visibility="{Binding Settings.ShowsNumber, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverterKey}}">
 								<Label Width="26" Margin="0,0,4,0"
-									   Style="{StaticResource NumberLabel}"
+									   Style="{StaticResource NumberLabelStyle}"
 									   FontSize="16"
 									   Content="{Binding Contrast, Mode=OneWay}"
 									   Visibility="{Binding IsContrastChanging, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverterKey}}"/>

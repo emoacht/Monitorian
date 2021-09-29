@@ -32,6 +32,11 @@ namespace ScreenFrame.Movers
 		public override PivotAlignment PivotAlignment { get; protected set; }
 
 		/// <summary>
+		/// Whether to make window centered at pivot
+		/// </summary>
+		public virtual bool IsCentered { get; set; }
+
+		/// <summary>
 		/// Gets Per-Monitor DPI of the monitor.
 		/// </summary>
 		/// <returns>DPI information</returns>
@@ -62,25 +67,35 @@ namespace ScreenFrame.Movers
 				return false;
 			}
 
-			var isLeftToRight = !CultureInfoAddition.UserDefaultUICulture.TextInfo.IsRightToLeft;
+			double x, y;
 
-			PivotAlignment = isLeftToRight
-				? PivotAlignment.TopLeft
-				: PivotAlignment.TopRight;
-
-			var x = _pivot.X;
-			var y = _pivot.Y;
-
-			switch (PivotAlignment)
+			if (IsCentered)
 			{
-				case PivotAlignment.TopLeft:
-					x -= 1;
-					y -= 1;
-					break;
-				case PivotAlignment.TopRight:
-					x -= (windowWidth - 1);
-					y -= 1;
-					break;
+				x = _pivot.X - windowWidth / 2;
+				y = _pivot.Y - windowHeight / 2;
+			}
+			else
+			{
+				var isLeftToRight = !CultureInfoAddition.UserDefaultUICulture.TextInfo.IsRightToLeft;
+
+				PivotAlignment = isLeftToRight
+					? PivotAlignment.TopLeft
+					: PivotAlignment.TopRight;
+
+				x = _pivot.X;
+				y = _pivot.Y;
+
+				switch (PivotAlignment)
+				{
+					case PivotAlignment.TopLeft:
+						x -= 1;
+						y -= 1;
+						break;
+					case PivotAlignment.TopRight:
+						x -= (windowWidth - 1);
+						y -= 1;
+						break;
+				}
 			}
 
 			// Make sure the right-bottom corner of window is inside the work area of monitor.

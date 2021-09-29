@@ -135,9 +135,6 @@
   <data name="MakeOperation" xml:space="preserve">
     <value>작업 로그 만들기</value>
   </data>
-  <data name="Probe" xml:space="preserve">
-    <value>Probe into monitors</value>
-  </data>
   <data name="RecordExceptionMessage" xml:space="preserve">
     <value>예상치 못한 문제가 발생했습니다. 예외 로그를 데스크톱에 저장하시겠습니까?</value>
   </data>

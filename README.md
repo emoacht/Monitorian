@@ -22,6 +22,7 @@ Additional languages:
 - de (German) by @uDEV2019
 - es (Spanish) by @josemirm
 - fr (French) by @AlexZeGamer
+- it (Italian) by @GhostyJade
 - ja-JP (Japanese) by @emoacht
 - ko-KR (Korean) by @VenusGirl
 - nl-NL (Dutch) by @JordyEGNL
@@ -44,7 +45,7 @@ Additional languages:
 [Monitorian](https://www.microsoft.com/store/apps/9nw33j738bl0) (Microsoft Store)
 
  * Other:<br>
-:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/3.5.1-Installer/MonitorianInstaller351.zip)
+:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/3.6.0-Installer/MonitorianInstaller360.zip)
 
 ## Install/Uninstall
 
@@ -146,6 +147,11 @@ An alternative language can be shown by adding a Resources (.resx) file into `/S
  - The name of a name/value pair must correspond to that in the default `Resources.resx` file to override it.
 
 ## History
+
+Ver 3.6 2021-9-30
+
+- Add it (Italian) language. Thanks to @GhostyJade!
+- Fix count for scan process
 
 Ver 3.5 2021-9-9
 

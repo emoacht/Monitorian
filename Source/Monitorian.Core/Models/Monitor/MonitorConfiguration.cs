@@ -314,7 +314,7 @@ namespace Monitorian.Core.Models.Monitor
 
 		private static IEnumerable<byte> EnumerateVcpCodes(string source)
 		{
-			if (string.IsNullOrEmpty(source) || !source.IsAscii())
+			if (string.IsNullOrEmpty(source))
 				yield break;
 
 			int index = source.IndexOf("vcp", StringComparison.OrdinalIgnoreCase);
@@ -326,6 +326,9 @@ namespace Monitorian.Core.Models.Monitor
 
 			foreach (char c in source.Skip(index + 3))
 			{
+				if (!IsAscii(c))
+					yield break;
+
 				switch (c)
 				{
 					case '(':
@@ -362,6 +365,7 @@ namespace Monitorian.Core.Models.Monitor
 				}
 			}
 
+			static bool IsAscii(char c) => c <= 0x7F;
 			static bool IsHexNumber(char c) => c is (>= '0' and <= '9') or (>= 'A' and <= 'F') or (>= 'a' and <= 'f');
 		}
 

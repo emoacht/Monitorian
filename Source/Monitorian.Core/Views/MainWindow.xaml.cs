@@ -169,6 +169,30 @@ namespace Monitorian.Core.Views
 			}
 		}
 
+		public void ShowUnnoticed()
+		{
+			var width = this.Width;
+			var height = this.Height;
+			var sizeToContent = this.SizeToContent;
+			try
+			{
+				// Set window size as small as possible to make it almost unnoticed.
+				this.Width = 1;
+				this.Height = 1;
+				this.SizeToContent = SizeToContent.Manual;
+
+				base.Show();
+				this.Hide();
+			}
+			finally
+			{
+				// Restore window size.
+				this.Width = width;
+				this.Height = height;
+				this.SizeToContent = sizeToContent;
+			}
+		}
+
 		public bool CanBeShown => (_preventionTime < DateTimeOffset.Now);
 		private DateTimeOffset _preventionTime;
 

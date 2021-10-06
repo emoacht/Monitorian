@@ -373,6 +373,7 @@ namespace Monitorian.Core
 		protected virtual void Update(string instanceName, int brightness)
 		{
 			var monitor = Monitors.FirstOrDefault(x => instanceName.StartsWith(x.DeviceInstanceId, StringComparison.OrdinalIgnoreCase));
+			EnsureUnisonWorkable(monitor);
 			monitor?.UpdateBrightness(brightness);
 		}
 
@@ -403,7 +404,7 @@ namespace Monitorian.Core
 				&& (m.Lowest < m.Highest) && (m.Highest <= 100))
 			{
 				name = m.Name;
-				isUnison = m.IsUnison;
+				isUnison = Settings.EnablesUnison && m.IsUnison;
 				lowest = m.Lowest;
 				highest = m.Highest;
 				return true;
@@ -423,6 +424,23 @@ namespace Monitorian.Core
 			{
 				Settings.MonitorCustomizations.Remove(deviceInstanceId);
 			}
+		}
+
+		private bool _isUnisonWorkable;
+
+		protected virtual void EnsureUnisonWorkable(MonitorViewModel monitor)
+		{
+			if (_isUnisonWorkable || (monitor?.IsUnison is not true))
+				return;
+
+			_current.Dispatcher.Invoke(() =>
+			{
+				if (!_current.MainWindow.IsLoaded)
+				{
+					((MainWindow)_current.MainWindow).ShowUnnoticed();
+				}
+				_isUnisonWorkable = true;
+			});
 		}
 
 		#endregion

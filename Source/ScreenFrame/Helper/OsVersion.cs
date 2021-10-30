@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Management;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -61,23 +61,27 @@ namespace ScreenFrame.Helper
 			}
 		}
 
+		[DllImport("Ntdll.dll")]
+		private static extern int RtlGetVersion(out OSVERSIONINFO lpVersionInformation);
+
+		[StructLayout(LayoutKind.Sequential)]
+		private struct OSVERSIONINFO
+		{
+			public uint dwOSVersionInfoSize;
+			public uint dwMajorVersion;
+			public uint dwMinorVersion;
+			public uint dwBuildNumber;
+			public uint dwPlatformId;
+
+			[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
+			public string szCSDVersion;
+		}
+
 		private static Version GetOsVersion()
 		{
-			var query = new SelectQuery("Win32_OperatingSystem", "OSType = 18"); // WINNT
-			using (var searcher = new ManagementObjectSearcher(query))
-			using (var results = searcher.Get())
-			{
-				foreach (ManagementObject result in results)
-				{
-					using (result)
-					{
-						var input = (string)result.GetPropertyValue("Version");
-						if (Version.TryParse(input, out Version output))
-							return output;
-					}
-				}
-				throw new InvalidOperationException("Failed to get OS version.");
-			}
+			return (RtlGetVersion(out OSVERSIONINFO info) == 0) // STATUS_SUCCESS
+				? new Version((int)info.dwMajorVersion, (int)info.dwMinorVersion, (int)info.dwBuildNumber)
+				: throw new InvalidOperationException("Failed to get OS version.");
 		}
 
 		#endregion

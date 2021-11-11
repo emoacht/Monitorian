@@ -25,13 +25,15 @@ namespace Monitorian.Core
 
 		public async Task<bool> StartAsync(StartupEventArgs e, params string[] definedOptions)
 		{
+			// This method must be called before DefinedArguments or OtherArguments property is consumed.
+			// An exception thrown in this method will not be handled.
+			await ParseArgumentsAsync(e, definedOptions);
 #if DEBUG
 			ConsoleService.TryStartWrite();
 #else
 			if (OtherArguments.Any())
 				ConsoleService.TryStartWrite();
 #endif
-			await ParseArgumentsAsync(e, definedOptions);
 
 			SubscribeExceptions();
 

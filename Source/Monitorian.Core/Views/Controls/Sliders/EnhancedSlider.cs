@@ -355,15 +355,15 @@ namespace Monitorian.Core.Views.Controls
 		{
 			if (defer)
 			{
-				_valuePropertyExpression = ReplaceBinding(this, ValueProperty, BindingMode.TwoWay, UpdateSourceTrigger.Explicit);
+				_valuePropertyExpression = ReplaceBinding(this, ValueProperty, BindingMode.TwoWay, UpdateSourceTrigger.Explicit, 0);
 			}
 			else if (_valuePropertyExpression is not null)
 			{
-				ReplaceBinding(this, ValueProperty, BindingMode.TwoWay, UpdateSourceTrigger.PropertyChanged);
+				ReplaceBinding(this, ValueProperty, BindingMode.TwoWay, UpdateSourceTrigger.PropertyChanged, 50);
 				_valuePropertyExpression = null;
 			}
 
-			static BindingExpression ReplaceBinding(DependencyObject target, DependencyProperty dp, BindingMode mode, UpdateSourceTrigger trigger)
+			static BindingExpression ReplaceBinding(DependencyObject target, DependencyProperty dp, BindingMode mode, UpdateSourceTrigger trigger, int delay)
 			{
 				var bindingPath = BindingOperations.GetBinding(target, dp)?.Path.Path;
 				if (string.IsNullOrEmpty(bindingPath))
@@ -374,7 +374,8 @@ namespace Monitorian.Core.Views.Controls
 				var binding = new Binding(bindingPath)
 				{
 					Mode = mode,
-					UpdateSourceTrigger = trigger
+					UpdateSourceTrigger = trigger,
+					Delay = delay
 				};
 				return BindingOperations.SetBinding(target, dp, binding) as BindingExpression;
 			}

@@ -84,7 +84,14 @@ namespace ScreenFrame
 			NotifyIcon.MouseClick += OnMouseClick;
 			NotifyIcon.MouseDoubleClick += OnMouseDoubleClick;
 
-			Handlers[WM_DPICHANGED] = HandleDpiChanged;
+			// The internal window of NotifyIcon seems to belong to the primary monitor and
+			// its DPI information cannot be used as is taking into account the primary taskbar which
+			// contains the notification area can be located in a monitor other than the primary one.
+			Handlers[WM_DPICHANGED] = (ref Message m) =>
+			{
+				CheckDpiChanged();
+				m.Result = IntPtr.Zero;
+			};
 		}
 
 		/// <summary>
@@ -172,6 +179,19 @@ namespace ScreenFrame
 			m.Result = IntPtr.Zero;
 		}
 
+		private void CheckDpiChanged()
+		{
+			if (!NotifyIconHelper.TryGetNotifyIconRect(NotifyIcon, out Rect iconRect))
+				return;
+
+			var oldDpi = _dpi;
+			_dpi = VisualTreeHelperAddition.GetDpi(new Point(iconRect.X, iconRect.Y));
+			if (!oldDpi.Equals(_dpi))
+			{
+				OnDpiChanged(oldDpi, _dpi);
+			}
+		}
+
 		/// <summary>
 		/// Called when DPI of the monitor to which NotifyIcon belongs changed.
 		/// </summary>
@@ -231,11 +251,15 @@ namespace ScreenFrame
 			{
 				MouseLeftButtonClick?.Invoke(this, EventArgs.Empty);
 			}
+
+			CheckDpiChanged();
 		}
 
 		private void OnMouseDoubleClick(object sender, MouseEventArgs e)
 		{
 			MouseLeftButtonClick?.Invoke(this, EventArgs.Empty);
+
+			CheckDpiChanged();
 		}
 
 		#endregion

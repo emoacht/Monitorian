@@ -10,11 +10,20 @@ namespace Monitorian.Core.Views.Controls
 {
 	public class CompoundSlider : ShadowSlider
 	{
+		private object _source;
+
+		public override void OnApplyTemplate()
+		{
+			base.OnApplyTemplate();
+
+			_source = BindingOperations.GetBindingExpression(this, ValueProperty).DataItem;
+
+			this.Unloaded += (_, _) => _source = null;
+		}
+
 		#region Unison
 
-		private static event EventHandler<(object source, double delta)> Moved; // Static event
-
-		private object _source;
+		private static event EventHandler<(object source, double delta, bool update)> Moved; // Static event
 
 		public bool IsUnison
 		{
@@ -31,7 +40,6 @@ namespace Monitorian.Core.Views.Controls
 					(d, e) =>
 					{
 						var instance = (CompoundSlider)d;
-						instance._source ??= BindingOperations.GetBindingExpression(d, IsUnisonProperty).DataItem;
 
 						if ((bool)e.NewValue)
 						{
@@ -59,20 +67,36 @@ namespace Monitorian.Core.Views.Controls
 					{
 						var instance = (CompoundSlider)d;
 
-						if (!instance.IsFocused && instance.IsUnison)
+						if (instance.IsUnison)
 						{
-							Moved?.Invoke(instance, (instance._source, (int)e.NewValue - instance.Value));
+							if (instance.IsFocused)
+							{
+								// This route is handled by OnValueChanged method.
+								instance._update = true;
+							}
+							else
+							{
+								// As DependencyPropertyChangedEventArgs.OldValue property is not always reliable,
+								// this route must be called before this instance's Value property is updated
+								// in order to obtain old value from that Value property.
+								Moved?.Invoke(instance, (instance._source, (int)e.NewValue - instance.Value, update: true));
+							}
 						}
 					}));
+
+		private bool _update;
 
 		protected override void OnValueChanged(double oldValue, double newValue)
 		{
 			base.OnValueChanged(oldValue, newValue);
 
-			if (this.IsFocused && IsUnison)
+			var update = _update;
+			_update = false;
+
+			if (IsUnison && this.IsFocused)
 			{
 				var delta = (newValue - oldValue) / GetRangeRate();
-				Moved?.Invoke(this, (_source, delta));
+				Moved?.Invoke(this, (_source, delta, update: update));
 			}
 		}
 
@@ -85,7 +109,7 @@ namespace Monitorian.Core.Views.Controls
 			_brightnessProtruded = null; // Reset
 		}
 
-		private void OnMoved(object sender, (object source, double delta) e)
+		private void OnMoved(object sender, (object source, double delta, bool update) e)
 		{
 			if (ReferenceEquals(this, sender) || ReferenceEquals(this._source, e.source))
 				return;
@@ -97,17 +121,18 @@ namespace Monitorian.Core.Views.Controls
 
 				UpdateValue(_brightnessProtruded.Value);
 			}
-			else
+
+			if ((e.delta == 0D) || e.update)
 			{
-				base.ExecuteUpdateSource();
+				base.EnsureUpdateSource();
 			}
 		}
 
-		protected override void ExecuteUpdateSource()
+		public override void EnsureUpdateSource()
 		{
-			base.ExecuteUpdateSource();
+			base.EnsureUpdateSource();
 
-			Moved?.Invoke(this, (_source, 0D));
+			Moved?.Invoke(this, (_source, 0D, update: true));
 		}
 
 		#endregion

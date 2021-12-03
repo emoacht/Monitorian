@@ -39,8 +39,6 @@ namespace Monitorian.Core.Views.Controls
 			return UpdateValue(this.Value + changeSize);
 		}
 
-		public void EnsureUpdateSource() => ExecuteUpdateSource();
-
 		protected virtual bool UpdateValue(double value)
 		{
 			// Slider.SnapToTick property will not be reflected like Slider.UpdateValue method.
@@ -119,7 +117,7 @@ namespace Monitorian.Core.Views.Controls
 		{
 			base.OnPreviewMouseUp(e);
 
-			ExecuteUpdateSource();
+			EnsureUpdateSource();
 		}
 
 		// OnPreviewStylusDown covers the case of OnPreviewTouchDown.
@@ -296,7 +294,7 @@ namespace Monitorian.Core.Views.Controls
 		{
 			base.OnManipulationCompleted(e);
 
-			ExecuteUpdateSource();
+			EnsureUpdateSource();
 		}
 
 		#endregion
@@ -328,7 +326,7 @@ namespace Monitorian.Core.Views.Controls
 			// Mouse.MouseWheelDeltaForOneLine should be casted to double in case the delta is smaller than 120.
 			var newValue = this.Value + (e.Delta / (double)Mouse.MouseWheelDeltaForOneLine * WheelFactor);
 			UpdateValue(newValue);
-			ExecuteUpdateSource();
+			EnsureUpdateSource();
 		}
 
 		#endregion
@@ -381,7 +379,7 @@ namespace Monitorian.Core.Views.Controls
 			}
 		}
 
-		protected virtual void ExecuteUpdateSource()
+		public virtual void EnsureUpdateSource()
 		{
 			_valuePropertyExpression?.UpdateSource();
 		}

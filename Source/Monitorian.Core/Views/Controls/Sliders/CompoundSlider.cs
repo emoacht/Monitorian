@@ -99,13 +99,13 @@ namespace Monitorian.Core.Views.Controls
 			}
 			else
 			{
-				base.ExecuteUpdateSource();
+				base.EnsureUpdateSource();
 			}
 		}
 
-		protected override void ExecuteUpdateSource()
+		public override void EnsureUpdateSource()
 		{
-			base.ExecuteUpdateSource();
+			base.EnsureUpdateSource();
 
 			Moved?.Invoke(this, (_source, 0D));
 		}

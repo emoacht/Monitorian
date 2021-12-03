@@ -17,19 +17,19 @@ In addition, the user can change the adjustable range of brightness and contrast
 
 Additional languages:
 
- - ar (Arabic) by @MohammadShughri
- - de (German) by @uDEV2019
- - es (Spanish) by @josemirm
- - fr (French) by @AlexZeGamer
- - it (Italian) by @GhostyJade
- - ja-JP (Japanese) by @emoacht
- - ko-KR (Korean) by @VenusGirl
- - nl-NL (Dutch) by @JordyEGNL
- - pl-PL (Polish) by @Daxxxis and @FakeMichau
- - ru-RU (Russian) by @SigmaTel71
- - tr-TR (Turkish) by @webbudesign
- - zh-Hans (Simplified Chinese) by @ComMouse and @zhujunsan
- - zh-Hant (Traditional Chinese) by @toto6038
+ - Arabic (ar) by @MohammadShughri
+ - German (de) by @uDEV2019
+ - Spanish (es) by @josemirm
+ - French (fr) by @AlexZeGamer
+ - Italian (it) by @GhostyJade
+ - Japanese (ja-JP) by @emoacht
+ - Korean (ko-KR) by @VenusGirl
+ - Dutch (nl-NL) by @JordyEGNL
+ - Polish (pl-PL) by @Daxxxis and @FakeMichau
+ - Russian (ru-RU) by @SigmaTel71
+ - Turkish (tr-TR) by @webbudesign
+ - Simplified Chinese (zh-Hans) by @ComMouse and @zhujunsan
+ - Traditional Chinese (zh-Hant) by @toto6038
 
 ## Requirements
 
@@ -50,7 +50,7 @@ Additional languages:
    ```
 
  * Other:<br>
-:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/3.6.8-Installer/MonitorianInstaller368.zip)
+:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/3.7.0-Installer/MonitorianInstaller370.zip)
 
 ## Install/Uninstall
 
@@ -153,35 +153,40 @@ An alternative language can be shown by adding a Resources (.resx) file into `/S
 
 ## History
 
+Ver 3.7 2021-12-3
+
+ - Fix issue of combination of moving in unison and deferring change
+ - Modify DPI awareness of the icon
+
 Ver 3.6 2021-9-30
 
- - Add it (Italian) language. Thanks to @GhostyJade!
+ - Add Italian (it) language. Thanks to @GhostyJade!
  - Fix count for scan process
 
 Ver 3.5 2021-9-9
 
  - Make rounded corners default on Windows 11
- - Add zh-Hant (Traditional Chinese) language. Thanks to @toto6038!
+ - Add Traditional Chinese (zh-Hant) language. Thanks to @toto6038!
 
 Ver 3.4 2021-8-30
 
- - Add nl-NL (Dutch) language. Thanks to @JordyEGNL!
- - Supplement zh-Hans (Simplified Chinese) language. Thanks to @zhujunsan!
+ - Add Dutch (nl-NL) language. Thanks to @JordyEGNL!
+ - Supplement Simplified Chinese (zh-Hans) language. Thanks to @zhujunsan!
 
 Ver 3.3 2021-8-20
 
- - Add ar (Arabic) language. Thanks to @MohammadShughri!
+ - Add Arabic (ar) language. Thanks to @MohammadShughri!
 
 Ver 3.2 2021-8-9
 
- - Supplement de (German) language. Thanks to @uDEV2019!
+ - Supplement German (de) language. Thanks to @uDEV2019!
 
 Ver 3.1 2021-8-4
 
- - Supplement pl-PL (Polish) language. Thanks to @FakeMichau!
- - Add tr-TR (Turkish) language. Thanks to @webbudesign!
- - Supplement ru-RU (Russian) language. Thanks to @SigmaTel71!
- - Add es (Spanish) language. Thanks to @josemirm!
+ - Supplement Polish (pl-PL) language. Thanks to @FakeMichau!
+ - Add Turkish (tr-TR) language. Thanks to @webbudesign!
+ - Supplement Russian (ru-RU) language. Thanks to @SigmaTel71!
+ - Add Spanish (es) language. Thanks to @josemirm!
 
 Ver 3.0 2021-7-1
 
@@ -193,15 +198,15 @@ Ver 2.19 2021-6-16
 
 Ver 2.18 2021-5-23
 
- - Add de (German) language. Thanks to @uDEV2019!
+ - Add German (de) language. Thanks to @uDEV2019!
 
 Ver 2.17 2021-5-19
 
- - Add fr (French) language. Thanks to @AlexZeGamer!
+ - Add French (fr) language. Thanks to @AlexZeGamer!
 
 Ver 2.16 2021-4-11
 
- - Add ko-KR (Korean) language. Thanks to @VenusGirl!
+ - Add Korean (ko-KR) language. Thanks to @VenusGirl!
 
 Ver 2.14 2021-3-26
 
@@ -213,9 +218,9 @@ Ver 2.13 2021-2-13
 
 Ver 2.11 2021-1-26
 
- - Add ru-RU (Russian) language. Thanks to @SigmaTel71!
- - Add pl-PL (Polish) language. Thanks to @Daxxxis!
- - Add zh-Hans (Simplified Chinese) language. Thanks to @ComMouse!
+ - Add Russian (ru-RU) language. Thanks to @SigmaTel71!
+ - Add Polish (pl-PL) language. Thanks to @Daxxxis!
+ - Add Simplified Chinese (zh-Hans) language. Thanks to @ComMouse!
 
 Ver 2.9 2020-12-22
 
@@ -237,7 +242,7 @@ Ver 2.6 2020-8-10
 
 Ver 2.5 2020-8-1
 
- - Fix issue of empty description
+ - Fix issue on empty description
 
 Ver 2.4 2019-12-30
 

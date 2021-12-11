@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,6 +11,60 @@ namespace Monitorian.Core.Views.Controls
 {
 	public class CompoundSlider : ShadowSlider
 	{
+		#region Type
+
+		private class Item
+		{
+			public object Source { get; set; }
+			public List<CompoundSlider> Sliders { get; } = new();
+			public double? BrightnessProtruded { get; set; }
+
+			public Item(object source) => this.Source = source;
+		}
+
+		private class ItemHolder
+		{
+			private readonly List<Item> _items = new();
+
+			public void Add(object source, CompoundSlider slider)
+			{
+				var item = _items.FirstOrDefault(x => ReferenceEquals(x.Source, source));
+				if (item is null)
+				{
+					item = new Item(source);
+					_items.Add(item);
+				}
+				else if (item.Sliders.Any(x => ReferenceEquals(x, slider)))
+					return;
+
+				item.Sliders.Add(slider);
+			}
+
+			public void Remove(object source, CompoundSlider slider)
+			{
+				var item = _items.FirstOrDefault(x => ReferenceEquals(x.Source, source));
+				if (item is null)
+					return;
+
+				item.Sliders.Remove(slider);
+				if (item.Sliders.Any())
+					return;
+
+				item.Source = null;
+				_items.Remove(item);
+			}
+
+			public bool TryGetItem(object source, out Item item)
+			{
+				item = _items.FirstOrDefault(x => ReferenceEquals(x.Source, source));
+				return (item is not null);
+			}
+		}
+
+		#endregion
+
+		private static readonly ItemHolder _holder = new();
+
 		private object _source;
 
 		public override void OnApplyTemplate()
@@ -17,8 +72,16 @@ namespace Monitorian.Core.Views.Controls
 			base.OnApplyTemplate();
 
 			_source = BindingOperations.GetBindingExpression(this, ValueProperty).DataItem;
+			if ((_source is null) && !DesignerProperties.GetIsInDesignMode(this))
+				throw new InvalidOperationException("The binding source of Value property must not be null.");
 
-			this.Unloaded += (_, _) => _source = null;
+			_holder.Add(_source, this);
+
+			this.Unloaded += (_, _) =>
+			{
+				_holder.Remove(_source, this);
+				_source = null;
+			};
 		}
 
 		#region Unison
@@ -100,13 +163,14 @@ namespace Monitorian.Core.Views.Controls
 			}
 		}
 
-		private double? _brightnessProtruded = null;
-
 		protected override void OnGotFocus(RoutedEventArgs e)
 		{
 			base.OnGotFocus(e);
 
-			_brightnessProtruded = null; // Reset
+			if (_holder.TryGetItem(_source, out Item item))
+			{
+				item.BrightnessProtruded = null; // Reset;
+			}
 		}
 
 		private void OnMoved(object sender, (object source, double delta, bool update) e)
@@ -114,12 +178,16 @@ namespace Monitorian.Core.Views.Controls
 			if (ReferenceEquals(this, sender) || ReferenceEquals(this._source, e.source))
 				return;
 
+			if (!_holder.TryGetItem(_source, out Item item) ||
+				!ReferenceEquals(item.Sliders.FirstOrDefault(x => x.IsUnison), this))
+				return;
+
 			if (e.delta != 0D)
 			{
-				_brightnessProtruded ??= this.Value;
-				_brightnessProtruded += e.delta * GetRangeRate();
+				item.BrightnessProtruded ??= this.Value;
+				item.BrightnessProtruded += e.delta * GetRangeRate();
 
-				UpdateValue(_brightnessProtruded.Value);
+				UpdateValue(item.BrightnessProtruded.Value);
 			}
 
 			if ((e.delta == 0D) || e.update)

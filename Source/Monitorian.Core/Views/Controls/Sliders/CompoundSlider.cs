@@ -65,15 +65,18 @@ namespace Monitorian.Core.Views.Controls
 
 		private static readonly ItemHolder _holder = new();
 
-		private object _source;
+		private object _source; // Binding source
 
 		public override void OnApplyTemplate()
 		{
 			base.OnApplyTemplate();
 
-			_source = BindingOperations.GetBindingExpression(this, ValueProperty).DataItem;
-			if ((_source is null) && !DesignerProperties.GetIsInDesignMode(this))
-				throw new InvalidOperationException("The binding source of Value property must not be null.");
+			if (DesignerProperties.GetIsInDesignMode(this))
+				return;
+
+			_source = this.DataContext;
+			if (_source is null)
+				throw new InvalidOperationException("The binding source must not be null.");
 
 			_holder.Add(_source, this);
 

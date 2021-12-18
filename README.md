@@ -26,6 +26,7 @@ Additional languages:
  - Korean (ko-KR) by @VenusGirl
  - Dutch (nl-NL) by @JordyEGNL
  - Polish (pl-PL) by @Daxxxis and @FakeMichau
+ - Romanian (ro) by @calini
  - Russian (ru-RU) by @SigmaTel71
  - Turkish (tr-TR) by @webbudesign
  - Simplified Chinese (zh-Hans) by @ComMouse and @zhujunsan
@@ -50,7 +51,7 @@ Additional languages:
    ```
 
  * Other:<br>
-:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/3.7.0-Installer/MonitorianInstaller370.zip)
+:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/3.8.0-Installer/MonitorianInstaller380.zip)
 
 ## Install/Uninstall
 
@@ -152,6 +153,10 @@ An alternative language can be shown by adding a Resources (.resx) file into `/S
  - The name of a name/value pair must correspond to that in the default `Resources.resx` file to override it.
 
 ## History
+
+Ver 3.8 2021-12-18
+
+ - Add Romanian (ro) language. Thanks to @calini!
 
 Ver 3.7 2021-12-3
 

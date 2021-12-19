@@ -265,6 +265,11 @@ namespace Monitorian.Core.Models.Monitor
 					var capabilitiesString = buffer.ToString();
 					var vcpCodes = EnumerateVcpCodes(capabilitiesString).ToArray();
 
+					//check is Monitor returns something invalid on this interface
+					//If it returns, let`s check is it support DDC/CI really?
+					if (!vcpCodes.Any())
+						isHighLevelSupported = CheckNonStandardMonitorHighLevelSupport(physicalMonitorHandle);
+
 					return new MonitorCapability(
 						isHighLevelBrightnessSupported: isHighLevelSupported,
 						isLowLevelBrightnessSupported: vcpCodes.Contains((byte)VcpCode.Luminance),
@@ -309,6 +314,26 @@ namespace Monitorian.Core.Models.Monitor
 				{
 					Marshal.FreeHGlobal(dataPointer);
 				}
+			}
+
+			static bool CheckNonStandardMonitorHighLevelSupport(SafePhysicalMonitorHandle physicalMonitorHandle)
+			{
+				//Check it by querying something like brightness using HighLevel
+				uint min_t = 0xFFFF, cur_t = 0xFFFF, max_t = 0xFFFF;
+				bool isOk = GetMonitorBrightness(physicalMonitorHandle, out min_t, out cur_t, out max_t);
+				//judge is it really output values
+				if (isOk && min_t != 0xFFFF && cur_t != 0xFFFF && max_t != 0xFFFF)
+				{
+					//Get Success,It support DDC/CI
+					//Console.WriteLine("Some Monitor like AOC Q2790PC have more than one interfaces like USB-C DP HDMI");
+					//Console.WriteLine("One of these interface like HDMI support DDC/CI but return bad VCP codes");
+					//Console.WriteLine("It blocked we check it`s real feature, so we can have a try!");
+					return true;
+				}
+				//Get Failed,It really not support DDC/CI...
+				//P.S.:Some monitor doesn`t support DDC/CI both returns invalid string
+				//but it not support HighLevel Qurey.
+				return false;
 			}
 		}
 

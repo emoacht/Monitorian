@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Threading;
 
 using Monitorian.Core.Models;
+using Monitorian.Core.Models.Monitor;
 using Monitorian.Core.Views;
 using StartupAgency;
 
@@ -70,6 +71,7 @@ namespace Monitorian.Core
 			new[]
 			{
 				StartupAgent.Options,
+				MonitorManager.Options,
 				LanguageService.Options,
 				WindowPainter.Options
 			}

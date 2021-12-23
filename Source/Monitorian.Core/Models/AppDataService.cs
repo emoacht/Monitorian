@@ -79,7 +79,34 @@ namespace Monitorian.Core.Models
 
 		#region Load/Save
 
+		/// <summary>
+		/// Loads saved instance from a specified file and copies its properties to current instance.
+		/// </summary>
+		/// <typeparam name="T">Type of instance</typeparam>
+		/// <param name="instance">Current instance</param>
+		/// <param name="fileName">File name of saved instance</param>
+		/// <param name="knownTypes">Known types of members of instance</param>
+		/// <remarks>
+		/// Only values of public and instance properties will be copied.
+		/// An indexer will be ignored.
+		/// </remarks>
 		public static void Load<T>(T instance, string fileName, IEnumerable<Type> knownTypes = null) where T : class
+		{
+			Load(instance, fileName, BindingFlags.Public | BindingFlags.Instance, knownTypes);
+		}
+
+		/// <summary>
+		/// Loads saved instance from a specified file and copies its properties to current instance.
+		/// </summary>
+		/// <typeparam name="T">Type of instance</typeparam>
+		/// <param name="instance">Current instance</param>
+		/// <param name="fileName">File name of saved instance</param>
+		/// <param name="flags">Flags to search properties to be copied</param>
+		/// <param name="knownTypes">Known types of members of instance</param>
+		/// <remarks>
+		/// An indexer will be ignored.
+		/// </remarks>
+		public static void Load<T>(T instance, string fileName, BindingFlags flags, IEnumerable<Type> knownTypes = null) where T : class
 		{
 			var filePath = Path.Combine(FolderPath, fileName);
 			var fileInfo = new FileInfo(filePath);
@@ -95,8 +122,9 @@ namespace Monitorian.Core.Models
 				var serializer = new DataContractSerializer(type, knownTypes);
 				var loaded = (T)serializer.ReadObject(xr);
 
-				type.GetProperties(BindingFlags.Public | BindingFlags.Instance)
+				type.GetProperties(flags)
 					.Where(x => x.CanWrite)
+					.Where(x => x.GetIndexParameters().Length == 0) // Exclude indexer to prevent TargetParameterCountException.
 					.ToList()
 					.ForEach(x => x.SetValue(instance, x.GetValue(loaded)));
 			}
@@ -110,6 +138,13 @@ namespace Monitorian.Core.Models
 			}
 		}
 
+		/// <summary>
+		/// Saves current instance to a specified file.
+		/// </summary>
+		/// <typeparam name="T">Type of instance</typeparam>
+		/// <param name="instance">Current instance</param>
+		/// <param name="fileName">File name of saved instance</param>
+		/// <param name="knownTypes">Known types of members of instance</param>
 		public static void Save<T>(T instance, string fileName, IEnumerable<Type> knownTypes = null) where T : class
 		{
 			AssureFolder();

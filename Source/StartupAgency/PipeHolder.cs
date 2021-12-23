@@ -180,7 +180,7 @@ namespace StartupAgency
 
 			using (var writer = new StreamWriter(client, Encoding.UTF8, 1024, leaveOpen: true) { AutoFlush = true })
 			{
-				if (args?.Any() is true)
+				if (args is { Length: > 0 })
 				{
 					// Filter out null bacause it causes NullReferenceException in WriteLineAsync method
 					// on .NET Framework.

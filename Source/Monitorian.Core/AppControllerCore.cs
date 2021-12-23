@@ -430,7 +430,7 @@ namespace Monitorian.Core
 
 		protected virtual void EnsureUnisonWorkable(MonitorViewModel monitor)
 		{
-			if (_isUnisonWorkable || (monitor?.IsUnison is not true))
+			if (_isUnisonWorkable || (monitor is not { IsUnison: true }))
 				return;
 
 			_current.Dispatcher.Invoke(() =>

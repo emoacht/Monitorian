@@ -108,7 +108,7 @@ namespace Monitorian.Core.Models.Monitor
 
 		private static IEnumerable<IMonitor> EnumerateMonitors(List<DeviceItemPlus> deviceItems)
 		{
-			if (deviceItems?.Any() is not true)
+			if (deviceItems is not { Count: > 0 })
 				yield break;
 
 			var handleItems = DeviceContext.GetMonitorHandles();

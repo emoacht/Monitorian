@@ -87,7 +87,7 @@ namespace Monitorian.Core
 			// The first element of StartupEventArgs.Args is not executing assembly's path unlike
 			// that of arguments provided by Environment.GetCommandLineArgs method.
 			args = e.Args.Concat(args).ToArray();
-			if (args.Any() is not true)
+			if (args is not { Length: > 0 })
 				return;
 
 			const char optionMark = '/';

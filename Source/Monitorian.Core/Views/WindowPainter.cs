@@ -87,7 +87,7 @@ namespace Monitorian.Core.Views
 
 		private bool ChangeColors(Window window)
 		{
-			if (_colors?.Any() is not true)
+			if (_colors is not { Count: > 0 })
 				return false;
 
 			var isBackgroundChanged = false;

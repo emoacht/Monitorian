@@ -55,7 +55,7 @@ namespace Monitorian.Core.Views.Controls
 		#region Drag
 
 		protected bool CanDrag { get; private set; }
-		protected bool IsDragging => (_thumb?.IsDragging is true);
+		protected bool IsDragging => (_thumb is { IsDragging: true });
 
 		private void CheckCanDrag()
 		{

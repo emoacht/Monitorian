@@ -90,7 +90,7 @@ namespace Monitorian.Supplement
 			try
 			{
 				var devices = await DeviceInformation.FindAllAsync(DisplayMonitor.GetDeviceSelector(), new[] { deviceInstanceIdKey });
-				if (devices?.Any() is true)
+				if (devices is { Count: > 0 })
 				{
 					var items = new List<DisplayItem>(devices.Count);
 					foreach (var device in devices)

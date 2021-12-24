@@ -18,6 +18,7 @@ namespace Monitorian.Core.Models.Monitor
 
 		public override bool IsBrightnessSupported => _capability.IsBrightnessSupported;
 		public override bool IsContrastSupported => _capability.IsContrastSupported;
+		public override bool IsPrecleared => _capability.IsPrecleared;
 
 		public DdcMonitorItem(
 			string deviceInstanceId,

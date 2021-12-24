@@ -20,6 +20,7 @@ namespace Monitorian.Core.Models.Monitor
 
 		public virtual bool IsBrightnessSupported => IsReachable;
 		public virtual bool IsContrastSupported => false;
+		public virtual bool IsPrecleared => false;
 
 		public MonitorItem(
 			string deviceInstanceId,
@@ -65,6 +66,7 @@ namespace Monitorian.Core.Models.Monitor
 				(nameof(IsReachable), IsReachable),
 				(nameof(IsBrightnessSupported), IsBrightnessSupported),
 				(nameof(IsContrastSupported), IsContrastSupported),
+				(nameof(IsPrecleared), IsPrecleared),
 				(nameof(Brightness), Brightness),
 				(nameof(BrightnessSystemAdjusted), BrightnessSystemAdjusted),
 				(nameof(Contrast), Contrast));

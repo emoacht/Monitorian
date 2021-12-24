@@ -13,11 +13,9 @@ namespace ScreenFrame.Helper
 	/// </summary>
 	internal static class DpiScaleExtension
 	{
-		public static bool IsDefault(this DpiScale a) =>
-			(1D == a.DpiScaleX) && (1D == a.DpiScaleY);
+		public static bool IsDefault(this DpiScale a) => a is { DpiScaleX: 1D, DpiScaleY: 1D };
 
-		public static bool IsValid(this DpiScale a) =>
-			(0 < a.DpiScaleX) && (0 < a.DpiScaleY);
+		public static bool IsValid(this DpiScale a) => a is { DpiScaleX: > 0, DpiScaleY: > 0 };
 
 		public static Matrix ToMatrix(this DpiScale a)
 		{

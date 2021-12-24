@@ -8,8 +8,6 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
-using Monitorian.Core.Helper;
-
 namespace Monitorian.Core.Models.Monitor
 {
 	/// <summary>
@@ -559,12 +557,15 @@ namespace Monitorian.Core.Models.Monitor
 		public bool IsContrastSupported { get; }
 
 		[DataMember(Order = 3)]
-		public string CapabilitiesString { get; }
+		public bool IsPrecleared { get; }
 
 		[DataMember(Order = 4)]
-		public string CapabilitiesReport { get; }
+		public string CapabilitiesString { get; }
 
 		[DataMember(Order = 5)]
+		public string CapabilitiesReport { get; }
+
+		[DataMember(Order = 6)]
 		public string CapabilitiesData { get; }
 
 		public MonitorCapability(
@@ -582,5 +583,34 @@ namespace Monitorian.Core.Models.Monitor
 			this.CapabilitiesReport = capabilitiesReport;
 			this.CapabilitiesData = (capabilitiesData is not null) ? Convert.ToBase64String(capabilitiesData) : null;
 		}
+
+		private MonitorCapability(
+			bool isHighLevelBrightnessSupported,
+			bool isLowLevelBrightnessSupported,
+			bool isContrastSupported,
+			bool isPrecleared,
+			string capabilitiesString,
+			string capabilitiesReport,
+			byte[] capabilitiesData) : this(
+				isHighLevelBrightnessSupported: isHighLevelBrightnessSupported,
+				isLowLevelBrightnessSupported: isLowLevelBrightnessSupported,
+				isContrastSupported: isContrastSupported,
+				capabilitiesString: capabilitiesString,
+				capabilitiesReport: capabilitiesReport,
+				capabilitiesData: capabilitiesData)
+		{
+			this.IsPrecleared = isPrecleared;
+		}
+
+		public static MonitorCapability PreclearedCapability => _preclearedCapability.Value;
+		private static readonly Lazy<MonitorCapability> _preclearedCapability = new(() =>
+			new MonitorCapability(
+				isHighLevelBrightnessSupported: false,
+				isLowLevelBrightnessSupported: true,
+				isContrastSupported: true,
+				isPrecleared: true,
+				capabilitiesString: null,
+				capabilitiesReport: null,
+				capabilitiesData: null));
 	}
 }

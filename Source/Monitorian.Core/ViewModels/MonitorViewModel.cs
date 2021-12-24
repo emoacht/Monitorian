@@ -31,7 +31,7 @@ namespace Monitorian.Core.ViewModels
 
 		internal void Replace(IMonitor monitor)
 		{
-			if (monitor?.IsReachable is true)
+			if (monitor is { IsReachable: true })
 			{
 				lock (_lock)
 				{

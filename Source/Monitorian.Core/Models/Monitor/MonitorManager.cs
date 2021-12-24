@@ -42,6 +42,24 @@ namespace Monitorian.Core.Models.Monitor
 
 		#endregion
 
+		#region Preclearance
+
+		public static IReadOnlyCollection<string> Options => new[] { Option };
+		private const string Option = "/preclear";
+
+		private static readonly Lazy<HashSet<string>> _preclearedIds = new(() =>
+		{
+			var buffer = AppKeeper.DefinedArguments
+				.SkipWhile(x => !string.Equals(x, Option, StringComparison.OrdinalIgnoreCase))
+				.Skip(1) // 1 means option.
+				.TakeWhile(x => x.StartsWith("DISPLAY"))
+				.Select(x => x.Replace(@"\\", @"\")); // Backslash will be escaped in JSON.
+
+			return new HashSet<string>(buffer);
+		});
+
+		#endregion
+
 		public static async Task<IEnumerable<IMonitor>> EnumerateMonitorsAsync()
 		{
 			var deviceItems = await GetMonitorDevicesAsync();
@@ -49,7 +67,7 @@ namespace Monitorian.Core.Models.Monitor
 			return EnumerateMonitors(deviceItems);
 		}
 
-		private static HashSet<string> _ids;
+		private static HashSet<string> _foundIds;
 
 		private static async Task<List<DeviceItemPlus>> GetMonitorDevicesAsync()
 		{
@@ -58,7 +76,7 @@ namespace Monitorian.Core.Models.Monitor
 				: DisplayConfig.EnumerateDisplayConfigs().ToArray();
 
 			var deviceItems = DeviceContext.EnumerateMonitorDevices().ToArray();
-			_ids = new HashSet<string>(deviceItems.Select(x => x.DeviceInstanceId));
+			_foundIds = new HashSet<string>(deviceItems.Select(x => x.DeviceInstanceId));
 
 			IEnumerable<DeviceItemPlus> Enumerate()
 			{
@@ -90,7 +108,7 @@ namespace Monitorian.Core.Models.Monitor
 
 		private static IEnumerable<IMonitor> EnumerateMonitors(List<DeviceItemPlus> deviceItems)
 		{
-			if (deviceItems?.Any() is not true)
+			if (deviceItems is not { Count: > 0 })
 				yield break;
 
 			var handleItems = DeviceContext.GetMonitorHandles();
@@ -101,9 +119,11 @@ namespace Monitorian.Core.Models.Monitor
 				foreach (var physicalItem in MonitorConfiguration.EnumeratePhysicalMonitors(handleItem.MonitorHandle))
 				{
 					int index = -1;
-					if (physicalItem.Capability.IsBrightnessSupported)
+					if (physicalItem.Capability.IsBrightnessSupported ||
+						_preclearedIds.Value.Any())
 					{
 						index = deviceItems.FindIndex(x =>
+							!x.IsInternal &&
 							(x.DisplayIndex == handleItem.DisplayIndex) &&
 							(x.MonitorIndex == physicalItem.MonitorIndex) &&
 							string.Equals(x.Description, physicalItem.Description, StringComparison.OrdinalIgnoreCase));
@@ -115,6 +135,22 @@ namespace Monitorian.Core.Models.Monitor
 					}
 
 					var deviceItem = deviceItems[index];
+
+					MonitorCapability capability = null;
+					if (physicalItem.Capability.IsBrightnessSupported)
+					{
+						capability = physicalItem.Capability;
+					}
+					else if (_preclearedIds.Value.Contains(deviceItem.DeviceInstanceId))
+					{
+						capability = MonitorCapability.PreclearedCapability;
+					}
+					else
+					{
+						physicalItem.Handle.Dispose();
+						continue;
+					}
+
 					yield return new DdcMonitorItem(
 						deviceInstanceId: deviceItem.DeviceInstanceId,
 						description: deviceItem.AlternateDescription,
@@ -122,7 +158,7 @@ namespace Monitorian.Core.Models.Monitor
 						monitorIndex: deviceItem.MonitorIndex,
 						monitorRect: handleItem.MonitorRect,
 						handle: physicalItem.Handle,
-						capability: physicalItem.Capability);
+						capability: capability);
 
 					deviceItems.RemoveAt(index);
 					if (deviceItems.Count == 0)
@@ -175,8 +211,8 @@ namespace Monitorian.Core.Models.Monitor
 		public static bool CheckMonitorsChanged()
 		{
 			var newIds = new HashSet<string>(DeviceContext.EnumerateMonitorDevices().Select(x => x.DeviceInstanceId));
-			var oldIds = _ids;
-			_ids = newIds;
+			var oldIds = _foundIds;
+			_foundIds = newIds;
 			return (oldIds?.SetEquals(newIds) is not true);
 		}
 

@@ -28,6 +28,9 @@ namespace Monitorian.Core.Views.Controls
 
 			public void Add(object source, CompoundSlider slider)
 			{
+				if (source is null)
+					return;
+
 				var item = _items.FirstOrDefault(x => ReferenceEquals(x.Source, source));
 				if (item is null)
 				{
@@ -42,6 +45,9 @@ namespace Monitorian.Core.Views.Controls
 
 			public void Remove(object source, CompoundSlider slider)
 			{
+				if (source is null)
+					return;
+
 				var item = _items.FirstOrDefault(x => ReferenceEquals(x.Source, source));
 				if (item is null)
 					return;
@@ -56,7 +62,11 @@ namespace Monitorian.Core.Views.Controls
 
 			public bool TryGetItem(object source, out Item item)
 			{
-				item = _items.FirstOrDefault(x => ReferenceEquals(x.Source, source));
+				if (source is null)
+					item = null;
+				else
+					item = _items.FirstOrDefault(x => ReferenceEquals(x.Source, source));
+
 				return (item is not null);
 			}
 		}
@@ -74,11 +84,11 @@ namespace Monitorian.Core.Views.Controls
 			if (DesignerProperties.GetIsInDesignMode(this))
 				return;
 
-			_source = this.DataContext;
-			if (_source is null)
-				throw new InvalidOperationException("The binding source must not be null.");
-
-			_holder.Add(_source, this);
+			this.Loaded += (_, _) =>
+			{
+				_source = this.DataContext;
+				_holder.Add(_source, this);
+			};
 
 			this.Unloaded += (_, _) =>
 			{
@@ -140,7 +150,7 @@ namespace Monitorian.Core.Views.Controls
 								// This route is handled by OnValueChanged method.
 								instance._update = true;
 							}
-							else
+							else if (instance._source is not null)
 							{
 								// As DependencyPropertyChangedEventArgs.OldValue property is not always reliable,
 								// this route must be called before this instance's Value property is updated
@@ -159,7 +169,7 @@ namespace Monitorian.Core.Views.Controls
 			var update = _update;
 			_update = false;
 
-			if (IsUnison && this.IsFocused)
+			if (IsUnison && this.IsFocused && (_source is not null))
 			{
 				var delta = (newValue - oldValue) / GetRangeRate();
 				Moved?.Invoke(this, (_source, delta, update: update));
@@ -203,7 +213,10 @@ namespace Monitorian.Core.Views.Controls
 		{
 			base.EnsureUpdateSource();
 
-			Moved?.Invoke(this, (_source, 0D, update: true));
+			if (_source is not null)
+			{
+				Moved?.Invoke(this, (_source, 0D, update: true));
+			}
 		}
 
 		#endregion

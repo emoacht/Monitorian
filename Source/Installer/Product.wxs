@@ -142,6 +142,12 @@
           <File Id="CoreResourcesLibrary_plPL" Name="$(var.Monitorian.TargetName).Core.resources.dll" KeyPath="yes"/>
         </Component>
       </Directory>
+      <Directory Id="ResourcesFolder_ptBR" Name="pt-BR"
+                 FileSource="$(var.Monitorian.TargetDir)pt-BR">
+        <Component Id="CoreResourcesLibrary_ptBR" Guid="{1F6F008E-29FE-4BA7-8135-E9D1945199C3}">
+          <File Id="CoreResourcesLibrary_ptBR" Name="$(var.Monitorian.TargetName).Core.resources.dll" KeyPath="yes"/>
+        </Component>
+      </Directory>
       <Directory Id="ResourcesFolder_ro" Name="ro"
                  FileSource="$(var.Monitorian.TargetDir)ro">
         <Component Id="CoreResourcesLibrary_ro" Guid="{02DC2C14-9F16-4A09-9557-23A38426C77F}">
@@ -218,6 +224,7 @@
       <ComponentRef Id="CoreResourcesLibrary_koKR"/>
       <ComponentRef Id="CoreResourcesLibrary_nlNL"/>
       <ComponentRef Id="CoreResourcesLibrary_plPL"/>
+      <ComponentRef Id="CoreResourcesLibrary_ptBR"/>
       <ComponentRef Id="CoreResourcesLibrary_ro"/>
       <ComponentRef Id="CoreResourcesLibrary_ruRU"/>
       <ComponentRef Id="CoreResourcesLibrary_trTR"/>

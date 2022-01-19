@@ -206,6 +206,10 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.pt-BR.resx">
+      <DependentUpon>Resources.resx</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.ro.resx">
       <DependentUpon>Resources.resx</DependentUpon>
       <SubType>Designer</SubType>

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <Product Id="*" Name="Monitorian" Manufacturer="emoacht" Version="3.8.2"
+  <Product Id="*" Name="Monitorian" Manufacturer="emoacht" Version="3.9.0"
            Language="1033" Codepage="1252" UpgradeCode="{81A4D148-75D3-462E-938D-8C208FB48E3C}">
     <Package Id="*" InstallerVersion="500" Compressed="yes"
              InstallScope="perMachine" InstallPrivileges="elevated"
@@ -142,6 +142,12 @@
           <File Id="CoreResourcesLibrary_plPL" Name="$(var.Monitorian.TargetName).Core.resources.dll" KeyPath="yes"/>
         </Component>
       </Directory>
+      <Directory Id="ResourcesFolder_ptBR" Name="pt-BR"
+                 FileSource="$(var.Monitorian.TargetDir)pt-BR">
+        <Component Id="CoreResourcesLibrary_ptBR" Guid="{1F6F008E-29FE-4BA7-8135-E9D1945199C3}">
+          <File Id="CoreResourcesLibrary_ptBR" Name="$(var.Monitorian.TargetName).Core.resources.dll" KeyPath="yes"/>
+        </Component>
+      </Directory>
       <Directory Id="ResourcesFolder_ro" Name="ro"
                  FileSource="$(var.Monitorian.TargetDir)ro">
         <Component Id="CoreResourcesLibrary_ro" Guid="{02DC2C14-9F16-4A09-9557-23A38426C77F}">
@@ -218,6 +224,7 @@
       <ComponentRef Id="CoreResourcesLibrary_koKR"/>
       <ComponentRef Id="CoreResourcesLibrary_nlNL"/>
       <ComponentRef Id="CoreResourcesLibrary_plPL"/>
+      <ComponentRef Id="CoreResourcesLibrary_ptBR"/>
       <ComponentRef Id="CoreResourcesLibrary_ro"/>
       <ComponentRef Id="CoreResourcesLibrary_ruRU"/>
       <ComponentRef Id="CoreResourcesLibrary_trTR"/>

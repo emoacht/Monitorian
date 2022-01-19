@@ -20,6 +20,8 @@ namespace Monitorian.Core.Models.Watcher
 			SystemEvents.SessionSwitch += OnSessionSwitch;
 		}
 
+		public bool IsLocked { get; private set; }
+
 		private void RaiseSessionSwitch(SessionSwitchReason reason, int count) =>
 			_onSessionSwitch?.Invoke(new SessionSwitchCountEventArgs(reason, count));
 
@@ -29,12 +31,14 @@ namespace Monitorian.Core.Models.Watcher
 			{
 				case SessionSwitchReason.SessionLogon:
 				case SessionSwitchReason.SessionUnlock:
+					IsLocked = false;
 					RaiseSessionSwitch(e.Reason, 0);
 					TimerStart(e);
 					break;
 				case SessionSwitchReason.SessionLogoff:
 				case SessionSwitchReason.SessionLock:
 					TimerStop();
+					IsLocked = true;
 					RaiseSessionSwitch(e.Reason, 0);
 					break;
 			}

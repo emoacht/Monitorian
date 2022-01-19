@@ -26,10 +26,11 @@ Additional languages:
  - Korean (ko-KR) by @VenusGirl
  - Dutch (nl-NL) by @JordyEGNL
  - Polish (pl-PL) by @Daxxxis and @FakeMichau
+ - Portuguese (pt-BR) by @guilhermgonzaga
  - Romanian (ro) by @calini
  - Russian (ru-RU) by @SigmaTel71
  - Turkish (tr-TR) by @webbudesign
- - Simplified Chinese (zh-Hans) by @ComMouse and @zhujunsan
+ - Simplified Chinese (zh-Hans) by @ComMouse, @zhujunsan and @xmuli
  - Traditional Chinese (zh-Hant) by @toto6038
 
 ## Requirements
@@ -51,7 +52,7 @@ Additional languages:
    ```
 
  * Other:<br>
-:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/3.8.2-Installer/MonitorianInstaller382.zip)
+:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/3.9.0-Installer/MonitorianInstaller390.zip)
 
 ## Install/Uninstall
 
@@ -153,6 +154,12 @@ An alternative language can be shown by adding a Resources (.resx) file into `/S
  - The name of a name/value pair must correspond to that in the default `Resources.resx` file to override it.
 
 ## History
+
+Ver 3.9 2022-1-20
+
+ - Add Portuguese (pt-BR) language. Thanks to @guilhermgonzaga!
+ - Supplement Chinese (zh-Hans) language. Thanks to @xmuli!
+ - Fix Dutch (nl-NL) language. Thanks to @JordyEGNL!
 
 Ver 3.8 2021-12-18
 

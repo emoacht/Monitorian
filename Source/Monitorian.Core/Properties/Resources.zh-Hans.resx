@@ -147,8 +147,8 @@
   <data name="OrderArrangement" xml:space="preserve">
     <value>按显示器排布进行排序</value>
   </data>
-  <data name="DeferChange" xml:space="preserve">^M
-    <value>延迟到关闭时生效</value>^M
+  <data name="DeferChange" xml:space="preserve">
+    <value>延迟到关闭时生效</value>
   </data>
   <data name="Probe" xml:space="preserve">
     <value>检测显示器</value>

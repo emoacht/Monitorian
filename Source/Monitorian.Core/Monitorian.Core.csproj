@@ -124,7 +124,6 @@
     <Compile Include="Views\Controls\IconButton.cs" />
     <Compile Include="Views\Controls\MultiToggleButton.cs" />
     <Compile Include="Views\Controls\PulseLabel.cs" />
-    <Compile Include="Views\Controls\ReversalLabel.cs" />
     <Compile Include="Views\Controls\SwitchTextBox.cs" />
     <Compile Include="Views\Controls\TemplateElement.cs" />
     <Compile Include="Views\Converters\BooleanInverseConverter.cs" />

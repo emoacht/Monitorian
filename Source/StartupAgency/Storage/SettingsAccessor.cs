@@ -35,7 +35,7 @@ namespace StartupAgency.Storage
 			this._values = settings.Values;
 		}
 
-		private readonly object _lock = new object();
+		private readonly object _lock = new();
 
 		#region Get
 

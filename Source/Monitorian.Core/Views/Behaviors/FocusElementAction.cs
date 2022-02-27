@@ -24,10 +24,8 @@ namespace Monitorian.Core.Views.Behaviors
 
 		protected override void Invoke(object parameter)
 		{
-			if ((TargetElement is null) || !TargetElement.Focusable || TargetElement.IsFocused)
-				return;
-
-			TargetElement.Focus();
+			if (TargetElement is { Focusable: true, IsFocused: false })
+				TargetElement.Focus();
 		}
 	}
 }

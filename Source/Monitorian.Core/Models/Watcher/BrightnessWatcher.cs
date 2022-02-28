@@ -5,34 +5,37 @@ using System.Management;
 using System.Text;
 using System.Threading.Tasks;
 
+using Monitorian.Core.Models.Monitor;
+
 namespace Monitorian.Core.Models.Watcher
 {
 	internal class BrightnessWatcher : IDisposable
 	{
-		private readonly ManagementEventWatcher _watcher;
+		private ManagementEventWatcher _watcher;
 		private Action<string, int> _onBrightnessChanged;
 
 		public BrightnessWatcher()
-		{
-			var scope = @"root\wmi";
-			var query = "SELECT * FROM WmiMonitorBrightnessEvent";
-			var option = new EventWatcherOptions(null, TimeSpan.FromSeconds(1), 1);
-			_watcher = new ManagementEventWatcher(scope, query, option);
-		}
+		{ }
 
-		public void Subscribe(Action<string, int> onBrightnessChanged)
+		/// <summary>
+		/// Subscribes to brightness changed event.
+		/// </summary>
+		/// <param name="onBrightnessChanged">Action to be invoked when brightness changed</param>
+		/// <returns>True if successfully subscribes</returns>
+		public bool Subscribe(Action<string, int> onBrightnessChanged)
 		{
+			_watcher = MSMonitor.StartBrightnessEventWatcher();
+			if (_watcher is null)
+				return false;
+
 			this._onBrightnessChanged = onBrightnessChanged ?? throw new ArgumentNullException(nameof(onBrightnessChanged));
 			_watcher.EventArrived += OnEventArrived;
-			_watcher.Start();
+			return true;
 		}
 
 		private void OnEventArrived(object sender, EventArrivedEventArgs e)
 		{
-			var newEvent = e.NewEvent;
-			var instanceName = (string)newEvent["InstanceName"];
-			var brightness = (byte)newEvent["Brightness"];
-
+			var (instanceName, brightness) = MSMonitor.ParseBrightnessEventArgs(e);
 			_onBrightnessChanged?.Invoke(instanceName, brightness);
 		}
 
@@ -56,9 +59,12 @@ namespace Monitorian.Core.Models.Watcher
 				// Free any other managed objects here.
 				try
 				{
-					_watcher.EventArrived -= OnEventArrived;
-					_watcher.Stop(); // This may throw InvalidCastException.
-					_watcher.Dispose();
+					if (_watcher is not null)
+					{
+						_watcher.EventArrived -= OnEventArrived;
+						_watcher.Stop(); // This may throw InvalidCastException.
+						_watcher.Dispose();
+					}
 				}
 				catch (InvalidCastException)
 				{

@@ -21,12 +21,18 @@ namespace Monitorian.Core.Models.Watcher
 		/// Subscribes to brightness changed event.
 		/// </summary>
 		/// <param name="onBrightnessChanged">Action to be invoked when brightness changed</param>
+		/// <param name="onError">Action to be invoked when error occurred</param>
 		/// <returns>True if successfully subscribes</returns>
-		public bool Subscribe(Action<string, int> onBrightnessChanged)
+		public bool Subscribe(Action<string, int> onBrightnessChanged, Action<string> onError)
 		{
-			_watcher = MSMonitor.StartBrightnessEventWatcher();
+			(_watcher, var message) = MSMonitor.StartBrightnessEventWatcher();
 			if (_watcher is null)
+			{
+				if (!string.IsNullOrEmpty(message))
+					onError?.Invoke(message);
+
 				return false;
+			}
 
 			this._onBrightnessChanged = onBrightnessChanged ?? throw new ArgumentNullException(nameof(onBrightnessChanged));
 			_watcher.EventArrived += OnEventArrived;

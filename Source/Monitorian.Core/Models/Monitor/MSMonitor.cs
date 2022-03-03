@@ -242,7 +242,7 @@ namespace Monitorian.Core.Models.Monitor
 
 		private static bool? _isBrightnessEventWatchable = null;
 
-		public static ManagementEventWatcher StartBrightnessEventWatcher()
+		public static (ManagementEventWatcher watcher, string message) StartBrightnessEventWatcher()
 		{
 			try
 			{
@@ -254,15 +254,16 @@ namespace Monitorian.Core.Models.Monitor
 				watcher.Start();
 
 				_isBrightnessEventWatchable = true;
-				return watcher;
+				return (watcher, null);
 			}
 			catch (ManagementException me)
 			{
-				Debug.WriteLine($"Failed to start watcher for WmiMonitorBrightnessEvent. HResult: {me.HResult} ErrorCode: {me.ErrorCode}" + Environment.NewLine
+				var message = $"Failed to start watcher for WmiMonitorBrightnessEvent. HResult: {me.HResult} ErrorCode: {me.ErrorCode}";
+				Debug.WriteLine(message + Environment.NewLine
 					+ me);
 
 				_isBrightnessEventWatchable = false;
-				return null;
+				return (null, message);
 			}
 		}
 

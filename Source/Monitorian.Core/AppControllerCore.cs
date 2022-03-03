@@ -90,7 +90,8 @@ namespace Monitorian.Core
 			{
 				if (!_sessionWatcher.IsLocked)
 					Update(instanceName, brightness);
-			});
+			},
+			async (message) => await Recorder.RecordAsync(message));
 		}
 
 		public virtual void End()

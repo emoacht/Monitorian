@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ChangeRange" xml:space="preserve">
-    <value>变更可调节范围</value>
+    <value>设置可调节范围</value>
   </data>
   <data name="Close" xml:space="preserve">
     <value>关闭</value>
@@ -130,22 +130,22 @@
     <value>是否将操作日志保存到桌面？</value>
   </data>
   <data name="EnableContrast" xml:space="preserve">
-    <value>启用对比度调节</value>
+    <value>开启对比度调节选项</value>
   </data>
   <data name="EnableRange" xml:space="preserve">
-    <value>启用调节范围设置</value>
+    <value>开启设置可调节范围选项</value>
   </data>
   <data name="EnableUnison" xml:space="preserve">
-    <value>启用同步调节</value>
+    <value>开启同时调整所有显示器选项</value>
   </data>
   <data name="MakeOperation" xml:space="preserve">
     <value>记录操作日志</value>
   </data>
   <data name="MoveUnison" xml:space="preserve">
-    <value>同步调节</value>
+    <value>同时调整所有显示器</value>
   </data>
   <data name="OrderArrangement" xml:space="preserve">
-    <value>按显示器排布进行排序</value>
+    <value>将显示器以系统设置顺序进行排列</value>
   </data>
   <data name="DeferChange" xml:space="preserve">
     <value>延迟到关闭时生效</value>
@@ -169,7 +169,7 @@
     <value>显示调整后亮度</value>
   </data>
   <data name="ShowNumber" xml:space="preserve">
-    <value>显示当前数值</value>
+    <value>显示当前亮度</value>
   </data>
   <data name="StartSignIn" xml:space="preserve">
     <value>开机时启动</value>
@@ -178,12 +178,12 @@
     <value>无法控制显示器。</value>
   </data>
   <data name="StatusReasonDdcFailing" xml:space="preserve">
-    <value>DDC/CI 调用反复失败。</value>
+    <value>DDC/CI 调用失败多次。</value>
   </data>
   <data name="StatusReasonDdcNotEnabled" xml:space="preserve">
     <value>DDC/CI 不受支持或未启用。</value>
   </data>
   <data name="UseLargeElements" xml:space="preserve">
-    <value>使用大型滑块</value>
+    <value>使用更大的滑块</value>
   </data>
 </root>

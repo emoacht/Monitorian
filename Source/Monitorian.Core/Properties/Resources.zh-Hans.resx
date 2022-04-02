@@ -136,13 +136,13 @@
     <value>开启设置可调节范围选项</value>
   </data>
   <data name="EnableUnison" xml:space="preserve">
-    <value>开启同时调整所有显示器选项</value>
+    <value>开启同时调整多个显示器选项</value>
   </data>
   <data name="MakeOperation" xml:space="preserve">
     <value>记录操作日志</value>
   </data>
   <data name="MoveUnison" xml:space="preserve">
-    <value>同时调整所有显示器</value>
+    <value>同时调整多个显示器</value>
   </data>
   <data name="OrderArrangement" xml:space="preserve">
     <value>将显示器以系统设置顺序进行排列</value>

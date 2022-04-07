@@ -126,6 +126,9 @@
   <data name="ChangeRange" xml:space="preserve">
     <value>Schimbă intervalul reglabil</value>
   </data>
+  <data name="ChangeUnison" xml:space="preserve">
+    <value>Sincronizează setarea</value>
+  </data>
   <data name="Close" xml:space="preserve">
     <value>Închide</value>
   </data>
@@ -149,9 +152,6 @@
   </data>
   <data name="MakeOperation" xml:space="preserve">
     <value>Creează jurnalul operațiunii</value>
-  </data>
-  <data name="MoveUnison" xml:space="preserve">
-    <value>Sincronizează setarea</value>
   </data>
   <data name="OrderArrangement" xml:space="preserve">
     <value>Sortează după poziția monitoarelor</value>

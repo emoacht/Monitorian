@@ -123,6 +123,9 @@
   <data name="ChangeRange" xml:space="preserve">
     <value>Изменить диапазон регулировки</value>
   </data>
+  <data name="ChangeUnison" xml:space="preserve">
+    <value>Регулировать одновременно</value>
+  </data>
   <data name="Close" xml:space="preserve">
     <value>Закрыть</value>
   </data>
@@ -146,9 +149,6 @@
   </data>
   <data name="MakeOperation" xml:space="preserve">
     <value>Создать журнал действий</value>
-  </data>
-  <data name="MoveUnison" xml:space="preserve">
-    <value>Регулировать одновременно</value>
   </data>
   <data name="OrderArrangement" xml:space="preserve">
     <value>Упорядочить по расположению мониторов</value>

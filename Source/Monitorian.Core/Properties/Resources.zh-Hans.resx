@@ -120,6 +120,9 @@
   <data name="ChangeRange" xml:space="preserve">
     <value>设置可调节范围</value>
   </data>
+  <data name="ChangeUnison" xml:space="preserve">
+    <value>多屏亮度调节</value>
+  </data>
   <data name="Close" xml:space="preserve">
     <value>关闭</value>
   </data>
@@ -143,9 +146,6 @@
   </data>
   <data name="MakeOperation" xml:space="preserve">
     <value>生成操作记录</value>
-  </data>
-  <data name="MoveUnison" xml:space="preserve">
-    <value>多屏亮度调节</value>
   </data>
   <data name="OrderArrangement" xml:space="preserve">
     <value>以显示器顺序进行排列</value>

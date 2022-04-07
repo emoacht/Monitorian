@@ -123,6 +123,9 @@
   <data name="ChangeRange" xml:space="preserve">
     <value>Zmień zakres regulacji</value>
   </data>
+  <data name="ChangeUnison" xml:space="preserve">
+    <value>Równoczesne dostosowowywanie</value>
+  </data>
   <data name="Close" xml:space="preserve">
     <value>Zamknij</value>
   </data>
@@ -146,9 +149,6 @@
   </data>
   <data name="MakeOperation" xml:space="preserve">
     <value>Utwórz dziennik operacji</value>
-  </data>
-  <data name="MoveUnison" xml:space="preserve">
-    <value>Równoczesne dostosowowywanie</value>
   </data>
   <data name="OrderArrangement" xml:space="preserve">
     <value>Sortuj według układu monitorów</value>

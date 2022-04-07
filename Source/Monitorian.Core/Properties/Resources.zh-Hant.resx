@@ -126,6 +126,9 @@
   <data name="ChangeRange" xml:space="preserve">
     <value>變更調節範圍</value>
   </data>
+  <data name="ChangeUnison" xml:space="preserve">
+    <value>連動調整</value>
+  </data>
   <data name="Close" xml:space="preserve">
     <value>關閉程式</value>
   </data>
@@ -149,9 +152,6 @@
   </data>
   <data name="MakeOperation" xml:space="preserve">
     <value>製作操作紀錄檔</value>
-  </data>
-  <data name="MoveUnison" xml:space="preserve">
-    <value>連動調整</value>
   </data>
   <data name="OrderArrangement" xml:space="preserve">
     <value>按顯示器排列呈現</value>

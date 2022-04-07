@@ -126,6 +126,9 @@
   <data name="ChangeRange" xml:space="preserve">
     <value>Change adjustable range</value>
   </data>
+  <data name="ChangeUnison" xml:space="preserve">
+    <value>Change brightness in unison</value>
+  </data>
   <data name="Close" xml:space="preserve">
     <value>Close</value>
   </data>
@@ -145,13 +148,10 @@
     <value>Enable changing adjustable range</value>
   </data>
   <data name="EnableUnison" xml:space="preserve">
-    <value>Enable moving in unison</value>
+    <value>Enable changing brightness in unison</value>
   </data>
   <data name="MakeOperation" xml:space="preserve">
     <value>Make operation log</value>
-  </data>
-  <data name="MoveUnison" xml:space="preserve">
-    <value>Move in unison</value>
   </data>
   <data name="OrderArrangement" xml:space="preserve">
     <value>Order by monitors arrangement</value>

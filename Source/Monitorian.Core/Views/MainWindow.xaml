@@ -633,7 +633,7 @@
 										Orientation="Horizontal">
 								<!-- Unison -->
 								<controls:IconButton Style="{StaticResource UnisonButtonStyle}"
-													 ToolTip="{x:Static properties:Resources.MoveUnison}"
+													 ToolTip="{x:Static properties:Resources.ChangeUnison}"
 													 Visibility="{Binding Settings.EnablesUnison, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverterKey}}"
 													 IsChecked="{Binding IsUnison, Mode=TwoWay}"/>
 

@@ -249,33 +249,42 @@ namespace Monitorian.Core.Models.Monitor
 				out _)
 				&& caps.HasFlag(MC_CAPS.MC_CAPS_BRIGHTNESS);
 
-			if (GetCapabilitiesStringLength(
-				physicalMonitorHandle,
-				out uint capabilitiesStringLength))
+			var status = AccessStatus.None;
+			while (true)
 			{
-				var buffer = new StringBuilder((int)capabilitiesStringLength);
-
-				if (CapabilitiesRequestAndCapabilitiesReply(
+				if (GetCapabilitiesStringLength(
 					physicalMonitorHandle,
-					buffer,
-					capabilitiesStringLength))
+					out uint capabilitiesStringLength))
 				{
-					var capabilitiesString = buffer.ToString();
-					var vcpCodes = EnumerateVcpCodes(capabilitiesString).ToArray();
+					var buffer = new StringBuilder((int)capabilitiesStringLength);
 
-					return new MonitorCapability(
-						isHighLevelBrightnessSupported: isHighLevelSupported,
-						isLowLevelBrightnessSupported: vcpCodes.Contains((byte)VcpCode.Luminance),
-						isContrastSupported: vcpCodes.Contains((byte)VcpCode.Contrast),
-						capabilitiesString: (verbose ? capabilitiesString : null),
-						capabilitiesReport: (verbose ? MakeCapabilitiesReport(vcpCodes) : null),
-						capabilitiesData: (verbose && !vcpCodes.Any() ? GetCapabilitiesData(physicalMonitorHandle, capabilitiesStringLength) : null));
+					if (CapabilitiesRequestAndCapabilitiesReply(
+						physicalMonitorHandle,
+						buffer,
+						capabilitiesStringLength))
+					{
+						var capabilitiesString = buffer.ToString();
+						var vcpCodes = EnumerateVcpCodes(capabilitiesString).ToArray();
+
+						return new MonitorCapability(
+							isHighLevelBrightnessSupported: isHighLevelSupported,
+							isLowLevelBrightnessSupported: vcpCodes.Contains((byte)VcpCode.Luminance),
+							isContrastSupported: vcpCodes.Contains((byte)VcpCode.Contrast),
+							capabilitiesString: (verbose ? capabilitiesString : null),
+							capabilitiesReport: (verbose ? MakeCapabilitiesReport(vcpCodes) : null),
+							capabilitiesData: (verbose && !vcpCodes.Any() ? GetCapabilitiesData(physicalMonitorHandle, capabilitiesStringLength) : null));
+					}
 				}
+
+				var (errorCode, _) = Error.GetCodeMessage();
+				if (CheckPossibleTransientStatus(status, status = GetStatus(errorCode)))
+					continue;
+
+				return new MonitorCapability(
+					isHighLevelBrightnessSupported: isHighLevelSupported,
+					isLowLevelBrightnessSupported: false,
+					isContrastSupported: false);
 			}
-			return new MonitorCapability(
-				isHighLevelBrightnessSupported: isHighLevelSupported,
-				isLowLevelBrightnessSupported: false,
-				isContrastSupported: false);
 
 			static string MakeCapabilitiesReport(byte[] vcpCodes)
 			{
@@ -428,21 +437,29 @@ namespace Monitorian.Core.Models.Monitor
 			if (!EnsurePhysicalMonitorHandle(physicalMonitorHandle))
 				return (result: AccessResult.Failed, 0, 0, 0);
 
-			if (GetVCPFeatureAndVCPFeatureReply(
-				physicalMonitorHandle,
-				(byte)vcpCode,
-				out _,
-				out uint currentValue,
-				out uint maximumValue))
+			var status = AccessStatus.None;
+			while (true)
 			{
-				return (result: AccessResult.Succeeded,
-					minimum: 0,
-					current: currentValue,
-					maximum: maximumValue);
+				if (GetVCPFeatureAndVCPFeatureReply(
+					physicalMonitorHandle,
+					(byte)vcpCode,
+					out _,
+					out uint currentValue,
+					out uint maximumValue))
+				{
+					return (result: AccessResult.Succeeded,
+						minimum: 0,
+						current: currentValue,
+						maximum: maximumValue);
+				}
+				var (errorCode, message) = Error.GetCodeMessage();
+				Debug.WriteLine($"Failed to get VCP value ({vcpCode}). {message}");
+
+				if (CheckPossibleTransientStatus(status, status = GetStatus(errorCode)))
+					continue;
+
+				return (result: new AccessResult(status, $"Low level, {message}"), 0, 0, 0);
 			}
-			var (errorCode, message) = Error.GetCodeMessage();
-			Debug.WriteLine($"Failed to get VCP value ({vcpCode}). {message}");
-			return (result: new AccessResult(GetStatus(errorCode), $"Low level, {message}"), 0, 0, 0);
 		}
 
 		/// <summary>
@@ -488,16 +505,24 @@ namespace Monitorian.Core.Models.Monitor
 			if (!EnsurePhysicalMonitorHandle(physicalMonitorHandle))
 				return AccessResult.Failed;
 
-			if (SetVCPFeature(
-				physicalMonitorHandle,
-				(byte)vcpCode,
-				value))
+			var status = AccessStatus.None;
+			while (true)
 			{
-				return AccessResult.Succeeded;
+				if (SetVCPFeature(
+					physicalMonitorHandle,
+					(byte)vcpCode,
+					value))
+				{
+					return AccessResult.Succeeded;
+				}
+				var (errorCode, message) = Error.GetCodeMessage();
+				Debug.WriteLine($"Failed to set VCP value ({vcpCode}). {message}");
+
+				if (CheckPossibleTransientStatus(status, status = GetStatus(errorCode)))
+					continue;
+
+				return new AccessResult(status, $"Low level, {message}");
 			}
-			var (errorCode, message) = Error.GetCodeMessage();
-			Debug.WriteLine($"Failed to set VCP value ({vcpCode}). {message}");
-			return new AccessResult(GetStatus(errorCode), $"Low level, {message}");
 		}
 
 		private static bool EnsurePhysicalMonitorHandle(SafePhysicalMonitorHandle physicalMonitorHandle)
@@ -511,6 +536,12 @@ namespace Monitorian.Core.Models.Monitor
 				return false;
 			}
 			return true;
+		}
+
+		private static bool CheckPossibleTransientStatus(AccessStatus oldStatus, AccessStatus newStatus)
+		{
+			return (oldStatus == AccessStatus.None)
+				&& (newStatus == AccessStatus.TransmissionFailed);
 		}
 
 		#region Error

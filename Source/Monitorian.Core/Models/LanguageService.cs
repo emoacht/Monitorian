@@ -19,7 +19,7 @@ namespace Monitorian.Core.Models
 
 		private static readonly Lazy<CultureInfo> _culture = new(() =>
 		{
-			var arguments = AppKeeper.DefinedArguments;
+			var arguments = AppKeeper.StandardArguments;
 
 			int i = 0;
 			while (i < arguments.Count - 1)

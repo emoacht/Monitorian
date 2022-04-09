@@ -22,13 +22,13 @@ namespace Monitorian.Core
 			StartupAgent = new StartupAgent();
 		}
 
-		public Task<bool> StartAsync(StartupEventArgs e) => StartAsync(e, GetDefinedOptions());
+		public Task<bool> StartAsync(StartupEventArgs e) => StartAsync(e, GetStandardOptions());
 
-		public async Task<bool> StartAsync(StartupEventArgs e, params string[] definedOptions)
+		public async Task<bool> StartAsync(StartupEventArgs e, params string[] standardOptions)
 		{
-			// This method must be called before DefinedArguments or OtherArguments property is consumed.
+			// This method must be called before StandardArguments or OtherArguments property is consumed.
 			// An exception thrown in this method will not be handled.
-			await ParseArgumentsAsync(e, definedOptions);
+			await ParseArgumentsAsync(e, standardOptions);
 #if DEBUG
 			ConsoleService.TryStartWrite();
 #else
@@ -61,13 +61,13 @@ namespace Monitorian.Core
 
 		#region Arguments
 
-		public static IReadOnlyList<string> DefinedArguments => _definedArguments?.ToArray() ?? Array.Empty<string>();
-		private static string[] _definedArguments;
+		public static IReadOnlyList<string> StandardArguments => _standardArguments?.ToArray() ?? Array.Empty<string>();
+		private static string[] _standardArguments;
 
 		public static IReadOnlyList<string> OtherArguments => _otherArguments?.ToArray() ?? Array.Empty<string>();
 		private static string[] _otherArguments;
 
-		public static string[] GetDefinedOptions() =>
+		public static string[] GetStandardOptions() =>
 			new[]
 			{
 				StartupAgent.Options,
@@ -78,7 +78,7 @@ namespace Monitorian.Core
 			.SelectMany(x => x)
 			.ToArray();
 
-		private async Task ParseArgumentsAsync(StartupEventArgs e, string[] definedOptions)
+		private async Task ParseArgumentsAsync(StartupEventArgs e, string[] standardOptions)
 		{
 			// Load persistent arguments.
 			var args = (await LoadArgumentsAsync())?.Split() ?? Array.Empty<string>();
@@ -91,14 +91,14 @@ namespace Monitorian.Core
 				return;
 
 			const char optionMark = '/';
-			var isDefined = false;
+			var isStandard = false;
 
 			var buffer = args
 				.Where(x => !string.IsNullOrWhiteSpace(x))
-				.GroupBy(x => (x[0] == optionMark) ? (isDefined = definedOptions.Contains(x.ToLower())) : isDefined)
+				.GroupBy(x => (x[0] == optionMark) ? (isStandard = standardOptions.Contains(x.ToLower())) : isStandard)
 				.ToArray();
 
-			_definedArguments = buffer.SingleOrDefault(x => x.Key)?.ToArray();
+			_standardArguments = buffer.SingleOrDefault(x => x.Key)?.ToArray();
 			_otherArguments = buffer.SingleOrDefault(x => !x.Key)?.ToArray();
 		}
 

@@ -54,13 +54,14 @@ namespace Monitorian.Core.Models.Monitor
 
 		private static HashSet<string> GetOptionIds(string option)
 		{
-			var buffer = AppKeeper.DefinedArguments
+			var ids = AppKeeper.DefinedArguments
 				.SkipWhile(x => !string.Equals(x, option, StringComparison.OrdinalIgnoreCase))
 				.Skip(1) // 1 means option.
-				.TakeWhile(x => x.StartsWith("DISPLAY"))
-				.Select(x => x.Replace(@"\\", @"\")); // Backslash will be escaped in JSON.
+				.Select(x => (success: DeviceConversion.TryParseToDeviceInstanceId(x, out string id), id))
+				.TakeWhile(x => x.success)
+				.Select(x => x.id);
 
-			return new HashSet<string>(buffer);
+			return new HashSet<string>(ids);
 		}
 
 		#endregion

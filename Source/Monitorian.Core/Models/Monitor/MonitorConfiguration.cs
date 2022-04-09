@@ -626,8 +626,7 @@ namespace Monitorian.Core.Models.Monitor
 
 		public static MonitorCapability PreclearedCapability => _preclearedCapability.Value;
 		private static readonly Lazy<MonitorCapability> _preclearedCapability = new(() =>
-			new MonitorCapability(
-				isHighLevelBrightnessSupported: false,
+			new(isHighLevelBrightnessSupported: false,
 				isLowLevelBrightnessSupported: true,
 				isContrastSupported: true,
 				isPrecleared: true,

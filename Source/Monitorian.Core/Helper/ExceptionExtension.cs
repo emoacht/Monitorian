@@ -54,10 +54,10 @@ namespace Monitorian.Core.Helper
 				.Where(x => !BasePropertyNames.Value.Contains(x.Name));
 		}
 
-		private static readonly Lazy<string[]> BasePropertyNames = new Lazy<string[]>(() =>
+		private static readonly Lazy<string[]> BasePropertyNames = new(() =>
 			typeof(Exception).GetProperties(BindingFlags.Public | BindingFlags.Instance).Select(x => x.Name).ToArray());
 
-		private static readonly Lazy<string> EndOfInnerExceptionStack = new Lazy<string>(() =>
+		private static readonly Lazy<string> EndOfInnerExceptionStack = new(() =>
 			GetEnvironmentString("Exception_EndOfInnerExceptionStack"));
 
 		private static string GetEnvironmentString(string key)

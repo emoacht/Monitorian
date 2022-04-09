@@ -59,7 +59,7 @@ namespace ScreenFrame.Movers
 		public SwitchWindowMover(Window window, NotifyIcon notifyIcon) : base(window, notifyIcon)
 		{
 			_departureTimer = new DispatcherTimer();
-			_departureTimer.Tick += (sender, e) =>
+			_departureTimer.Tick += (_, _) =>
 			{
 				_departureTimer.Stop();
 				InitiateDeparture();

@@ -55,6 +55,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DisplayInformation.cs" />
+    <Compile Include="Launcher.cs" />
     <Compile Include="LightInformation.cs" />
     <Compile Include="UIInformation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -60,7 +60,7 @@ namespace Monitorian.Core.Models.Watcher
 
 			this._onPowerSettingChanged = onPowerSettingChanged.action;
 			_complement = new SystemEventsComplement();
-			_complement.PowerSettingChanged += (sender, e) => this._onPowerSettingChanged.Invoke(e);
+			_complement.PowerSettingChanged += (_, e) => this._onPowerSettingChanged.Invoke(e);
 			_complement.RegisterPowerSettingEvent(onPowerSettingChanged.guids);
 		}
 

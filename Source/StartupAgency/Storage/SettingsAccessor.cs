@@ -21,12 +21,10 @@ namespace StartupAgency.Storage
 	internal class SettingsAccessor
 	{
 		public static SettingsAccessor Local => _local.Value;
-		private static readonly Lazy<SettingsAccessor> _local = new Lazy<SettingsAccessor>(() =>
-			new SettingsAccessor(ApplicationData.Current.LocalSettings));
+		private static readonly Lazy<SettingsAccessor> _local = new(() => new(ApplicationData.Current.LocalSettings));
 
 		public static SettingsAccessor Roaming => _roaming.Value;
-		private static readonly Lazy<SettingsAccessor> _roaming = new Lazy<SettingsAccessor>(() =>
-			new SettingsAccessor(ApplicationData.Current.RoamingSettings));
+		private static readonly Lazy<SettingsAccessor> _roaming = new(() => new(ApplicationData.Current.RoamingSettings));
 
 		private readonly IPropertySet _values;
 
@@ -35,7 +33,7 @@ namespace StartupAgency.Storage
 			this._values = settings.Values;
 		}
 
-		private readonly object _lock = new object();
+		private readonly object _lock = new();
 
 		#region Get
 

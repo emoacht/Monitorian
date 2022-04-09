@@ -126,6 +126,9 @@
   <data name="ChangeRange" xml:space="preserve">
     <value>調整可能な幅を変更する</value>
   </data>
+  <data name="ChangeUnison" xml:space="preserve">
+    <value>明るさを一斉に変更する</value>
+  </data>
   <data name="Close" xml:space="preserve">
     <value>閉じる</value>
   </data>
@@ -145,13 +148,10 @@
     <value>調整可能な幅を変更可能にする</value>
   </data>
   <data name="EnableUnison" xml:space="preserve">
-    <value>一斉に動かせるようにする</value>
+    <value>明るさを一斉に変更可能にする</value>
   </data>
   <data name="MakeOperation" xml:space="preserve">
     <value>動作ログを作成する</value>
-  </data>
-  <data name="MoveUnison" xml:space="preserve">
-    <value>一斉に動かす</value>
   </data>
   <data name="OrderArrangement" xml:space="preserve">
     <value>モニター配置に従って並べる</value>

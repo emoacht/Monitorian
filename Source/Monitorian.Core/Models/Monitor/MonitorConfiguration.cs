@@ -428,21 +428,29 @@ namespace Monitorian.Core.Models.Monitor
 			if (!EnsurePhysicalMonitorHandle(physicalMonitorHandle))
 				return (result: AccessResult.Failed, 0, 0, 0);
 
-			if (GetVCPFeatureAndVCPFeatureReply(
-				physicalMonitorHandle,
-				(byte)vcpCode,
-				out _,
-				out uint currentValue,
-				out uint maximumValue))
+			var status = AccessStatus.None;
+			while (true)
 			{
-				return (result: AccessResult.Succeeded,
-					minimum: 0,
-					current: currentValue,
-					maximum: maximumValue);
+				if (GetVCPFeatureAndVCPFeatureReply(
+					physicalMonitorHandle,
+					(byte)vcpCode,
+					out _,
+					out uint currentValue,
+					out uint maximumValue))
+				{
+					return (result: AccessResult.Succeeded,
+						minimum: 0,
+						current: currentValue,
+						maximum: maximumValue);
+				}
+				var (errorCode, message) = Error.GetCodeMessage();
+				Debug.WriteLine($"Failed to get VCP value ({vcpCode}). {message}");
+
+				if (CheckPossibleTransientStatus(status, status = GetStatus(errorCode)))
+					continue;
+
+				return (result: new AccessResult(status, $"Low level, {message}"), 0, 0, 0);
 			}
-			var (errorCode, message) = Error.GetCodeMessage();
-			Debug.WriteLine($"Failed to get VCP value ({vcpCode}). {message}");
-			return (result: new AccessResult(GetStatus(errorCode), $"Low level, {message}"), 0, 0, 0);
 		}
 
 		/// <summary>
@@ -488,16 +496,24 @@ namespace Monitorian.Core.Models.Monitor
 			if (!EnsurePhysicalMonitorHandle(physicalMonitorHandle))
 				return AccessResult.Failed;
 
-			if (SetVCPFeature(
-				physicalMonitorHandle,
-				(byte)vcpCode,
-				value))
+			var status = AccessStatus.None;
+			while (true)
 			{
-				return AccessResult.Succeeded;
+				if (SetVCPFeature(
+					physicalMonitorHandle,
+					(byte)vcpCode,
+					value))
+				{
+					return AccessResult.Succeeded;
+				}
+				var (errorCode, message) = Error.GetCodeMessage();
+				Debug.WriteLine($"Failed to set VCP value ({vcpCode}). {message}");
+
+				if (CheckPossibleTransientStatus(status, status = GetStatus(errorCode)))
+					continue;
+
+				return new AccessResult(status, $"Low level, {message}");
 			}
-			var (errorCode, message) = Error.GetCodeMessage();
-			Debug.WriteLine($"Failed to set VCP value ({vcpCode}). {message}");
-			return new AccessResult(GetStatus(errorCode), $"Low level, {message}");
 		}
 
 		private static bool EnsurePhysicalMonitorHandle(SafePhysicalMonitorHandle physicalMonitorHandle)
@@ -511,6 +527,12 @@ namespace Monitorian.Core.Models.Monitor
 				return false;
 			}
 			return true;
+		}
+
+		private static bool CheckPossibleTransientStatus(AccessStatus oldStatus, AccessStatus newStatus)
+		{
+			return (oldStatus == AccessStatus.None)
+				&& (newStatus == AccessStatus.TransmissionFailed);
 		}
 
 		#region Error
@@ -604,8 +626,7 @@ namespace Monitorian.Core.Models.Monitor
 
 		public static MonitorCapability PreclearedCapability => _preclearedCapability.Value;
 		private static readonly Lazy<MonitorCapability> _preclearedCapability = new(() =>
-			new MonitorCapability(
-				isHighLevelBrightnessSupported: false,
+			new(isHighLevelBrightnessSupported: false,
 				isLowLevelBrightnessSupported: true,
 				isContrastSupported: true,
 				isPrecleared: true,

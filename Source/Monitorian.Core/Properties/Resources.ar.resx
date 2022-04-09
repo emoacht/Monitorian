@@ -123,6 +123,9 @@
   <data name="ChangeRange" xml:space="preserve">
     <value>تغيير المدى</value>
   </data>
+  <data name="ChangeUnison" xml:space="preserve">
+    <value>التحرك بانسجام</value>
+  </data>
   <data name="Close" xml:space="preserve">
     <value>أغلق</value>
   </data>
@@ -146,9 +149,6 @@
   </data>
   <data name="MakeOperation" xml:space="preserve">
     <value>تفعيل سجلات العمليات</value>
-  </data>
-  <data name="MoveUnison" xml:space="preserve">
-    <value>التحرك بانسجام</value>
   </data>
   <data name="OrderArrangement" xml:space="preserve">
     <value>فرز حسب تخطيط الشاشة</value>

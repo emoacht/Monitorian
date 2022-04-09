@@ -7,7 +7,7 @@ using System.Windows;
 
 namespace Monitorian.Core.Views.Controls
 {
-	public class TemplateElement
+	public static class TemplateElement
 	{
 		public static Visibility GetVisibility(DependencyObject obj)
 		{

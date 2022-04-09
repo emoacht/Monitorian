@@ -87,7 +87,7 @@ namespace Monitorian.Core.Models.Monitor
 		private static Guid SENSOR_TYPE_AMBIENT_LIGHT => new Guid("97F115C8-599A-4153-8894-D2D12899918A");
 
 		public static bool AmbientLightSensorExists => _ambientLightSensorExists.Value;
-		private static readonly Lazy<bool> _ambientLightSensorExists = new Lazy<bool>(() => SensorExists(SENSOR_TYPE_AMBIENT_LIGHT));
+		private static readonly Lazy<bool> _ambientLightSensorExists = new(() => SensorExists(SENSOR_TYPE_AMBIENT_LIGHT));
 
 		private static bool SensorExists(Guid sensorTypeGuid)
 		{

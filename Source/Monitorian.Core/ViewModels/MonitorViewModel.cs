@@ -27,7 +27,7 @@ namespace Monitorian.Core.ViewModels
 			LoadCustomization();
 		}
 
-		private readonly object _lock = new object();
+		private readonly object _lock = new();
 
 		internal void Replace(IMonitor monitor)
 		{

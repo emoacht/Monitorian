@@ -123,6 +123,9 @@
   <data name="ChangeRange" xml:space="preserve">
     <value>Einstellbaren Bereich ändern</value>
   </data>
+  <data name="ChangeUnison" xml:space="preserve">
+    <value>Regler synchron verschieben</value>
+  </data>
   <data name="Close" xml:space="preserve">
     <value>Schließen</value>
   </data>
@@ -146,9 +149,6 @@
   </data>
   <data name="MakeOperation" xml:space="preserve">
     <value>Anwendungsprotokoll erstellen</value>
-  </data>
-  <data name="MoveUnison" xml:space="preserve">
-    <value>Regler synchron verschieben</value>
   </data>
   <data name="OrderArrangement" xml:space="preserve">
     <value>Nach Monitoranordnung sortieren</value>

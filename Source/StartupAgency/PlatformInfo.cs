@@ -16,7 +16,7 @@ namespace StartupAgency
 		/// Whether this assembly is packaged in AppX package
 		/// </summary>
 		public static bool IsPackaged => _isPackaged.Value;
-		private static readonly Lazy<bool> _isPackaged = new Lazy<bool>(() => IsPackagedWithName());
+		private static readonly Lazy<bool> _isPackaged = new(() => IsPackagedWithName());
 
 		private static bool IsPackagedWithName()
 		{

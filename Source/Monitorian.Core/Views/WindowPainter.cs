@@ -13,7 +13,7 @@ namespace Monitorian.Core.Views
 {
 	public class WindowPainter : ScreenFrame.Painter.WindowPainter
 	{
-		public WindowPainter() : base(AppKeeper.DefinedArguments)
+		public WindowPainter() : base(AppKeeper.StandardArguments)
 		{ }
 
 		public static new IReadOnlyCollection<string> Options => ScreenFrame.Painter.WindowPainter.Options.Concat(ColorPairs.Keys).ToArray();

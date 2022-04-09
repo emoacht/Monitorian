@@ -15,17 +15,17 @@ namespace Monitorian.Core.Views.Controls
 	{
 		public SwitchTextBox() : base()
 		{
-			this.PreviewMouseLeftButtonDown += (sender, e) => OnDeviceDown(e.MouseDevice, true);
-			this.PreviewMouseRightButtonDown += (sender, e) => OnDeviceDown(e.MouseDevice, false);
-			this.PreviewStylusDown += (sender, e) => OnDeviceDown(e.StylusDevice, false);
-			this.PreviewTouchDown += (sender, e) => OnDeviceDown(e.TouchDevice, false);
+			this.PreviewMouseLeftButtonDown += (_, e) => OnDeviceDown(e.MouseDevice, true);
+			this.PreviewMouseRightButtonDown += (_, e) => OnDeviceDown(e.MouseDevice, false);
+			this.PreviewStylusDown += (_, e) => OnDeviceDown(e.StylusDevice, false);
+			this.PreviewTouchDown += (_, e) => OnDeviceDown(e.TouchDevice, false);
 
-			this.PreviewMouseUp += (sender, e) => OnDeviceUp();
-			this.PreviewStylusUp += (sender, e) => OnDeviceUp();
-			this.PreviewTouchUp += (sender, e) => OnDeviceUp();
-			this.MouseLeave += (sender, e) => OnDeviceUp();
-			this.StylusLeave += (sender, e) => OnDeviceUp();
-			this.TouchLeave += (sender, e) => OnDeviceUp();
+			this.PreviewMouseUp += (_, _) => OnDeviceUp();
+			this.PreviewStylusUp += (_, _) => OnDeviceUp();
+			this.PreviewTouchUp += (_, _) => OnDeviceUp();
+			this.MouseLeave += (_, _) => OnDeviceUp();
+			this.StylusLeave += (_, _) => OnDeviceUp();
+			this.TouchLeave += (_, _) => OnDeviceUp();
 
 			this.IsReadOnly = true;
 		}

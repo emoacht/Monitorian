@@ -123,6 +123,9 @@
   <data name="ChangeRange" xml:space="preserve">
     <value>Kullanılabilir aralık içinde değiştir</value>
   </data>
+  <data name="ChangeUnison" xml:space="preserve">
+    <value>Uyumlu hareket et</value>
+  </data>
   <data name="Close" xml:space="preserve">
     <value>Kapat</value>
   </data>
@@ -146,9 +149,6 @@
   </data>
   <data name="MakeOperation" xml:space="preserve">
     <value>Operasyon loglarını aktif et</value>
-  </data>
-  <data name="MoveUnison" xml:space="preserve">
-    <value>Uyumlu hareket et</value>
   </data>
   <data name="OrderArrangement" xml:space="preserve">
     <value>Monitör düzenine göre sırala</value>

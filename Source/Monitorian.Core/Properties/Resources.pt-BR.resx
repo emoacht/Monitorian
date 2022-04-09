@@ -126,6 +126,9 @@
   <data name="ChangeRange" xml:space="preserve">
     <value>Alterar faixa de ajuste</value>
   </data>
+  <data name="ChangeUnison" xml:space="preserve">
+    <value>Alterar em conjunto</value>
+  </data>
   <data name="Close" xml:space="preserve">
     <value>Fechar</value>
   </data>
@@ -149,9 +152,6 @@
   </data>
   <data name="MakeOperation" xml:space="preserve">
     <value>Produzir relatório de operações</value>
-  </data>
-  <data name="MoveUnison" xml:space="preserve">
-    <value>Alterar em conjunto</value>
   </data>
   <data name="OrderArrangement" xml:space="preserve">
     <value>Ordenar pela disposição dos monitores</value>

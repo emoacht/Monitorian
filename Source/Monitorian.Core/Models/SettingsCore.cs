@@ -166,8 +166,8 @@ namespace Monitorian.Core.Models
 				TimeSpan.FromMilliseconds(100),
 				() => Save(this));
 
-			MonitorCustomizations.CollectionChanged += (sender, e) => RaisePropertyChanged(nameof(MonitorCustomizations));
-			PropertyChanged += async (sender, e) => await _save.PushAsync();
+			MonitorCustomizations.CollectionChanged += (_, _) => RaisePropertyChanged(nameof(MonitorCustomizations));
+			PropertyChanged += async (_, _) => await _save.PushAsync();
 		}
 
 		#region Load/Save

@@ -36,7 +36,7 @@ namespace Monitorian.Core.Views
 			var window = Window.GetWindow(this) as MenuWindow;
 			if (window?.AppTitle is TextBlock appTitle)
 			{
-				appTitle.MouseDown += (sender, e) => Open();
+				appTitle.MouseDown += (_, _) => Open();
 			}
 		}
 

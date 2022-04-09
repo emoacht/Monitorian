@@ -43,7 +43,7 @@ namespace Monitorian.Supplement
 		}
 
 		private static LightSensor _sensor;
-		private static readonly object _lock = new object();
+		private static readonly object _lock = new();
 
 		/// <summary>
 		/// Report interval for ambient light sensor

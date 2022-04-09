@@ -42,21 +42,27 @@ namespace Monitorian.Core.Models.Monitor
 
 		#endregion
 
-		#region Preclearance
+		#region Preclusion/Preclearance
 
-		public static IReadOnlyCollection<string> Options => new[] { Option };
-		private const string Option = "/preclear";
+		public static IReadOnlyCollection<string> Options => new[] { PrecludeOption, PreclearOption };
 
-		private static readonly Lazy<HashSet<string>> _preclearedIds = new(() =>
+		private const string PrecludeOption = "/preclude";
+		private const string PreclearOption = "/preclear";
+
+		private static readonly Lazy<HashSet<string>> _precludedIds = new(() => GetOptionIds(PrecludeOption));
+		private static readonly Lazy<HashSet<string>> _preclearedIds = new(() => GetOptionIds(PreclearOption));
+
+		private static HashSet<string> GetOptionIds(string option)
 		{
-			var buffer = AppKeeper.DefinedArguments
-				.SkipWhile(x => !string.Equals(x, Option, StringComparison.OrdinalIgnoreCase))
+			var ids = AppKeeper.StandardArguments
+				.SkipWhile(x => !string.Equals(x, option, StringComparison.OrdinalIgnoreCase))
 				.Skip(1) // 1 means option.
-				.TakeWhile(x => x.StartsWith("DISPLAY"))
-				.Select(x => x.Replace(@"\\", @"\")); // Backslash will be escaped in JSON.
+				.Select(x => (success: DeviceConversion.TryParseToDeviceInstanceId(x, out string id), id))
+				.TakeWhile(x => x.success)
+				.Select(x => x.id);
 
-			return new HashSet<string>(buffer);
-		});
+			return new HashSet<string>(ids);
+		}
 
 		#endregion
 
@@ -82,6 +88,9 @@ namespace Monitorian.Core.Models.Monitor
 			{
 				foreach (var deviceItem in deviceItems)
 				{
+					if (_precludedIds.Value.Any(x => string.Equals(deviceItem.DeviceInstanceId, x, StringComparison.OrdinalIgnoreCase)))
+						continue;
+
 					var displayItem = displayItems.FirstOrDefault(x => string.Equals(deviceItem.DeviceInstanceId, x.DeviceInstanceId, StringComparison.OrdinalIgnoreCase));
 					if (displayItem is null)
 					{

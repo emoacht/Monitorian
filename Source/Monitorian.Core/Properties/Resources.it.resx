@@ -126,6 +126,9 @@
   <data name="ChangeRange" xml:space="preserve">
     <value>Cambia range modificabile</value>
   </data>
+  <data name="ChangeUnison" xml:space="preserve">
+    <value>Sincronizza spostamento</value>
+  </data>
   <data name="Close" xml:space="preserve">
     <value>Chiudi</value>
   </data>
@@ -149,9 +152,6 @@
   </data>
   <data name="MakeOperation" xml:space="preserve">
     <value>Crea log operazione</value>
-  </data>
-  <data name="MoveUnison" xml:space="preserve">
-    <value>Sincronizza spostamento</value>
   </data>
   <data name="OrderArrangement" xml:space="preserve">
     <value>Ordina per collocazione monitor</value>

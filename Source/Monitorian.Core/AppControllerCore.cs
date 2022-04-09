@@ -30,7 +30,7 @@ namespace Monitorian.Core
 		protected internal SettingsCore Settings { get; }
 
 		public ObservableCollection<MonitorViewModel> Monitors { get; }
-		protected readonly object _monitorsLock = new object();
+		protected readonly object _monitorsLock = new();
 
 		public NotifyIconContainer NotifyIconContainer { get; }
 		public WindowPainter WindowPainter { get; }
@@ -40,7 +40,7 @@ namespace Monitorian.Core
 		private readonly PowerWatcher _powerWatcher;
 		private readonly BrightnessWatcher _brightnessWatcher;
 
-		protected OperationRecorder Recorder { get; private set; }
+		protected OperationRecorder Recorder { get; } = new();
 
 		public AppControllerCore(AppKeeper keeper, SettingsCore settings)
 		{
@@ -90,7 +90,8 @@ namespace Monitorian.Core
 			{
 				if (!_sessionWatcher.IsLocked)
 					Update(instanceName, brightness);
-			});
+			},
+			async (message) => await Recorder.RecordAsync(message));
 		}
 
 		public virtual void End()
@@ -147,7 +148,7 @@ namespace Monitorian.Core
 		protected virtual void ShowMenuWindow(Point pivot)
 		{
 			var window = new MenuWindow(this, pivot);
-			window.ViewModel.CloseAppRequested += (sender, e) => _current.Shutdown();
+			window.ViewModel.CloseAppRequested += (_, _) => _current.Shutdown();
 			window.MenuSectionTop.Add(new ProbeSection(this));
 			window.Show();
 		}
@@ -155,7 +156,7 @@ namespace Monitorian.Core
 		protected virtual async void OnSettingsInitiated()
 		{
 			if (Settings.MakesOperationLog)
-				Recorder = await OperationRecorder.CreateAsync("Initiated");
+				await Recorder.EnableAsync("Initiated");
 		}
 
 		protected virtual async void OnSettingsChanged(object sender, PropertyChangedEventArgs e)
@@ -181,7 +182,11 @@ namespace Monitorian.Core
 					break;
 
 				case nameof(Settings.MakesOperationLog):
-					Recorder = Settings.MakesOperationLog ? await OperationRecorder.CreateAsync("Enabled") : null;
+					if (Settings.MakesOperationLog)
+						await Recorder.EnableAsync("Enabled");
+					else
+						Recorder.Disable();
+
 					break;
 			}
 		}
@@ -190,7 +195,7 @@ namespace Monitorian.Core
 
 		protected virtual async void OnMonitorsChangeInferred(object sender = null, ICountEventArgs e = null)
 		{
-			await (Recorder?.RecordAsync($"{nameof(OnMonitorsChangeInferred)} ({sender}{e?.Description})") ?? Task.CompletedTask);
+			await Recorder.RecordAsync($"{nameof(OnMonitorsChangeInferred)} ({sender}{e?.Description})");
 
 			if (e?.Count == 0)
 				return;
@@ -200,16 +205,16 @@ namespace Monitorian.Core
 
 		protected internal virtual async void OnMonitorAccessFailed(AccessResult result)
 		{
-			await (Recorder?.RecordAsync($"{nameof(OnMonitorAccessFailed)}" + Environment.NewLine
+			await Recorder.RecordAsync($"{nameof(OnMonitorAccessFailed)}" + Environment.NewLine
 				+ $"Status: {result.Status}" + Environment.NewLine
-				+ $"Message: {result.Message}") ?? Task.CompletedTask);
+				+ $"Message: {result.Message}");
 		}
 
 		protected internal virtual async void OnMonitorsChangeFound()
 		{
 			if (Monitors.Any())
 			{
-				await (Recorder?.RecordAsync($"{nameof(OnMonitorsChangeFound)}") ?? Task.CompletedTask);
+				await Recorder.RecordAsync($"{nameof(OnMonitorsChangeFound)}");
 
 				_displayWatcher.RaiseDisplaySettingsChanged();
 			}
@@ -240,7 +245,7 @@ namespace Monitorian.Core
 
 					var intervalTask = (interval > TimeSpan.Zero) ? Task.Delay(interval) : Task.CompletedTask;
 
-					Recorder?.StartGroupRecord($"{nameof(ScanAsync)} [{DateTime.Now}]");
+					Recorder.StartGroupRecord($"{nameof(ScanAsync)} [{DateTime.Now}]");
 
 					await Task.Run(async () =>
 					{
@@ -249,7 +254,7 @@ namespace Monitorian.Core
 
 						foreach (var item in await MonitorManager.EnumerateMonitorsAsync())
 						{
-							Recorder?.AddGroupRecordItem("Items", item.ToString());
+							Recorder.AddGroupRecordItem("Items", item.ToString());
 
 							var oldMonitorExists = false;
 
@@ -321,8 +326,8 @@ namespace Monitorian.Core
 					foreach (var m in Monitors.Where(x => !x.IsControllable))
 						m.IsTarget = !controllableMonitorExists;
 
-					Recorder?.AddGroupRecordItems(nameof(Monitors), Monitors.Select(x => x.ToString()));
-					await (Recorder?.EndGroupRecordAsync() ?? Task.CompletedTask);
+					Recorder.AddGroupRecordItems(nameof(Monitors), Monitors.Select(x => x.ToString()));
+					await Recorder.EndGroupRecordAsync();
 
 					await intervalTask;
 				}

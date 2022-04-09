@@ -180,7 +180,7 @@ namespace Monitorian.Core.Views.Controls
 
 				var originThumbPoint = getPosition(_thumb);
 				var originThumbPointToScreen = _thumb.PointToScreen(originThumbPoint);
-				//_thumbOriginThumbPoint.SetValue(_thumb, originThumbPoint);
+				_thumbOriginThumbPoint.SetValue(_thumb, originThumbPoint);
 				_thumbPreviousScreenCoordPosition.SetValue(_thumb, originThumbPointToScreen);
 				_thumbOriginScreenCoordPosition.SetValue(_thumb, originThumbPointToScreen);
 

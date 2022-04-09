@@ -126,6 +126,9 @@
   <data name="ChangeRange" xml:space="preserve">
     <value>Verander aanpasbaar bereik</value>
   </data>
+  <data name="ChangeUnison" xml:space="preserve">
+    <value>Waardes samen aanpassen</value>
+  </data>
   <data name="Close" xml:space="preserve">
     <value>Sluiten</value>
   </data>
@@ -149,9 +152,6 @@
   </data>
   <data name="MakeOperation" xml:space="preserve">
     <value>Bewerkingslogboek maken</value>
-  </data>
-  <data name="MoveUnison" xml:space="preserve">
-    <value>Waardes samen aanpassen</value>
   </data>
   <data name="OrderArrangement" xml:space="preserve">
     <value>Ordenen op monitor volgorde</value>

@@ -148,7 +148,7 @@
     <value>Habilitar el canvi del rang d'ajustament</value>
   </data>
   <data name="EnableUnison" xml:space="preserve">
-    <value>Habilitar moure els controls alhora</value>
+    <value>Habilitar canviar la brillantor alhora</value>
   </data>
   <data name="MakeOperation" xml:space="preserve">
     <value>Registrar operacions</value>

@@ -18,8 +18,9 @@ In addition, the user can change the adjustable range of brightness and contrast
 Additional languages:
 
  - Arabic (ar) by @MohammadShughri
+ - Catalan (ca) by @ericmp33
  - German (de) by @uDEV2019
- - Spanish (es) by @josemirm
+ - Spanish (es) by @josemirm and @ericmp33
  - French (fr) by @AlexZeGamer
  - Italian (it) by @GhostyJade
  - Japanese (ja-JP) by @emoacht
@@ -30,8 +31,8 @@ Additional languages:
  - Romanian (ro) by @calini
  - Russian (ru-RU) by @SigmaTel71
  - Turkish (tr-TR) by @webbudesign
- - Simplified Chinese (zh-Hans) by @ComMouse, @zhujunsan and @xmuli
- - Traditional Chinese (zh-Hant) by @toto6038
+ - Simplified Chinese (zh-Hans) by @ComMouse, @zhujunsan, @XMuli and @FISHandCHEAP
+ - Traditional Chinese (zh-Hant) by @toto6038 and @XMuli
 
 ## Requirements
 
@@ -52,7 +53,7 @@ Additional languages:
    ```
 
  * Other:<br>
-:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/3.9.0-Installer/MonitorianInstaller390.zip)
+:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/3.10.1-Installer/MonitorianInstaller3101.zip)
 
 ## Install/Uninstall
 
@@ -64,7 +65,7 @@ msiexec /a [source msi file path] targetdir=[destination folder path (absolute p
 
 In such case, please note the following:
 
- - The settings file will be created at: `[system drive]\Users\[user name]\AppData\Local\Monitorian\`
+ - The settings file (and other file) will be created at: `[system drive]\Users\[user name]\AppData\Local\Monitorian\`
  - When you check [Start on sign in], a registry value will be added to: `HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run`
 
 ## Remarks
@@ -123,11 +124,13 @@ In any case, reporting on the controllability of a monitor MUST include probe.lo
 
 ### Operations
 
- - As part of testing, you can record operations to scan monitors and reflect their states. To enable the recording, check `Make operation log` in the hidden menu. After that, __operation.log__ can be copied by `Copy operation log`.
+ - As part of testing, you can set this app to record operations to scan monitors and reflect their states. To enable the recording, check `Make operation log` in the hidden menu. After some information is recorded, you will be able to copy __operation.log__ by `Copy operation log`.
+ - If you notice an issue, <ins>enable the recording and then wait until the issue happens. When you notice the issue again, copy this log and check the information including the change before and after the issue.</ins>
 
 ### Command-line arguments
 
  - As part of testing, you can store persistent arguments in `Command-line arguments` in the hidden menu. They will be tested along with current arguments when this app starts.
+ - For example, if you want to fix this app's language to English (default), set `/lang en` in this box.
 
 ### Exceptions
 
@@ -144,7 +147,7 @@ In any case, reporting on the controllability of a monitor MUST include probe.lo
 | Windows 10 SDK (10.0.19041.0)                               | TargetPlatformVersion  |
 
 3. Load the solution by specifying `/Source/Monitorian.sln`. Then go to the solution explorer and right click the solution name and execute `Restore NuGet Packages`.
-4. To open installer project, install [WiX Toolset Build Tools](https://wixtoolset.org/releases/) and [WiX Toolset Visual Studio Extension](https://marketplace.visualstudio.com/items?itemName=WixToolset.WiXToolset). For Visual Studio 2022, Use [latest release](https://github.com/wixtoolset/VisualStudioExtension/releases/tag/v1.0.0.12).
+4. To open installer project, install [WiX Toolset Build Tools](https://wixtoolset.org/releases/) and [WiX Toolset Visual Studio Extension](https://marketplace.visualstudio.com/items?itemName=WixToolset.WiXToolset). For Visual Studio 2022, Use [latest release](https://github.com/wixtoolset/VisualStudioExtension/releases/tag/v1.0.0.18).
 
 ### Globalization
 
@@ -155,10 +158,18 @@ An alternative language can be shown by adding a Resources (.resx) file into `/S
 
 ## History
 
+Ver 3.10 2022-4-12
+
+ - Redesign small slider
+ - Add Catalan (ca) language. Thanks to @ericmp33!
+ - Supplement Spanish (es) language. Thanks to @ericmp33!
+ - Improve Simplified Chinese (zh-Hans) language. Thanks to @FISHandCHEAP!
+ - Supplement Traditional Chinese (zh-Hant) language. Thanks to @XMuli!
+
 Ver 3.9 2022-1-20
 
  - Add Portuguese (pt-BR) language. Thanks to @guilhermgonzaga!
- - Supplement Chinese (zh-Hans) language. Thanks to @xmuli!
+ - Supplement Simplified Chinese (zh-Hans) language. Thanks to @XMuli!
  - Fix Dutch (nl-NL) language. Thanks to @JordyEGNL!
 
 Ver 3.8 2021-12-18
@@ -172,8 +183,8 @@ Ver 3.7 2021-12-3
 
 Ver 3.6 2021-9-30
 
- - Add Italian (it) language. Thanks to @GhostyJade!
  - Fix count for scan process
+ - Add Italian (it) language. Thanks to @GhostyJade!
 
 Ver 3.5 2021-9-9
 

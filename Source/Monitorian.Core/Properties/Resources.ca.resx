@@ -118,78 +118,78 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Arguments" xml:space="preserve">
-    <value>Argumentos de linha de comando</value>
+    <value>Arguments de línia de comandes</value>
   </data>
   <data name="ChangeContrast" xml:space="preserve">
-    <value>Alterar contraste</value>
+    <value>Canviar contrast</value>
   </data>
   <data name="ChangeRange" xml:space="preserve">
-    <value>Alterar faixa de ajuste</value>
+    <value>Canviar rang d'ajustament</value>
   </data>
   <data name="ChangeUnison" xml:space="preserve">
-    <value>Alterar em conjunto</value>
+    <value>Canviar la brillantor alhora</value>
   </data>
   <data name="Close" xml:space="preserve">
-    <value>Fechar</value>
+    <value>Tancar</value>
   </data>
   <data name="CopyOperation" xml:space="preserve">
-    <value>Copiar relatório de operações</value>
+    <value>Copiar registre d'operació</value>
   </data>
   <data name="CopySaveOperationMessage" xml:space="preserve">
-    <value>Salvar relatório de operações na área de trabalho?</value>
+    <value>Desar registre d'operació a l'escriptori?</value>
   </data>
   <data name="DeferChange" xml:space="preserve">
-    <value>Adiar alteração até terminar</value>
+    <value>No fer canvis fins a acabar d'ajustar</value>
   </data>
   <data name="EnableContrast" xml:space="preserve">
-    <value>Permitir alteração de contraste</value>
+    <value>Habilitar el canvi de contrast</value>
   </data>
   <data name="EnableRange" xml:space="preserve">
-    <value>Permitir alteração da faixa de ajuste</value>
+    <value>Habilitar el canvi del rang d'ajustament</value>
   </data>
   <data name="EnableUnison" xml:space="preserve">
-    <value>Permitir alterações em conjunto</value>
+    <value>Habilitar canviar la brillantor alhora</value>
   </data>
   <data name="MakeOperation" xml:space="preserve">
-    <value>Produzir relatório de operações</value>
+    <value>Registrar operacions</value>
   </data>
   <data name="OrderArrangement" xml:space="preserve">
-    <value>Ordenar pela disposição dos monitores</value>
+    <value>Ordenar per posició dels monitors</value>
   </data>
   <data name="Probe" xml:space="preserve">
-    <value>Inspecionar monitores</value>
+    <value>Sondejar monitors</value>
   </data>
   <data name="RecordExceptionMessage" xml:space="preserve">
-    <value>Houve um problema inesperado. Salvar relatório de erros na área de trabalho?</value>
+    <value>Ha aparegut un problema inesperat. Desar registre d'errors a l'escriptori?</value>
   </data>
   <data name="RecordProbeMessage" xml:space="preserve">
-    <value>Salvar relatório na área de trabalho?</value>
+    <value>Desar registre de sondeig a l'escriptori?</value>
   </data>
   <data name="Rescan" xml:space="preserve">
-    <value>Procurar monitores</value>
+    <value>Tornar a comprovar monitors</value>
   </data>
   <data name="Settings" xml:space="preserve">
-    <value>Ajustes</value>
+    <value>Ajustaments</value>
   </data>
   <data name="ShowAdjusted" xml:space="preserve">
-    <value>Mostrar brilho ajustado</value>
+    <value>Mostrar brillantor ajustada</value>
   </data>
   <data name="ShowNumber" xml:space="preserve">
     <value>Mostrar número</value>
   </data>
   <data name="StartSignIn" xml:space="preserve">
-    <value>Executar ao inicializar</value>
+    <value>Executar en iniciar sessió</value>
   </data>
   <data name="StatusNotControllable" xml:space="preserve">
-    <value>O monitor não é controlável.</value>
+    <value>Monitor no controlable.</value>
   </data>
   <data name="StatusReasonDdcFailing" xml:space="preserve">
-    <value>Houve erros incessantes no DDC/CI.</value>
+    <value>DDC/CI ha fallat repetidament.</value>
   </data>
   <data name="StatusReasonDdcNotEnabled" xml:space="preserve">
-    <value>Não há suporte para DDC/CI ou está inativo.</value>
+    <value>DDC/CI no està suportat o no està habilitat.</value>
   </data>
   <data name="UseLargeElements" xml:space="preserve">
-    <value>Usar controles grandes</value>
+    <value>Utilitzar controls grans</value>
   </data>
 </root>

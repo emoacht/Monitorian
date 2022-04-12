@@ -126,7 +126,7 @@
   <data name="CopyOperation" xml:space="preserve">
     <value>작업 로그 복사</value>
   </data>
-  <data name="CopyOperationMessage" xml:space="preserve">
+  <data name="CopySaveOperationMessage" xml:space="preserve">
     <value>작업 로그를 데스크톱에 저장하시겠습니까?</value>
   </data>
   <data name="EnableUnison" xml:space="preserve">

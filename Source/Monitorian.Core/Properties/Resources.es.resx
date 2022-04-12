@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Arguments" xml:space="preserve">
+    <value>Argumentos de línia de comandos</value>
+  </data>
   <data name="ChangeContrast" xml:space="preserve">
     <value>Cambiar contraste</value>
   </data>
@@ -132,7 +135,7 @@
   <data name="CopyOperation" xml:space="preserve">
     <value>Copiar registro de operación</value>
   </data>
-  <data name="CopyOperationMessage" xml:space="preserve">
+  <data name="CopySaveOperationMessage" xml:space="preserve">
     <value>¿Guardar registro de operación en el escritorio?</value>
   </data>
   <data name="DeferChange" xml:space="preserve">

@@ -135,7 +135,7 @@
   <data name="CopyOperation" xml:space="preserve">
     <value>Bewerkingslogboek kopiëren</value>
   </data>
-  <data name="CopyOperationMessage" xml:space="preserve">
+  <data name="CopySaveOperationMessage" xml:space="preserve">
     <value>Bewerkingslogboek kopiëren naar de Desktop?</value>
   </data>
   <data name="DeferChange" xml:space="preserve">

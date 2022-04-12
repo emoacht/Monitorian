@@ -57,7 +57,7 @@ namespace Monitorian.Core.Models
 		private static string BuildHtml(string title, string body)
 		{
 			body = body?
-				.Split(new[] { "\r\n\r\n", "\n\n" }, StringSplitOptions.RemoveEmptyEntries)
+				.Split(new[] { "\r\n\r\n", "\n\n" /* two consecutive line breaks */ }, StringSplitOptions.RemoveEmptyEntries)
 				.Select(x =>
 				{
 					var array = x.Split(Array.Empty<char>(), 2, StringSplitOptions.RemoveEmptyEntries);
@@ -72,7 +72,7 @@ namespace Monitorian.Core.Models
 				})
 				.Aggregate((w, n) => $"{w}\r\n{n}");
 
-			return $@"<!DOCTYPE HTML PUBLIC "" -//W3C//DTD HTML 4.01//EN"" ""http://www.w3.org/TR/html4/strict.dtd"">
+			return $@"<!DOCTYPE html>
 <html>
 <head>
 <meta charset=""utf-8""/>

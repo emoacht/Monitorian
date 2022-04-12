@@ -117,9 +117,18 @@ namespace Monitorian.Core.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Save operation log to Desktop?.
         /// </summary>
-        public static string CopyOperationMessage {
+        public static string CopySaveOperationMessage {
             get {
-                return ResourceManager.GetString("CopyOperationMessage", resourceCulture);
+                return ResourceManager.GetString("CopySaveOperationMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Wait for more information to be recorded to operaton log..
+        /// </summary>
+        public static string CopyWaitOperationMessage {
+            get {
+                return ResourceManager.GetString("CopyWaitOperationMessage", resourceCulture);
             }
         }
         

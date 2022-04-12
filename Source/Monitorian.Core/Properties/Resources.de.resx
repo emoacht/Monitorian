@@ -132,7 +132,7 @@
   <data name="CopyOperation" xml:space="preserve">
     <value>Anwendungsprotokoll kopieren</value>
   </data>
-  <data name="CopyOperationMessage" xml:space="preserve">
+  <data name="CopySaveOperationMessage" xml:space="preserve">
     <value>Anwendungsprotokoll auf Desktop speichern?</value>
   </data>
   <data name="DeferChange" xml:space="preserve">

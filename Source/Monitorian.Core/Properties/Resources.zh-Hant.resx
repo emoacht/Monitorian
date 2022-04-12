@@ -135,7 +135,7 @@
   <data name="CopyOperation" xml:space="preserve">
     <value>複製操作紀錄</value>
   </data>
-  <data name="CopyOperationMessage" xml:space="preserve">
+  <data name="CopySaveOperationMessage" xml:space="preserve">
     <value>將操作紀錄檔儲存至桌面？</value>
   </data>
   <data name="DeferChange" xml:space="preserve">

@@ -146,7 +146,8 @@ namespace Monitorian.Core.Models
 		/// <summary>
 		/// Copies operation log from AppData to Desktop.
 		/// </summary>
-		public static async Task CopyOperationAsync()
+		/// <param name="threshold">Threshold of log's content (in the number of characters)</param>
+		public static async Task CopyOperationAsync(int threshold = 10000)
 		{
 			var buffer = new StringBuilder();
 
@@ -164,8 +165,20 @@ namespace Monitorian.Core.Models
 			if (buffer.Length == 0)
 				return;
 
+			if (buffer.Length < threshold)
+			{
+				MessageBox.Show(
+					Resources.CopyWaitOperationMessage,
+					ProductInfo.Title,
+					MessageBoxButton.OK,
+					MessageBoxImage.Exclamation,
+					MessageBoxResult.OK);
+
+				return;
+			}
+
 			if (MessageBox.Show(
-				Resources.CopyOperationMessage,
+				Resources.CopySaveOperationMessage,
 				ProductInfo.Title,
 				MessageBoxButton.OKCancel,
 				MessageBoxImage.Information,

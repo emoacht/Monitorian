@@ -132,7 +132,7 @@
   <data name="CopyOperation" xml:space="preserve">
     <value>نسخ سجلات العمليات</value>
   </data>
-  <data name="CopyOperationMessage" xml:space="preserve">
+  <data name="CopySaveOperationMessage" xml:space="preserve">
     <value>نسخ سجلات العمليات إلى سطح المكتب</value>
   </data>
   <data name="DeferChange" xml:space="preserve">

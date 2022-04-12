@@ -132,7 +132,7 @@
   <data name="CopyOperation" xml:space="preserve">
     <value>Копировать журнал действий</value>
   </data>
-  <data name="CopyOperationMessage" xml:space="preserve">
+  <data name="CopySaveOperationMessage" xml:space="preserve">
     <value>Сохранить журнал действий на рабочий стол?</value>
   </data>
   <data name="DeferChange" xml:space="preserve">

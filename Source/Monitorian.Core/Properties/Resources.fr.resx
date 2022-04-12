@@ -126,7 +126,7 @@
   <data name="CopyOperation" xml:space="preserve">
     <value>Copier le journal des opérations</value>
   </data>
-  <data name="CopyOperationMessage" xml:space="preserve">
+  <data name="CopySaveOperationMessage" xml:space="preserve">
     <value>Enregistrer le journal des opérations sur le Bureau ?</value>
   </data>
   <data name="EnableUnison" xml:space="preserve">

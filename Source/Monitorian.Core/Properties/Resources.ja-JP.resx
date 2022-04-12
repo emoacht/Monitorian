@@ -135,8 +135,11 @@
   <data name="CopyOperation" xml:space="preserve">
     <value>動作ログをコピーする</value>
   </data>
-  <data name="CopyOperationMessage" xml:space="preserve">
+  <data name="CopySaveOperationMessage" xml:space="preserve">
     <value>動作ログをデスクトップに保存しますか?</value>
+  </data>
+  <data name="CopyWaitOperationMessage" xml:space="preserve">
+    <value>動作ログにもっと情報が記録されるのを待ってください。</value>
   </data>
   <data name="DeferChange" xml:space="preserve">
     <value>止まるまで変更を遅らせる</value>

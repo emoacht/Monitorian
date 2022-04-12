@@ -135,7 +135,7 @@
   <data name="CopyOperation" xml:space="preserve">
     <value>Copiar relatório de operações</value>
   </data>
-  <data name="CopyOperationMessage" xml:space="preserve">
+  <data name="CopySaveOperationMessage" xml:space="preserve">
     <value>Salvar relatório de operações na área de trabalho?</value>
   </data>
   <data name="DeferChange" xml:space="preserve">

@@ -135,7 +135,7 @@
   <data name="CopyOperation" xml:space="preserve">
     <value>Copiar registre d'operació</value>
   </data>
-  <data name="CopyOperationMessage" xml:space="preserve">
+  <data name="CopySaveOperationMessage" xml:space="preserve">
     <value>Desar registre d'operació a l'escriptori?</value>
   </data>
   <data name="DeferChange" xml:space="preserve">

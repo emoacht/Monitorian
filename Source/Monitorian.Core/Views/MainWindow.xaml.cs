@@ -11,7 +11,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-
+using Windows.UI.ViewManagement;
 using Monitorian.Core.Helper;
 using Monitorian.Core.Models;
 using Monitorian.Core.ViewModels;
@@ -99,6 +99,20 @@ namespace Monitorian.Core.Views
 				.ToDictionary(x => (string)x.Key, x => (double)x.Value);
 		}
 
+		private void ApplyDynamicColors() {
+			if (!OsVersion.Is10OrGreater)
+				return;
+
+			var uiSettings = new UISettings();
+			var accentColor = uiSettings.GetColorValue(UIColorType.Accent);
+			var accentLightColor = uiSettings.GetColorValue(UIColorType.AccentLight1);
+			var accentDarkColor = uiSettings.GetColorValue(UIColorType.AccentDark1);
+
+			this.Resources["Slider.Background.Main.StaticColor"] = accentColor.ToWindowsMediaColor();
+			this.Resources["Slider.Background.Main.MouseOverColor"] = accentLightColor.ToWindowsMediaColor();
+			this.Resources["Slider.Background.Main.PressedColor"] = accentDarkColor.ToWindowsMediaColor();
+		}
+
 		public bool UsesLargeElements
 		{
 			get { return (bool)GetValue(UsesLargeElementsProperty); }
@@ -113,7 +127,7 @@ namespace Monitorian.Core.Views
 					true,
 					(d, e) =>
 					{
-						// Setting the same value will not trigger calling this method.					
+						// Setting the same value will not trigger calling this method.
 
 						var window = (MainWindow)d;
 						if (window._defaultHeights is null)
@@ -139,6 +153,8 @@ namespace Monitorian.Core.Views
 
 		public void ShowForeground()
 		{
+			ApplyDynamicColors();
+
 			try
 			{
 				this.Topmost = true;
@@ -205,7 +221,7 @@ namespace Monitorian.Core.Views
 
 			ViewModel.Deactivate();
 
-			// Set time to prevent this window from being shown unintentionally. 
+			// Set time to prevent this window from being shown unintentionally.
 			_preventionTime = DateTimeOffset.Now + TimeSpan.FromSeconds(0.2);
 
 			ClearHide();

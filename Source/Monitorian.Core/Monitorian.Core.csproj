@@ -55,6 +55,7 @@
     <Compile Include="Collections\ObservableKeyedList.cs" />
     <Compile Include="Common\BindableBase.cs" />
     <Compile Include="Helper\ArraySearch.cs" />
+    <Compile Include="Helper\ColorExtension.cs" />
     <Compile Include="Helper\EnumerableExtension.cs" />
     <Compile Include="Helper\ExceptionExtension.cs" />
     <Compile Include="Helper\KeyValuePairExtension.cs" />
@@ -264,6 +265,12 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.Windows.SDK.Contracts">
+      <Version>10.0.17134.1000</Version>
+    </PackageReference>
+    <PackageReference Include="System.Runtime.WindowsRuntime">
+      <Version>4.7.0</Version>
+    </PackageReference>
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf">
       <Version>1.1.37</Version>
     </PackageReference>

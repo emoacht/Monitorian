@@ -51,9 +51,9 @@
 		<Color x:Key="Slider.Background.DisabledColor">#FFF0F0F0</Color>
 		<Color x:Key="Slider.Background.VacantColor">#FF999999</Color>
 
-		<SolidColorBrush x:Key="Slider.Background.Main.Static" Color="{StaticResource Slider.Background.Main.StaticColor}"/>
-		<SolidColorBrush x:Key="Slider.Background.Main.MouseOver" Color="{StaticResource Slider.Background.Main.MouseOverColor}"/>
-		<SolidColorBrush x:Key="Slider.Background.Main.Pressed" Color="{StaticResource Slider.Background.Main.PressedColor}"/>
+		<SolidColorBrush x:Key="Slider.Background.Main.Static" Color="{DynamicResource Slider.Background.Main.StaticColor}"/>
+		<SolidColorBrush x:Key="Slider.Background.Main.MouseOver" Color="{DynamicResource Slider.Background.Main.MouseOverColor}"/>
+		<SolidColorBrush x:Key="Slider.Background.Main.Pressed" Color="{DynamicResource Slider.Background.Main.PressedColor}"/>
 		<SolidColorBrush x:Key="Slider.Background.Range.Static" Color="{StaticResource Slider.Background.Range.StaticColor}"/>
 		<SolidColorBrush x:Key="Slider.Background.Range.MouseOver" Color="{StaticResource Slider.Background.Range.MouseOverColor}"/>
 		<SolidColorBrush x:Key="Slider.Background.Range.Pressed" Color="{StaticResource Slider.Background.Range.PressedColor}"/>

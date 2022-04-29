@@ -44,6 +44,9 @@ namespace Monitorian.Core.Views
 			{
 				ViewModel.MonitorsView.Refresh();
 			};
+			//controller.WindowPainter.ColorChanged += (_, _) =>
+			//{
+			//};
 
 			_tracker = new TouchpadTracker(this);
 			_tracker.ManipulationDelta += (_, delta) =>
@@ -113,7 +116,7 @@ namespace Monitorian.Core.Views
 					true,
 					(d, e) =>
 					{
-						// Setting the same value will not trigger calling this method.					
+						// Setting the same value will not trigger calling this method.
 
 						var window = (MainWindow)d;
 						if (window._defaultHeights is null)
@@ -205,7 +208,7 @@ namespace Monitorian.Core.Views
 
 			ViewModel.Deactivate();
 
-			// Set time to prevent this window from being shown unintentionally. 
+			// Set time to prevent this window from being shown unintentionally.
 			_preventionTime = DateTimeOffset.Now + TimeSpan.FromSeconds(0.2);
 
 			ClearHide();

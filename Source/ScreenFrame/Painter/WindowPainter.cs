@@ -188,6 +188,7 @@ namespace ScreenFrame.Painter
 		}
 
 		private const int WM_SETTINGCHANGE = 0x001A;
+		private const int WM_DWMCOLORIZATIONCOLORCHANGED = 0x0320;
 
 		private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
 		{
@@ -196,27 +197,39 @@ namespace ScreenFrame.Painter
 				case WM_SETTINGCHANGE:
 					if (string.Equals(Marshal.PtrToStringAuto(lParam), "ImmersiveColorSet"))
 					{
-						OnChanged();
+						OnThemeChanged();
 					}
+					break;
+
+				case WM_DWMCOLORIZATIONCOLORCHANGED:
+					OnColorChanged();
 					break;
 			}
 			return IntPtr.Zero;
 		}
 
-		private Task _throttleTask;
+		private Throttle _themeChange;
+		private Throttle _colorChange;
 
-		private async void OnChanged()
+		private async void OnThemeChanged()
 		{
-			var waitTask = Task.Delay(TimeSpan.FromSeconds(1));
-			_throttleTask = waitTask;
-			await waitTask;
-			if (_throttleTask == waitTask)
+			_themeChange ??= new Throttle(() =>
 			{
 				if (ApplyChangedTheme())
 				{
 					ThemeChanged?.Invoke(null, EventArgs.Empty);
 				}
-			}
+			});
+			await _themeChange.PushAsync();
+		}
+
+		private async void OnColorChanged()
+		{
+			_colorChange ??= new Throttle(() =>
+			{
+				ColorChanged?.Invoke(null, EventArgs.Empty);
+			});
+			await _colorChange.PushAsync();
 		}
 
 		#endregion
@@ -339,6 +352,11 @@ namespace ScreenFrame.Painter
 			_translucentBrush = null;
 		}
 
+		/// <summary>
+		/// Occurs when the accent color for Windows is changed.
+		/// </summary>
+		public event EventHandler ColorChanged;
+
 		#region Resources
 
 		/// <summary>
@@ -404,6 +422,7 @@ namespace ScreenFrame.Painter
 			{
 				RemoveHook();
 				ThemeChanged = null;
+				ColorChanged = null;
 			}
 
 			_isDisposed = true;

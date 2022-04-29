@@ -52,6 +52,7 @@
     <Compile Include="Helper\DpiScaleExtension.cs" />
     <Compile Include="Helper\KeyValuePairExtension.cs" />
     <Compile Include="Helper\OsVersion.cs" />
+    <Compile Include="Helper\Throttle.cs" />
     <Compile Include="Movers\BasicWindowMover.cs" />
     <Compile Include="Movers\FloatWindowMover.cs" />
     <Compile Include="Movers\PopupWindowMover.cs" />

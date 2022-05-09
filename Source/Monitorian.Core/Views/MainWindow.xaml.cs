@@ -44,7 +44,7 @@ namespace Monitorian.Core.Views
 			{
 				ViewModel.MonitorsView.Refresh();
 			};
-			//controller.WindowPainter.ColorChanged += (_, _) =>
+			//controller.WindowPainter.AccentColorChanged += (_, _) =>
 			//{
 			//};
 

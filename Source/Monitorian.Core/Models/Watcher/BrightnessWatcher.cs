@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Management;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -68,11 +69,11 @@ namespace Monitorian.Core.Models.Watcher
 					if (_watcher is not null)
 					{
 						_watcher.EventArrived -= OnEventArrived;
-						_watcher.Stop(); // This may throw InvalidCastException.
+						_watcher.Stop(); // This may throw InvalidCastException or COMException.
 						_watcher.Dispose();
 					}
 				}
-				catch (InvalidCastException)
+				catch (Exception ex) when (ex is InvalidCastException or COMException)
 				{
 				}
 			}

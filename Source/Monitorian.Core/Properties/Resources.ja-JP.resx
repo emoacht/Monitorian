@@ -171,6 +171,9 @@
   <data name="Rescan" xml:space="preserve">
     <value>モニターを再探索する</value>
   </data>
+  <data name="RestoreReconnection" xml:space="preserve">
+    <value>再接続時に明るさを復元する</value>
+  </data>
   <data name="Settings" xml:space="preserve">
     <value>設定</value>
   </data>

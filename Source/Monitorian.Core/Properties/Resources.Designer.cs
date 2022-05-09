@@ -223,6 +223,15 @@ namespace Monitorian.Core.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Restore brightness on reconnection.
+        /// </summary>
+        public static string RestoreReconnection {
+            get {
+                return ResourceManager.GetString("RestoreReconnection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Settings.
         /// </summary>
         public static string Settings {

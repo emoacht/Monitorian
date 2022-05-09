@@ -18,14 +18,14 @@ namespace ScreenFrame.Painter
 	{
 		#region Win32 (common)
 
-		[DllImport("Dwmapi.dll", SetLastError = true)]
+		[DllImport("Dwmapi.dll")]
 		private static extern int DwmSetWindowAttribute(
 			IntPtr hwnd,
 			uint dwAttribute,
 			[In] ref bool pvAttribute, // IntPtr
 			uint cbAttribute);
 
-		[DllImport("Dwmapi.dll", SetLastError = true)]
+		[DllImport("Dwmapi.dll")]
 		private static extern int DwmSetWindowAttribute(
 			IntPtr hwnd,
 			uint dwAttribute,

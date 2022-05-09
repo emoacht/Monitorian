@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Media;
 
 using Monitorian.Core.Helper;
+using Monitorian.Supplement;
 using ScreenFrame.Painter;
 
 namespace Monitorian.Core.Views
@@ -19,7 +20,7 @@ namespace Monitorian.Core.Views
 		public static new IReadOnlyCollection<string> Options => ScreenFrame.Painter.WindowPainter.Options.Concat(ColorPairs.Keys).ToArray();
 
 		/// <summary>
-		/// Color changeable elements of window
+		/// Color changeable background/border
 		/// </summary>
 		private enum ColorElement
 		{
@@ -77,15 +78,17 @@ namespace Monitorian.Core.Views
 			_colors = colors.Any() ? colors : null;
 		}
 
+		#region Theme or background/border colors
+
 		protected override void PaintBackground(Window window)
 		{
-			if (ChangeColors(window))
+			if (ChangeBackgroundColors(window))
 				return;
 
 			base.PaintBackground(window);
 		}
 
-		private bool ChangeColors(Window window)
+		private bool ChangeBackgroundColors(Window window)
 		{
 			if (_colors is not { Count: > 0 })
 				return false;
@@ -135,5 +138,61 @@ namespace Monitorian.Core.Views
 					break;
 			}
 		}
+
+		#endregion
+
+		#region Accent color
+
+		private static readonly Lazy<ResourceDictionary> _generic = new(() =>
+			Application.Current.Resources.MergedDictionaries.Single(x => x.Source.OriginalString.EndsWith("Generic.xaml")));
+
+		private class ColorContainer
+		{
+			private readonly string _key;
+			private readonly Color _color;
+
+			public ColorContainer(string key)
+			{
+				this._key = key;
+				this._color = Color;
+			}
+
+			public Color Color
+			{
+				get => (Color)_generic.Value[_key];
+				set => _generic.Value[_key] = value;
+			}
+
+			public void Revert() => Color = _color;
+		}
+
+		private readonly Lazy<ColorContainer> _staticColorContaier = new(() => new("App.Background.Accent.StaticColor"));
+		private readonly Lazy<ColorContainer> _mouseOverColorContainer = new(() => new("App.Background.Accent.MouseOverColor"));
+		private readonly Lazy<ColorContainer> _pressedColorContainer = new(() => new("App.Background.Accent.PressedColor"));
+
+		public void AttachAccentColors()
+		{
+			ChangeAccentColors();
+
+			RespondsAccentColorChanged = true;
+		}
+
+		public void DetachAccentColors()
+		{
+			RespondsAccentColorChanged = false;
+
+			_staticColorContaier.Value.Revert();
+			_mouseOverColorContainer.Value.Revert();
+			_pressedColorContainer.Value.Revert();
+		}
+
+		protected override void ChangeAccentColors()
+		{
+			_staticColorContaier.Value.Color = UIInformation.GetAccentColor();
+			_mouseOverColorContainer.Value.Color = UIInformation.GetAccentLightColor();
+			_pressedColorContainer.Value.Color = _mouseOverColorContainer.Value.Color;
+		}
+
+		#endregion
 	}
 }

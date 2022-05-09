@@ -39,11 +39,6 @@ namespace ScreenFrame.Painter
 		private ColorTheme _theme;
 
 		/// <summary>
-		/// Whether to respond when the color theme of Windows is changed
-		/// </summary>
-		protected bool RespondsThemeChanged { get; set; } = true; // Default
-
-		/// <summary>
 		/// Background texture of window
 		/// </summary>
 		private enum BackgroundTexture
@@ -138,8 +133,7 @@ namespace ScreenFrame.Painter
 			DisableTransitions(window);
 			PaintBackground(window);
 
-			if (RespondsThemeChanged)
-				AddHook(window);
+			AddHook(window);
 		}
 
 		private void OnClosed(object sender, EventArgs e)
@@ -147,8 +141,7 @@ namespace ScreenFrame.Painter
 			var oldWindow = (Window)sender;
 			Remove(oldWindow);
 
-			if (RespondsThemeChanged &&
-				RemoveHook(oldWindow))
+			if (RemoveHook(oldWindow))
 			{
 				var newWindow = _windows.FirstOrDefault(x => x.IsInitialized);
 				if (newWindow is not null)
@@ -188,38 +181,58 @@ namespace ScreenFrame.Painter
 		}
 
 		private const int WM_SETTINGCHANGE = 0x001A;
+		private const int WM_DWMCOLORIZATIONCOLORCHANGED = 0x0320;
 
 		private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
 		{
 			switch (msg)
 			{
-				case WM_SETTINGCHANGE:
-					if (string.Equals(Marshal.PtrToStringAuto(lParam), "ImmersiveColorSet"))
-					{
-						OnChanged();
-					}
+				case WM_SETTINGCHANGE when (Marshal.PtrToStringAuto(lParam) == "ImmersiveColorSet") && RespondsThemeChanged:
+					OnThemeChanged();
+					break;
+
+				case WM_DWMCOLORIZATIONCOLORCHANGED when RespondsAccentColorChanged:
+					OnAccentColorChanged(ColorExtension.FromUInt32((uint)wParam));
 					break;
 			}
 			return IntPtr.Zero;
 		}
 
-		private Task _throttleTask;
+		private Throttle _applyChangedTheme;
+		private Throttle<Color> _applyChangedAccentColor;
 
-		private async void OnChanged()
+		private async void OnThemeChanged()
 		{
-			var waitTask = Task.Delay(TimeSpan.FromSeconds(1));
-			_throttleTask = waitTask;
-			await waitTask;
-			if (_throttleTask == waitTask)
+			_applyChangedTheme ??= new Throttle(() =>
 			{
 				if (ApplyChangedTheme())
 				{
 					ThemeChanged?.Invoke(null, EventArgs.Empty);
 				}
-			}
+			});
+			await _applyChangedTheme.PushAsync();
+		}
+
+		private async void OnAccentColorChanged(Color color)
+		{
+			_applyChangedAccentColor ??= new Throttle<Color>(c =>
+			{
+				if (ApplyChangedAccentColor(c))
+				{
+					AccentColorChanged?.Invoke(null, EventArgs.Empty);
+				}
+			});
+			await _applyChangedAccentColor.PushAsync(color);
 		}
 
 		#endregion
+
+		#region Theme
+
+		/// <summary>
+		/// Whether to respond when the color theme for Windows is changed
+		/// </summary>
+		protected bool RespondsThemeChanged { get; set; } = true; // Default
 
 		/// <summary>
 		/// Occurs when the color theme for Windows is changed.
@@ -339,8 +352,6 @@ namespace ScreenFrame.Painter
 			_translucentBrush = null;
 		}
 
-		#region Resources
-
 		/// <summary>
 		/// Changes color themes.
 		/// </summary>
@@ -379,6 +390,50 @@ namespace ScreenFrame.Painter
 
 		#endregion
 
+		#region Accent color
+
+		/// <summary>
+		/// Whether to respond when the accent color for Windows is changed
+		/// </summary>
+		protected bool RespondsAccentColorChanged
+		{
+			get => _respondsAccentColorChanged;
+			set
+			{
+				_respondsAccentColorChanged = value;
+				if (_respondsAccentColorChanged)
+					_accentColor = ColorExtension.GetColorizationColor();
+			}
+		}
+		private bool _respondsAccentColorChanged;
+
+		/// <summary>
+		/// Occurs when the accent color for Windows is changed.
+		/// </summary>
+		public event EventHandler AccentColorChanged;
+
+		private static Color _accentColor;
+
+		private bool ApplyChangedAccentColor(Color accentColor)
+		{
+			if (_accentColor == accentColor)
+				return false;
+
+			// Color provided with WM_DWMCOLORIZATIONCOLORCHANGED and by DwmGetColorizationColor
+			// will not match that provided by UISettings.
+			ChangeAccentColors();
+			_accentColor = accentColor;
+			return true;
+		}
+
+		/// <summary>
+		/// Changes accent colors.
+		/// </summary>
+		protected virtual void ChangeAccentColors()
+		{ }
+
+		#endregion
+
 		#region IDisposable
 
 		private bool _isDisposed = false;
@@ -404,6 +459,7 @@ namespace ScreenFrame.Painter
 			{
 				RemoveHook();
 				ThemeChanged = null;
+				AccentColorChanged = null;
 			}
 
 			_isDisposed = true;

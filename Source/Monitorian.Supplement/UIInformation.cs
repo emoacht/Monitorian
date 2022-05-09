@@ -26,6 +26,18 @@ namespace Monitorian.Supplement
 		public static Color GetAccentColor() => GetUIColor(UIColorType.Accent);
 
 		/// <summary>
+		/// Gets the system accent light color.
+		/// </summary>
+		/// <returns></returns>
+		public static Color GetAccentLightColor() => GetUIColor(UIColorType.AccentLight1);
+
+		/// <summary>
+		/// Gets the system accent dark color.
+		/// </summary>
+		/// <returns></returns>
+		public static Color GetAccentDarkColor() => GetUIColor(UIColorType.AccentDark1);
+
+		/// <summary>
 		/// Gets the system background color.
 		/// </summary>
 		/// <returns></returns>

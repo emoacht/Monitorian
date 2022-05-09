@@ -39,9 +39,6 @@
 		<Style TargetType="{x:Type ToolTip}" BasedOn="{StaticResource ToolTipStyle}"/>
 
 		<!-- Slider -->
-		<Color x:Key="Slider.Background.Main.StaticColor">#FF2982CC</Color>
-		<Color x:Key="Slider.Background.Main.MouseOverColor">#FF5CA4DE</Color>
-		<Color x:Key="Slider.Background.Main.PressedColor">#FF5CA4DE</Color>
 		<Color x:Key="Slider.Background.Range.StaticColor">#FFFFA500</Color>
 		<Color x:Key="Slider.Background.Range.MouseOverColor">#FFFFC400</Color>
 		<Color x:Key="Slider.Background.Range.PressedColor">#FFFFC400</Color>
@@ -51,9 +48,9 @@
 		<Color x:Key="Slider.Background.DisabledColor">#FFF0F0F0</Color>
 		<Color x:Key="Slider.Background.VacantColor">#FF999999</Color>
 
-		<SolidColorBrush x:Key="Slider.Background.Main.Static" Color="{StaticResource Slider.Background.Main.StaticColor}"/>
-		<SolidColorBrush x:Key="Slider.Background.Main.MouseOver" Color="{StaticResource Slider.Background.Main.MouseOverColor}"/>
-		<SolidColorBrush x:Key="Slider.Background.Main.Pressed" Color="{StaticResource Slider.Background.Main.PressedColor}"/>
+		<SolidColorBrush x:Key="Slider.Background.Main.Static" Color="{DynamicResource App.Background.Accent.StaticColor}"/>
+		<SolidColorBrush x:Key="Slider.Background.Main.MouseOver" Color="{DynamicResource App.Background.Accent.MouseOverColor}"/>
+		<SolidColorBrush x:Key="Slider.Background.Main.Pressed" Color="{DynamicResource App.Background.Accent.PressedColor}"/>
 		<SolidColorBrush x:Key="Slider.Background.Range.Static" Color="{StaticResource Slider.Background.Range.StaticColor}"/>
 		<SolidColorBrush x:Key="Slider.Background.Range.MouseOver" Color="{StaticResource Slider.Background.Range.MouseOverColor}"/>
 		<SolidColorBrush x:Key="Slider.Background.Range.Pressed" Color="{StaticResource Slider.Background.Range.PressedColor}"/>
@@ -667,7 +664,7 @@
 							</Grid.ColumnDefinitions>
 
 							<Rectangle Grid.Column="0"
-									   Fill="{StaticResource App.Background.Accent}"
+									   Fill="{StaticResource Slider.Background.Main.Static}"
 									   Visibility="{Binding IsSelectedByKey, Converter={StaticResource BooleanToVisibilityConverterKey}}"/>
 
 							<!-- Brightness -->

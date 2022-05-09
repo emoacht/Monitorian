@@ -53,7 +53,7 @@ Additional languages:
    ```
 
  * Other:<br>
-:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/3.10.1-Installer/MonitorianInstaller3101.zip)
+:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/3.11.0-Installer/MonitorianInstaller3110.zip)
 
 ## Install/Uninstall
 
@@ -157,6 +157,10 @@ An alternative language can be shown by adding a Resources (.resx) file into `/S
  - The name of a name/value pair must correspond to that in the default `Resources.resx` file to override it.
 
 ## History
+
+Ver 3.11 2022-5-10
+
+ - Enable to use accent color for brightness
 
 Ver 3.10 2022-4-12
 

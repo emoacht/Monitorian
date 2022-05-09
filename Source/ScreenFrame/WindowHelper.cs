@@ -180,14 +180,14 @@ namespace ScreenFrame
 			IntPtr hWnd,
 			out RECT lpRect);
 
-		[DllImport("Dwmapi.dll", SetLastError = true)]
+		[DllImport("Dwmapi.dll")]
 		private static extern int DwmGetWindowAttribute(
 			IntPtr hwnd,
 			uint dwAttribute,
 			out RECT pvAttribute, // IntPtr
 			uint cbAttribute);
 
-		[DllImport("Dwmapi.dll", SetLastError = true)]
+		[DllImport("Dwmapi.dll")]
 		private static extern int DwmSetWindowAttribute(
 			IntPtr hwnd,
 			uint dwAttribute,

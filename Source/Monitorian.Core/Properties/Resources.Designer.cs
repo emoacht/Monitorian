@@ -286,6 +286,15 @@ namespace Monitorian.Core.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Use accent color for brightness.
+        /// </summary>
+        public static string UseAccentColor {
+            get {
+                return ResourceManager.GetString("UseAccentColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Use large sliders.
         /// </summary>
         public static string UseLargeElements {

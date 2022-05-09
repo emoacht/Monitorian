@@ -155,6 +155,9 @@ namespace Monitorian.Core
 
 		protected virtual async void OnSettingsInitiated()
 		{
+			if (Settings.UsesAccentColor)
+				WindowPainter.AttachAccentColors();
+
 			if (Settings.MakesOperationLog)
 				await Recorder.EnableAsync("Initiated");
 		}
@@ -163,6 +166,14 @@ namespace Monitorian.Core
 		{
 			switch (e.PropertyName)
 			{
+				case nameof(Settings.UsesAccentColor):
+					if (Settings.UsesAccentColor)
+						WindowPainter.AttachAccentColors();
+					else
+						WindowPainter.DetachAccentColors();
+
+					break;
+
 				case nameof(Settings.EnablesUnison) when !Settings.EnablesUnison:
 					foreach (var m in Monitors)
 						m.IsUnison = false;

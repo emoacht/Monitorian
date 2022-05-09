@@ -32,6 +32,17 @@ namespace Monitorian.Core.Models
 		private bool _usesLargeElements = true; // Default
 
 		/// <summary>
+		/// Whether to use accent color for brightness
+		/// </summary>
+		[DataMember]
+		public bool UsesAccentColor
+		{
+			get => _usesAccentColor;
+			set => SetPropertyValue(ref _usesAccentColor, value);
+		}
+		private bool _usesAccentColor;
+
+		/// <summary>
 		/// Whether to show adjusted brightness
 		/// </summary>
 		[DataMember]

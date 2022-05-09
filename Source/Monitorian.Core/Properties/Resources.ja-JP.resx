@@ -192,6 +192,9 @@
   <data name="StatusReasonDdcNotEnabled" xml:space="preserve">
     <value>DDC/CIがサポートされていないか有効になっていません。</value>
   </data>
+  <data name="UseAccentColor" xml:space="preserve">
+    <value>明るさにアクセントカラーを使う</value>
+  </data>
   <data name="UseLargeElements" xml:space="preserve">
     <value>大きいスライダーを使う</value>
   </data>

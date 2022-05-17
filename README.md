@@ -53,7 +53,7 @@ Additional languages:
    ```
 
  * Other:<br>
-:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/3.11.0-Installer/MonitorianInstaller3110.zip)
+:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/3.11.1-Installer/MonitorianInstaller3111.zip)
 
 ## Install/Uninstall
 
@@ -158,9 +158,10 @@ An alternative language can be shown by adding a Resources (.resx) file into `/S
 
 ## History
 
-Ver 3.11 2022-5-10
+Ver 3.11 2022-5-18
 
  - Enable to use accent color for brightness
+ - Supplement Korean (ko-KR) language. Thanks to @VenusGirl!
 
 Ver 3.10 2022-4-12
 

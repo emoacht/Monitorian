@@ -293,28 +293,31 @@ namespace Monitorian.Core.Models.Monitor
 			[DataMember(Order = 0)]
 			public string System { get; private set; }
 
+			[DataMember(Order = 1)]
+			public string OS { get; private set; }
+
 			// When Name property of DataMemberAttribute contains a space or specific character 
 			// (e.g. !, ?), DataContractJsonSerializer.WriteObject method will internally throw 
 			// a System.Xml.XmlException while it will work fine.
-			[DataMember(Order = 1, Name = "Device Context - DeviceItems")]
+			[DataMember(Order = 2, Name = "Device Context - DeviceItems")]
 			public DeviceContext.DeviceItem[] DeviceItems { get; private set; }
 
-			[DataMember(Order = 2, Name = "DisplayMonitor - DisplayItems")]
+			[DataMember(Order = 3, Name = "DisplayMonitor - DisplayItems")]
 			public DisplayMonitor.DisplayItem[] DisplayMonitorItems { get; private set; }
 
-			[DataMember(Order = 3, Name = "Display Config - DisplayItems")]
+			[DataMember(Order = 4, Name = "Display Config - DisplayItems")]
 			public DisplayConfig.DisplayItem[] DisplayConfigItems { get; private set; }
 
-			[DataMember(Order = 4, Name = "Device Installation - InstalledItems")]
+			[DataMember(Order = 5, Name = "Device Installation - InstalledItems")]
 			public DeviceInformation.InstalledItem[] InstalledItems { get; private set; }
 
-			[DataMember(Order = 5, Name = "Monitor Configuration - PhysicalItems")]
+			[DataMember(Order = 6, Name = "Monitor Configuration - PhysicalItems")]
 			public Dictionary<DeviceContext.HandleItem, PhysicalItemPlus[]> PhysicalItems { get; private set; }
 
-			[DataMember(Order = 6, Name = "MSMonitorClass - DesktopItems")]
+			[DataMember(Order = 7, Name = "MSMonitorClass - DesktopItems")]
 			public MSMonitor.DesktopItem[] DesktopItems { get; private set; }
 
-			[DataMember(Order = 7)]
+			[DataMember(Order = 8)]
 			public string[] ElapsedTime { get; private set; }
 
 			public MonitorData()
@@ -323,6 +326,7 @@ namespace Monitorian.Core.Models.Monitor
 			public async Task PopulateAsync()
 			{
 				System = GetSystem();
+				OS = Environment.OSVersion.Version.ToString();
 
 				var sw = new Stopwatch();
 

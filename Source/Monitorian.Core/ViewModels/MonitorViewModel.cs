@@ -417,7 +417,7 @@ namespace Monitorian.Core.ViewModels
 		{
 			get
 			{
-				if (0 < _controllableCount)
+				if (IsReachable && (0 < _controllableCount))
 					return null;
 
 				LanguageService.Switch();

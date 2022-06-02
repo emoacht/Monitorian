@@ -84,7 +84,7 @@ Add-on features are available for Microsoft Store version on a subscription basi
 
 ### Command-line options
 
-You can use command-line options to get/set the brigtness.
+You can use command-line options to get/set the brightness.
 
 | Actions                                | Options                                |
 |----------------------------------------|----------------------------------------|

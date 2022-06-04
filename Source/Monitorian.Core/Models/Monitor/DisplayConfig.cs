@@ -274,21 +274,26 @@ namespace Monitorian.Core.Models.Monitor
 			public bool IsInternal { get; }
 
 			[DataMember(Order = 3)]
-			public string ConnectionDescription { get; }
+			public float RefreshRate { get; }
 
 			[DataMember(Order = 4)]
+			public string ConnectionDescription { get; }
+
+			[DataMember(Order = 5)]
 			public bool IsAvailable { get; }
 
 			public DisplayItem(
 				string deviceInstanceId,
 				string displayName,
 				bool isInternal,
+				float refreshRate,
 				string connectionDescription,
 				bool isAvailable)
 			{
 				this.DeviceInstanceId = deviceInstanceId;
 				this.DisplayName = displayName;
 				this.IsInternal = isInternal;
+				this.RefreshRate = refreshRate;
 				this.ConnectionDescription = connectionDescription;
 				this.IsAvailable = isAvailable;
 			}
@@ -339,6 +344,7 @@ namespace Monitorian.Core.Models.Monitor
 					deviceInstanceId: deviceInstanceId,
 					displayName: deviceName.monitorFriendlyDeviceName,
 					isInternal: (deviceName.outputTechnology == DISPLAYCONFIG_VIDEO_OUTPUT_TECHNOLOGY.DISPLAYCONFIG_OUTPUT_TECHNOLOGY_INTERNAL),
+					refreshRate: displayPath.targetInfo.refreshRate.Numerator / (float)displayPath.targetInfo.refreshRate.Denominator,
 					connectionDescription: GetConnectionDescription(deviceName.outputTechnology),
 					isAvailable: displayPath.targetInfo.targetAvailable);
 			}

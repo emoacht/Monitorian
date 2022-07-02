@@ -16,7 +16,7 @@ using Monitorian.Core.Helper;
 using Monitorian.Core.Models;
 using Monitorian.Core.ViewModels;
 using Monitorian.Core.Views.Controls;
-using Monitorian.Core.Views.Touchpad;
+using Monitorian.Core.Views.Input.Touchpad;
 using ScreenFrame.Movers;
 
 namespace Monitorian.Core.Views

@@ -131,9 +131,9 @@
     <Compile Include="Views\Converters\StringToVisibilityConverter.cs" />
     <Compile Include="Views\Converters\VisibilityInverseConverter.cs" />
     <Compile Include="Views\Converters\VisibilityToBooleanFilterConverter.cs" />
-    <Compile Include="Views\Touchpad\TouchpadContact.cs" />
-    <Compile Include="Views\Touchpad\TouchpadHelper.cs" />
-    <Compile Include="Views\Touchpad\TouchpadTracker.cs" />
+    <Compile Include="Views\Input\Touchpad\TouchpadContact.cs" />
+    <Compile Include="Views\Input\Touchpad\TouchpadHelper.cs" />
+    <Compile Include="Views\Input\Touchpad\TouchpadTracker.cs" />
     <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
@@ -268,5 +268,6 @@
       <Version>1.1.37</Version>
     </PackageReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

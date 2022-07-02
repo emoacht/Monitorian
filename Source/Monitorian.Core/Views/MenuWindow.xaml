@@ -10,6 +10,12 @@
 		ShowInTaskbar="False" Topmost="True"
 		AllowsTransparency="True" WindowStyle="None"
 		Background="{StaticResource App.Background.Plain}">
+	<Window.InputBindings>
+		<KeyBinding Command="ApplicationCommands.Close" Key="Esc"/>
+	</Window.InputBindings>
+	<Window.CommandBindings>
+		<CommandBinding Command="ApplicationCommands.Close" Executed="OnCloseTriggered"/>
+	</Window.CommandBindings>
 
 	<StackPanel Margin="0,4">
 		<TextBlock x:Name="AppTitle"

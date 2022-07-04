@@ -16,7 +16,8 @@ using Monitorian.Core.Helper;
 using Monitorian.Core.Models;
 using Monitorian.Core.ViewModels;
 using Monitorian.Core.Views.Controls;
-using Monitorian.Core.Views.Touchpad;
+using Monitorian.Core.Views.Input;
+using Monitorian.Core.Views.Input.Touchpad;
 using ScreenFrame.Movers;
 
 namespace Monitorian.Core.Views
@@ -77,6 +78,8 @@ namespace Monitorian.Core.Views
 				});
 
 			//this.InvalidateProperty(UsesLargeElementsProperty);
+
+			EnableMouseHorizontalWheel();
 		}
 
 		protected override void OnClosed(EventArgs e)
@@ -133,6 +136,21 @@ namespace Monitorian.Core.Views
 							window.Resources[key] = buffer;
 						}
 					}));
+
+		#endregion
+
+		#region MouseHorizontalWheel
+
+		public event MouseWheelEventHandler MouseHorizontalWheel
+		{
+			add => AddHandler(MouseAddition.MouseHorizontalWheelEvent, value);
+			remove => RemoveHandler(MouseAddition.MouseHorizontalWheelEvent, value);
+		}
+
+		private void EnableMouseHorizontalWheel()
+		{
+			MouseAddition.EnableMouseHorizontalWheel(this);
+		}
 
 		#endregion
 

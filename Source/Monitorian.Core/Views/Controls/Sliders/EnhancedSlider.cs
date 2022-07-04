@@ -329,6 +329,8 @@ namespace Monitorian.Core.Views.Controls
 			EnsureUpdateSource();
 		}
 
+		public virtual void OnMouseHorizontalWheel(object sender, MouseWheelEventArgs e) => OnMouseWheel(e);
+
 		#endregion
 
 		#region Deferral

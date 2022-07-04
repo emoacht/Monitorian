@@ -686,6 +686,14 @@
 									<behaviors:ItemSliderBehavior IsSelected="{Binding IsSelected, Mode=OneWay}"
 																  IsByKey="{Binding IsByKey, Mode=TwoWay}"/>
 								</i:Interaction.Behaviors>
+								<i:Interaction.Triggers>
+									<i:EventTrigger SourceObject="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
+													EventName="MouseHorizontalWheel">
+										<i:CallMethodAction TargetObject="{Binding RelativeSource={RelativeSource AncestorType={x:Type Slider}}}"
+															MethodName="OnMouseHorizontalWheel"
+															IsEnabled="{Binding IsUnison, Mode=OneWay, Converter={StaticResource BooleanInverseConverterKey}}"/>
+									</i:EventTrigger>
+								</i:Interaction.Triggers>
 							</controls:CompoundSlider>
 
 							<Grid Grid.Column="2"

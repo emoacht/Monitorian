@@ -86,7 +86,7 @@ namespace Monitorian.Core
 			// Concatenate current and persistent arguments.
 			// The first element of StartupEventArgs.Args is not executing assembly's path unlike
 			// that of arguments provided by Environment.GetCommandLineArgs method.
-			args = e.Args.Concat(args).ToArray();
+			args = e.Args.Concat(args.Select(x => x.Trim('"'))).ToArray();
 			if (args is not { Length: > 0 })
 				return;
 

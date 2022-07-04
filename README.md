@@ -53,7 +53,7 @@ Additional languages:
    ```
 
  * Other:<br>
-:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/3.11.3-Installer/MonitorianInstaller3113.zip)
+:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/3.12.0-Installer/MonitorianInstaller3120.zip)
 
 ## Install/Uninstall
 
@@ -157,6 +157,10 @@ An alternative language can be shown by adding a Resources (.resx) file into `/S
  - The name of a name/value pair must correspond to that in the default `Resources.resx` file to override it.
 
 ## History
+
+Ver 3.12 2022-7-4
+
+ - Enable mouse horizontal wheel to change brigtness concurrently (except that in unison)
 
 Ver 3.11 2022-6-2
 

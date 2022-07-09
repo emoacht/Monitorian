@@ -690,7 +690,7 @@
 									<i:EventTrigger SourceObject="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
 													EventName="MouseHorizontalWheel">
 										<i:CallMethodAction TargetObject="{Binding RelativeSource={RelativeSource AncestorType={x:Type Slider}}}"
-															MethodName="OnMouseHorizontalWheel"
+															MethodName="OnMouseWheel"
 															IsEnabled="{Binding IsUnison, Mode=OneWay, Converter={StaticResource BooleanInverseConverterKey}}"/>
 									</i:EventTrigger>
 								</i:Interaction.Triggers>

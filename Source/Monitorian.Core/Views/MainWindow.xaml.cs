@@ -184,6 +184,11 @@ namespace Monitorian.Core.Views
 						FocusManager.SetFocusedElement(this, currentFocusedElement);
 				}
 			}
+			catch (ArgumentException ex) when ((uint)ex.HResult is 0x80070057)
+			{
+				// Window.Show method can cause ArgumentException when internally calling
+				// CompositionTarget.SetRootVisual method.
+			}
 			finally
 			{
 				this.Topmost = false;

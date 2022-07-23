@@ -71,11 +71,13 @@ namespace Monitorian.Core.Collections
 		{
 			while ((1 <= List.Count) && (AbsoluteCapacity < List.Count))
 			{
-				var item = List[List.Count - 1];
-				List.RemoveAt(List.Count - 1);
+				int index = List.Count - 1;
+				var item = List[index];
+				List.RemoveAt(index);
 				CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(
 					action: NotifyCollectionChangedAction.Remove,
-					changedItem: item));
+					changedItem: item,
+					index: index));
 			}
 		}
 
@@ -155,11 +157,12 @@ namespace Monitorian.Core.Collections
 				if (!TryFindIndex(key, out int index))
 					return false;
 
-				var oldItem = List[index];
+				var item = List[index];
 				List.RemoveAt(index);
 				CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(
 					action: NotifyCollectionChangedAction.Remove,
-					changedItem: oldItem));
+					changedItem: item,
+					index: index));
 				return true;
 			}
 		}

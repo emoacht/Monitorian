@@ -70,6 +70,12 @@ namespace Monitorian.Core.ViewModels
 
 		#endregion
 
+		#region Accent color
+
+		public bool IsAccentColorSupported => _controller.WindowPainter.IsAccentColorSupported;
+
+		#endregion
+
 		public event EventHandler CloseAppRequested;
 
 		/// <summary>

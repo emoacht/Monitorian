@@ -74,7 +74,8 @@
 						  IsChecked="{Binding Settings.UsesLargeElements}"/>
 		</ContentControl>
 
-		<ContentControl Style="{StaticResource MenuItemStyle}">
+		<ContentControl Style="{StaticResource MenuItemStyle}"
+						Visibility="{Binding IsAccentColorSupported, Converter={StaticResource BooleanToVisibilityConverterKey}}">
 			<ToggleButton Padding="8,4"
 						  Style="{StaticResource CheckButtonItemStyle}"
 						  FontSize="13"

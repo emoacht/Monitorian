@@ -143,6 +143,12 @@ namespace Monitorian.Core.Views
 
 		#region Accent color
 
+		/// <summary>
+		/// Whether the accent color is supported
+		/// </summary>
+		/// <remarks>Windows 8.1 has the accent color but is not considered as such here.</remarks>
+		public bool IsAccentColorSupported { get; } = OsVersion.Is10OrGreater;
+
 		private static readonly Lazy<ResourceDictionary> _generic = new(() =>
 			Application.Current.Resources.MergedDictionaries.Single(x => x.Source.OriginalString.EndsWith("Generic.xaml")));
 
@@ -172,6 +178,9 @@ namespace Monitorian.Core.Views
 
 		public void AttachAccentColors()
 		{
+			if (!IsAccentColorSupported)
+				return;
+
 			ChangeAccentColors();
 
 			RespondsAccentColorChanged = true;

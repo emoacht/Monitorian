@@ -63,7 +63,7 @@ namespace Monitorian.Core.ViewModels
 					_controller.StartupAgent.Unregister();
 				}
 				_isRegistered = value;
-				RaisePropertyChanged();
+				OnPropertyChanged();
 			}
 		}
 		private bool? _isRegistered;

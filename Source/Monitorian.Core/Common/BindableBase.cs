@@ -14,17 +14,17 @@ namespace Monitorian.Core.Common
 		[field: NonSerialized]
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		protected virtual bool SetPropertyValue<T>(ref T storage, T value, [CallerMemberName] string propertyName = null)
+		protected virtual bool SetProperty<T>(ref T storage, T value, [CallerMemberName] string propertyName = null)
 		{
 			if (EqualityComparer<T>.Default.Equals(storage, value))
 				return false;
 
 			storage = value;
-			RaisePropertyChanged(propertyName);
+			OnPropertyChanged(propertyName);
 			return true;
 		}
 
-		protected virtual void RaisePropertyChanged([CallerMemberName] string propertyName = null) =>
+		protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null) =>
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 	}
 }

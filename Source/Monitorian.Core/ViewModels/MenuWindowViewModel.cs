@@ -63,10 +63,16 @@ namespace Monitorian.Core.ViewModels
 					_controller.StartupAgent.Unregister();
 				}
 				_isRegistered = value;
-				RaisePropertyChanged();
+				OnPropertyChanged();
 			}
 		}
 		private bool? _isRegistered;
+
+		#endregion
+
+		#region Accent color
+
+		public bool IsAccentColorSupported => _controller.WindowPainter.IsAccentColorSupported;
 
 		#endregion
 

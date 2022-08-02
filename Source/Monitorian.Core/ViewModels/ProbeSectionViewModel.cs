@@ -35,7 +35,7 @@ namespace Monitorian.Core.ViewModels
 		public bool CanProbe
 		{
 			get => _canProbe;
-			private set => SetPropertyValue(ref _canProbe, value);
+			private set => SetProperty(ref _canProbe, value);
 		}
 		private bool _canProbe = true;
 
@@ -68,7 +68,7 @@ namespace Monitorian.Core.ViewModels
 		public string Arguments
 		{
 			get => _arguments;
-			set => SetPropertyValue(ref _arguments, value);
+			set => SetProperty(ref _arguments, value);
 		}
 		private string _arguments;
 	}

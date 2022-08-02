@@ -105,7 +105,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf">
-      <Version>1.1.37</Version>
+      <Version>1.1.39</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

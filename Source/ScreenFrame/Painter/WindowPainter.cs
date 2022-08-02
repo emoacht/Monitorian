@@ -402,7 +402,7 @@ namespace ScreenFrame.Painter
 			{
 				_respondsAccentColorChanged = value;
 				if (_respondsAccentColorChanged)
-					_accentColor = ColorExtension.GetColorizationColor();
+					AccentColor = ColorExtension.GetColorizationColor();
 			}
 		}
 		private bool _respondsAccentColorChanged;
@@ -412,17 +412,24 @@ namespace ScreenFrame.Painter
 		/// </summary>
 		public event EventHandler AccentColorChanged;
 
-		private static Color _accentColor;
+		/// <summary>
+		/// The accent color for Windows
+		/// </summary>
+		/// <remarks>
+		/// This color is obtained by DwmGetColorizationColor function and then replaced with the color
+		/// provided along with WM_DWMCOLORIZATIONCOLORCHANGED message.
+		/// This color should not be used as is on Windows 10 because it will not match the actual color
+		/// obtainable by Windows.UI.ViewManagement.UISettings.
+		/// </remarks>
+		protected static Color AccentColor { get; private set; }
 
 		private bool ApplyChangedAccentColor(Color accentColor)
 		{
-			if (_accentColor == accentColor)
+			if (AccentColor == accentColor)
 				return false;
 
-			// Color provided with WM_DWMCOLORIZATIONCOLORCHANGED and by DwmGetColorizationColor
-			// will not match that provided by UISettings.
+			AccentColor = accentColor;
 			ChangeAccentColors();
-			_accentColor = accentColor;
 			return true;
 		}
 

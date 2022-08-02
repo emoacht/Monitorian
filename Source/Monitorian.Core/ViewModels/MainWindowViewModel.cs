@@ -54,7 +54,7 @@ namespace Monitorian.Core.ViewModels
 				//case NotifyCollectionChangedAction.Reset:
 				case NotifyCollectionChangedAction.Add:
 				case NotifyCollectionChangedAction.Remove:
-					RaisePropertyChanged(nameof(IsMonitorsEmpty));
+					OnPropertyChanged(nameof(IsMonitorsEmpty));
 
 					if (MonitorsView.CurrentItem is null)
 					{
@@ -78,7 +78,7 @@ namespace Monitorian.Core.ViewModels
 		private void OnScanningChanged(object sender, bool e)
 		{
 			IsScanning = e;
-			RaisePropertyChanged(nameof(IsScanning));
+			OnPropertyChanged(nameof(IsScanning));
 		}
 
 		public bool IsScanning { get; private set; }

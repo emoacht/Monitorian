@@ -62,7 +62,7 @@ namespace Monitorian.Core.ViewModels
 			get => _name ?? _monitor.Description;
 			set
 			{
-				if (SetPropertyValue(ref _name, GetValueOrNull(value)))
+				if (SetProperty(ref _name, GetValueOrNull(value)))
 					SaveCustomization();
 			}
 		}
@@ -75,7 +75,7 @@ namespace Monitorian.Core.ViewModels
 			get => _isUnison;
 			set
 			{
-				if (SetPropertyValue(ref _isUnison, value))
+				if (SetProperty(ref _isUnison, value))
 					SaveCustomization();
 			}
 		}
@@ -87,7 +87,7 @@ namespace Monitorian.Core.ViewModels
 		public bool IsRangeChanging
 		{
 			get => _isRangeChanging;
-			set => SetPropertyValue(ref _isRangeChanging, value);
+			set => SetProperty(ref _isRangeChanging, value);
 		}
 		private bool _isRangeChanging = false;
 
@@ -99,7 +99,7 @@ namespace Monitorian.Core.ViewModels
 			get => _rangeLowest;
 			set
 			{
-				if (SetPropertyValue(ref _rangeLowest, (byte)value))
+				if (SetProperty(ref _rangeLowest, (byte)value))
 					SaveCustomization();
 			}
 		}
@@ -113,7 +113,7 @@ namespace Monitorian.Core.ViewModels
 			get => _rangeHighest;
 			set
 			{
-				if (SetPropertyValue(ref _rangeHighest, (byte)value))
+				if (SetProperty(ref _rangeHighest, (byte)value))
 					SaveCustomization();
 			}
 		}
@@ -154,9 +154,9 @@ namespace Monitorian.Core.ViewModels
 			switch (result.Status)
 			{
 				case AccessStatus.Succeeded:
-					RaisePropertyChanged(nameof(BrightnessSystemChanged)); // This must be prior to Brightness.
-					RaisePropertyChanged(nameof(Brightness));
-					RaisePropertyChanged(nameof(BrightnessSystemAdjusted));
+					OnPropertyChanged(nameof(BrightnessSystemChanged)); // This must be prior to Brightness.
+					OnPropertyChanged(nameof(Brightness));
+					OnPropertyChanged(nameof(BrightnessSystemAdjusted));
 					OnSucceeded();
 					return true;
 
@@ -235,7 +235,7 @@ namespace Monitorian.Core.ViewModels
 			switch (result.Status)
 			{
 				case AccessStatus.Succeeded:
-					RaisePropertyChanged(nameof(Brightness));
+					OnPropertyChanged(nameof(Brightness));
 					OnSucceeded();
 					return true;
 
@@ -266,7 +266,7 @@ namespace Monitorian.Core.ViewModels
 			get => IsContrastSupported && _isContrastChanging;
 			set
 			{
-				if (SetPropertyValue(ref _isContrastChanging, value) && value)
+				if (SetProperty(ref _isContrastChanging, value) && value)
 					UpdateContrast();
 			}
 		}
@@ -298,7 +298,7 @@ namespace Monitorian.Core.ViewModels
 			switch (result.Status)
 			{
 				case AccessStatus.Succeeded:
-					RaisePropertyChanged(nameof(Contrast));
+					OnPropertyChanged(nameof(Contrast));
 					OnSucceeded();
 					return true;
 
@@ -327,7 +327,7 @@ namespace Monitorian.Core.ViewModels
 			switch (result.Status)
 			{
 				case AccessStatus.Succeeded:
-					RaisePropertyChanged(nameof(Contrast));
+					OnPropertyChanged(nameof(Contrast));
 					OnSucceeded();
 					return true;
 
@@ -396,8 +396,8 @@ namespace Monitorian.Core.ViewModels
 				_controllableCount = NormalCount;
 				if (formerCount <= InitialCount)
 				{
-					RaisePropertyChanged(nameof(IsControllable));
-					RaisePropertyChanged(nameof(Message));
+					OnPropertyChanged(nameof(IsControllable));
+					OnPropertyChanged(nameof(Message));
 				}
 
 				_isConfirmed = true;
@@ -408,8 +408,8 @@ namespace Monitorian.Core.ViewModels
 		{
 			if (--_controllableCount == 0)
 			{
-				RaisePropertyChanged(nameof(IsControllable));
-				RaisePropertyChanged(nameof(Message));
+				OnPropertyChanged(nameof(IsControllable));
+				OnPropertyChanged(nameof(Message));
 			}
 		}
 
@@ -442,8 +442,8 @@ namespace Monitorian.Core.ViewModels
 			get => _isByKey;
 			set
 			{
-				if (SetPropertyValue(ref _isByKey, value))
-					RaisePropertyChanged(nameof(IsSelectedByKey));
+				if (SetProperty(ref _isByKey, value))
+					OnPropertyChanged(nameof(IsSelectedByKey));
 			}
 		}
 		private bool _isByKey;
@@ -453,8 +453,8 @@ namespace Monitorian.Core.ViewModels
 			get => _isSelected;
 			set
 			{
-				if (SetPropertyValue(ref _isSelected, value))
-					RaisePropertyChanged(nameof(IsSelectedByKey));
+				if (SetProperty(ref _isSelected, value))
+					OnPropertyChanged(nameof(IsSelectedByKey));
 			}
 		}
 		private bool _isSelected;
@@ -466,7 +466,7 @@ namespace Monitorian.Core.ViewModels
 		public bool IsTarget
 		{
 			get => _isTarget;
-			set => SetPropertyValue(ref _isTarget, value);
+			set => SetProperty(ref _isTarget, value);
 		}
 		private bool _isTarget;
 

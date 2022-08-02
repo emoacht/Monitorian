@@ -27,7 +27,7 @@ namespace Monitorian.Core.Models
 		public bool UsesLargeElements
 		{
 			get => _usesLargeElements;
-			set => SetPropertyValue(ref _usesLargeElements, value);
+			set => SetProperty(ref _usesLargeElements, value);
 		}
 		private bool _usesLargeElements = true; // Default
 
@@ -38,7 +38,7 @@ namespace Monitorian.Core.Models
 		public bool UsesAccentColor
 		{
 			get => _usesAccentColor;
-			set => SetPropertyValue(ref _usesAccentColor, value);
+			set => SetProperty(ref _usesAccentColor, value);
 		}
 		private bool _usesAccentColor;
 
@@ -49,7 +49,7 @@ namespace Monitorian.Core.Models
 		public bool ShowsAdjusted
 		{
 			get => _showsAdjusted;
-			set => SetPropertyValue(ref _showsAdjusted, value);
+			set => SetProperty(ref _showsAdjusted, value);
 		}
 		private bool _showsAdjusted = true; // default
 
@@ -60,7 +60,7 @@ namespace Monitorian.Core.Models
 		public bool ShowsNumber
 		{
 			get => _showsNumber;
-			set => SetPropertyValue(ref _showsNumber, value);
+			set => SetProperty(ref _showsNumber, value);
 		}
 		private bool _showsNumber = true; // default
 
@@ -71,7 +71,7 @@ namespace Monitorian.Core.Models
 		public bool OrdersArrangement
 		{
 			get => _ordersArrangement;
-			set => SetPropertyValue(ref _ordersArrangement, value);
+			set => SetProperty(ref _ordersArrangement, value);
 		}
 		private bool _ordersArrangement = true; // default
 
@@ -82,7 +82,7 @@ namespace Monitorian.Core.Models
 		public bool DefersChange
 		{
 			get => _defersChange;
-			set => SetPropertyValue(ref _defersChange, value);
+			set => SetProperty(ref _defersChange, value);
 		}
 		private bool _defersChange;
 
@@ -93,7 +93,7 @@ namespace Monitorian.Core.Models
 		public bool EnablesUnison
 		{
 			get => _enablesUnison;
-			set => SetPropertyValue(ref _enablesUnison, value);
+			set => SetProperty(ref _enablesUnison, value);
 		}
 		private bool _enablesUnison;
 
@@ -104,7 +104,7 @@ namespace Monitorian.Core.Models
 		public bool EnablesRange
 		{
 			get => _enablesRange;
-			set => SetPropertyValue(ref _enablesRange, value);
+			set => SetProperty(ref _enablesRange, value);
 		}
 		private bool _enablesRange;
 
@@ -115,7 +115,7 @@ namespace Monitorian.Core.Models
 		public bool EnablesContrast
 		{
 			get => _enablesContrast;
-			set => SetPropertyValue(ref _enablesContrast, value);
+			set => SetProperty(ref _enablesContrast, value);
 		}
 		private bool _enablesContrast;
 
@@ -137,7 +137,7 @@ namespace Monitorian.Core.Models
 		public string SelectedDeviceInstanceId
 		{
 			get => _selectedDeviceInstanceId;
-			set => SetPropertyValue(ref _selectedDeviceInstanceId, value);
+			set => SetProperty(ref _selectedDeviceInstanceId, value);
 		}
 		private string _selectedDeviceInstanceId;
 
@@ -148,7 +148,7 @@ namespace Monitorian.Core.Models
 		public bool MakesOperationLog
 		{
 			get => _makesOperationLog;
-			set => SetPropertyValue(ref _makesOperationLog, value);
+			set => SetProperty(ref _makesOperationLog, value);
 		}
 		private bool _makesOperationLog;
 
@@ -177,7 +177,7 @@ namespace Monitorian.Core.Models
 				TimeSpan.FromMilliseconds(100),
 				() => Save(this));
 
-			MonitorCustomizations.CollectionChanged += (_, _) => RaisePropertyChanged(nameof(MonitorCustomizations));
+			MonitorCustomizations.CollectionChanged += (_, _) => OnPropertyChanged(nameof(MonitorCustomizations));
 			PropertyChanged += async (_, _) => await _save.PushAsync();
 		}
 

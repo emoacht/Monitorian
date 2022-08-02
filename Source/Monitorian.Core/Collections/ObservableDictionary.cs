@@ -106,12 +106,16 @@ namespace Monitorian.Core.Collections
 		{
 			lock (Lock)
 			{
-				if (!Dictionary.Remove(item))
+				int index = Dictionary.Keys.ToList().IndexOf(item.Key);
+				if (index < 0)
 					return false;
+
+				Dictionary.Remove(item);
 
 				CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(
 					action: NotifyCollectionChangedAction.Remove,
-					changedItem: item));
+					changedItem: item,
+					index: index));
 				return true;
 			}
 		}

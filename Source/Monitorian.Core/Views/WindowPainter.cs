@@ -143,27 +143,37 @@ namespace Monitorian.Core.Views
 
 		#region Accent color
 
-		private static readonly Lazy<ResourceDictionary> _generic = new(() =>
-			Application.Current.Resources.MergedDictionaries.Single(x => x.Source.OriginalString.EndsWith("Generic.xaml")));
+		/// <summary>
+		/// Whether the accent color is supported
+		/// </summary>
+		/// <remarks>
+		/// The accent color on Windows 8.1 seems not have shaded variants and so is not considered
+		/// as utilizable here.
+		/// </remarks>
+		public bool IsAccentColorSupported { get; } = OsVersion.Is10OrGreater;
 
 		private class ColorContainer
 		{
+			private static readonly ResourceDictionary _generic;
+
+			static ColorContainer() => _generic = Application.Current.Resources.MergedDictionaries.Single(x => x.Source.OriginalString.EndsWith("Generic.xaml"));
+
 			private readonly string _key;
-			private readonly Color _color;
+			private readonly Color _originalColor;
 
 			public ColorContainer(string key)
 			{
 				this._key = key;
-				this._color = Color;
+				_originalColor = Color;
 			}
 
 			public Color Color
 			{
-				get => (Color)_generic.Value[_key];
-				set => _generic.Value[_key] = value;
+				get => (Color)_generic[_key];
+				set => _generic[_key] = value;
 			}
 
-			public void Revert() => Color = _color;
+			public void Revert() => Color = _originalColor;
 		}
 
 		private readonly Lazy<ColorContainer> _staticColorContaier = new(() => new("App.Background.Accent.StaticColor"));
@@ -172,6 +182,9 @@ namespace Monitorian.Core.Views
 
 		public void AttachAccentColors()
 		{
+			if (!IsAccentColorSupported)
+				return;
+
 			ChangeAccentColors();
 
 			RespondsAccentColorChanged = true;

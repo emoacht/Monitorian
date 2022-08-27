@@ -8,6 +8,7 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Monitorian.Core.Helper;
@@ -18,7 +19,7 @@ namespace Monitorian.Core.Models.Monitor
 	{
 		#region Type
 
-		private class DeviceItemPlus
+		private class BasicItem
 		{
 			private readonly DeviceContext.DeviceItem _deviceItem;
 
@@ -29,7 +30,7 @@ namespace Monitorian.Core.Models.Monitor
 			public byte MonitorIndex => _deviceItem.MonitorIndex;
 			public bool IsInternal { get; }
 
-			public DeviceItemPlus(
+			public BasicItem(
 				DeviceContext.DeviceItem deviceItem,
 				string alternateDescription = null,
 				bool isInternal = true)
@@ -66,25 +67,18 @@ namespace Monitorian.Core.Models.Monitor
 
 		#endregion
 
-		public static async Task<IEnumerable<IMonitor>> EnumerateMonitorsAsync()
-		{
-			var deviceItems = await GetMonitorDevicesAsync();
-
-			return EnumerateMonitors(deviceItems);
-		}
-
 		private static HashSet<string> _foundIds;
 
-		private static async Task<List<DeviceItemPlus>> GetMonitorDevicesAsync()
+		public static async Task<IEnumerable<IMonitor>> EnumerateMonitorsAsync(TimeSpan timeout, CancellationToken cancellationToken = default)
 		{
+			var deviceItems = DeviceContext.EnumerateMonitorDevices().ToArray();
+			_foundIds = new HashSet<string>(deviceItems.Select(x => x.DeviceInstanceId));
+
 			IDisplayItem[] displayItems = OsVersion.Is10Build17134OrGreater
 				? await DisplayMonitor.GetDisplayMonitorsAsync()
 				: DisplayConfig.EnumerateDisplayConfigs().ToArray();
 
-			var deviceItems = DeviceContext.EnumerateMonitorDevices().ToArray();
-			_foundIds = new HashSet<string>(deviceItems.Select(x => x.DeviceInstanceId));
-
-			IEnumerable<DeviceItemPlus> Enumerate()
+			IEnumerable<BasicItem> EnumerateBasicItems()
 			{
 				foreach (var deviceItem in deviceItems)
 				{
@@ -94,135 +88,144 @@ namespace Monitorian.Core.Models.Monitor
 					var displayItem = displayItems.FirstOrDefault(x => string.Equals(deviceItem.DeviceInstanceId, x.DeviceInstanceId, StringComparison.OrdinalIgnoreCase));
 					if (displayItem is null)
 					{
-						yield return new DeviceItemPlus(deviceItem);
+						yield return new BasicItem(deviceItem);
 					}
 					else if (!string.IsNullOrWhiteSpace(displayItem.DisplayName))
 					{
-						yield return new DeviceItemPlus(deviceItem, displayItem.DisplayName, displayItem.IsInternal);
+						yield return new BasicItem(deviceItem, displayItem.DisplayName, displayItem.IsInternal);
 					}
 					else if (Regex.IsMatch(deviceItem.Description, "^Generic (?:PnP|Non-PnP) Monitor$", RegexOptions.IgnoreCase)
 						&& !string.IsNullOrWhiteSpace(displayItem.ConnectionDescription))
 					{
-						yield return new DeviceItemPlus(deviceItem, $"{deviceItem.Description} ({displayItem.ConnectionDescription})", displayItem.IsInternal);
+						yield return new BasicItem(deviceItem, $"{deviceItem.Description} ({displayItem.ConnectionDescription})", displayItem.IsInternal);
 					}
 					else
 					{
-						yield return new DeviceItemPlus(deviceItem, null, displayItem.IsInternal);
+						yield return new BasicItem(deviceItem, null, displayItem.IsInternal);
 					}
 				}
 			}
 
-			return Enumerate().Where(x => !string.IsNullOrWhiteSpace(x.AlternateDescription)).ToList();
-		}
-
-		private static IEnumerable<IMonitor> EnumerateMonitors(List<DeviceItemPlus> deviceItems)
-		{
-			if (deviceItems is not { Count: > 0 })
-				yield break;
+			var basicItems = EnumerateBasicItems().Where(x => !string.IsNullOrWhiteSpace(x.AlternateDescription)).ToList();
+			if (basicItems.Count == 0)
+				return Enumerable.Empty<IMonitor>();
 
 			var handleItems = DeviceContext.GetMonitorHandles();
 
-			// Obtained by DDC/CI
-			foreach (var handleItem in handleItems)
+			var physicalItemsTasks = handleItems
+				.Select(x => Task.Run(() => (x, physicalItems: MonitorConfiguration.EnumeratePhysicalMonitors(x.MonitorHandle))))
+				.ToArray();
+
+			await Task.WhenAny(Task.WhenAll(physicalItemsTasks), Task.Delay(timeout, cancellationToken));
+			cancellationToken.ThrowIfCancellationRequested();
+
+			var physicalItemsPairs = physicalItemsTasks.Where(x => x.Status == TaskStatus.RanToCompletion).Select(x => x.Result);
+
+			IEnumerable<IMonitor> EnumerateMonitorItems()
 			{
-				foreach (var physicalItem in MonitorConfiguration.EnumeratePhysicalMonitors(handleItem.MonitorHandle))
+				// Obtained by DDC/CI
+				foreach ((var handleItem, var physicalItems) in physicalItemsPairs)
 				{
-					int index = -1;
-					if (physicalItem.Capability.IsBrightnessSupported ||
-						_preclearedIds.Value.Any())
+					foreach (var physicalItem in physicalItems)
 					{
-						index = deviceItems.FindIndex(x =>
-							!x.IsInternal &&
+						int index = -1;
+						if (physicalItem.Capability.IsBrightnessSupported ||
+							_preclearedIds.Value.Any())
+						{
+							index = basicItems.FindIndex(x =>
+								!x.IsInternal &&
+								(x.DisplayIndex == handleItem.DisplayIndex) &&
+								(x.MonitorIndex == physicalItem.MonitorIndex) &&
+								string.Equals(x.Description, physicalItem.Description, StringComparison.OrdinalIgnoreCase));
+						}
+						if (index < 0)
+						{
+							physicalItem.Handle.Dispose();
+							continue;
+						}
+
+						var basicItem = basicItems[index];
+
+						MonitorCapability capability = null;
+						if (physicalItem.Capability.IsBrightnessSupported)
+						{
+							capability = physicalItem.Capability;
+						}
+						else if (_preclearedIds.Value.Contains(basicItem.DeviceInstanceId))
+						{
+							capability = MonitorCapability.PreclearedCapability;
+						}
+						else
+						{
+							physicalItem.Handle.Dispose();
+							continue;
+						}
+
+						yield return new DdcMonitorItem(
+							deviceInstanceId: basicItem.DeviceInstanceId,
+							description: basicItem.AlternateDescription,
+							displayIndex: basicItem.DisplayIndex,
+							monitorIndex: basicItem.MonitorIndex,
+							monitorRect: handleItem.MonitorRect,
+							handle: physicalItem.Handle,
+							capability: capability);
+
+						basicItems.RemoveAt(index);
+						if (basicItems.Count == 0)
+							yield break;
+					}
+				}
+
+				// Obtained by WMI
+				foreach (var desktopItem in MSMonitor.EnumerateDesktopMonitors())
+				{
+					if (desktopItem.BrightnessLevels is not { Length: > 0 })
+						continue;
+
+					foreach (var handleItem in handleItems)
+					{
+						int index = basicItems.FindIndex(x =>
 							(x.DisplayIndex == handleItem.DisplayIndex) &&
-							(x.MonitorIndex == physicalItem.MonitorIndex) &&
-							string.Equals(x.Description, physicalItem.Description, StringComparison.OrdinalIgnoreCase));
-					}
-					if (index < 0)
-					{
-						physicalItem.Handle.Dispose();
-						continue;
-					}
+							string.Equals(x.DeviceInstanceId, desktopItem.DeviceInstanceId, StringComparison.OrdinalIgnoreCase));
+						if (index < 0)
+							continue;
 
-					var deviceItem = deviceItems[index];
+						var basicItem = basicItems[index];
+						yield return new WmiMonitorItem(
+							deviceInstanceId: basicItem.DeviceInstanceId,
+							description: basicItem.AlternateDescription,
+							displayIndex: basicItem.DisplayIndex,
+							monitorIndex: basicItem.MonitorIndex,
+							monitorRect: handleItem.MonitorRect,
+							isInternal: basicItem.IsInternal,
+							brightnessLevels: desktopItem.BrightnessLevels);
 
-					MonitorCapability capability = null;
-					if (physicalItem.Capability.IsBrightnessSupported)
-					{
-						capability = physicalItem.Capability;
+						basicItems.RemoveAt(index);
+						if (basicItems.Count == 0)
+							yield break;
 					}
-					else if (_preclearedIds.Value.Contains(deviceItem.DeviceInstanceId))
-					{
-						capability = MonitorCapability.PreclearedCapability;
-					}
-					else
-					{
-						physicalItem.Handle.Dispose();
-						continue;
-					}
-
-					yield return new DdcMonitorItem(
-						deviceInstanceId: deviceItem.DeviceInstanceId,
-						description: deviceItem.AlternateDescription,
-						displayIndex: deviceItem.DisplayIndex,
-						monitorIndex: deviceItem.MonitorIndex,
-						monitorRect: handleItem.MonitorRect,
-						handle: physicalItem.Handle,
-						capability: capability);
-
-					deviceItems.RemoveAt(index);
-					if (deviceItems.Count == 0)
-						yield break;
 				}
-			}
 
-			// Obtained by WMI
-			foreach (var desktopItem in MSMonitor.EnumerateDesktopMonitors())
-			{
-				if (!desktopItem.BrightnessLevels.Any())
-					continue;
-
-				foreach (var handleItem in handleItems)
+				// Unreachable neither by DDC/CI nor by WMI
+				foreach (var basicItem in basicItems)
 				{
-					int index = deviceItems.FindIndex(x =>
-						(x.DisplayIndex == handleItem.DisplayIndex) &&
-						string.Equals(x.DeviceInstanceId, desktopItem.DeviceInstanceId, StringComparison.OrdinalIgnoreCase));
-					if (index < 0)
-						continue;
-
-					var deviceItem = deviceItems[index];
-					yield return new WmiMonitorItem(
-						deviceInstanceId: deviceItem.DeviceInstanceId,
-						description: deviceItem.AlternateDescription,
-						displayIndex: deviceItem.DisplayIndex,
-						monitorIndex: deviceItem.MonitorIndex,
-						monitorRect: handleItem.MonitorRect,
-						isInternal: deviceItem.IsInternal,
-						brightnessLevels: desktopItem.BrightnessLevels);
-
-					deviceItems.RemoveAt(index);
-					if (deviceItems.Count == 0)
-						yield break;
+					yield return new UnreachableMonitorItem(
+						deviceInstanceId: basicItem.DeviceInstanceId,
+						description: basicItem.AlternateDescription,
+						displayIndex: basicItem.DisplayIndex,
+						monitorIndex: basicItem.MonitorIndex,
+						isInternal: basicItem.IsInternal);
 				}
 			}
 
-			// Unreachable neither by DDC/CI nor by WMI
-			foreach (var deviceItem in deviceItems)
-			{
-				yield return new UnreachableMonitorItem(
-					deviceInstanceId: deviceItem.DeviceInstanceId,
-					description: deviceItem.AlternateDescription,
-					displayIndex: deviceItem.DisplayIndex,
-					monitorIndex: deviceItem.MonitorIndex,
-					isInternal: deviceItem.IsInternal);
-			}
+			return EnumerateMonitorItems();
 		}
 
 		public static bool CheckMonitorsChanged()
 		{
-			var newIds = new HashSet<string>(DeviceContext.EnumerateMonitorDevices().Select(x => x.DeviceInstanceId));
 			var oldIds = _foundIds;
-			_foundIds = newIds;
-			return (oldIds?.SetEquals(newIds) is not true);
+			_foundIds = new HashSet<string>(DeviceContext.EnumerateMonitorDevices().Select(x => x.DeviceInstanceId));
+			return (oldIds?.SetEquals(_foundIds) is not true);
 		}
 
 		#region Probe

@@ -263,7 +263,7 @@ namespace Monitorian.Core
 						var oldMonitorIndices = Enumerable.Range(0, Monitors.Count).ToList();
 						var newMonitorItems = new List<IMonitor>();
 
-						foreach (var item in await MonitorManager.EnumerateMonitorsAsync())
+						foreach (var item in await MonitorManager.EnumerateMonitorsAsync(TimeSpan.FromSeconds(12)))
 						{
 							Recorder.AddGroupRecordItem("Items", item.ToString());
 

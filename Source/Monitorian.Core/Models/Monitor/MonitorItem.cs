@@ -16,6 +16,7 @@ namespace Monitorian.Core.Models.Monitor
 		public byte DisplayIndex { get; }
 		public byte MonitorIndex { get; }
 		public Rect MonitorRect { get; }
+		public bool IsInternal { get; }
 		public bool IsReachable { get; }
 
 		public virtual bool IsBrightnessSupported => IsReachable;
@@ -28,6 +29,7 @@ namespace Monitorian.Core.Models.Monitor
 			byte displayIndex,
 			byte monitorIndex,
 			Rect monitorRect,
+			bool isInternal,
 			bool isReachable)
 		{
 			if (string.IsNullOrWhiteSpace(deviceInstanceId))
@@ -40,6 +42,7 @@ namespace Monitorian.Core.Models.Monitor
 			this.DisplayIndex = displayIndex;
 			this.MonitorIndex = monitorIndex;
 			this.MonitorRect = monitorRect;
+			this.IsInternal = isInternal;
 			this.IsReachable = isReachable;
 		}
 
@@ -63,6 +66,7 @@ namespace Monitorian.Core.Models.Monitor
 				(nameof(DisplayIndex), DisplayIndex),
 				(nameof(MonitorIndex), MonitorIndex),
 				(nameof(MonitorRect), MonitorRect),
+				(nameof(IsInternal), IsInternal),
 				(nameof(IsReachable), IsReachable),
 				(nameof(IsBrightnessSupported), IsBrightnessSupported),
 				(nameof(IsContrastSupported), IsContrastSupported),

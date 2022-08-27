@@ -14,6 +14,7 @@ namespace Monitorian.Core.Models.Monitor
 		byte DisplayIndex { get; }
 		byte MonitorIndex { get; }
 		Rect MonitorRect { get; }
+		bool IsInternal { get; }
 		bool IsReachable { get; }
 		bool IsBrightnessSupported { get; }
 		bool IsContrastSupported { get; }

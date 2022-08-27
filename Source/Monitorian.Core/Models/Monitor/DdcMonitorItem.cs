@@ -33,6 +33,7 @@ namespace Monitorian.Core.Models.Monitor
 				displayIndex: displayIndex,
 				monitorIndex: monitorIndex,
 				monitorRect: monitorRect,
+				isInternal: false,
 				isReachable: true)
 		{
 			this._handle = handle ?? throw new ArgumentNullException(nameof(handle));

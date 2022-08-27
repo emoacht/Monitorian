@@ -9,8 +9,6 @@ namespace Monitorian.Core.Models.Monitor
 {
 	internal class UnreachableMonitorItem : MonitorItem
 	{
-		public bool IsInternal { get; }
-
 		public UnreachableMonitorItem(
 			string deviceInstanceId,
 			string description,
@@ -22,9 +20,9 @@ namespace Monitorian.Core.Models.Monitor
 				displayIndex: displayIndex,
 				monitorIndex: monitorIndex,
 				monitorRect: Rect.Empty,
+				isInternal: isInternal,
 				isReachable: false)
 		{
-			this.IsInternal = isInternal;
 		}
 
 		public override AccessResult UpdateBrightness(int brightness = -1) => AccessResult.Failed;

@@ -165,6 +165,9 @@
   <data name="Rescan" xml:space="preserve">
     <value>Monitore neu abfragen</value>
   </data>
+  <data name="RestoreReconnection" xml:space="preserve">
+    <value>Helligkeit bei Wiederverbinden wiederherstellen</value>
+  </data>
   <data name="Settings" xml:space="preserve">
     <value>Einstellungen</value>
   </data>

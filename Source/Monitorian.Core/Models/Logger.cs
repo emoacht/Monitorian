@@ -249,9 +249,7 @@ namespace Monitorian.Core.Models
 		{
 			try
 			{
-				AppDataService.AssureFolder();
-
-				var appDataFilePath = Path.Combine(AppDataService.FolderPath, fileName);
+				var appDataFilePath = Path.Combine(AppDataService.EnsureFolderPath(), fileName);
 
 				UpdateContent(appDataFilePath, content, capacity);
 			}

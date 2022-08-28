@@ -12,22 +12,16 @@ namespace Monitorian.Core.Models
 {
 	public static class AppDataService
 	{
-		public static string FolderPath => _folderPath ??= GetFolderPath();
+		public static string FolderPath => _folderPath ??=
+			Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), ProductInfo.Product);
 		private static string _folderPath;
 
-		private static string GetFolderPath()
-		{
-			var appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-			if (string.IsNullOrEmpty(appDataPath)) // This should not happen.
-				throw new DirectoryNotFoundException();
-
-			return Path.Combine(appDataPath, ProductInfo.Product);
-		}
-
-		public static void AssureFolder()
+		public static string EnsureFolderPath()
 		{
 			if (!Directory.Exists(FolderPath))
 				Directory.CreateDirectory(FolderPath);
+
+			return FolderPath;
 		}
 
 		#region Access
@@ -54,9 +48,7 @@ namespace Monitorian.Core.Models
 
 		public static async Task WriteAsync(string fileName, bool append, string content)
 		{
-			AssureFolder();
-
-			var filePath = Path.Combine(FolderPath, fileName);
+			var filePath = Path.Combine(EnsureFolderPath(), fileName);
 
 			using var sw = new StreamWriter(filePath, append, Encoding.UTF8); // BOM will be emitted.
 			await sw.WriteAsync(content);
@@ -147,9 +139,7 @@ namespace Monitorian.Core.Models
 		/// <param name="knownTypes">Known types of members of instance</param>
 		public static void Save<T>(T instance, string fileName, IEnumerable<Type> knownTypes = null) where T : class
 		{
-			AssureFolder();
-
-			var filePath = Path.Combine(FolderPath, fileName);
+			var filePath = Path.Combine(EnsureFolderPath(), fileName);
 
 			using var sw = new StreamWriter(filePath, false, Encoding.UTF8);
 			using var xw = XmlWriter.Create(sw, new XmlWriterSettings { Indent = true });

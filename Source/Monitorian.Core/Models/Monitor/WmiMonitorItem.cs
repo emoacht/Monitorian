@@ -14,7 +14,6 @@ namespace Monitorian.Core.Models.Monitor
 	/// </summary>
 	internal class WmiMonitorItem : MonitorItem
 	{
-		private readonly bool _isInternal;
 		private readonly byte[] _brightnessLevels;
 
 		public WmiMonitorItem(
@@ -30,15 +29,15 @@ namespace Monitorian.Core.Models.Monitor
 				displayIndex: displayIndex,
 				monitorIndex: monitorIndex,
 				monitorRect: monitorRect,
+				isInternal: isInternal,
 				isReachable: true)
 		{
-			this._isInternal = isInternal;
 			this._brightnessLevels = brightnessLevels?.ToArray() ?? throw new ArgumentNullException(nameof(brightnessLevels));
 		}
 
 		public override AccessResult UpdateBrightness(int brightness = -1)
 		{
-			if (_isInternal)
+			if (IsInternal)
 			{
 				this.Brightness = PowerManagement.GetActiveSchemeBrightness();
 
@@ -62,7 +61,7 @@ namespace Monitorian.Core.Models.Monitor
 			if (brightness is < 0 or > 100)
 				throw new ArgumentOutOfRangeException(nameof(brightness), brightness, "The brightness must be within 0 to 100.");
 
-			if (_isInternal)
+			if (IsInternal)
 			{
 				if (PowerManagement.SetActiveSchemeBrightness(brightness))
 				{

@@ -32,7 +32,7 @@ namespace Monitorian.Core.Models.Monitor
 			[OnSerializing]
 			private void OnSerializing(StreamingContext context)
 			{
-				_brightnessLevelsString = string.Join(" ", BrightnessLevels ?? Array.Empty<byte>());
+				_brightnessLevelsString = string.Join(" ", BrightnessLevels ?? Enumerable.Empty<byte>());
 			}
 
 			public DesktopItem(
@@ -246,10 +246,8 @@ namespace Monitorian.Core.Models.Monitor
 		{
 			try
 			{
-				var scope = @"root\wmi";
-				var query = "SELECT * FROM WmiMonitorBrightnessEvent";
 				var option = new EventWatcherOptions(null, TimeSpan.FromSeconds(1), 1);
-				var watcher = new ManagementEventWatcher(scope, query, option);
+				var watcher = new ManagementEventWatcher(@"root\wmi", "SELECT * FROM WmiMonitorBrightnessEvent", option);
 
 				watcher.Start();
 

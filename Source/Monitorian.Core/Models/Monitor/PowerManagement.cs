@@ -143,12 +143,11 @@ namespace Monitorian.Core.Models.Monitor
 
 			try
 			{
-				using (var key = Registry.LocalMachine.OpenSubKey(name))
-				{
-					// 1: Remove
-					// 2: Add
-					return ((int)key.GetValue("Attributes") == 2);
-				}
+				using var key = Registry.LocalMachine.OpenSubKey(name);
+
+				// 1: Remove
+				// 2: Add
+				return ((int)key.GetValue("Attributes") == 2);
 			}
 			catch (Exception ex)
 			{

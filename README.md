@@ -2,7 +2,7 @@
 
 Monitorian is a Windows desktop tool to adjust the brightness of multiple monitors with ease.
 
-![Screenshot](Images/Screenshot_main.png)<br>
+<img src="Images/Screenshot_main.png" alt="Screenshot" width="487.5"><br>
 (DPI: 200%)
 
 The user can change the brightness of monitors, including external ones, either individually or in unison. For the system with an ambient light sensor, the adjusted brightness can be shown along with configured one.
@@ -53,7 +53,7 @@ Additional languages:
    ```
 
  * Other:<br>
-:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/3.12.1-Installer/MonitorianInstaller3121.zip)
+:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/3.13.0-Installer/MonitorianInstaller3130.zip)
 
 ## Install/Uninstall
 
@@ -73,6 +73,7 @@ In such case, please note the following:
  - The monitor name shown in main window can be changed to distinguish monitors easily. To change the name, press and hold it until it turns to be editable.
  - To adjust the brightness by a touchpad, place two fingers on it and swipe horizontally. The touchpad must be a precision touchpad.
  - The number of monitors shown at a time is up to 4.
+ - In case an external monitor is not shown, read [detection of external monitors](#detection-of-external-monitors).
 
 ## Add-on Features
 
@@ -103,13 +104,35 @@ You can call this app by its name `Monitorian` in command prompt or bat file. Fr
 
 The code for add-on features is not included in this repository.
 
+## Detection of external monitors
+
+This app checks if each external monitor is controllable through DDC/CI and shows only controllable ones. 
+
+For this purpose, this app requests a monitor to send its capabilities information through DDC/CI and checks if it includes the capabilities to get/set the brightness. If capabilities information is not received or these capabilities are not included, such monitor will be regarded as not controllable through DDC/CI.
+
+This function has been tested and worked well in most cases. Therefore, if a monitor is not shown, it is most likely caused by hardware-oriented reasons that cannot be solved by this app. Such reasons include:
+
+1. The monitor model does not support DDC/CI.
+
+1. The monitor's DDC/CI setting is OFF. You may need to change the setting by OSD menu.
+
+1. The monitor's DDC/CI function is weird. Some monitors are found not to return correct capabilities information.
+
+1. The PC's connector does not support DDC/CI.
+
+1. The cable, converter, or docking station which connects the PC and the monitor is not compatible with DDC/CI. Thunderbolt/USB-C cables are generally compatible but converters aren't. Surface Dock and Surface Dock 2 are known to be compatible. 
+
+1. The monitor or the PC have issues including contact failture in connector. This is particularly the case for old monitors.
+
+If you think it is worth to report, read [reporting](#reporting) and then create an issue with logs and other relevant information. Please note that an issue which does not include any meaningful clue will be closed.
+
 ## Development
 
-This app is a WPF app developed and tested with Surface Pro 4 and 7.
+This app is a WPF app developed and tested with Surface Pro series.
 
 ### Reporting
 
-The controllability of an external monitor depends on whether the monitor successfully responds to DDC/CI commands. Even if a monitor is expected to be DDC/CI compatible, it may fail to respond (a) if the monitor is weird, (b) if its connection to the system is problematic, or (c) when the system starts or resumes. If an issue is case (a) or (b), this app cannot help it. If case (c), this app may be able to handle it.
+The controllability of an external monitor depends on whether the monitor successfully responds to DDC/CI commands. Even if a monitor is expected to be DDC/CI compatible, it may fail to respond typically when the system starts or resumes.
 
 In any case, reporting on the controllability of a monitor MUST include probe.log and operation.log described below. The logs will be the starting point to look into the issue.
 
@@ -158,6 +181,11 @@ An alternative language can be shown by adding a Resources (.resx) file into `/S
 
 ## History
 
+Ver 3.13 2022-8-29
+
+ - Shorten scan time when multiple external monitors exist
+ - Supplement German (de) language. Thanks fot @uDEV2019!
+ 
 Ver 3.12 2022-7-4
 
  - Enable mouse horizontal wheel to change brigtness concurrently (except that in unison)

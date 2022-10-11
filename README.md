@@ -52,6 +52,11 @@ Additional languages:
    winget install Monitorian
    ```
 
+ * Chocolatey (a.k.a. [Chocolatey Package Manager](https://community.chocolatey.org/packages/monitorian), App Installer):
+   ```
+   choco install monitorian
+   ```
+
  * Other:<br>
 :floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/3.13.0-Installer/MonitorianInstaller3130.zip)
 

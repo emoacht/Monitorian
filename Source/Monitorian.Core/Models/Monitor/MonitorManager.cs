@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Management;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System.Text;
@@ -325,7 +324,7 @@ namespace Monitorian.Core.Models.Monitor
 
 			public async Task PopulateAsync()
 			{
-				System = GetSystem();
+				System = $"Manufacturer: {SystemInfo.Manufacturer}, Model: {SystemInfo.Model}, OS: {Environment.OSVersion.Version}";
 
 				var sw = new Stopwatch();
 
@@ -370,13 +369,6 @@ namespace Monitorian.Core.Models.Monitor
 						var elapsed = sw.Elapsed;
 						return $@"{name,-14} -> {elapsed.ToString($@"{(elapsed.Minutes > 0 ? @"m\:" : string.Empty)}s\.fff")}";
 					});
-			}
-
-			private string GetSystem()
-			{
-				using var @class = new ManagementClass("Win32_ComputerSystem");
-				using var instance = @class.GetInstances().Cast<ManagementObject>().FirstOrDefault();
-				return $"Manufacturer: {instance?["Manufacturer"]}, Model: {instance?["Model"]}, OS: {Environment.OSVersion.Version}";
 			}
 		}
 

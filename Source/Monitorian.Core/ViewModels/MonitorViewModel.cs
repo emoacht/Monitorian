@@ -23,6 +23,7 @@ namespace Monitorian.Core.ViewModels
 		{
 			this._controller = controller ?? throw new ArgumentNullException(nameof(controller));
 			this._monitor = monitor ?? throw new ArgumentNullException(nameof(monitor));
+			SetTopLeft();
 
 			LoadCustomization();
 		}
@@ -37,6 +38,7 @@ namespace Monitorian.Core.ViewModels
 				{
 					this._monitor.Dispose();
 					this._monitor = monitor;
+					SetTopLeft();
 				}
 			}
 			else
@@ -50,7 +52,6 @@ namespace Monitorian.Core.ViewModels
 		public byte DisplayIndex => _monitor.DisplayIndex;
 		public byte MonitorIndex => _monitor.MonitorIndex;
 		public Rect MonitorRect => _monitor.MonitorRect;
-		public double MonitorTop => _monitor.MonitorRect.Top;
 
 		#region Customization
 
@@ -460,6 +461,29 @@ namespace Monitorian.Core.ViewModels
 		private bool _isSelected;
 
 		public bool IsSelectedByKey => IsSelected && IsByKey;
+
+		#endregion
+
+		#region Arrangement
+
+		public ulong MonitorTopLeft
+		{
+			get => _monitorTopLeft;
+			private set => SetProperty(ref _monitorTopLeft, value);
+		}
+		private ulong _monitorTopLeft;
+
+		private void SetTopLeft()
+		{
+			MonitorTopLeft = GetTopLeft(_monitor.MonitorRect.Location);
+
+			static ulong GetTopLeft(Point location)
+			{
+				var x = (long)Math.Round(location.X, MidpointRounding.AwayFromZero) + int.MaxValue;
+				var y = (long)Math.Round(location.Y, MidpointRounding.AwayFromZero) + int.MaxValue;
+				return (ulong)x | ((ulong)y << 32);
+			}
+		}
 
 		#endregion
 

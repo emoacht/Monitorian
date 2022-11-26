@@ -179,6 +179,10 @@ An alternative language can be shown by adding a Resources (.resx) file into `/S
  - The file name must be in `Resources.[language-culture].resx` format.
  - The name of a name/value pair must correspond to that in the default `Resources.resx` file to override it.
 
+### Reference
+
+ - VESA [Monitor Control Command Set (MCCS)](https://www.google.co.jp/search?q=VESA+Monitor+Control+Command+Set+Standard+MCCS) standard
+
 ## History
 
 Ver 3.14 2022-10-23

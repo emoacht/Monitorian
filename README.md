@@ -181,6 +181,10 @@ An alternative language can be shown by adding a Resources (.resx) file into `/S
 
 ## History
 
+Ver 3.14 2022-10-23
+
+ - Make change of monitors arrangement reflected immediately
+
 Ver 3.13 2022-8-29
 
  - Shorten scan time when multiple external monitors exist

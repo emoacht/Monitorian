@@ -31,7 +31,7 @@ Additional languages:
  - Romanian (ro) by @calini
  - Russian (ru-RU) by @SigmaTel71
  - Turkish (tr-TR) by @webbudesign
- - Simplified Chinese (zh-Hans) by @ComMouse, @zhujunsan, @XMuli and @FISHandCHEAP
+ - Simplified Chinese (zh-Hans) by @ComMouse, @zhujunsan, @XMuli, @FISHandCHEAP and @FrzMtrsprt
  - Traditional Chinese (zh-Hant) by @toto6038 and @XMuli
 
 ## Requirements
@@ -53,7 +53,7 @@ Additional languages:
    ```
 
  * Other:<br>
-:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/3.13.0-Installer/MonitorianInstaller3130.zip)
+:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/3.15.0-Installer/MonitorianInstaller3150.zip)
 
 ## Install/Uninstall
 
@@ -185,6 +185,11 @@ An alternative language can be shown by adding a Resources (.resx) file into `/S
 
 ## History
 
+Ver 3.15 2022-12-4
+
+ - Fix touchpad swipe
+ - Supplement Simplified Chinese (zh-Hans). Thanks to @FrzMtrsprt!
+
 Ver 3.14 2022-10-23
 
  - Make change of monitors arrangement reflected immediately
@@ -192,7 +197,7 @@ Ver 3.14 2022-10-23
 Ver 3.13 2022-8-29
 
  - Shorten scan time when multiple external monitors exist
- - Supplement German (de) language. Thanks fot @uDEV2019!
+ - Supplement German (de) language. Thanks to @uDEV2019!
  
 Ver 3.12 2022-7-4
 

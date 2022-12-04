@@ -19,15 +19,14 @@
 
 	<StackPanel Margin="0,4">
 		<TextBlock x:Name="AppTitle"
-				   HorizontalAlignment="Left"
-				   Padding="8,2"
-				   Foreground="{StaticResource App.Foreground}"
+				   Margin="8,2"
+				   Style="{StaticResource PlainTextStyle}"
 				   Text="{Binding Source={x:Static models:ProductInfo.Title}, Mode=OneTime}"/>
 
 		<StackPanel x:Name="HeadItems"
 					Margin="0,0,0,6">
 			<TextBlock Margin="8,0"
-					   Foreground="{StaticResource App.Foreground}">
+					   Style="{StaticResource PlainTextStyle}">
 				<Run Text="{Binding Source={x:Static models:ProductInfo.Version}, Mode=OneTime}"/>
 				<Run Text="|"/>
 				<Run Foreground="{StaticResource App.Foreground.Shadow}"
@@ -60,7 +59,6 @@
 		<ContentControl Style="{StaticResource MenuItemStyle}">
 			<ToggleButton Padding="8,4"
 						  Style="{StaticResource CheckButtonItemStyle}"
-						  FontSize="13"
 						  Content="{x:Static properties:Resources.StartSignIn}"
 						  IsChecked="{Binding IsRegistered}"
 						  Visibility="{Binding CanRegister, Mode=OneTime, Converter={StaticResource BooleanToVisibilityConverterKey}}"/>
@@ -69,7 +67,6 @@
 		<ContentControl Style="{StaticResource MenuItemStyle}">
 			<ToggleButton Padding="8,4"
 						  Style="{StaticResource CheckButtonItemStyle}"
-						  FontSize="13"
 						  Content="{x:Static properties:Resources.UseLargeElements}"
 						  IsChecked="{Binding Settings.UsesLargeElements}"/>
 		</ContentControl>
@@ -78,7 +75,6 @@
 						Visibility="{Binding IsAccentColorSupported, Converter={StaticResource BooleanToVisibilityConverterKey}}">
 			<ToggleButton Padding="8,4"
 						  Style="{StaticResource CheckButtonItemStyle}"
-						  FontSize="13"
 						  Content="{x:Static properties:Resources.UseAccentColor}"
 						  IsChecked="{Binding Settings.UsesAccentColor}"/>
 		</ContentControl>
@@ -86,7 +82,6 @@
 		<ContentControl Style="{StaticResource MenuItemStyle}">
 			<ToggleButton Padding="8,4"
 						  Style="{StaticResource CheckButtonItemStyle}"
-						  FontSize="13"
 						  Content="{x:Static properties:Resources.ShowAdjusted}"
 						  IsChecked="{Binding Settings.ShowsAdjusted}"/>
 		</ContentControl>
@@ -94,7 +89,6 @@
 		<ContentControl Style="{StaticResource MenuItemStyle}">
 			<ToggleButton Padding="8,4"
 						  Style="{StaticResource CheckButtonItemStyle}"
-						  FontSize="13"
 						  Content="{x:Static properties:Resources.ShowNumber}"
 						  IsChecked="{Binding Settings.ShowsNumber}"/>
 		</ContentControl>
@@ -102,7 +96,6 @@
 		<ContentControl Style="{StaticResource MenuItemStyle}">
 			<ToggleButton Padding="8,4"
 						  Style="{StaticResource CheckButtonItemStyle}"
-						  FontSize="13"
 						  Content="{x:Static properties:Resources.OrderArrangement}"
 						  IsChecked="{Binding Settings.OrdersArrangement}"/>
 		</ContentControl>
@@ -110,7 +103,6 @@
 		<ContentControl Style="{StaticResource MenuItemStyle}">
 			<ToggleButton Padding="8,4"
 						  Style="{StaticResource CheckButtonItemStyle}"
-						  FontSize="13"
 						  Content="{x:Static properties:Resources.DeferChange}"
 						  IsChecked="{Binding Settings.DefersChange}"/>
 		</ContentControl>
@@ -122,7 +114,6 @@
 		<ContentControl Style="{StaticResource MenuItemStyle}">
 			<ToggleButton Padding="8,4"
 						  Style="{StaticResource CheckButtonItemStyle}"
-						  FontSize="13"
 						  Content="{x:Static properties:Resources.EnableUnison}"
 						  IsChecked="{Binding Settings.EnablesUnison}"/>
 		</ContentControl>
@@ -130,7 +121,6 @@
 		<ContentControl Style="{StaticResource MenuItemStyle}">
 			<ToggleButton Padding="8,4"
 						  Style="{StaticResource CheckButtonItemStyle}"
-						  FontSize="13"
 						  Content="{x:Static properties:Resources.EnableRange}"
 						  IsChecked="{Binding Settings.EnablesRange}"/>
 		</ContentControl>
@@ -138,7 +128,6 @@
 		<ContentControl Style="{StaticResource MenuItemStyle}">
 			<ToggleButton Padding="8,4"
 						  Style="{StaticResource CheckButtonItemStyle}"
-						  FontSize="13"
 						  Content="{x:Static properties:Resources.EnableContrast}"
 						  IsChecked="{Binding Settings.EnablesContrast}"/>
 		</ContentControl>
@@ -149,7 +138,6 @@
 		<ContentControl Style="{StaticResource MenuItemStyle}">
 			<Button Padding="8,4"
 					Style="{StaticResource CloseButtonItemStyle}"
-					FontSize="14"
 					Content="{x:Static properties:Resources.Close}">
 				<i:Interaction.Triggers>
 					<i:EventTrigger EventName="Click">

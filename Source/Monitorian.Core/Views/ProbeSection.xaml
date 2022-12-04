@@ -9,7 +9,6 @@
 			<ContentControl Style="{StaticResource MenuItemStyle}">
 				<Button Padding="8,4"
 						Style="{StaticResource PlainButtonItemStyle}"
-						FontSize="13"
 						Content="{x:Static properties:Resources.Probe}"
 						IsEnabled="{Binding CanProbe, Mode=OneWay}">
 					<i:Interaction.Triggers>
@@ -24,7 +23,6 @@
 			<ContentControl Style="{StaticResource MenuItemStyle}">
 				<Button Padding="8,4"
 						Style="{StaticResource PlainButtonItemStyle}"
-						FontSize="13"
 						Content="{x:Static properties:Resources.Rescan}">
 					<i:Interaction.Triggers>
 						<i:EventTrigger EventName="Click">
@@ -38,7 +36,6 @@
 			<ContentControl Style="{StaticResource MenuItemStyle}">
 				<ToggleButton Padding="8,4"
 							  Style="{StaticResource CheckButtonItemStyle}"
-							  FontSize="13"
 							  Content="{x:Static properties:Resources.MakeOperation}"
 							  IsChecked="{Binding Settings.MakesOperationLog}"/>
 			</ContentControl>
@@ -46,7 +43,6 @@
 			<ContentControl Style="{StaticResource MenuItemStyle}">
 				<Button Padding="8,4"
 						Style="{StaticResource PlainButtonItemStyle}"
-						FontSize="13"
 						Content="{x:Static properties:Resources.CopyOperation}">
 					<i:Interaction.Triggers>
 						<i:EventTrigger EventName="Click">
@@ -60,7 +56,6 @@
 			<ContentControl Style="{StaticResource MenuItemStyle}">
 				<controls:MultiToggleButton Padding="8,4"
 											Style="{StaticResource MultiButtonItemStyle}"
-											FontSize="13"
 											Content="{x:Static properties:Resources.Arguments}"
 											IsCheckable="False">
 					<controls:MultiToggleButton.SubContent>

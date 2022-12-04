@@ -21,9 +21,9 @@ namespace Monitorian.Core.Models
 				if (resourceName is null)
 					return null;
 
-				using (var s = assembly.GetManifestResourceStream(resourceName))
-				using (var sr = new StreamReader(s))
-					return sr.ReadToEnd();
+				using var s = assembly.GetManifestResourceStream(resourceName);
+				using var sr = new StreamReader(s);
+				return sr.ReadToEnd();
 			}
 			catch (Exception ex)
 			{
@@ -33,9 +33,12 @@ namespace Monitorian.Core.Models
 			}
 		}
 
+		private static string GetTempFilePath(string fileName) =>
+			Path.Combine(Path.GetTempPath(), $"monitorian_{Path.GetFileNameWithoutExtension(fileName).ToLower()}.html");
+
 		public static string SaveTempFileAsHtml(string fileName, string title, string body)
 		{
-			var filePath = Path.Combine(Path.GetTempPath(), $"{Path.GetFileNameWithoutExtension(fileName)}.html");
+			var filePath = GetTempFilePath(fileName);
 			SaveFileAsHtml(filePath, title, body);
 			return filePath;
 		}
@@ -50,8 +53,16 @@ namespace Monitorian.Core.Models
 
 			var html = BuildHtml(title, body);
 
-			using (var sw = new StreamWriter(filePath, false, Encoding.UTF8)) // BOM will be emitted.
+			try
+			{
+				using var sw = new StreamWriter(filePath, false, Encoding.UTF8); // BOM will be emitted.
 				sw.Write(html);
+			}
+			catch (Exception ex)
+			{
+				Debug.WriteLine("Failed to save a file." + Environment.NewLine
+					+ ex);
+			}
 		}
 
 		private static string BuildHtml(string title, string body)
@@ -85,6 +96,29 @@ namespace Monitorian.Core.Models
 {body}
 </body>
 </html>";
+		}
+
+		public static bool DeleteTempFile(string fileName, TimeSpan validDuration = default)
+		{
+			var filePath = GetTempFilePath(fileName);
+			var fileInfo = new FileInfo(filePath);
+			if (!fileInfo.Exists)
+				return false;
+
+			if ((validDuration == default) || (fileInfo.LastWriteTime < DateTime.Now.Add(-validDuration)))
+			{
+				try
+				{
+					fileInfo.Delete();
+					return false;
+				}
+				catch (Exception ex)
+				{
+					Debug.WriteLine("Failed to delete a file." + Environment.NewLine
+						+ ex);
+				}
+			}
+			return true;
 		}
 	}
 }

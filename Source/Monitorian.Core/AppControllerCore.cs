@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -92,6 +93,8 @@ namespace Monitorian.Core
 					Update(instanceName, brightness);
 			},
 			async (message) => await Recorder.RecordAsync(message));
+
+			await CleanAsync();
 		}
 
 		public virtual void End()
@@ -470,6 +473,15 @@ namespace Monitorian.Core
 		public Task<string> LoadArgumentsAsync() => _keeper.LoadArgumentsAsync();
 
 		public Task SaveArgumentsAsync(string content) => _keeper.SaveArgumentsAsync(content);
+
+		#endregion
+
+		#region Clean
+
+		protected virtual Task CleanAsync()
+		{
+			return Task.Run(() => File.Delete(Path.Combine(Path.GetTempPath(), "License.html")));
+		}
 
 		#endregion
 	}

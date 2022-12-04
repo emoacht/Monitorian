@@ -15,9 +15,6 @@ using System.Windows.Media.Imaging;
 using Monitorian.Core.Helper;
 using Monitorian.Core.Models;
 using Monitorian.Core.ViewModels;
-using Monitorian.Core.Views.Controls;
-using Monitorian.Core.Views.Input;
-using Monitorian.Core.Views.Input.Touchpad;
 using ScreenFrame.Movers;
 
 namespace Monitorian.Core.Views
@@ -25,7 +22,7 @@ namespace Monitorian.Core.Views
 	public partial class MainWindow : Window
 	{
 		private readonly StickWindowMover _mover;
-		private readonly TouchpadTracker _tracker;
+		//private readonly TouchpadTracker _tracker;
 		public MainWindowViewModel ViewModel => (MainWindowViewModel)this.DataContext;
 
 		public MainWindow(AppControllerCore controller)
@@ -49,17 +46,17 @@ namespace Monitorian.Core.Views
 			//{
 			//};
 
-			_tracker = new TouchpadTracker(this);
-			_tracker.ManipulationDelta += (_, delta) =>
-			{
-				var slider = FocusManager.GetFocusedElement(this) as EnhancedSlider;
-				slider?.ChangeValue(delta);
-			};
-			_tracker.ManipulationCompleted += (_, _) =>
-			{
-				var slider = FocusManager.GetFocusedElement(this) as EnhancedSlider;
-				slider?.EnsureUpdateSource();
-			};
+			//_tracker = new TouchpadTracker(this);
+			//_tracker.ManipulationDelta += (_, delta) =>
+			//{
+			//	var slider = FocusManager.GetFocusedElement(this) as EnhancedSlider;
+			//	slider?.ChangeValue(delta);
+			//};
+			//_tracker.ManipulationCompleted += (_, _) =>
+			//{
+			//	var slider = FocusManager.GetFocusedElement(this) as EnhancedSlider;
+			//	slider?.EnsureUpdateSource();
+			//};
 		}
 
 		public override void OnApplyTemplate()
@@ -73,13 +70,11 @@ namespace Monitorian.Core.Views
 				UsesLargeElementsProperty,
 				new Binding(nameof(SettingsCore.UsesLargeElements))
 				{
-					Source = ((MainWindowViewModel)this.DataContext).Settings,
+					Source = ViewModel.Settings,
 					Mode = BindingMode.OneWay
 				});
 
 			//this.InvalidateProperty(UsesLargeElementsProperty);
-
-			EnableMouseHorizontalWheel();
 		}
 
 		protected override void OnClosed(EventArgs e)
@@ -136,21 +131,6 @@ namespace Monitorian.Core.Views
 							window.Resources[key] = buffer;
 						}
 					}));
-
-		#endregion
-
-		#region MouseHorizontalWheel
-
-		public event MouseWheelEventHandler MouseHorizontalWheel
-		{
-			add => AddHandler(MouseAddition.MouseHorizontalWheelEvent, value);
-			remove => RemoveHandler(MouseAddition.MouseHorizontalWheelEvent, value);
-		}
-
-		private void EnableMouseHorizontalWheel()
-		{
-			MouseAddition.EnableMouseHorizontalWheel(this);
-		}
 
 		#endregion
 

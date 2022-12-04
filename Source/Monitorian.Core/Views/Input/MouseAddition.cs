@@ -10,14 +10,14 @@ using System.Windows.Interop;
 namespace Monitorian.Core.Views.Input
 {
 	/// <summary>
-	/// Additional events to <see cref="System.Windows.Input.Mouse"/>
+	/// Additional attached events to <see cref="System.Windows.Input.Mouse"/>
 	/// </summary>
 	public static class MouseAddition
 	{
 		#region Event
 
 		/// <summary>
-		/// Mouse horizontal wheel event
+		/// Mouse horizontal wheel attached event
 		/// </summary>
 		public static readonly RoutedEvent MouseHorizontalWheelEvent = EventManager.RegisterRoutedEvent(
 			"MouseHorizontalWheel",
@@ -28,48 +28,62 @@ namespace Monitorian.Core.Views.Input
 		public static void AddMouseHorizontalWheelHandler(DependencyObject d, MouseWheelEventHandler handler)
 		{
 			if (d is UIElement element)
+			{
 				element.AddHandler(MouseHorizontalWheelEvent, handler);
+				EnableMouseHorizontalWheel(element);
+			}
 		}
 
 		public static void RemoveMouseHorizontalWheelHandler(DependencyObject d, MouseWheelEventHandler handler)
 		{
 			if (d is UIElement element)
+			{
 				element.RemoveHandler(MouseHorizontalWheelEvent, handler);
+				DisableMouseHorizontalWheel(element);
+			}
 		}
 
 		#endregion
 
-		private static readonly HashSet<IntPtr> _windows = new();
+		private static readonly Dictionary<Window, HashSet<UIElement>> _windows = new();
 
 		/// <summary>
-		/// Enables mouse horizontal wheel event.
+		/// Enables mouse horizontal wheel attached event for a specified UIElement.
 		/// </summary>
-		/// <param name="element">UIElement</param>
+		/// <param name="element">UIElement that listens to this event</param>
+		/// <exception cref="ArgumentNullException"></exception>
 		public static void EnableMouseHorizontalWheel(UIElement element)
 		{
 			var window = element as Window ?? Window.GetWindow(element) ?? throw new ArgumentNullException(nameof(element));
-
 			if (window.IsLoaded)
 			{
-				AddMouseHorizontalWheelHook(window);
+				AddMouseHorizontalWheelHook(window, element);
 			}
 			else
 			{
 				window.Loaded += OnLoaded;
 			}
 
-			static void OnLoaded(object sender, RoutedEventArgs e)
+			void OnLoaded(object sender, RoutedEventArgs e)
 			{
 				var window = (Window)sender;
 				window.Loaded -= OnLoaded;
-				AddMouseHorizontalWheelHook(window);
+				AddMouseHorizontalWheelHook(window, element);
 			}
 		}
 
-		private static void AddMouseHorizontalWheelHook(Window window)
+		private static void AddMouseHorizontalWheelHook(Window window, UIElement element)
 		{
+			if (_windows.TryGetValue(window, out HashSet<UIElement> elements))
+			{
+				elements.Add(element);
+				return;
+			}
+
+			_windows.Add(window, new HashSet<UIElement> { element });
+
 			var handle = new WindowInteropHelper(window).Handle;
-			if (_windows.Add(handle) && (HwndSource.FromHwnd(handle) is HwndSource source))
+			if ((handle != IntPtr.Zero) && (HwndSource.FromHwnd(handle) is HwndSource source))
 			{
 				source.AddHook(WndProc);
 				window.Closed += OnClosed;
@@ -84,38 +98,46 @@ namespace Monitorian.Core.Views.Input
 		}
 
 		/// <summary>
-		/// Disables mouse horizontal wheel event.
+		/// Disables mouse horizontal wheel attached event for a specified UIElement.
 		/// </summary>
-		/// <param name="window">Window</param>
-		/// <remarks>
-		/// This method only accepts Window instance for simplicity.
-		/// </remarks>
-		public static void DisableMouseHorizontalWheel(Window window)
+		/// <param name="element">UIElement that listens to this event</param>
+		/// <exception cref="ArgumentNullException"></exception>
+		public static void DisableMouseHorizontalWheel(UIElement element)
 		{
-			if (window is null)
-				throw new ArgumentNullException(nameof(window));
-
-			RemoveMouseHorizontalWheelHook(window);
+			var window = element as Window ?? Window.GetWindow(element) ?? throw new ArgumentNullException(nameof(element));
+			RemoveMouseHorizontalWheelHook(window, element);
 		}
 
-		private static void RemoveMouseHorizontalWheelHook(Window window)
+		private static void RemoveMouseHorizontalWheelHook(Window window, UIElement element = null)
 		{
+			if (element is not null)
+			{
+				if (_windows.TryGetValue(window, out HashSet<UIElement> elements))
+				{
+					if (!elements.Remove(element) || elements.Any())
+						return;
+				}
+			}
+
+			if (!_windows.Remove(window))
+				return;
+
 			var handle = new WindowInteropHelper(window).Handle;
-			if (_windows.Remove(handle) && (HwndSource.FromHwnd(handle) is HwndSource source))
+			if ((handle != IntPtr.Zero) && (HwndSource.FromHwnd(handle) is HwndSource source))
 			{
 				source.RemoveHook(WndProc);
 			}
 		}
 
 		/// <summary>
-		/// Whether mouse horizontal wheel direction is to be inverted
+		/// Whether mouse horizontal wheel direction is inverted
 		/// </summary>
 		public static bool IsMouseHorizontalWheelInverted
 		{
-			get => _isMouseHorizontalWheelInvertedValue is -1;
-			set => _isMouseHorizontalWheelInvertedValue = (short)(value ? -1 : 1);
+			get => _isMouseHorizontalWheelInvertedValue is 1;
+			set => _isMouseHorizontalWheelInvertedValue = (short)(value ? 1 : -1);
 		}
-		private static short _isMouseHorizontalWheelInvertedValue = -1; // Default is true.
+		private static short _isMouseHorizontalWheelInvertedValue = -1; // Default
 
 		private const int WM_MOUSEHWHEEL = 0x020E;
 

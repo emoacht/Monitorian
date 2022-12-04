@@ -17,11 +17,14 @@ namespace Monitorian.Core.ViewModels
 		public MenuWindowViewModel(AppControllerCore controller)
 		{
 			this._controller = controller ?? throw new ArgumentNullException(nameof(controller));
+
+			CleanLicense();
 		}
 
 		#region License
 
 		private const string LicenseFileName = "License.txt";
+		private static bool _licenseFileExists = true; // Default
 
 		public void OpenLicense()
 		{
@@ -30,7 +33,16 @@ namespace Monitorian.Core.ViewModels
 				var licenseFileBody = DocumentService.ReadEmbeddedFile(LicenseFileName);
 				var licenseFilePath = DocumentService.SaveTempFileAsHtml(LicenseFileName, ProductInfo.Product, licenseFileBody);
 				Process.Start(licenseFilePath);
+				_licenseFileExists = true;
 			});
+		}
+
+		private void CleanLicense()
+		{
+			if (!_licenseFileExists)
+				return;
+
+			Task.Run(() => _licenseFileExists = DocumentService.DeleteTempFile(LicenseFileName, TimeSpan.FromHours(1)));
 		}
 
 		#endregion

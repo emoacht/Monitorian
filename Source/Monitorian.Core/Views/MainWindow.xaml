@@ -420,6 +420,7 @@
 
 		<!-- Pulse Label -->
 		<Style x:Key="PulseLabelStyle" TargetType="{x:Type controls:PulseLabel}">
+			<Setter Property="FontSize" Value="12"/>
 			<Setter Property="Template">
 				<Setter.Value>
 					<ControlTemplate TargetType="{x:Type controls:PulseLabel}">
@@ -575,16 +576,17 @@
 
 		<!-- Number Label -->
 		<Style x:Key="NumberLabelStyle" TargetType="{x:Type Label}">
+			<Setter Property="VerticalAlignment" Value="Center"/>
 			<Setter Property="Padding" Value="0"/>
 			<Setter Property="HorizontalContentAlignment" Value="Right"/>
-			<Setter Property="VerticalAlignment" Value="Center"/>
 			<Setter Property="Foreground" Value="{StaticResource App.Foreground}"/>
+			<Setter Property="FontFamily" Value="Segoe UI"/>
 		</Style>
 	</Window.Resources>
 
 	<Grid Width="340">
 		<!-- Pulse -->
-		<controls:PulseLabel Height="16" Margin="8,4"
+		<controls:PulseLabel Margin="8,4"
 							 Style="{StaticResource PulseLabelStyle}"
 							 Content="{Binding Source={x:Static models:ProductInfo.Title}, Mode=OneTime}"
 							 IsPulsing="{Binding IsScanning, Mode=OneWay}"
@@ -624,7 +626,7 @@
 							<controls:SwitchTextBox Grid.Column="0"
 													Height="22" Margin="8,5,0,5" HorizontalAlignment="Left" VerticalAlignment="Center"
 													Style="{StaticResource NameTextBoxStyle}"
-													TextWrapping="Wrap" MaxLength="96" FontSize="14"
+													TextWrapping="Wrap" MaxLength="96"
 													Text="{Binding Name, Mode=TwoWay}"/>
 
 							<StackPanel Grid.Column="1"
@@ -685,15 +687,8 @@
 								<i:Interaction.Behaviors>
 									<behaviors:ItemSliderBehavior IsSelected="{Binding IsSelected, Mode=OneWay}"
 																  IsByKey="{Binding IsByKey, Mode=TwoWay}"/>
+									<behaviors:MouseHorizontalWheelBehavior/>
 								</i:Interaction.Behaviors>
-								<i:Interaction.Triggers>
-									<i:EventTrigger SourceObject="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
-													EventName="MouseHorizontalWheel">
-										<i:CallMethodAction TargetObject="{Binding RelativeSource={RelativeSource AncestorType={x:Type Slider}}}"
-															MethodName="OnMouseWheel"
-															IsEnabled="{Binding IsUnison, Mode=OneWay, Converter={StaticResource BooleanInverseConverterKey}}"/>
-									</i:EventTrigger>
-								</i:Interaction.Triggers>
 							</controls:CompoundSlider>
 
 							<Grid Grid.Column="2"
@@ -745,7 +740,7 @@
 							<Border Margin="6,6,6,0"
 									Padding="3"
 									BorderBrush="{StaticResource App.Foreground.Invalid}" BorderThickness="1">
-								<TextBlock Foreground="{StaticResource App.Foreground.Invalid}"
+								<TextBlock Style="{StaticResource InvalidTextStyle}"
 										   TextWrapping="Wrap"
 										   Text="{Binding Message, Mode=OneWay}"/>
 							</Border>

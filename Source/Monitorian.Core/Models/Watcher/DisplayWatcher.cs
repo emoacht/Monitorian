@@ -7,14 +7,14 @@ using Microsoft.Win32;
 
 namespace Monitorian.Core.Models.Watcher
 {
-	internal class DisplayWatcher : TimerWatcher, IDisposable
+	internal class DisplayWatcher : TimerWatcher
 	{
-		private Action _onDisplaySettingsChanged;
+		private Action<CountEventArgs> _onDisplaySettingsChanged;
 
 		public DisplayWatcher() : base(1, 4, 5)
 		{ }
 
-		public void Subscribe(Action onDisplaySettingsChanged)
+		public void Subscribe(Action<CountEventArgs> onDisplaySettingsChanged)
 		{
 			this._onDisplaySettingsChanged = onDisplaySettingsChanged ?? throw new ArgumentNullException(nameof(onDisplaySettingsChanged));
 			SystemEvents.DisplaySettingsChanged += OnDisplaySettingsChanged;
@@ -27,19 +27,13 @@ namespace Monitorian.Core.Models.Watcher
 			TimerStart();
 		}
 
-		protected override void TimerTick() => _onDisplaySettingsChanged?.Invoke();
+		protected override void TimerTick() => _onDisplaySettingsChanged?.Invoke(new CountEventArgs(Count));
 
 		#region IDisposable
 
 		private bool _isDisposed = false;
 
-		public void Dispose()
-		{
-			Dispose(true);
-			GC.SuppressFinalize(this);
-		}
-
-		protected virtual void Dispose(bool disposing)
+		protected override void Dispose(bool disposing)
 		{
 			if (_isDisposed)
 				return;
@@ -52,6 +46,8 @@ namespace Monitorian.Core.Models.Watcher
 
 			// Free any unmanaged objects here.
 			_isDisposed = true;
+
+			base.Dispose(disposing);
 		}
 
 		#endregion

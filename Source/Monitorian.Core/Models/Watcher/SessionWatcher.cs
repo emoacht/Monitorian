@@ -7,7 +7,7 @@ using Microsoft.Win32;
 
 namespace Monitorian.Core.Models.Watcher
 {
-	internal class SessionWatcher : TimerWatcher, IDisposable
+	internal class SessionWatcher : TimerWatcher
 	{
 		private Action<SessionSwitchCountEventArgs> _onSessionSwitch;
 
@@ -58,13 +58,7 @@ namespace Monitorian.Core.Models.Watcher
 
 		private bool _isDisposed = false;
 
-		public void Dispose()
-		{
-			Dispose(true);
-			GC.SuppressFinalize(this);
-		}
-
-		protected virtual void Dispose(bool disposing)
+		protected override void Dispose(bool disposing)
 		{
 			if (_isDisposed)
 				return;
@@ -77,6 +71,8 @@ namespace Monitorian.Core.Models.Watcher
 
 			// Free any unmanaged objects here.
 			_isDisposed = true;
+
+			base.Dispose(disposing);
 		}
 
 		#endregion

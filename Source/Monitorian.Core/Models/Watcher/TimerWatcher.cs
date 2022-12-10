@@ -7,7 +7,7 @@ using System.Windows.Threading;
 
 namespace Monitorian.Core.Models.Watcher
 {
-	internal abstract class TimerWatcher
+	internal abstract class TimerWatcher : IDisposable
 	{
 		private readonly DispatcherTimer _timer;
 		private readonly TimeSpan[] _intervals;
@@ -59,5 +59,32 @@ namespace Monitorian.Core.Models.Watcher
 		}
 
 		protected abstract void TimerTick();
+
+		#region IDisposable
+
+		private bool _isDisposed = false;
+
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		protected virtual void Dispose(bool disposing)
+		{
+			if (_isDisposed)
+				return;
+
+			if (disposing)
+			{
+				// Free any other managed objects here.
+				_timer.Stop();
+			}
+
+			// Free any unmanaged objects here.
+			_isDisposed = true;
+		}
+
+		#endregion
 	}
 }

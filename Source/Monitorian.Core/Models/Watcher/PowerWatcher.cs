@@ -102,6 +102,8 @@ namespace Monitorian.Core.Models.Watcher
 				// Free any other managed objects here.
 				SystemEvents.PowerModeChanged -= OnPowerModeChanged;
 				_complement?.UnregisterPowerSettingEvent();
+				_resumeWatcher.Dispose();
+				_statusWatcher.Dispose();
 			}
 
 			// Free any unmanaged objects here.

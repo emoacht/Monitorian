@@ -5,7 +5,7 @@
 	<Color x:Key="App.ForegroundColor">Black</Color>
 	<Color x:Key="App.ShadowColor">Gray</Color>
 	<Color x:Key="App.LineColor">#FF959595</Color>
-	<Color x:Key="App.TargetColor">#FFA2A2A2</Color>
+	<Color x:Key="App.TargetColor">#FF979797</Color>
 	<Color x:Key="App.OverlayColor">#48FFFFFF</Color>
 
 	<SolidColorBrush x:Key="App.Foreground" Color="{DynamicResource App.ForegroundColor}"/>

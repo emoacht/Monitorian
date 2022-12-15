@@ -86,7 +86,8 @@ namespace Monitorian.Core
 
 			_displayWatcher.Subscribe((e) => OnMonitorsChangeInferred(nameof(DisplayWatcher), e));
 			_sessionWatcher.Subscribe((e) => OnMonitorsChangeInferred(nameof(SessionWatcher), e));
-			_powerWatcher.Subscribe((e) => OnMonitorsChangeInferred(nameof(PowerWatcher), e), PowerManagement.GetOnPowerSettingChanged());
+			_powerWatcher.Subscribe((e) => OnMonitorsChangeInferred(nameof(PowerWatcher), e));
+
 			_brightnessWatcher.Subscribe((instanceName, brightness) =>
 			{
 				if (!_sessionWatcher.IsLocked)

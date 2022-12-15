@@ -85,6 +85,7 @@ namespace Monitorian.Core.Models.Monitor
 		private static readonly Guid VIDEO_ADAPTIVE_DISPLAY_BRIGHTNESS = new Guid("fbd9aa66-9553-4097-ba44-ed6e9d65eab8");
 		private static readonly Guid DEVICE_POWER_POLICY_VIDEO_BRIGHTNESS = new Guid("aded5e82-b909-4619-9949-f5d71dac0bcb");
 		private static readonly Guid DEVICE_POWER_POLICY_VIDEO_DIM_BRIGHTNESS = new Guid("f1fbfde2-a960-4165-9f88-50667911ce96");
+		private static readonly Guid CONSOLE_DISPLAY_STATE = new Guid("6fe69556-704a-47a0-8f24-c28d936fda47");
 
 		// AC/DC power source derived from winnt.h
 		private static readonly Guid ACDC_POWER_SOURCE = new Guid("5d3e9a59-e9d5-4b00-a6bd-ff34ff516548");
@@ -101,38 +102,70 @@ namespace Monitorian.Core.Models.Monitor
 			return activePolicyGuid;
 		}
 
+		public static (IReadOnlyCollection<Guid>, Func<PowerSettingChangedEventArgs, DisplayStates>) GetOnPowerSettingChanged()
+		{
+			var powerSettingGuids = new List<Guid>
+			{
+				ACDC_POWER_SOURCE,
+				CONSOLE_DISPLAY_STATE
+			};
+
+			if (CanAdaptiveBrightnessEnabled)
+				powerSettingGuids.Add(VIDEO_ADAPTIVE_DISPLAY_BRIGHTNESS);
+
+			return (powerSettingGuids, OnPowerSettingChanged);
+		}
+
+		private static DisplayStates OnPowerSettingChanged(PowerSettingChangedEventArgs e)
+		{
+			// Power Setting GUIDs
+			// https://learn.microsoft.com/en-us/windows/win32/power/power-setting-guids
+			if (e?.PowerSettingGuid == CONSOLE_DISPLAY_STATE)
+			{
+				// 0: Off
+				// 1: On
+				// 2: Dimmed
+				var state = e.Data switch
+				{
+					0 => DisplayStates.Off,
+					1 => DisplayStates.On,
+					2 => DisplayStates.Dimmed,
+					_ => default
+				};
+
+				if ((default == state) || (DisplayState == state))
+					return default;
+
+				return DisplayState = state;
+			}
+			else if (e?.PowerSettingGuid == VIDEO_ADAPTIVE_DISPLAY_BRIGHTNESS)
+			{
+				// 0: Off
+				// 1: On
+				IsAdaptiveBrightnessEnabled = (e.Data == 1);
+			}
+			return default;
+		}
+
+		#region Display
+
+		public static DisplayStates DisplayState
+		{
+			get => _displayState;
+			private set => _displayState = value;
+		}
+		private static DisplayStates _displayState = DisplayStates.On; // Default
+
+		#endregion
+
 		#region Adaptive Brightness
 
 		public static bool IsAdaptiveBrightnessEnabled
 		{
-			get => _isAdaptiveBrightnessEnabled ??= CanAdaptiveBrightnessEnabled && CheckAdaptiveBrightnessEnabled();
+			get => _isAdaptiveBrightnessEnabled ??= CanAdaptiveBrightnessEnabled && (IsActiveSchemeAdaptiveBrightnessEnabled() is true);
 			private set => _isAdaptiveBrightnessEnabled = value;
 		}
 		public static bool? _isAdaptiveBrightnessEnabled;
-
-		public static (IReadOnlyCollection<Guid>, Action<PowerSettingChangedEventArgs>) GetOnPowerSettingChanged()
-		{
-			if (!CanAdaptiveBrightnessEnabled)
-				return default;
-
-			var settingGuids = new[]
-			{
-				ACDC_POWER_SOURCE,
-				VIDEO_ADAPTIVE_DISPLAY_BRIGHTNESS
-			};
-			return (settingGuids, (e) => IsAdaptiveBrightnessEnabled = CheckAdaptiveBrightnessEnabled(e));
-		}
-
-		private static bool CheckAdaptiveBrightnessEnabled(PowerSettingChangedEventArgs e = null)
-		{
-			if (e?.Guid == VIDEO_ADAPTIVE_DISPLAY_BRIGHTNESS)
-			{
-				// 0: Off
-				// 1: On
-				return (e.Data == 1);
-			}
-			return (IsActiveSchemeAdaptiveBrightnessEnabled() is true);
-		}
 
 		private static bool CanAdaptiveBrightnessEnabled => _canAdaptiveBrightnessEnabled ??= LightSensor.AmbientLightSensorExists && IsSettingAdaptiveBrightnessAdded();
 		private static bool? _canAdaptiveBrightnessEnabled;
@@ -151,7 +184,7 @@ namespace Monitorian.Core.Models.Monitor
 			}
 			catch (Exception ex)
 			{
-				Debug.WriteLine("Failed to check if adaptive brightness setting is added" + Environment.NewLine
+				Debug.WriteLine("Failed to check if adaptive brightness setting is added." + Environment.NewLine
 					+ ex);
 				return false;
 			}
@@ -352,5 +385,13 @@ namespace Monitorian.Core.Models.Monitor
 		}
 
 		#endregion
+	}
+
+	public enum DisplayStates
+	{
+		None = 0,
+		Off,
+		On,
+		Dimmed
 	}
 }

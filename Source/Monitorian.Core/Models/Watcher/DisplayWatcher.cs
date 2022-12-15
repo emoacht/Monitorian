@@ -11,7 +11,7 @@ namespace Monitorian.Core.Models.Watcher
 	{
 		private Action<ICountEventArgs> _onDisplaySettingsChanged;
 
-		public DisplayWatcher() : base(1, 4, 5)
+		public DisplayWatcher() : base(1, 4, 5, 10)
 		{ }
 
 		public void Subscribe(Action<ICountEventArgs> onDisplaySettingsChanged)

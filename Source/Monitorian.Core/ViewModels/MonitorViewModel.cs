@@ -134,7 +134,7 @@ namespace Monitorian.Core.ViewModels
 				if (_monitor.Brightness == value)
 					return;
 
-				SetBrightness(value);
+				SetBrightness(value, false);
 
 				if (IsSelected)
 					_controller.SaveMonitorUserChanged(this);
@@ -215,18 +215,15 @@ namespace Monitorian.Core.ViewModels
 			SetBrightness(brightness, isCycle);
 		}
 
-		private void SetBrightness(int brightness, bool isCycle)
+		public void SetBrightness(int brightness) => SetBrightness(brightness, false);
+
+		private bool SetBrightness(int brightness, bool isCycle)
 		{
 			if (brightness < RangeLowest)
 				brightness = isCycle ? RangeHighest : RangeLowest;
 			else if (RangeHighest < brightness)
 				brightness = isCycle ? RangeLowest : RangeHighest;
 
-			SetBrightness(brightness);
-		}
-
-		private bool SetBrightness(int brightness)
-		{
 			AccessResult result;
 			lock (_lock)
 			{

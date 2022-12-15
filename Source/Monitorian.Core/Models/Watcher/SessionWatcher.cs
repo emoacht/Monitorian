@@ -9,12 +9,12 @@ namespace Monitorian.Core.Models.Watcher
 {
 	internal class SessionWatcher : TimerWatcher
 	{
-		private Action<SessionSwitchCountEventArgs> _onSessionSwitch;
+		private Action<ICountEventArgs> _onSessionSwitch;
 
 		public SessionWatcher() : base(5, 5)
 		{ }
 
-		public void Subscribe(Action<SessionSwitchCountEventArgs> onSessionSwitch)
+		public void Subscribe(Action<ICountEventArgs> onSessionSwitch)
 		{
 			this._onSessionSwitch = onSessionSwitch ?? throw new ArgumentNullException(nameof(onSessionSwitch));
 			SystemEvents.SessionSwitch += OnSessionSwitch;

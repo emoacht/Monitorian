@@ -9,12 +9,12 @@ namespace Monitorian.Core.Models.Watcher
 {
 	internal class DisplayWatcher : TimerWatcher
 	{
-		private Action<CountEventArgs> _onDisplaySettingsChanged;
+		private Action<ICountEventArgs> _onDisplaySettingsChanged;
 
 		public DisplayWatcher() : base(1, 4, 5)
 		{ }
 
-		public void Subscribe(Action<CountEventArgs> onDisplaySettingsChanged)
+		public void Subscribe(Action<ICountEventArgs> onDisplaySettingsChanged)
 		{
 			this._onDisplaySettingsChanged = onDisplaySettingsChanged ?? throw new ArgumentNullException(nameof(onDisplaySettingsChanged));
 			SystemEvents.DisplaySettingsChanged += OnDisplaySettingsChanged;

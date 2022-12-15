@@ -208,11 +208,16 @@ namespace Monitorian.Core
 
 		#region Monitors
 
-		protected virtual async void OnMonitorsChangeInferred(object sender = null, ICountEventArgs e = null)
+		protected virtual async void OnMonitorsChangeInferred(object sender, ICountEventArgs e = null)
 		{
 			await Recorder.RecordAsync($"{nameof(OnMonitorsChangeInferred)} ({sender}{e?.Description})");
 
-			if (e?.Count == 0)
+			await ProceedScanAsync(e);
+		}
+
+		protected virtual async Task ProceedScanAsync(ICountEventArgs e)
+		{
+			if (e is { Count: 0 })
 				return;
 
 			await ScanAsync(TimeSpan.FromSeconds(3));

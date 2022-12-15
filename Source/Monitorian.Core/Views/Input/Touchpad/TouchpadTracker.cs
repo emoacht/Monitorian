@@ -53,7 +53,7 @@ namespace Monitorian.Core.Views.Input.Touchpad
 			{
 				case TouchpadHelper.WM_INPUT:
 					var contacts = TouchpadHelper.ParseInput(lParam);
-					if (contacts?.Length > 1)
+					if (contacts is { Length: > 1 })
 					{
 						Check(contacts[0]);
 						handled = true;

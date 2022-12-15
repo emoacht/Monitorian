@@ -85,7 +85,8 @@ namespace Monitorian.Core.Models.Watcher
 		{
 			switch (state)
 			{
-				case DisplayStates.On or DisplayStates.Dimmed:
+				case DisplayStates.On:
+				case DisplayStates.Dimmed:
 					RaiseDisplayStateChanged(state, 0);
 					_stateWatcher.TimerStart(state);
 					break;

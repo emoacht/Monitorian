@@ -43,6 +43,11 @@ namespace ScreenFrame.Helper
 		/// </summary>
 		public static bool Is11OrGreater => IsEqualToOrGreaterThan(10, 0, 22000);
 
+		/// <summary>
+		/// Whether OS is Windows 11 (10.0.22623) or greater
+		/// </summary>
+		public static bool Is11Build22623OrGreater => IsEqualToOrGreaterThan(10, 0, 22623);
+
 		#region Cache
 
 		private static readonly Dictionary<string, bool> _cache = new();

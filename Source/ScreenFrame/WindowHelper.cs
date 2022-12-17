@@ -89,16 +89,16 @@ namespace ScreenFrame
 			public int right;
 			public int bottom;
 
+			public int Width => (right - left);
+			public int Height => (bottom - top);
+
 			public static implicit operator Rect(RECT rect)
 			{
-				if ((rect.right < rect.left) || (rect.bottom < rect.top))
-					return Rect.Empty;
-
 				return new Rect(
 					rect.left,
 					rect.top,
-					rect.right - rect.left,
-					rect.bottom - rect.top);
+					rect.Width,
+					rect.Height);
 			}
 
 			public static implicit operator RECT(Rect rect)
@@ -278,6 +278,13 @@ namespace ScreenFrame
 		[DllImport("User32.dll", SetLastError = true)]
 		[return: MarshalAs(UnmanagedType.Bool)]
 		private static extern bool EnumWindows(
+			EnumWindowsProc lpEnumFunc,
+			IntPtr lParam);
+
+		[DllImport("User32.dll")]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		private static extern bool EnumChildWindows(
+			IntPtr hWndParent,
 			EnumWindowsProc lpEnumFunc,
 			IntPtr lParam);
 
@@ -591,7 +598,7 @@ namespace ScreenFrame
 				IntPtr.Zero,
 				IntPtr.Zero,
 				className,
-				string.Empty);
+				null);
 			if (windowHandle != IntPtr.Zero)
 			{
 				if (GetWindowRect(
@@ -724,28 +731,76 @@ namespace ScreenFrame
 			};
 		}
 
-		internal static bool TryGetOverflowAreaRect(out Rect overflowAreaRect)
+		/// <summary>
+		/// Attempts to get the rectangle of Start button.
+		/// </summary>
+		/// <param name="buttonRect">Rectangle of Start button</param>
+		/// <returns>True if successfully gets</returns>
+		internal static bool TryGetStartButtonRect(out Rect buttonRect)
 		{
-			// This combination of functions will not produce current location of overflow area
-			// until it is shown in the monitor where primary taskbar currently locates. Thus
-			// the location must be verified by other means.
-			var overflowAreaHandle = FindWindowEx(
+			var windowHandle = FindWindowEx(
 				IntPtr.Zero,
 				IntPtr.Zero,
-				"NotifyIconOverflowWindow",
-				string.Empty);
-			if (overflowAreaHandle != IntPtr.Zero)
+				PrimaryTaskbarWindowClassName,
+				null);
+			if (windowHandle != IntPtr.Zero)
 			{
-				if (GetWindowRect(
-					overflowAreaHandle,
-					out RECT rect))
+				windowHandle = FindWindowEx(
+					windowHandle,
+					IntPtr.Zero,
+					"Start",
+					null);
+				if (windowHandle != IntPtr.Zero)
 				{
-					overflowAreaRect = rect;
-					return true;
+					if (GetWindowRect(
+						windowHandle,
+						out RECT rect))
+					{
+						buttonRect = rect;
+						return true;
+					}
 				}
 			}
-			overflowAreaRect = Rect.Empty;
+			buttonRect = default;
 			return false;
+		}
+
+		/// <summary>
+		/// Attempts to get the rectangle of overflow area.
+		/// </summary>
+		/// <param name="overflowAreaRect">Rectangle of overflow area</param>
+		/// <param name="includesDistance">Whether rectangle of overflow area includes distance</param>
+		/// <returns>True if successfully gets</returns>
+		/// <remarks>
+		/// This method will not produce current location of overflow area until it is shown
+		/// in the monitor where primary taskbar currently locates. Thus, the location must be
+		/// verified by other means.
+		/// </remarks>
+		internal static bool TryGetOverflowAreaRect(out Rect overflowAreaRect, out bool includesDistance)
+		{
+			// As of Windows 11 10.0.22623.xxx, the traditional window of overflow area
+			// (NotifyIconOverflowWindow) still exists but seems no longer used. Instead, another
+			// window (TopLevelWindowForOverflowXamlIsland) hosts overflow area. Its rectangle
+			// includes surrounding spaces.
+			if (TryGetWindow("NotifyIconOverflowWindow", out _, out Rect windowRect)
+				&& IsValid(windowRect))
+			{
+				overflowAreaRect = windowRect;
+				includesDistance = false;
+				return true;
+			}
+			if (TryGetWindow("TopLevelWindowForOverflowXamlIsland", out _, out windowRect)
+				&& IsValid(windowRect))
+			{
+				overflowAreaRect = windowRect;
+				includesDistance = true;
+				return true;
+			}
+			overflowAreaRect = default;
+			includesDistance = false;
+			return false;
+
+			static bool IsValid(Rect rect) => rect is { Width: > 0, Height: > 0 };
 		}
 
 		#endregion

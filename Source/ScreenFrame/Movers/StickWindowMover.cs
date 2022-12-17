@@ -63,11 +63,13 @@ namespace ScreenFrame.Movers
 		/// <summary>
 		/// Whether to keep distance from the taskbar or the notification overflow area
 		/// </summary>
+		/// <remarks>This is valid only on Windows 11.</remarks>
 		public bool KeepsDistance { get; set; }
 
 		/// <summary>
 		/// Distance from the taskbar or the notification overflow area
 		/// </summary>
+		/// <remarks>This is valid only on Windows 11.</remarks>
 		public double Distance { get; set; } = 12D;
 
 		/// <summary>
@@ -87,6 +89,7 @@ namespace ScreenFrame.Movers
 
 			var iconPlacement = IconPlacement.Unknown;
 			var overflowAreaRect = default(Rect);
+			var includesDistance = false;
 
 			if (NotifyIconHelper.TryGetNotifyIconRect(_notifyIcon, out Rect iconRect))
 			{
@@ -96,10 +99,11 @@ namespace ScreenFrame.Movers
 				{
 					iconPlacement = IconPlacement.InTaskbar;
 				}
-				else if (WindowHelper.TryGetOverflowAreaRect(out overflowAreaRect)
+				else if (WindowHelper.TryGetOverflowAreaRect(out overflowAreaRect, out bool buffer)
 					&& overflowAreaRect.Contains(iconRect))
 				{
 					iconPlacement = IconPlacement.InOverflowArea;
+					includesDistance = buffer;
 				}
 			}
 
@@ -108,9 +112,14 @@ namespace ScreenFrame.Movers
 
 			var isLeftToRight = !CultureInfoAddition.UserDefaultUICulture.TextInfo.IsRightToLeft;
 
-			var distance = KeepsDistance
-				? new Vector(Distance, Distance) * VisualTreeHelperAddition.GetDpi(_window).ToMatrix()
-				: new Vector(0, 0);
+			var distance = new Vector(0, 0);
+			if (OsVersion.Is11OrGreater && KeepsDistance)
+			{
+				distance = (OsVersion.Is11Build22623OrGreater && includesDistance)
+					? new Vector(0, Distance)
+					: new Vector(Distance, Distance);
+				distance *= VisualTreeHelperAddition.GetDpi(_window).ToMatrix();
+			}
 
 			double x = 0, y = 0;
 
@@ -129,6 +138,9 @@ namespace ScreenFrame.Movers
 						_ => isLeftToRight ? (taskbarRect.Right - distance.X) : (taskbarRect.Left + distance.X), // Fallback
 					};
 					x -= isLeftToRight ? (windowWidth - windowMargin.Right) : windowMargin.Left;
+
+					if (OsVersion.Is11Build22623OrGreater && WindowHelper.TryGetStartButtonRect(out Rect buttonRect))
+						taskbarRect = new Rect(taskbarRect.Left, buttonRect.Top, taskbarRect.Width, buttonRect.Height);
 
 					switch (taskbarAlignment)
 					{

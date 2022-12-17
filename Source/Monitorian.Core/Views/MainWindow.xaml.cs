@@ -33,9 +33,10 @@ namespace Monitorian.Core.Views
 
 			this.DataContext = new MainWindowViewModel(controller);
 
-			_mover = new StickWindowMover(this, controller.NotifyIconContainer.NotifyIcon);
-			if (OsVersion.Is11OrGreater)
-				_mover.KeepsDistance = true;
+			_mover = new StickWindowMover(this, controller.NotifyIconContainer.NotifyIcon)
+			{
+				KeepsDistance = true
+			};
 
 			controller.WindowPainter.Add(this);
 			controller.WindowPainter.ThemeChanged += (_, _) =>

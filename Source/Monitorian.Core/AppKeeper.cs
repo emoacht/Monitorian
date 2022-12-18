@@ -22,13 +22,13 @@ namespace Monitorian.Core
 			StartupAgent = new StartupAgent();
 		}
 
-		public Task<bool> StartAsync(StartupEventArgs e) => StartAsync(e, GetStandardOptions());
+		public Task<bool> StartAsync(StartupEventArgs e) => StartAsync(e, Enumerable.Empty<string>());
 
-		public async Task<bool> StartAsync(StartupEventArgs e, params string[] standardOptions)
+		public async Task<bool> StartAsync(StartupEventArgs e, IEnumerable<string> additionalOptions)
 		{
 			// This method must be called before StandardArguments or OtherArguments property is consumed.
 			// An exception thrown in this method will not be handled.
-			await ParseArgumentsAsync(e, standardOptions);
+			await ParseArgumentsAsync(e, EnumerateStandardOptions().Concat(additionalOptions).ToArray());
 #if DEBUG
 			ConsoleService.TryStartWrite();
 #else
@@ -67,7 +67,7 @@ namespace Monitorian.Core
 		public static IReadOnlyList<string> OtherArguments => _otherArguments?.ToArray() ?? Array.Empty<string>();
 		private static string[] _otherArguments;
 
-		public static string[] GetStandardOptions() =>
+		public static IEnumerable<string> EnumerateStandardOptions() =>
 			new[]
 			{
 				StartupAgent.Options,
@@ -75,8 +75,7 @@ namespace Monitorian.Core
 				LanguageService.Options,
 				WindowPainter.Options
 			}
-			.SelectMany(x => x)
-			.ToArray();
+			.SelectMany(x => x);
 
 		private async Task ParseArgumentsAsync(StartupEventArgs e, string[] standardOptions)
 		{

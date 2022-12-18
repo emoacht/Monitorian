@@ -15,6 +15,7 @@ namespace Monitorian.Core.Models
 	public class LanguageService
 	{
 		public static IReadOnlyCollection<string> Options => new[] { Option };
+
 		private const string Option = "/lang";
 
 		private static readonly Lazy<CultureInfo> _culture = new(() =>

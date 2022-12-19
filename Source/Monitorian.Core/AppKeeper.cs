@@ -41,7 +41,7 @@ namespace Monitorian.Core
 			var (success, response) = StartupAgent.Start(ProductInfo.Product, ProductInfo.StartupTaskId, OtherArguments);
 			if (!success && (response is not null))
 			{
-				ConsoleService.Write(response.ToString());
+				ConsoleService.WriteLine(response);
 			}
 			return success;
 		}
@@ -56,7 +56,7 @@ namespace Monitorian.Core
 		public void Write(string content)
 		{
 			if (!string.IsNullOrEmpty(content))
-				ConsoleService.Write(content);
+				ConsoleService.WriteLine(content);
 		}
 
 		#region Arguments
@@ -144,7 +144,7 @@ namespace Monitorian.Core
 
 		private void OnException(object sender, Exception exception, string exceptionName)
 		{
-			if (ConsoleService.Write(exception, exceptionName))
+			if (ConsoleService.WriteLine(exception, exceptionName))
 				return;
 
 			Logger.RecordException(exception);

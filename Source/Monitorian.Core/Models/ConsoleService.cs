@@ -54,9 +54,9 @@ namespace Monitorian.Core.Models
 		/// </summary>
 		/// <returns>True if output is redirected</returns>
 		/// <remarks>
-		/// This method substitutes <see cref="System.Console.IsOutputRedirected"/> property which cannot
-		/// correctly handle a case where output handle cannot be obtained. It happens when output
-		/// has not been redirected.
+		/// This method substitutes <see cref="System.Console.IsOutputRedirected"/> property which
+		/// cannot correctly handle a case where output handle cannot be obtained. It happens when
+		/// output has not been redirected.
 		/// </remarks>
 		private static bool IsOutputRedirected()
 		{
@@ -104,20 +104,21 @@ namespace Monitorian.Core.Models
 				return;
 
 			Trace.Listeners.Remove(_listener);
+			_listener.Dispose();
 			_listener = null;
 
 			FreeConsole();
 		}
 
-		public static bool Write(Exception exception, string exceptionName)
+		public static bool WriteLine(Exception exception, string exceptionName)
 		{
 			var content = $"[{exceptionName}]" + Environment.NewLine
 				+ exception;
 
-			return Write(content);
+			return WriteLine(content);
 		}
 
-		public static bool Write(string content)
+		public static bool WriteLine(string content)
 		{
 			if (Debugger.IsAttached || (_listener is not null))
 			{

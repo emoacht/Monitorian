@@ -314,8 +314,28 @@ namespace Monitorian.Core.ViewModels
 			}
 		}
 
+		public void IncrementContrast(int tickSize)
+		{
+			var size = (double)tickSize;
+			var count = Math.Floor(Contrast / size);
+			int contrast = (int)Math.Ceiling((count + 1) * size);
+
+			SetContrast(contrast);
+		}
+
+		public void DecrementContrast(int tickSize)
+		{
+			var size = (double)tickSize;
+			var count = Math.Ceiling(Contrast / size);
+			int contrast = (int)Math.Floor((count - 1) * size);
+
+			SetContrast(contrast);
+		}
+
 		private bool SetContrast(int contrast)
 		{
+			contrast = Math.Min(100, Math.Max(0, contrast));
+
 			AccessResult result;
 			lock (_lock)
 			{

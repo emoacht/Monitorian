@@ -155,6 +155,7 @@ namespace Monitorian.Core.ViewModels
 			switch (result.Status)
 			{
 				case AccessStatus.Succeeded:
+					BrightnessUpdatedTime = DateTimeOffset.Now;
 					OnPropertyChanged(nameof(BrightnessSystemChanged)); // This must be prior to Brightness.
 					OnPropertyChanged(nameof(Brightness));
 					OnPropertyChanged(nameof(BrightnessSystemAdjusted));
@@ -173,6 +174,14 @@ namespace Monitorian.Core.ViewModels
 					OnFailed();
 					return false;
 			}
+		}
+
+		public bool? UpdateBrightnessIfElapsed(TimeSpan duration)
+		{
+			if (DateTimeOffset.Now - BrightnessUpdatedTime < duration)
+				return null;
+
+			return UpdateBrightness();
 		}
 
 		public void IncrementBrightness()
@@ -233,6 +242,7 @@ namespace Monitorian.Core.ViewModels
 			switch (result.Status)
 			{
 				case AccessStatus.Succeeded:
+					BrightnessUpdatedTime = DateTimeOffset.Now;
 					OnPropertyChanged(nameof(Brightness));
 					OnSucceeded();
 					return true;
@@ -252,6 +262,8 @@ namespace Monitorian.Core.ViewModels
 					return false;
 			}
 		}
+
+		public DateTimeOffset BrightnessUpdatedTime { get; private set; }
 
 		#endregion
 
@@ -296,6 +308,7 @@ namespace Monitorian.Core.ViewModels
 			switch (result.Status)
 			{
 				case AccessStatus.Succeeded:
+					ContrastUpdatedTime = DateTimeOffset.Now;
 					OnPropertyChanged(nameof(Contrast));
 					OnSucceeded();
 					return true;
@@ -312,6 +325,14 @@ namespace Monitorian.Core.ViewModels
 					OnFailed();
 					return false;
 			}
+		}
+
+		public bool? UpdateContrastIfElapsed(TimeSpan duration)
+		{
+			if (DateTimeOffset.Now - ContrastUpdatedTime < duration)
+				return null;
+
+			return UpdateContrast();
 		}
 
 		public void IncrementContrast(int tickSize)
@@ -345,6 +366,7 @@ namespace Monitorian.Core.ViewModels
 			switch (result.Status)
 			{
 				case AccessStatus.Succeeded:
+					ContrastUpdatedTime = DateTimeOffset.Now;
 					OnPropertyChanged(nameof(Contrast));
 					OnSucceeded();
 					return true;
@@ -364,6 +386,8 @@ namespace Monitorian.Core.ViewModels
 					return false;
 			}
 		}
+
+		public DateTimeOffset ContrastUpdatedTime { get; private set; }
 
 		#endregion
 

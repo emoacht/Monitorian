@@ -98,12 +98,12 @@ namespace StartupAgency
 			set { if (_holder is not null) { _holder.HandleRequestAsync = value; } }
 		}
 
-		private const string HideOption = "/hide";
-
 		/// <summary>
 		/// Options
 		/// </summary>
 		public static IReadOnlyCollection<string> Options => new[] { HideOption };
+
+		private const string HideOption = "/hide";
 
 		/// <summary>
 		/// Determines whether caller instance is expected to show its window.

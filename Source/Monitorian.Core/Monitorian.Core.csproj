@@ -238,7 +238,8 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Icons\TrayIcon.ico" />
+    <Resource Include="Resources\Icons\DarkTrayIcon.ico" />
+    <Resource Include="Resources\Icons\LightTrayIcon.ico" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="Views\Generic.xaml">
@@ -271,6 +272,5 @@
       <Version>1.1.39</Version>
     </PackageReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

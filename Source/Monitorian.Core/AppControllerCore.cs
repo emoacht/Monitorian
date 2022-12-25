@@ -70,7 +70,11 @@ namespace Monitorian.Core
 
 			OnSettingsInitiated();
 
-			NotifyIconContainer.ShowIcon("pack://application:,,,/Monitorian.Core;component/Resources/Icons/TrayIcon.ico", ProductInfo.Title);
+			NotifyIconContainer.ShowIcon(WindowPainter.GetIconPath(), ProductInfo.Title);
+			WindowPainter.ThemeChanged += (_, _) =>
+			{
+				NotifyIconContainer.ShowIcon(WindowPainter.GetIconPath());
+			};
 
 			_current.MainWindow = new MainWindow(this);
 

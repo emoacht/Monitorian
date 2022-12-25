@@ -66,7 +66,7 @@ namespace ScreenFrame
 					if (iconRect.Contains(point))
 						return true;
 				}
-				point = new Point(iconRect.X, iconRect.Y); // Fallback
+				point = iconRect.Location; // Fallback
 				return true;
 			}
 			point = default;

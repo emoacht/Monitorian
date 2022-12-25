@@ -66,8 +66,8 @@ namespace Monitorian.Core.Views
 			int i = 0;
 			while (i < arguments.Count - 1)
 			{
-				if (colorPairs.TryGetValue(arguments[i], out ColorElement key) &&
-					TryParse(arguments[i + 1], out Brush value))
+				if (colorPairs.TryGetValue(arguments[i], out ColorElement key)
+					&& TryParse(arguments[i + 1], out Brush value))
 				{
 					colors[key] = value;
 					i++;
@@ -137,6 +137,16 @@ namespace Monitorian.Core.Views
 					ChangeResources(oldUriString: null, newUriString: LightThemeUriString);
 					break;
 			}
+		}
+
+		public string GetIconPath()
+		{
+			return Theme switch
+			{
+				ColorTheme.Dark => "pack://application:,,,/Monitorian.Core;component/Resources/Icons/DarkTrayIcon.ico",
+				ColorTheme.Light => "pack://application:,,,/Monitorian.Core;component/Resources/Icons/LightTrayIcon.ico",
+				_ => null
+			};
 		}
 
 		#endregion

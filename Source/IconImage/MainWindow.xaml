@@ -21,8 +21,10 @@
 			  x:Name="ImageGrid"
 			  Width="256" Height="256"
 			  RenderTransformOrigin="0.5 0.5">
-			<local:AppIcon x:Name="ImageContent"
-						   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+			<local:DarkAppIcon x:Name="ImageContent"
+							   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+			<!--<local:LightAppIcon x:Name="ImageContent"
+								HorizontalAlignment="Center" VerticalAlignment="Center"/>-->
 
 			<Grid.RenderTransform>
 				<ScaleTransform ScaleX="{Binding ElementName=ScaleSlider, Path=Value, Converter={StaticResource ScaleConverterKey}, ConverterParameter=256}"

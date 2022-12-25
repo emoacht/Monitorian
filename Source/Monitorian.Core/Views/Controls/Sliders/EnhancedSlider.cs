@@ -10,6 +10,9 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
 
+using Monitorian.Core.Views.Input;
+using Monitorian.Core.Views.Input.Touchpad;
+
 namespace Monitorian.Core.Views.Controls
 {
 	public class EnhancedSlider : Slider
@@ -25,6 +28,8 @@ namespace Monitorian.Core.Views.Controls
 		private Track _track;
 		private Thumb _thumb;
 
+		private TouchpadTracker _tracker;
+
 		public override void OnApplyTemplate()
 		{
 			base.OnApplyTemplate();
@@ -32,6 +37,8 @@ namespace Monitorian.Core.Views.Controls
 			_track = this.GetTemplateChild("PART_Track") as Track;
 			_thumb = _track?.Thumb;
 			CheckCanDrag();
+
+			_tracker = TouchpadTracker.Create(this);
 		}
 
 		public bool ChangeValue(double changeSize)
@@ -310,8 +317,17 @@ namespace Monitorian.Core.Views.Controls
 			if (!this.IsFocused)
 				this.Focus();
 
-			if (e.Delta == 0)
+			if (e.Delta is 0)
 				return;
+
+			bool IsTouchpad() => (e.Timestamp - _tracker.LastInputTimeStamp <= 500);
+
+			int delta = e.Delta;
+			if ((e.RoutedEvent == Mouse.MouseWheelEvent && IsTouchpad()) ||
+				(e.RoutedEvent == MouseAddition.MouseHorizontalWheelEvent))
+			{
+				delta *= -1;
+			}
 
 			// The default wheel rotation delta (for one notch) is set at 120.
 			// This value is seen as WHEEL_DELTA and System.Windows.Input.Mouse.MouseWheelDeltaForOneLine.
@@ -324,7 +340,7 @@ namespace Monitorian.Core.Views.Controls
 			// https://docs.microsoft.com/en-us/dotnet/api/system.windows.forms.mouseeventargs.delta
 			//
 			// Mouse.MouseWheelDeltaForOneLine should be casted to double in case the delta is smaller than 120.
-			var newValue = this.Value + (e.Delta / (double)Mouse.MouseWheelDeltaForOneLine * WheelFactor);
+			var newValue = this.Value + (delta / (double)Mouse.MouseWheelDeltaForOneLine * WheelFactor);
 			UpdateValue(newValue);
 			EnsureUpdateSource();
 		}

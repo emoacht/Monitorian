@@ -12,7 +12,20 @@ namespace Monitorian.Core.Views.Input.Touchpad
 {
 	public class TouchpadTracker
 	{
+		private static readonly Dictionary<Window, TouchpadTracker> _windows = new();
+
+		public static TouchpadTracker Create(UIElement element)
+		{
+			var window = Window.GetWindow(element);
+			if (!_windows.TryGetValue(window, out TouchpadTracker tracker))
+			{
+				tracker = new TouchpadTracker(window);
+			}
+			return tracker;
+		}
+
 		private readonly Window _window;
+		private readonly Throttle _complete;
 
 		public TouchpadTracker(Window window)
 		{
@@ -20,31 +33,49 @@ namespace Monitorian.Core.Views.Input.Touchpad
 				return;
 
 			this._window = window ?? throw new ArgumentNullException(nameof(window));
-			this._window.SourceInitialized += OnSourceInitialized;
-			this._window.Closed += OnClosed;
-		}
-
-		private Throttle _complete;
-		private HwndSource _source;
-
-		private void OnSourceInitialized(object sender, EventArgs e)
-		{
 			_complete = new Throttle(TimeSpan.FromMilliseconds(100), Complete);
 
+			_windows.Add(this._window, this);
+
+			if (this._window.IsInitialized)
+			{
+				Register();
+			}
+			else
+			{
+				this._window.SourceInitialized += OnSourceInitialized;
+			}
+			this._window.Closed += OnClosed;
+
+			void OnSourceInitialized(object sender, EventArgs e)
+			{
+				Register();
+			}
+
+			void OnClosed(object sender, EventArgs e)
+			{
+				Unregister();
+
+				_windows.Remove(this._window);
+			}
+		}
+
+		private HwndSource _source;
+
+		private void Register()
+		{
 			_source = (HwndSource)PresentationSource.FromVisual(_window);
 			_source.AddHook(WndProc);
-
 			TouchpadHelper.RegisterInput(_source.Handle);
 		}
 
-		private void OnClosed(object sender, EventArgs e)
+		private void Unregister()
 		{
 			ManipulationDelta = null;
 			ManipulationCompleted = null;
 
-			_source?.RemoveHook(WndProc);
-
 			TouchpadHelper.UnregisterInput();
+			_source?.RemoveHook(WndProc);
 		}
 
 		private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
@@ -52,6 +83,12 @@ namespace Monitorian.Core.Views.Input.Touchpad
 			switch (msg)
 			{
 				case TouchpadHelper.WM_INPUT:
+					LastInputTimeStamp = Environment.TickCount;
+
+					if ((ManipulationDelta is null) &&
+						(ManipulationCompleted is null))
+						break;
+
 					var contacts = TouchpadHelper.ParseInput(lParam);
 					if (contacts is { Length: > 1 })
 					{
@@ -65,6 +102,11 @@ namespace Monitorian.Core.Views.Input.Touchpad
 
 		public event EventHandler<int> ManipulationDelta;
 		public event EventHandler ManipulationCompleted;
+
+		/// <summary>
+		/// The number of milliseconds when last input event by touchpad occured
+		/// </summary>
+		public int LastInputTimeStamp { get; private set; }
 
 		public int UnitResolution
 		{
@@ -91,7 +133,7 @@ namespace Monitorian.Core.Views.Input.Touchpad
 				<= -1 => -1,
 				_ => 0
 			};
-			if (delta == 0)
+			if (delta is 0)
 				return;
 
 			_contact = contact;

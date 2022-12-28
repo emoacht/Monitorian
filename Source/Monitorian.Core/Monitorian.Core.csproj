@@ -105,10 +105,10 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="ViewModels\DevSectionViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\MenuWindowViewModel.cs" />
     <Compile Include="ViewModels\MonitorViewModel.cs" />
-    <Compile Include="ViewModels\ProbeSectionViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
     <Compile Include="Views\Behaviors\FocusElementAction.cs" />
     <Compile Include="Views\Behaviors\FocusMenuBehavior.cs" />
@@ -137,14 +137,14 @@
     <Compile Include="Views\Input\Touchpad\TouchpadHelper.cs" />
     <Compile Include="Views\Input\Touchpad\TouchpadTracker.cs" />
     <Compile Include="Views\Input\MouseAddition.cs" />
+    <Compile Include="Views\DevSection.xaml.cs">
+      <DependentUpon>DevSection.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\MenuWindow.xaml.cs">
       <DependentUpon>MenuWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\ProbeSection.xaml.cs">
-      <DependentUpon>ProbeSection.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\WindowPainter.cs" />
   </ItemGroup>
@@ -242,6 +242,10 @@
     <Resource Include="Resources\Icons\LightTrayIcon.ico" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Views\DevSection.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Generic.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -251,10 +255,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\MenuWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\ProbeSection.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

@@ -1,0 +1,75 @@
+﻿<UserControl x:Class="Monitorian.Core.Views.DevSection"
+			 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+			 xmlns:controls="clr-namespace:Monitorian.Core.Views.Controls"
+			 xmlns:properties="clr-namespace:Monitorian.Core.Properties">
+	<UserControl.Resources>
+		<StackPanel x:Key="Content">
+			<ContentControl Style="{StaticResource MenuItemStyle}">
+				<Button Padding="8,4"
+						Style="{StaticResource PlainButtonItemStyle}"
+						Content="{x:Static properties:Resources.Probe}"
+						IsEnabled="{Binding CanProbe, Mode=OneWay}">
+					<i:Interaction.Triggers>
+						<i:EventTrigger EventName="Click">
+							<i:CallMethodAction TargetObject="{Binding}"
+												MethodName="PerformProbe"/>
+						</i:EventTrigger>
+					</i:Interaction.Triggers>
+				</Button>
+			</ContentControl>
+
+			<ContentControl Style="{StaticResource MenuItemStyle}">
+				<Button Padding="8,4"
+						Style="{StaticResource PlainButtonItemStyle}"
+						Content="{x:Static properties:Resources.Rescan}">
+					<i:Interaction.Triggers>
+						<i:EventTrigger EventName="Click">
+							<i:CallMethodAction TargetObject="{Binding}"
+												MethodName="PerformRescan"/>
+						</i:EventTrigger>
+					</i:Interaction.Triggers>
+				</Button>
+			</ContentControl>
+
+			<ContentControl Style="{StaticResource MenuItemStyle}">
+				<ToggleButton Padding="8,4"
+							  Style="{StaticResource CheckButtonItemStyle}"
+							  Content="{x:Static properties:Resources.MakeOperation}"
+							  IsChecked="{Binding Settings.MakesOperationLog}"/>
+			</ContentControl>
+
+			<ContentControl Style="{StaticResource MenuItemStyle}">
+				<Button Padding="8,4"
+						Style="{StaticResource PlainButtonItemStyle}"
+						Content="{x:Static properties:Resources.CopyOperation}">
+					<i:Interaction.Triggers>
+						<i:EventTrigger EventName="Click">
+							<i:CallMethodAction TargetObject="{Binding}"
+												MethodName="PerformCopy"/>
+						</i:EventTrigger>
+					</i:Interaction.Triggers>
+				</Button>
+			</ContentControl>
+
+			<ContentControl Style="{StaticResource MenuItemStyle}">
+				<controls:MultiToggleButton Padding="8,4"
+											Style="{StaticResource MultiButtonItemStyle}"
+											Content="{x:Static properties:Resources.Arguments}"
+											IsCheckable="False">
+					<controls:MultiToggleButton.SubContent>
+						<TextBox Style="{StaticResource PlainTextBoxStyle}"
+								 FlowDirection="LeftToRight"
+								 TextWrapping="Wrap" AcceptsReturn="True"
+								 MaxLength="256" MaxLines="5"
+								 Text="{Binding Arguments, Mode=TwoWay}"/>
+					</controls:MultiToggleButton.SubContent>
+				</controls:MultiToggleButton>
+			</ContentControl>
+
+			<Separator Style="{StaticResource MenuSeparatorStyle}"/>
+		</StackPanel>
+	</UserControl.Resources>
+
+</UserControl>

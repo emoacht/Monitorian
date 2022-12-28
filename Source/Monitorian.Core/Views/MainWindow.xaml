@@ -663,6 +663,7 @@
 								<ColumnDefinition Width="Auto"/>
 								<ColumnDefinition Width="Auto"/>
 								<ColumnDefinition Width="Auto"/>
+								<ColumnDefinition Width="Auto"/>
 							</Grid.ColumnDefinitions>
 
 							<Rectangle Grid.Column="0"
@@ -691,47 +692,48 @@
 								</i:Interaction.Behaviors>
 							</controls:CompoundSlider>
 
-							<Grid Grid.Column="2"
-								  Visibility="{Binding Settings.ShowsNumber, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverterKey}}">
-								<Label Width="26" Margin="0,0,4,0"
-									   Style="{StaticResource NumberLabelStyle}"
-									   FontSize="16"
-									   Content="{Binding Brightness, Mode=OneWay}"
-									   Visibility="{Binding IsRangeChanging, Mode=OneWay, Converter={StaticResource BooleanToVisibilityTurnConverterKey}, ConverterParameter=True}">
-									<i:Interaction.Triggers>
-										<i:EventTrigger EventName="MouseDown">
-											<i:CallMethodAction TargetObject="{Binding}" MethodName="IncrementBrightness"/>
-										</i:EventTrigger>
-									</i:Interaction.Triggers>
-								</Label>
+							<Label Grid.Column="2"
+								   Width="26" Margin="0,0,4,0"
+								   Style="{StaticResource NumberLabelStyle}"
+								   FontSize="16"
+								   Content="{Binding Brightness, Mode=OneWay}"
+								   Visibility="{Binding IsRangeChanging, Mode=OneWay, Converter={StaticResource BooleanToVisibilityTurnConverterKey}, ConverterParameter=True}">
+								<i:Interaction.Triggers>
+									<i:EventTrigger EventName="MouseDown">
+										<i:CallMethodAction TargetObject="{Binding}" MethodName="IncrementBrightness"/>
+									</i:EventTrigger>
+								</i:Interaction.Triggers>
+							</Label>
 
-								<Label Width="48" Margin="0,0,4,0"
-									   Style="{StaticResource NumberLabelStyle}"
-									   FontSize="15"
-									   Visibility="{Binding IsRangeChanging, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverterKey}}">
-									<TextBlock>
-										<Run Text="{Binding RangeLowest, Mode=OneWay, StringFormat={}{0}-}"/><Run Text="{Binding RangeHighest, Mode=OneWay}"/>
-									</TextBlock>
-								</Label>
-							</Grid>
+							<Label Grid.Column="3"
+								   Width="48" Margin="0,0,4,0"
+								   Style="{StaticResource NumberLabelStyle}"
+								   FontSize="15"
+								   Visibility="{Binding IsRangeChanging, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverterKey}}">
+								<TextBlock>
+									<Run Text="{Binding RangeLowest, Mode=OneWay}"/><Run Text="-"/><Run Text="{Binding RangeHighest, Mode=OneWay}"/>
+								</TextBlock>
+							</Label>
 
 							<!-- Contrast -->
-							<controls:EnhancedSlider Grid.Column="3"
+							<controls:EnhancedSlider Grid.Column="4"
 													 Width="100" Margin="8,0,4,0" VerticalAlignment="Center"
 													 Style="{StaticResource SubSliderHorizontal}"
 													 Minimum="0" Maximum="100"
 													 Value="{Binding Contrast, Mode=TwoWay, Delay=50}"
 													 DefersUpdateSource="{Binding Settings.DefersChange, Mode=OneWay}"
-													 Visibility="{Binding IsContrastChanging, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverterKey}}"/>
+													 Visibility="{Binding IsContrastChanging, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverterKey}}">
+								<i:Interaction.Behaviors>
+									<behaviors:MouseHorizontalWheelBehavior/>
+								</i:Interaction.Behaviors>
+							</controls:EnhancedSlider>
 
-							<Grid Grid.Column="4"
-								  Visibility="{Binding Settings.ShowsNumber, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverterKey}}">
-								<Label Width="26" Margin="0,0,4,0"
-									   Style="{StaticResource NumberLabelStyle}"
-									   FontSize="16"
-									   Content="{Binding Contrast, Mode=OneWay}"
-									   Visibility="{Binding IsContrastChanging, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverterKey}}"/>
-							</Grid>
+							<Label Grid.Column="5"
+								   Width="26" Margin="0,0,4,0"
+								   Style="{StaticResource NumberLabelStyle}"
+								   FontSize="16"
+								   Content="{Binding Contrast, Mode=OneWay}"
+								   Visibility="{Binding IsContrastChanging, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverterKey}}"/>
 						</Grid>
 
 						<!-- Message -->

@@ -54,17 +54,6 @@ namespace Monitorian.Core.Models
 		private bool _showsAdjusted = true; // default
 
 		/// <summary>
-		/// Whether to show current number
-		/// </summary>
-		[DataMember]
-		public bool ShowsNumber
-		{
-			get => _showsNumber;
-			set => SetProperty(ref _showsNumber, value);
-		}
-		private bool _showsNumber = true; // default
-
-		/// <summary>
 		/// Whether to order by monitors arrangement
 		/// </summary>
 		[DataMember]

@@ -216,16 +216,24 @@ namespace Monitorian.Core.Models
 		[DataMember]
 		public byte Highest { get; private set; } = 100;
 
-		public MonitorCustomizationItem(string name, bool isUnison)
+		public MonitorCustomizationItem(string name, bool isUnison, byte lowest, byte highest)
 		{
 			this.Name = name;
 			this.IsUnison = isUnison;
-		}
-
-		public MonitorCustomizationItem(string name, bool isUnison, byte lowest, byte highest) : this(name, isUnison)
-		{
 			this.Lowest = lowest;
 			this.Highest = highest;
+		}
+
+		internal bool IsValid
+		{
+			get => (Lowest < Highest) && (Highest <= 100);
+		}
+
+		internal bool IsDefault
+		{
+			get => (Name is null)
+				&& (IsUnison == default)
+				&& (Lowest == 0) && (Highest == 100);
 		}
 	}
 }

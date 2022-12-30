@@ -31,7 +31,7 @@ Additional languages:
  - Romanian (ro) by @calini
  - Russian (ru-RU) by @SigmaTel71
  - Turkish (tr-TR) by @webbudesign
- - Ukrainian (uk-UK) by @kaplun07
+ - Ukrainian (uk-UA) by @kaplun07
  - Simplified Chinese (zh-Hans) by @ComMouse, @zhujunsan, @XMuli, @FISHandCHEAP and @FrzMtrsprt
  - Traditional Chinese (zh-Hant) by @toto6038 and @XMuli
 

@@ -21,41 +21,6 @@ namespace ScreenFrame
 		#region Win32
 
 		[DllImport("User32.dll", SetLastError = true)]
-		private static extern IntPtr FindWindowEx(
-			IntPtr hwndParent,
-			IntPtr hwndChildAfter,
-			string lpszClass,
-			string lpszWindow);
-
-		[DllImport("User32.dll")]
-		private static extern IntPtr MonitorFromPoint(
-			POINT pt,
-			MONITOR_DEFAULTTO dwFlags);
-
-		[DllImport("User32.dll")]
-		private static extern IntPtr MonitorFromWindow(
-			IntPtr hwnd,
-			MONITOR_DEFAULTTO dwFlags);
-
-		private enum MONITOR_DEFAULTTO : uint
-		{
-			/// <summary>
-			/// If no display monitor intersects, returns null.
-			/// </summary>
-			MONITOR_DEFAULTTONULL = 0x00000000,
-
-			/// <summary>
-			/// If no display monitor intersects, returns a handle to the primary display monitor.
-			/// </summary>
-			MONITOR_DEFAULTTOPRIMARY = 0x00000001,
-
-			/// <summary>
-			/// If no display monitor intersects, returns a handle to the display monitor that is nearest to the rectangle.
-			/// </summary>
-			MONITOR_DEFAULTTONEAREST = 0x00000002,
-		}
-
-		[DllImport("User32.dll", SetLastError = true)]
 		private static extern IntPtr GetDC(IntPtr hWnd);
 
 		[DllImport("User32.dll", SetLastError = true)]
@@ -101,8 +66,6 @@ namespace ScreenFrame
 			/// </summary>
 			MDT_Default = MDT_Effective_DPI
 		}
-
-		private const int S_OK = 0x0;
 
 		#endregion
 

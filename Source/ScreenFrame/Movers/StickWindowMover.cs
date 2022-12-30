@@ -89,7 +89,7 @@ namespace ScreenFrame.Movers
 
 			var iconPlacement = IconPlacement.Unknown;
 			var overflowAreaRect = default(Rect);
-			var includesDistance = false;
+			var isMarginIncluded = false;
 
 			if (NotifyIconHelper.TryGetNotifyIconRect(_notifyIcon, out Rect iconRect))
 			{
@@ -103,7 +103,7 @@ namespace ScreenFrame.Movers
 					&& overflowAreaRect.Contains(iconRect))
 				{
 					iconPlacement = IconPlacement.InOverflowArea;
-					includesDistance = buffer;
+					isMarginIncluded = buffer;
 				}
 			}
 
@@ -115,7 +115,7 @@ namespace ScreenFrame.Movers
 			var distance = new Vector(0, 0);
 			if (OsVersion.Is11OrGreater && KeepsDistance)
 			{
-				distance = (OsVersion.Is11Build22623OrGreater && includesDistance)
+				distance = (OsVersion.Is11Build22623OrGreater && isMarginIncluded)
 					? new Vector(0, Distance)
 					: new Vector(Distance, Distance);
 				distance *= VisualTreeHelperAddition.GetDpi(_window).ToMatrix();

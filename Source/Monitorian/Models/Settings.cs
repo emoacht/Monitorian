@@ -12,7 +12,7 @@ namespace Monitorian.Models
 	[DataContract]
 	public class Settings : SettingsCore
 	{
-		public Settings() : base(null)
+		public Settings() : base()
 		{ }
 
 		protected override Task InitiateAsync()

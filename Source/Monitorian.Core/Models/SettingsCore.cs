@@ -146,15 +146,20 @@ namespace Monitorian.Core.Models
 		protected Type[] KnownTypes { get; set; }
 
 		private const string SettingsFileName = "settings.xml";
-		private readonly string _fileName;
 
-		public SettingsCore() : this(null)
-		{ }
-
-		protected SettingsCore(string fileName)
+		protected string FileName
 		{
-			this._fileName = !string.IsNullOrWhiteSpace(fileName) ? fileName : SettingsFileName;
+			get => _fileName;
+			set
+			{
+				if (!string.IsNullOrWhiteSpace(value))
+					_fileName = value;
+			}
 		}
+		private string _fileName = SettingsFileName;
+
+		public SettingsCore()
+		{ }
 
 		private Throttle _save;
 
@@ -176,7 +181,7 @@ namespace Monitorian.Core.Models
 		{
 			try
 			{
-				AppDataService.Load(instance, _fileName, KnownTypes);
+				AppDataService.Load(instance, FileName, KnownTypes);
 			}
 			catch (Exception ex)
 			{
@@ -189,7 +194,7 @@ namespace Monitorian.Core.Models
 		{
 			try
 			{
-				AppDataService.Save(instance, _fileName, KnownTypes);
+				AppDataService.Save(instance, FileName, KnownTypes);
 			}
 			catch (Exception ex)
 			{

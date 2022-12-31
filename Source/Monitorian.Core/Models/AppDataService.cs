@@ -37,9 +37,7 @@ namespace Monitorian.Core.Models
 
 		public static async Task<string> ReadAsync(string fileName)
 		{
-			var filePath = Path.Combine(FolderPath, fileName);
-
-			if (!File.Exists(filePath))
+			if (!Exists(fileName, out string filePath))
 				return null;
 
 			using var sr = new StreamReader(filePath, Encoding.UTF8);
@@ -52,6 +50,12 @@ namespace Monitorian.Core.Models
 
 			using var sw = new StreamWriter(filePath, append, Encoding.UTF8); // BOM will be emitted.
 			await sw.WriteAsync(content);
+		}
+
+		public static bool Exists(string fileName, out string filePath)
+		{
+			filePath = Path.Combine(FolderPath, fileName);
+			return File.Exists(filePath);
 		}
 
 		public static void Delete(string fileName)

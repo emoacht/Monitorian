@@ -112,6 +112,12 @@ namespace ScreenFrame
 		/// Shows NotifyIcon.
 		/// </summary>
 		/// <param name="iconPath">Path to icon for NotifyIcon</param>
+		public void ShowIcon(string iconPath) => ShowIcon(iconPath, Text);
+
+		/// <summary>
+		/// Shows NotifyIcon.
+		/// </summary>
+		/// <param name="iconPath">Path to icon for NotifyIcon</param>
 		/// <param name="iconText">Text for NotifyIcon</param>
 		public void ShowIcon(string iconPath, string iconText)
 		{
@@ -121,11 +127,9 @@ namespace ScreenFrame
 			var iconResource = System.Windows.Application.GetResourceStream(new Uri(iconPath));
 			if (iconResource is not null)
 			{
-				using (var iconStream = iconResource.Stream)
-				{
-					var icon = new System.Drawing.Icon(iconStream);
-					ShowIcon(icon, iconText);
-				}
+				using var iconStream = iconResource.Stream;
+				var icon = new System.Drawing.Icon(iconStream);
+				ShowIcon(icon, iconText);
 			}
 		}
 
@@ -157,7 +161,7 @@ namespace ScreenFrame
 		}
 
 		/// <summary>
-		/// Processes windows message sent to NotifyIcon.
+		/// Processes windows messages sent to NotifyIcon.
 		/// </summary>
 		/// <param name="m">Windows message</param>
 		protected virtual void WndProc(ref Message m)
@@ -185,7 +189,7 @@ namespace ScreenFrame
 				return;
 
 			var oldDpi = _dpi;
-			_dpi = VisualTreeHelperAddition.GetDpi(new Point(iconRect.X, iconRect.Y));
+			_dpi = VisualTreeHelperAddition.GetDpi(iconRect.Location);
 			if (!oldDpi.Equals(_dpi))
 			{
 				OnDpiChanged(oldDpi, _dpi);
@@ -212,7 +216,8 @@ namespace ScreenFrame
 		}
 
 		private const double Limit16 = 1.1; // Upper limit (110%) for 16x16
-		private const double Limit32 = 2.0; // Upper limit (200%) for 32x32
+		private const double Limit32 = 1.5; // Upper limit (150%) for 32x32
+		private const double Limit40 = 2.0; // Upper limit (200%) for 40x40
 
 		private static System.Drawing.Size GetIconSize(DpiScale dpi)
 		{
@@ -220,6 +225,7 @@ namespace ScreenFrame
 			{
 				<= Limit16 => new System.Drawing.Size(16, 16),
 				<= Limit32 => new System.Drawing.Size(32, 32),
+				<= Limit40 => new System.Drawing.Size(40, 40),
 				_ => new System.Drawing.Size(48, 48)
 			};
 		}

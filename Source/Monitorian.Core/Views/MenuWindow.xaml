@@ -89,13 +89,6 @@
 		<ContentControl Style="{StaticResource MenuItemStyle}">
 			<ToggleButton Padding="8,4"
 						  Style="{StaticResource CheckButtonItemStyle}"
-						  Content="{x:Static properties:Resources.ShowNumber}"
-						  IsChecked="{Binding Settings.ShowsNumber}"/>
-		</ContentControl>
-
-		<ContentControl Style="{StaticResource MenuItemStyle}">
-			<ToggleButton Padding="8,4"
-						  Style="{StaticResource CheckButtonItemStyle}"
 						  Content="{x:Static properties:Resources.OrderArrangement}"
 						  IsChecked="{Binding Settings.OrdersArrangement}"/>
 		</ContentControl>

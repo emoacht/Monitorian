@@ -22,7 +22,6 @@ namespace Monitorian.Core.Views
 	public partial class MainWindow : Window
 	{
 		private readonly StickWindowMover _mover;
-		//private readonly TouchpadTracker _tracker;
 		public MainWindowViewModel ViewModel => (MainWindowViewModel)this.DataContext;
 
 		public MainWindow(AppControllerCore controller)
@@ -45,18 +44,6 @@ namespace Monitorian.Core.Views
 			};
 			//controller.WindowPainter.AccentColorChanged += (_, _) =>
 			//{
-			//};
-
-			//_tracker = new TouchpadTracker(this);
-			//_tracker.ManipulationDelta += (_, delta) =>
-			//{
-			//	var slider = FocusManager.GetFocusedElement(this) as EnhancedSlider;
-			//	slider?.ChangeValue(delta);
-			//};
-			//_tracker.ManipulationCompleted += (_, _) =>
-			//{
-			//	var slider = FocusManager.GetFocusedElement(this) as EnhancedSlider;
-			//	slider?.EnsureUpdateSource();
 			//};
 		}
 

@@ -17,14 +17,14 @@ namespace ScreenFrame
 		#region Win32
 
 		[DllImport("User32.dll", SetLastError = true)]
-		private static extern IntPtr FindWindowEx(
+		internal static extern IntPtr FindWindowEx(
 			IntPtr hwndParent,
 			IntPtr hwndChildAfter,
 			string lpszClass,
 			string lpszWindow);
 
 		[DllImport("User32.dll")]
-		private static extern IntPtr MonitorFromPoint(
+		internal static extern IntPtr MonitorFromPoint(
 			POINT pt,
 			MONITOR_DEFAULTTO dwFlags);
 
@@ -34,11 +34,11 @@ namespace ScreenFrame
 			MONITOR_DEFAULTTO dwFlags);
 
 		[DllImport("User32.dll")]
-		private static extern IntPtr MonitorFromWindow(
+		internal static extern IntPtr MonitorFromWindow(
 			IntPtr hwnd,
 			MONITOR_DEFAULTTO dwFlags);
 
-		private enum MONITOR_DEFAULTTO : uint
+		internal enum MONITOR_DEFAULTTO : uint
 		{
 			/// <summary>
 			/// If no display monitor intersects, returns null.
@@ -224,7 +224,7 @@ namespace ScreenFrame
 
 		[DllImport("User32.dll")]
 		[return: MarshalAs(UnmanagedType.Bool)]
-		private static extern bool SetForegroundWindow(IntPtr hWnd);
+		internal static extern bool SetForegroundWindow(IntPtr hWnd);
 
 		[DllImport("User32.dll")]
 		private static extern uint GetWindowThreadProcessId(
@@ -480,7 +480,7 @@ namespace ScreenFrame
 		public static bool IsForegroundWindow(Window window)
 		{
 			var windowHandle = new WindowInteropHelper(window).Handle;
-			return windowHandle == GetForegroundWindow();
+			return (windowHandle == GetForegroundWindow());
 		}
 
 		/// <summary>
@@ -525,6 +525,49 @@ namespace ScreenFrame
 			}
 
 			return (windowHandle == GetForegroundWindow());
+		}
+
+		/// <summary>
+		/// Gets all windows.
+		/// </summary>
+		/// <returns>
+		/// <para>parent: Parent window's identifier</para>
+		/// <para>child: Child window's identifier</para>
+		/// <para>name: Child window's class name</para>
+		/// </returns>
+		/// <remarks>This method is for research.</remarks>
+		public static IReadOnlyList<(int parent, int child, string name)> GetAllWindows()
+		{
+			var list = new List<(int parent, int child, string name)>();
+			int count = 0;
+
+			EnumWindows(
+				Proc,
+				new IntPtr(count));
+
+			return list.AsReadOnly();
+
+			bool Proc(IntPtr windowHandle, IntPtr lParam)
+			{
+				var buffer = new StringBuilder(256);
+
+				if (GetClassName(
+					windowHandle,
+					buffer,
+					buffer.Capacity) > 0)
+				{
+					int parent = lParam.ToInt32();
+					int child = ++count;
+					var name = buffer.ToString();
+					list.Add((parent, child, name));
+
+					EnumChildWindows(
+						windowHandle,
+						Proc,
+						new IntPtr(child));
+				}
+				return true;
+			}
 		}
 
 		#endregion
@@ -769,35 +812,35 @@ namespace ScreenFrame
 		/// Attempts to get the rectangle of overflow area.
 		/// </summary>
 		/// <param name="overflowAreaRect">Rectangle of overflow area</param>
-		/// <param name="includesDistance">Whether rectangle of overflow area includes distance</param>
+		/// <param name="isMarginIncluded">Whether rectangle of overflow area includes margin</param>
 		/// <returns>True if successfully gets</returns>
 		/// <remarks>
 		/// This method will not produce current location of overflow area until it is shown
 		/// in the monitor where primary taskbar currently locates. Thus, the location must be
 		/// verified by other means.
 		/// </remarks>
-		internal static bool TryGetOverflowAreaRect(out Rect overflowAreaRect, out bool includesDistance)
+		internal static bool TryGetOverflowAreaRect(out Rect overflowAreaRect, out bool isMarginIncluded)
 		{
 			// As of Windows 11 10.0.22623.xxx, the traditional window of overflow area
 			// (NotifyIconOverflowWindow) still exists but seems no longer used. Instead, another
 			// window (TopLevelWindowForOverflowXamlIsland) hosts overflow area. Its rectangle
-			// includes surrounding spaces.
+			// includes margin surrounding it.
 			if (TryGetWindow("NotifyIconOverflowWindow", out _, out Rect windowRect)
 				&& IsValid(windowRect))
 			{
 				overflowAreaRect = windowRect;
-				includesDistance = false;
+				isMarginIncluded = false;
 				return true;
 			}
 			if (TryGetWindow("TopLevelWindowForOverflowXamlIsland", out _, out windowRect)
 				&& IsValid(windowRect))
 			{
 				overflowAreaRect = windowRect;
-				includesDistance = true;
+				isMarginIncluded = true;
 				return true;
 			}
 			overflowAreaRect = default;
-			includesDistance = false;
+			isMarginIncluded = false;
 			return false;
 
 			static bool IsValid(Rect rect) => rect is { Width: > 0, Height: > 0 };

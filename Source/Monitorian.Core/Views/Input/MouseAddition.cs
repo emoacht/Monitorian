@@ -129,16 +129,6 @@ namespace Monitorian.Core.Views.Input
 			}
 		}
 
-		/// <summary>
-		/// Whether mouse horizontal wheel direction is inverted
-		/// </summary>
-		public static bool IsMouseHorizontalWheelInverted
-		{
-			get => _isMouseHorizontalWheelInvertedValue is 1;
-			set => _isMouseHorizontalWheelInvertedValue = (short)(value ? 1 : -1);
-		}
-		private static short _isMouseHorizontalWheelInvertedValue = -1; // Default
-
 		private const int WM_MOUSEHWHEEL = 0x020E;
 
 		private static IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
@@ -154,7 +144,7 @@ namespace Monitorian.Core.Views.Input
 
 		private static void HandleMouseHorizontalWheel(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
 		{
-			int delta = unchecked((short)((long)wParam >> 16)) * _isMouseHorizontalWheelInvertedValue;
+			int delta = unchecked((short)((long)wParam >> 16));
 			if (delta is 0)
 				return;
 

@@ -16,10 +16,6 @@ namespace ScreenFrame
 	{
 		#region Win32
 
-		[DllImport("User32.dll")]
-		[return: MarshalAs(UnmanagedType.Bool)]
-		private static extern bool SetForegroundWindow(IntPtr hWnd);
-
 		[DllImport("Shell32.dll", SetLastError = true)]
 		private static extern int Shell_NotifyIconGetRect(
 			[In] ref NOTIFYICONIDENTIFIER identifier,
@@ -66,7 +62,7 @@ namespace ScreenFrame
 					if (iconRect.Contains(point))
 						return true;
 				}
-				point = new Point(iconRect.X, iconRect.Y); // Fallback
+				point = iconRect.Location; // Fallback
 				return true;
 			}
 			point = default;

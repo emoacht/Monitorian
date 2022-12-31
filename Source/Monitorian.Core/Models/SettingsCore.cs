@@ -54,17 +54,6 @@ namespace Monitorian.Core.Models
 		private bool _showsAdjusted = true; // default
 
 		/// <summary>
-		/// Whether to show current number
-		/// </summary>
-		[DataMember]
-		public bool ShowsNumber
-		{
-			get => _showsNumber;
-			set => SetProperty(ref _showsNumber, value);
-		}
-		private bool _showsNumber = true; // default
-
-		/// <summary>
 		/// Whether to order by monitors arrangement
 		/// </summary>
 		[DataMember]
@@ -157,15 +146,20 @@ namespace Monitorian.Core.Models
 		protected Type[] KnownTypes { get; set; }
 
 		private const string SettingsFileName = "settings.xml";
-		private readonly string _fileName;
 
-		public SettingsCore() : this(null)
-		{ }
-
-		protected SettingsCore(string fileName)
+		protected string FileName
 		{
-			this._fileName = !string.IsNullOrWhiteSpace(fileName) ? fileName : SettingsFileName;
+			get => _fileName;
+			set
+			{
+				if (!string.IsNullOrWhiteSpace(value))
+					_fileName = value;
+			}
 		}
+		private string _fileName = SettingsFileName;
+
+		public SettingsCore()
+		{ }
 
 		private Throttle _save;
 
@@ -187,7 +181,7 @@ namespace Monitorian.Core.Models
 		{
 			try
 			{
-				AppDataService.Load(instance, _fileName, KnownTypes);
+				AppDataService.Load(instance, FileName, KnownTypes);
 			}
 			catch (Exception ex)
 			{
@@ -200,7 +194,7 @@ namespace Monitorian.Core.Models
 		{
 			try
 			{
-				AppDataService.Save(instance, _fileName, KnownTypes);
+				AppDataService.Save(instance, FileName, KnownTypes);
 			}
 			catch (Exception ex)
 			{
@@ -227,16 +221,24 @@ namespace Monitorian.Core.Models
 		[DataMember]
 		public byte Highest { get; private set; } = 100;
 
-		public MonitorCustomizationItem(string name, bool isUnison)
+		public MonitorCustomizationItem(string name, bool isUnison, byte lowest, byte highest)
 		{
 			this.Name = name;
 			this.IsUnison = isUnison;
-		}
-
-		public MonitorCustomizationItem(string name, bool isUnison, byte lowest, byte highest) : this(name, isUnison)
-		{
 			this.Lowest = lowest;
 			this.Highest = highest;
+		}
+
+		internal bool IsValid
+		{
+			get => (Lowest < Highest) && (Highest <= 100);
+		}
+
+		internal bool IsDefault
+		{
+			get => (Name is null)
+				&& (IsUnison == default)
+				&& (Lowest == 0) && (Highest == 100);
 		}
 	}
 }

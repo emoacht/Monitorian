@@ -55,7 +55,7 @@ namespace Monitorian.Core.Models
 		public static bool IsResourceRightToLeft => (_culture.Value?.TextInfo.IsRightToLeft is true);
 
 		/// <summary>
-		/// Switches default and current threads' culture.
+		/// Switches default and current thread's culture.
 		/// </summary>
 		/// <returns>True if successfully switches the culture</returns>
 		public static bool SwitchDefault()

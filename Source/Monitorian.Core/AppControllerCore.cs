@@ -70,7 +70,11 @@ namespace Monitorian.Core
 
 			OnSettingsInitiated();
 
-			NotifyIconContainer.ShowIcon("pack://application:,,,/Monitorian.Core;component/Resources/Icons/TrayIcon.ico", ProductInfo.Title);
+			NotifyIconContainer.ShowIcon(WindowPainter.GetIconPath(), ProductInfo.Title);
+			WindowPainter.ThemeChanged += (_, _) =>
+			{
+				NotifyIconContainer.ShowIcon(WindowPainter.GetIconPath());
+			};
 
 			_current.MainWindow = new MainWindow(this);
 
@@ -153,7 +157,7 @@ namespace Monitorian.Core
 		{
 			var window = new MenuWindow(this, pivot);
 			window.ViewModel.CloseAppRequested += (_, _) => _current.Shutdown();
-			window.MenuSectionTop.Add(new ProbeSection(this));
+			window.MenuSectionTop.Add(new DevSection(this));
 			window.Show();
 		}
 
@@ -430,10 +434,10 @@ namespace Monitorian.Core
 		protected internal virtual bool TryLoadCustomization(string deviceInstanceId, ref string name, ref bool isUnison, ref byte lowest, ref byte highest)
 		{
 			if (Settings.MonitorCustomizations.TryGetValue(deviceInstanceId, out MonitorCustomizationItem m)
-				&& (m.Lowest < m.Highest) && (m.Highest <= 100))
+				&& m.IsValid)
 			{
 				name = m.Name;
-				isUnison = Settings.EnablesUnison && m.IsUnison;
+				isUnison = m.IsUnison && Settings.EnablesUnison;
 				lowest = m.Lowest;
 				highest = m.Highest;
 				return true;
@@ -443,11 +447,10 @@ namespace Monitorian.Core
 
 		protected internal virtual void SaveCustomization(string deviceInstanceId, string name, bool isUnison, byte lowest, byte highest)
 		{
-			if (((name is not null) || isUnison || (0 != lowest) || (highest != 100))
-				&& (lowest < highest) && (highest <= 100))
+			MonitorCustomizationItem m = new(name, isUnison, lowest, highest);
+			if (m.IsValid && !m.IsDefault)
 			{
-				Settings.MonitorCustomizations.Add(deviceInstanceId, new MonitorCustomizationItem(name, isUnison, lowest, highest));
-
+				Settings.MonitorCustomizations.Add(deviceInstanceId, m);
 			}
 			else
 			{

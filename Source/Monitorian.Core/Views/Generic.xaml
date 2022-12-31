@@ -49,7 +49,7 @@
 	<converters:VisibilityToBooleanFilterConverter x:Key="VisibilityToBooleanFilterConverterKey"/>
 	<converters:BooleanInverseConverter x:Key="BooleanInverseConverterKey"/>
 	<converters:VisibilityInverseConverter x:Key="VisibilityInverseConverterKey"/>
-	<converters:StringToVisibilityConverter x:Key="StringToVisibilityConverterKey"/>
+	<converters:ObjectToVisibilityConverter x:Key="ObjectToVisibilityConverterKey"/>
 
 	<!-- Menu separator -->
 	<Style x:Key="MenuSeparatorStyle" TargetType="{x:Type Separator}">

@@ -36,7 +36,10 @@ namespace ScreenFrame.Painter
 
 		private const string ThemeOption = "/theme";
 
-		private ColorTheme _theme;
+		/// <summary>
+		/// Current theme
+		/// </summary>
+		protected ColorTheme Theme { get; private set; }
 
 		/// <summary>
 		/// Background texture of window
@@ -82,7 +85,7 @@ namespace ScreenFrame.Painter
 				switch (arguments[i])
 				{
 					case ThemeOption when Enum.TryParse(arguments[i + 1], true, out ColorTheme buffer):
-						_theme = buffer;
+						Theme = buffer;
 						RespondsThemeChanged = false;
 						i++;
 						break;
@@ -242,19 +245,19 @@ namespace ScreenFrame.Painter
 		private void ApplyInitialTheme()
 		{
 			if (RespondsThemeChanged)
-				_theme = ThemeInfo.GetWindowsTheme();
+				Theme = ThemeInfo.GetWindowsTheme();
 
-			ChangeThemes(oldTheme: ColorTheme.Unknown, newTheme: _theme);
+			ChangeThemes(oldTheme: ColorTheme.Unknown, newTheme: Theme);
 		}
 
 		private bool ApplyChangedTheme()
 		{
-			var theme = ThemeInfo.GetWindowsTheme();
-			if (_theme == theme)
+			var oldTheme = Theme;
+			Theme = ThemeInfo.GetWindowsTheme();
+			if (Theme == oldTheme)
 				return false;
 
-			ChangeThemes(oldTheme: _theme, newTheme: theme);
-			_theme = theme;
+			ChangeThemes(oldTheme: oldTheme, newTheme: Theme);
 
 			ResetTranslucent();
 

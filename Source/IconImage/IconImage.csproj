@@ -55,7 +55,11 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="ScaleConverter.cs" />
-    <Page Include="AppIcon.xaml">
+    <Page Include="DarkAppIcon.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="LightAppIcon.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -67,8 +71,11 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="AppIcon.xaml.cs">
-      <DependentUpon>AppIcon.xaml</DependentUpon>
+    <Compile Include="DarkAppIcon.xaml.cs">
+      <DependentUpon>DarkAppIcon.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="LightAppIcon.xaml.cs">
+      <DependentUpon>LightAppIcon.xaml</DependentUpon>
     </Compile>
     <Compile Include="FrameworkElementImage.cs" />
     <Compile Include="MainWindow.xaml.cs">

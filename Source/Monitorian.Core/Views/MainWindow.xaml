@@ -738,7 +738,7 @@
 
 						<!-- Message -->
 						<Grid Grid.Row="2"
-							  Visibility="{Binding Message, Mode=OneWay, Converter={StaticResource StringToVisibilityConverterKey}}">
+							  Visibility="{Binding Message, Mode=OneWay, Converter={StaticResource ObjectToVisibilityConverterKey}}">
 							<Border Margin="6,6,6,0"
 									Padding="3"
 									BorderBrush="{StaticResource App.Foreground.Invalid}" BorderThickness="1">

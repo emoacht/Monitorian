@@ -8,7 +8,7 @@ using Windows.ApplicationModel;
 namespace StartupAgency.Bridge
 {
 	/// <summary>
-	/// StartupTask broker
+	/// Startup task broker
 	/// </summary>
 	/// <remarks>
 	/// This class wraps <see cref="Windows.ApplicationModel.StartupTask"/> which is only available

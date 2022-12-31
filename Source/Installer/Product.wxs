@@ -172,6 +172,12 @@
 					<File Id="CoreResourcesLibrary_trTR" Name="$(var.Monitorian.TargetName).Core.resources.dll" KeyPath="yes"/>
 				</Component>
 			</Directory>
+			<Directory Id="ResourcesFolder_ukUA" Name="uk-UA"
+					   FileSource="$(var.Monitorian.TargetDir)uk-UA">
+				<Component Id="CoreResourcesLibrary_ukUA" Guid="{6F8729D5-94CD-4CEA-9DEA-BCED7C809806}">
+					<File Id="CoreResourcesLibrary_ukUA" Name="$(var.Monitorian.TargetName).Core.resources.dll" KeyPath="yes"/>
+				</Component>
+			</Directory>
 			<Directory Id="ResourcesFolder_zhHans" Name="zh-Hans"
 					   FileSource="$(var.Monitorian.TargetDir)zh-Hans">
 				<Component Id="CoreResourcesLibrary_zhHans" Guid="{D4727E68-157A-495D-B9B8-0CD100291E5E}">
@@ -235,6 +241,7 @@
 			<ComponentRef Id="CoreResourcesLibrary_ro"/>
 			<ComponentRef Id="CoreResourcesLibrary_ruRU"/>
 			<ComponentRef Id="CoreResourcesLibrary_trTR"/>
+			<ComponentRef Id="CoreResourcesLibrary_ukUA"/>
 			<ComponentRef Id="CoreResourcesLibrary_zhHans"/>
 			<ComponentRef Id="CoreResourcesLibrary_zhHant"/>
 			<ComponentRef Id="ApplicationShortcut"/>

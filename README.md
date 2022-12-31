@@ -15,6 +15,8 @@ In addition, the user can change the adjustable range of brightness and contrast
 ![Screenshot](Images/Screenshot_range.png)&nbsp;
 ![Screenshot](Images/Screenshot_contrast.png)<br>
 
+https://user-images.githubusercontent.com/7205690/210137118-66cfdd6e-9847-41b3-a836-d1ff8cf73f3d.mp4
+
 Additional languages:
 
  - Arabic (ar) by @MohammadShughri
@@ -54,7 +56,7 @@ Additional languages:
    ```
 
  * Other:<br>
-:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/3.15.3-Installer/MonitorianInstaller3153.zip)
+:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/4.0.0-Installer/MonitorianInstaller400.zip)
 
 ## Install/Uninstall
 
@@ -84,9 +86,11 @@ Add-on features are available for Microsoft Store version on a subscription basi
 
 ![Screenshot](Images/Screenshot_keys_en.png)
 
+All hot keys for brightness can be switched to contrast by `To contrast` hot key. It can be switched back to brightness by `To brightness` hot key.
+
 ### Command-line options
 
-You can use command-line options to get/set the brightness.
+You can use command-line options to get/set the brightness or contrast.
 
 | Actions                                | Options                                |
 |----------------------------------------|----------------------------------------|
@@ -97,7 +101,25 @@ You can use command-line options to get/set the brightness.
 | Set brightness of a specified monitor. | /set [Device Instance ID] [Brightness] |
 | Set brightness of all monitors.        | /set all [Brightness]                  |
 
-If this app is called with `/get` option, it will return [Device Instance ID] [Monitor name] [Brightness]. The device instance ID is an unique identifier given by the OS to each monitor. The brightness ranges from 0 to 100%. It can be specified with brightness itself (e.g. 20), increase (e.g. +10) or decrease (e.g. -10) when you use `/set` option.
+You can switch to contrast by inserting `contrast` after `/get` or `/set` (e.g. /get contrast all).
+
+If this app is called with `/get` or `/set`, it will return
+
+[Device Instance ID] [Monitor name] [Brightness] B
+
+'B' at the end indicates brightness. In addition, '*' is added in the case of a selected monitor. 
+
+If this app is call with `/get contrast` or `/set contrast`, it will return
+
+[Device Instance ID] [Monitor name] [Contrast] C
+
+'C' at the end indicates contrast. If contrast is not supported by a monitor, '-' will be shown instead.
+
+The device instance ID is an unique identifier given by the OS to each monitor. It must be enclosed in quotes. 
+
+The brightness or contrast ranges from 0 to 100%. When you use `/set` option, it can be specified with the number itself (e.g. 20), increase (e.g. +10) or decrease (e.g. -10).
+
+The options can be executed consecutively (e.g. monitorian /get 20 /get contrast 20).
 
 You can call this app by its name `Monitorian` in command prompt or bat file. From Task Scheduler, it can be performed by the path to its alias `%LOCALAPPDATA%\Microsoft\WindowsApps\Monitorian.exe`. For example, to increase brightness of all monitors by 30%, the Action will be the following:
 
@@ -185,6 +207,11 @@ An alternative language can be shown by adding a Resources (.resx) file into `/S
  - VESA [Monitor Control Command Set (MCCS)](https://www.google.co.jp/search?q=VESA+Monitor+Control+Command+Set+Standard+MCCS) standard
 
 ## History
+
+Ver 4.0 2022-12-31
+
+ - Modify UI
+ - Add Ukrainian (uk-UA) language. Thanks to @kaplun07!
 
 Ver 3.15 2022-12-4
 

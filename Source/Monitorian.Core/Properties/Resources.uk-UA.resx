@@ -53,6 +53,7 @@
     value   : The object must be serialized with 
             : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
             : and then encoded with base64 encoding.
+
     mimetype: application/x-microsoft.net.object.bytearray.base64
     value   : The object must be serialized into a byte array 
             : using a System.ComponentModel.TypeConverter
@@ -116,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Arguments" xml:space="preserve">
+    <value>Параметри командного рядка</value>
+  </data>
   <data name="ChangeContrast" xml:space="preserve">
     <value>Змінити контрастність</value>
   </data>
@@ -126,13 +130,16 @@
     <value>Регулювати одночасно</value>
   </data>
   <data name="Close" xml:space="preserve">
-    <value>Закрити</value>
+    <value>Закрити программу</value>
   </data>
   <data name="CopyOperation" xml:space="preserve">
     <value>Копіювати журнал дій</value>
   </data>
   <data name="CopySaveOperationMessage" xml:space="preserve">
     <value>Зберегти журнал дій на робочий стіл?</value>
+  </data>
+  <data name="CopyWaitOperationMessage" xml:space="preserve">
+    <value>Зачекайте, поки додаткова інформація буде записана в журнал операцій.</value>
   </data>
   <data name="DeferChange" xml:space="preserve">
     <value>Не змінювати яскравість до зупинки</value>
@@ -164,6 +171,9 @@
   <data name="Rescan" xml:space="preserve">
     <value>Знайти монітори</value>
   </data>
+  <data name="RestoreReconnection" xml:space="preserve">
+    <value>Відновити яскравість після повторного підключення</value>
+  </data>
   <data name="Settings" xml:space="preserve">
     <value>Налаштування</value>
   </data>
@@ -184,6 +194,9 @@
   </data>
   <data name="StatusReasonDdcNotEnabled" xml:space="preserve">
     <value>DDC/CI не увімкнено або не підтримується.</value>
+  </data>
+  <data name="UseAccentColor" xml:space="preserve">
+    <value>Використовувати кольорову тему системи</value>
   </data>
   <data name="UseLargeElements" xml:space="preserve">
     <value>Використовувати великі повзунки</value>

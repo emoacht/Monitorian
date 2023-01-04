@@ -31,13 +31,13 @@ namespace ScreenFrame.Painter
 		{
 			const string keyName = @"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize"; // HKCU
 
+			// A specified value may not exist if light theme has never been selected.
 			using var key = Registry.CurrentUser.OpenSubKey(keyName);
 
 			return key?.GetValue(valueName) switch
 			{
-				0 => ColorTheme.Dark,
 				1 => ColorTheme.Light,
-				_ => ColorTheme.Unknown
+				0 or _ => ColorTheme.Dark
 			};
 		}
 	}

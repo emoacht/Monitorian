@@ -143,9 +143,8 @@ namespace Monitorian.Core.Views
 		{
 			return Theme switch
 			{
-				ColorTheme.Dark => "pack://application:,,,/Monitorian.Core;component/Resources/Icons/DarkTrayIcon.ico",
 				ColorTheme.Light => "pack://application:,,,/Monitorian.Core;component/Resources/Icons/LightTrayIcon.ico",
-				_ => null
+				ColorTheme.Dark or _ => "pack://application:,,,/Monitorian.Core;component/Resources/Icons/DarkTrayIcon.ico",
 			};
 		}
 

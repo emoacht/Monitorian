@@ -189,4 +189,7 @@
   <data name="UseLargeElements" xml:space="preserve">
     <value>Использовать большие ползунки</value>
   </data>
+  <data name="UseAccentColor" xml:space="preserve">
+    <value>Использовать системный цвет для ползунка яркости</value>
+  </data>
 </root>

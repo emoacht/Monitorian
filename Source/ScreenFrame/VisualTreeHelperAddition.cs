@@ -37,6 +37,9 @@ namespace ScreenFrame
 		private const int LOGPIXELSX = 88;
 		private const int LOGPIXELSY = 90;
 
+		[DllImport("User32.dll")]
+		private static extern uint GetDpiForSystem();
+
 		[DllImport("Shcore.dll")]
 		private static extern int GetDpiForMonitor(
 			IntPtr hmonitor,
@@ -80,6 +83,14 @@ namespace ScreenFrame
 
 		private static DpiScale GetSystemDpi()
 		{
+			if (OsVersion.Is10Build14393OrGreater)
+			{
+				double pixelsPerInch = GetDpiForSystem();
+				return new DpiScale(
+					pixelsPerInch / DefaultPixelsPerInch,
+					pixelsPerInch / DefaultPixelsPerInch);
+			}
+
 			var handle = IntPtr.Zero;
 			try
 			{

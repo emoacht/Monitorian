@@ -11,8 +11,8 @@ using System.Windows.Input;
 
 namespace Monitorian.Core.Views.Controls
 {
-	[TemplatePart(Name = "PART_StartTrack", Type = typeof(Track))]
-	[TemplatePart(Name = "PART_EndTrack", Type = typeof(Track))]
+	[TemplatePart(Name = nameof(Named.PART_StartTrack), Type = typeof(Track))]
+	[TemplatePart(Name = nameof(Named.PART_EndTrack), Type = typeof(Track))]
 	public class RangeSlider : EnhancedSlider
 	{
 		static RangeSlider()
@@ -108,6 +108,12 @@ namespace Monitorian.Core.Views.Controls
 				|| (this.Minimum < this.SelectionStart) || (this.SelectionEnd < this.Maximum);
 		}
 
+		private enum Named
+		{
+			PART_StartTrack,
+			PART_EndTrack
+		}
+
 		private Track _startTrack;
 		private Track _endTrack;
 
@@ -116,8 +122,8 @@ namespace Monitorian.Core.Views.Controls
 			ClearBindingAndRemoveDragEventHandler(_startTrack);
 			ClearBindingAndRemoveDragEventHandler(_endTrack);
 
-			_startTrack = this.GetTemplateChild("PART_StartTrack") as Track;
-			_endTrack = this.GetTemplateChild("PART_EndTrack") as Track;
+			_startTrack = this.GetTemplateChild(nameof(Named.PART_StartTrack)) as Track;
+			_endTrack = this.GetTemplateChild(nameof(Named.PART_EndTrack)) as Track;
 
 			SetBindingAndAddDragEventHandler(_startTrack, nameof(Slider.SelectionStart));
 			SetBindingAndAddDragEventHandler(_endTrack, nameof(Slider.SelectionEnd));

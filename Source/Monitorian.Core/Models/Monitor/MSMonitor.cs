@@ -194,7 +194,7 @@ namespace Monitorian.Core.Models.Monitor
 			if (string.IsNullOrWhiteSpace(deviceInstanceId))
 				throw new ArgumentNullException(nameof(deviceInstanceId));
 			if (brightness is < 0 or > 100)
-				throw new ArgumentOutOfRangeException(nameof(brightness), brightness, "The brightness must be within 0 to 100.");
+				throw new ArgumentOutOfRangeException(nameof(brightness), brightness, "The brightness must be from 0 to 100.");
 
 			try
 			{

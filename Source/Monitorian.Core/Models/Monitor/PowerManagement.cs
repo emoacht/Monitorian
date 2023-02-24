@@ -81,14 +81,14 @@ namespace Monitorian.Core.Models.Monitor
 		#endregion
 
 		// Video settings derived from winnt.h
-		private static readonly Guid VIDEO_SUBGROUP = new Guid("7516b95f-f776-4464-8c53-06167f40cc99");
-		private static readonly Guid VIDEO_ADAPTIVE_DISPLAY_BRIGHTNESS = new Guid("fbd9aa66-9553-4097-ba44-ed6e9d65eab8");
-		private static readonly Guid DEVICE_POWER_POLICY_VIDEO_BRIGHTNESS = new Guid("aded5e82-b909-4619-9949-f5d71dac0bcb");
-		private static readonly Guid DEVICE_POWER_POLICY_VIDEO_DIM_BRIGHTNESS = new Guid("f1fbfde2-a960-4165-9f88-50667911ce96");
-		private static readonly Guid CONSOLE_DISPLAY_STATE = new Guid("6fe69556-704a-47a0-8f24-c28d936fda47");
+		private static readonly Guid VIDEO_SUBGROUP = new("7516b95f-f776-4464-8c53-06167f40cc99");
+		private static readonly Guid VIDEO_ADAPTIVE_DISPLAY_BRIGHTNESS = new("fbd9aa66-9553-4097-ba44-ed6e9d65eab8");
+		private static readonly Guid DEVICE_POWER_POLICY_VIDEO_BRIGHTNESS = new("aded5e82-b909-4619-9949-f5d71dac0bcb");
+		private static readonly Guid DEVICE_POWER_POLICY_VIDEO_DIM_BRIGHTNESS = new("f1fbfde2-a960-4165-9f88-50667911ce96");
+		private static readonly Guid CONSOLE_DISPLAY_STATE = new("6fe69556-704a-47a0-8f24-c28d936fda47");
 
 		// AC/DC power source derived from winnt.h
-		private static readonly Guid ACDC_POWER_SOURCE = new Guid("5d3e9a59-e9d5-4b00-a6bd-ff34ff516548");
+		private static readonly Guid ACDC_POWER_SOURCE = new("5d3e9a59-e9d5-4b00-a6bd-ff34ff516548");
 
 		public static Guid GetActiveScheme()
 		{
@@ -322,7 +322,7 @@ namespace Monitorian.Core.Models.Monitor
 		public static bool SetActiveSchemeBrightness(int brightness)
 		{
 			if (brightness is < 0 or > 100)
-				throw new ArgumentOutOfRangeException(nameof(brightness), brightness, "The brightness must be within 0 to 100.");
+				throw new ArgumentOutOfRangeException(nameof(brightness), brightness, "The brightness must be from 0 to 100.");
 
 			var isOnline = IsOnline();
 			if (!isOnline.HasValue)
@@ -352,7 +352,7 @@ namespace Monitorian.Core.Models.Monitor
 					DEVICE_POWER_POLICY_VIDEO_BRIGHTNESS,
 					(uint)brightness) != ERROR_SUCCESS)
 				{
-					Debug.WriteLine("Failed to write DC Brightness");
+					Debug.WriteLine("Failed to write DC Brightness.");
 					return false;
 				}
 			}

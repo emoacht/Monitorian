@@ -188,7 +188,7 @@ namespace Monitorian.Core.Models.Monitor
 
 		#endregion
 
-		private static readonly Guid GUID_DEVINTERFACE_MONITOR = new Guid("E6F07B5F-EE97-4a90-B076-33F57BF4EAA7");
+		private static readonly Guid GUID_DEVINTERFACE_MONITOR = new("E6F07B5F-EE97-4a90-B076-33F57BF4EAA7");
 
 		public static IEnumerable<InstalledItem> EnumerateInstalledMonitors()
 		{

@@ -59,7 +59,7 @@ namespace Monitorian.Core.Models.Monitor
 		public override AccessResult SetBrightness(int brightness)
 		{
 			if (brightness is < 0 or > 100)
-				throw new ArgumentOutOfRangeException(nameof(brightness), brightness, "The brightness must be within 0 to 100.");
+				throw new ArgumentOutOfRangeException(nameof(brightness), brightness, "The brightness must be from 0 to 100.");
 
 			if (IsInternal)
 			{

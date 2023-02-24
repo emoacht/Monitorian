@@ -63,7 +63,7 @@ namespace Monitorian.Core.Models.Monitor
 		public override AccessResult SetBrightness(int brightness)
 		{
 			if (brightness is < 0 or > 100)
-				throw new ArgumentOutOfRangeException(nameof(brightness), brightness, "The brightness must be within 0 to 100.");
+				throw new ArgumentOutOfRangeException(nameof(brightness), brightness, "The brightness must be from 0 to 100.");
 
 			var buffer = (uint)Math.Round(brightness / 100D * (_maximumBrightness - _minimumBrightness) + _minimumBrightness, MidpointRounding.AwayFromZero);
 
@@ -99,7 +99,7 @@ namespace Monitorian.Core.Models.Monitor
 		public override AccessResult SetContrast(int contrast)
 		{
 			if (contrast is < 0 or > 100)
-				throw new ArgumentOutOfRangeException(nameof(contrast), contrast, "The contrast must be within 0 to 100.");
+				throw new ArgumentOutOfRangeException(nameof(contrast), contrast, "The contrast must be from 0 to 100.");
 
 			var buffer = (uint)Math.Round(contrast / 100D * (_maximumContrast - _minimumContrast) + _minimumContrast, MidpointRounding.AwayFromZero);
 

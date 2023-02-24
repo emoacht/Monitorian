@@ -8,9 +8,9 @@ using System.Windows.Controls;
 
 namespace Monitorian.Core.Views.Controls
 {
-	[TemplatePart(Name = "PART_ShadowThumb", Type = typeof(FrameworkElement))]
-	[TemplatePart(Name = "PART_ShadowLeft", Type = typeof(ColumnDefinition))]
-	[TemplatePart(Name = "PART_ShadowRight", Type = typeof(ColumnDefinition))]
+	[TemplatePart(Name = nameof(Named.PART_ShadowThumb), Type = typeof(FrameworkElement))]
+	[TemplatePart(Name = nameof(Named.PART_ShadowLeft), Type = typeof(ColumnDefinition))]
+	[TemplatePart(Name = nameof(Named.PART_ShadowRight), Type = typeof(ColumnDefinition))]
 	public class ShadowSlider : RangeSlider
 	{
 		public override void OnApplyTemplate()
@@ -58,15 +58,22 @@ namespace Monitorian.Core.Views.Controls
 			CanUseShadow = FindTemplateMembers();
 		}
 
+		private enum Named
+		{
+			PART_ShadowThumb,
+			PART_ShadowLeft,
+			PART_ShadowRight
+		}
+
 		private FrameworkElement _shadowThumb;
 		private ColumnDefinition _shadowLeft;
 		private ColumnDefinition _shadowRight;
 
 		private bool FindTemplateMembers()
 		{
-			_shadowThumb = this.GetTemplateChild("PART_ShadowThumb") as FrameworkElement;
-			_shadowLeft = this.GetTemplateChild("PART_ShadowLeft") as ColumnDefinition;
-			_shadowRight = this.GetTemplateChild("PART_ShadowRight") as ColumnDefinition;
+			_shadowThumb = this.GetTemplateChild(nameof(Named.PART_ShadowThumb)) as FrameworkElement;
+			_shadowLeft = this.GetTemplateChild(nameof(Named.PART_ShadowLeft)) as ColumnDefinition;
+			_shadowRight = this.GetTemplateChild(nameof(Named.PART_ShadowRight)) as ColumnDefinition;
 
 			return (_shadowThumb is not null)
 				&& (_shadowLeft is not null)

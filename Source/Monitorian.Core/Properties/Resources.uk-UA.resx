@@ -130,7 +130,7 @@
     <value>Регулювати одночасно</value>
   </data>
   <data name="Close" xml:space="preserve">
-    <value>Закрити программу</value>
+    <value>Закрити</value>
   </data>
   <data name="CopyOperation" xml:space="preserve">
     <value>Копіювати журнал дій</value>

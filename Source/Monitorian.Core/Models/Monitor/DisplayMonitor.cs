@@ -29,21 +29,21 @@ namespace Monitorian.Core.Models.Monitor
 			public string DisplayName { get; }
 
 			[DataMember(Order = 2)]
-			public bool IsInternal { get; }
+			public float PhysicalDiagonalLength { get; }
 
 			[DataMember(Order = 3)]
-			public string ConnectionDescription { get; }
+			public bool IsInternal { get; }
 
 			[DataMember(Order = 4)]
-			public float PhysicalSize { get; }
+			public string ConnectionDescription { get; }
 
 			public DisplayItem(Monitorian.Supplement.DisplayInformation.DisplayItem item)
 			{
 				this.DeviceInstanceId = item.DeviceInstanceId;
 				this.DisplayName = item.DisplayName;
+				this.PhysicalDiagonalLength = item.PhysicalDiagonalLength;
 				this.IsInternal = item.IsInternal;
 				this.ConnectionDescription = item.ConnectionDescription;
-				this.PhysicalSize = item.PhysicalSize;
 			}
 		}
 

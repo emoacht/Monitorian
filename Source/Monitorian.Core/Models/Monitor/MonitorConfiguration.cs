@@ -186,6 +186,7 @@ namespace Monitorian.Core.Models.Monitor
 			None = 0x0,
 			Luminance = 0x10,
 			Contrast = 0x12,
+			Temperature = 0x14,
 			SpeakerVolume = 0x62,
 			PowerMode = 0xD6,
 		}
@@ -261,14 +262,14 @@ namespace Monitorian.Core.Models.Monitor
 					capabilitiesStringLength))
 				{
 					var capabilitiesString = buffer.ToString();
-					var vcpCodes = EnumerateVcpCodes(capabilitiesString).ToArray();
+					IReadOnlyCollection<byte> vcpCodes = EnumerateVcpCodes(capabilitiesString).ToArray();
 
 					return new MonitorCapability(
 						isHighLevelBrightnessSupported: isHighLevelSupported,
 						isLowLevelBrightnessSupported: vcpCodes.Contains((byte)VcpCode.Luminance),
 						isContrastSupported: vcpCodes.Contains((byte)VcpCode.Contrast),
 						capabilitiesString: (verbose ? capabilitiesString : null),
-						capabilitiesReport: (verbose ? MakeCapabilitiesReport(vcpCodes) : null),
+						capabilitiesReport: (verbose ? MakeCapabilitiesReport(capabilitiesString) : null),
 						capabilitiesData: (verbose && !vcpCodes.Any() ? GetCapabilitiesData(physicalMonitorHandle, capabilitiesStringLength) : null));
 				}
 			}
@@ -277,12 +278,19 @@ namespace Monitorian.Core.Models.Monitor
 				isLowLevelBrightnessSupported: false,
 				isContrastSupported: false);
 
-			static string MakeCapabilitiesReport(byte[] vcpCodes)
+			static string MakeCapabilitiesReport(string capabilitiesString)
 			{
-				return $"Luminance: {vcpCodes.Contains((byte)VcpCode.Luminance)}, " +
-					   $"Contrast: {vcpCodes.Contains((byte)VcpCode.Contrast)}, " +
-					   $"Speaker Volume: {vcpCodes.Contains((byte)VcpCode.SpeakerVolume)}, " +
-					   $"Power Mode: {vcpCodes.Contains((byte)VcpCode.PowerMode)}";
+				IReadOnlyDictionary<byte, byte[]> vcpCodeValues = GetVcpCodeValues(capabilitiesString);
+
+				var temperatureString = vcpCodeValues.TryGetValue((byte)VcpCode.Temperature, out byte[] values)
+					? $"{true} ({values?.Intersect(new byte[] { 3, 4, 5, 6, 7, 8, 9, 10 }).Count() ?? 0})"
+					: false.ToString();
+
+				return $"Luminance: {vcpCodeValues.ContainsKey((byte)VcpCode.Luminance)}, " +
+					   $"Contrast: {vcpCodeValues.ContainsKey((byte)VcpCode.Contrast)}, " +
+					   $"Color Temperature: {temperatureString}, " +
+					   $"Speaker Volume: {vcpCodeValues.ContainsKey((byte)VcpCode.SpeakerVolume)}, " +
+					   $"Power Mode: {vcpCodeValues.ContainsKey((byte)VcpCode.PowerMode)}";
 			}
 
 			static byte[] GetCapabilitiesData(SafePhysicalMonitorHandle physicalMonitorHandle, uint capabilitiesStringLength)
@@ -315,7 +323,7 @@ namespace Monitorian.Core.Models.Monitor
 			if (string.IsNullOrEmpty(source))
 				yield break;
 
-			int index = source.IndexOf("vcp", StringComparison.OrdinalIgnoreCase);
+			int index = source.IndexOf("vcp", StringComparison.Ordinal);
 			if (index < 0)
 				yield break;
 
@@ -336,23 +344,18 @@ namespace Monitorian.Core.Models.Monitor
 						depth--;
 						if (depth < 1)
 						{
-							if (0 < buffer.Length)
-							{
-								yield return byte.Parse(buffer.ToString(), NumberStyles.HexNumber, NumberFormatInfo.InvariantInfo);
-							}
 							yield break; // End of enumeration
 						}
 						break;
 					default:
-						if (depth == 1)
+						if (depth is 1)
 						{
 							if (IsHexNumber(c))
 							{
 								buffer.Append(c);
-								if (buffer.Length == 1)
+								if (buffer.Length is 1)
 									continue;
 							}
-
 							if (0 < buffer.Length)
 							{
 								yield return byte.Parse(buffer.ToString(), NumberStyles.HexNumber, NumberFormatInfo.InvariantInfo);
@@ -362,6 +365,90 @@ namespace Monitorian.Core.Models.Monitor
 						break;
 				}
 			}
+
+			static bool IsAscii(char c) => c <= 0x7F;
+			static bool IsHexNumber(char c) => c is (>= '0' and <= '9') or (>= 'A' and <= 'F') or (>= 'a' and <= 'f');
+		}
+
+		private static Dictionary<byte, byte[]> GetVcpCodeValues(string source)
+		{
+			var dic = new Dictionary<byte, byte[]>();
+
+			if (string.IsNullOrEmpty(source))
+				return dic;
+
+			int index = source.IndexOf("vcp", StringComparison.Ordinal);
+			if (index < 0)
+				return dic;
+
+			int depth = 0;
+			var buffer1 = new StringBuilder(2);
+			byte? lastKey = null;
+			var buffer2 = new StringBuilder(2);
+			var values = new List<byte>();
+
+			foreach (char c in source.Skip(index + 3))
+			{
+				if (!IsAscii(c))
+					break;
+
+				switch (c)
+				{
+					case '(':
+						depth++;
+						break;
+					case ')':
+						depth--;
+						switch (depth)
+						{
+							case < 1:
+								goto end; // End of enumeration
+							case 1:
+								if (values.Any() && lastKey.HasValue)
+								{
+									dic[lastKey.Value] = values.ToArray();
+									values.Clear();
+								}
+								break;
+						}
+						break;
+					default:
+						switch (depth)
+						{
+							case 1:
+								if (IsHexNumber(c))
+								{
+									buffer1.Append(c);
+									if (buffer1.Length is 1)
+										continue;
+								}
+								if (0 < buffer1.Length)
+								{
+									lastKey = byte.Parse(buffer1.ToString(), NumberStyles.HexNumber, NumberFormatInfo.InvariantInfo);
+									buffer1.Clear();
+									dic[lastKey.Value] = null;
+								}
+								break;
+							case 2:
+								if (IsHexNumber(c))
+								{
+									buffer2.Append(c);
+									if (buffer2.Length is 1)
+										continue;
+								}
+								if (0 < buffer2.Length)
+								{
+									var value = byte.Parse(buffer2.ToString(), NumberStyles.HexNumber, NumberFormatInfo.InvariantInfo);
+									buffer2.Clear();
+									values.Add(value);
+								}
+								break;
+						}
+						break;
+				}
+			}
+		end:
+			return dic;
 
 			static bool IsAscii(char c) => c <= 0x7F;
 			static bool IsHexNumber(char c) => c is (>= '0' and <= '9') or (>= 'A' and <= 'F') or (>= 'a' and <= 'f');

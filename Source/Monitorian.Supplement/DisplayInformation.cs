@@ -16,7 +16,7 @@ namespace Monitorian.Supplement
 	/// <see cref="Windows.Devices.Display.DisplayMonitor"/> is only available
 	/// on Windows 10 (version 10.0.17134.0) or newer.
 	/// </remarks>
-	public class DisplayInformation
+	public static class DisplayInformation
 	{
 		#region Type
 

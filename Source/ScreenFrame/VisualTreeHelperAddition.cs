@@ -231,11 +231,11 @@ namespace ScreenFrame
 		#region VisualTree
 
 		/// <summary>
-		/// Attempts to get the first ancestor visual of a specified visual.
+		/// Attempts to get the first ancestor object of a specified object.
 		/// </summary>
-		/// <typeparam name="T">Type of ancestor visual</typeparam>
-		/// <param name="reference">Descendant visual</param>
-		/// <param name="ancestor">Ancestor visual</param>
+		/// <typeparam name="T">Type of ancestor dependency object</typeparam>
+		/// <param name="reference">Descendant dependency object</param>
+		/// <param name="ancestor">Ancestor dependency object</param>
 		/// <returns>True if successfully gets</returns>
 		public static bool TryGetAncestor<T>(DependencyObject reference, out T ancestor) where T : DependencyObject
 		{
@@ -256,11 +256,11 @@ namespace ScreenFrame
 		}
 
 		/// <summary>
-		/// Attempts to get the first descendant visual of a specified visual.
+		/// Attempts to get the first descendant object of a specified object.
 		/// </summary>
-		/// <typeparam name="T">Type of descendant visual</typeparam>
-		/// <param name="reference">Ancestor visual</param>
-		/// <param name="descendant">Descendant visual</param>
+		/// <typeparam name="T">Type of descendant dependency object</typeparam>
+		/// <param name="reference">Ancestor dependency object</param>
+		/// <param name="descendant">Descendant dependency object</param>
 		/// <returns>True if successfully gets</returns>
 		public static bool TryGetDescendant<T>(DependencyObject reference, out T descendant) where T : DependencyObject
 		{
@@ -269,7 +269,7 @@ namespace ScreenFrame
 
 			while (parent is not null)
 			{
-				var count = VisualTreeHelper.GetChildrenCount(parent);
+				int count = VisualTreeHelper.GetChildrenCount(parent);
 				for (int i = 0; i < count; i++)
 				{
 					var child = VisualTreeHelper.GetChild(parent, i);

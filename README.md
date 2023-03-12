@@ -31,7 +31,7 @@ Additional languages:
  - Polish (pl-PL) by @Daxxxis and @FakeMichau
  - Portuguese (pt-BR) by @guilhermgonzaga
  - Romanian (ro) by @calini
- - Russian (ru-RU) by @SigmaTel71
+ - Russian (ru-RU) by @SigmaTel71 and @San4es
  - Turkish (tr-TR) by @webbudesign
  - Ukrainian (uk-UA) by @kaplun07
  - Simplified Chinese (zh-Hans) by @ComMouse, @zhujunsan, @XMuli, @FISHandCHEAP and @FrzMtrsprt
@@ -56,7 +56,7 @@ Additional languages:
    ```
 
  * Other:<br>
-:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/4.0.1-Installer/MonitorianInstaller401.zip)
+:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/4.1.0-Installer/MonitorianInstaller410.zip)
 
 ## Install/Uninstall
 
@@ -211,6 +211,12 @@ An alternative language can be shown by adding a Resources (.resx) file into `/S
  - VESA [Monitor Control Command Set (MCCS)](https://www.google.co.jp/search?q=VESA+Monitor+Control+Command+Set+Standard+MCCS) standard
 
 ## History
+
+Ver 4.1 2023-3-13
+
+ - Improve internal code
+ - Supplement Ukrainian (uk-UA) language. Thanks to @kaplun07!
+ - Supplement Russian (ru-RU) language. Thanks to @San4es!
 
 Ver 4.0 2022-12-31
 

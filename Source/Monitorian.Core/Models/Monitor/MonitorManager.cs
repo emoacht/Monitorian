@@ -248,10 +248,10 @@ namespace Monitorian.Core.Models.Monitor
 		[DataContract]
 		private class PhysicalItemPlus : MonitorConfiguration.PhysicalItem
 		{
-			[DataMember(Order = 6)]
+			[DataMember(Order = 3)]
 			public string GetBrightness { get; private set; }
 
-			[DataMember(Order = 7)]
+			[DataMember(Order = 4)]
 			public string SetBrightness { get; private set; }
 
 			public PhysicalItemPlus(

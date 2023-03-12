@@ -14,7 +14,7 @@ namespace Monitorian.Supplement
 	/// <see cref="Windows.Devices.Sensors.LightSensor"/> has been available
 	/// since Windows 8.1 but is officially supported on Windows 10 (version 10.0.10240.0) or newer.
 	/// </remarks>
-	public class LightInformation
+	public static class LightInformation
 	{
 		/// <summary>
 		/// Determines whether an integrated ambient light sensor exists.

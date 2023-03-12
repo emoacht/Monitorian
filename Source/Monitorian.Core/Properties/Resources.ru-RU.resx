@@ -186,6 +186,9 @@
   <data name="StatusReasonDdcNotEnabled" xml:space="preserve">
     <value>DDC/CI не включен или не поддерживается.</value>
   </data>
+  <data name="UseAccentColor" xml:space="preserve">
+    <value>Использовать системный цвет для ползунка яркости</value>
+  </data>
   <data name="UseLargeElements" xml:space="preserve">
     <value>Использовать большие ползунки</value>
   </data>

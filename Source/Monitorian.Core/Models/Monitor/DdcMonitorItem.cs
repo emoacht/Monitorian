@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -19,6 +20,7 @@ namespace Monitorian.Core.Models.Monitor
 		public override bool IsBrightnessSupported => _capability.IsBrightnessSupported;
 		public override bool IsContrastSupported => _capability.IsContrastSupported;
 		public override bool IsPrecleared => _capability.IsPrecleared;
+		public override bool IsTemperatureSupported => _capability.IsTemperatureSupported;
 
 		public DdcMonitorItem(
 			string deviceInstanceId,
@@ -63,7 +65,7 @@ namespace Monitorian.Core.Models.Monitor
 		public override AccessResult SetBrightness(int brightness)
 		{
 			if (brightness is < 0 or > 100)
-				throw new ArgumentOutOfRangeException(nameof(brightness), brightness, "The brightness must be within 0 to 100.");
+				throw new ArgumentOutOfRangeException(nameof(brightness), brightness, "The brightness must be from 0 to 100.");
 
 			var buffer = (uint)Math.Round(brightness / 100D * (_maximumBrightness - _minimumBrightness) + _minimumBrightness, MidpointRounding.AwayFromZero);
 
@@ -99,7 +101,7 @@ namespace Monitorian.Core.Models.Monitor
 		public override AccessResult SetContrast(int contrast)
 		{
 			if (contrast is < 0 or > 100)
-				throw new ArgumentOutOfRangeException(nameof(contrast), contrast, "The contrast must be within 0 to 100.");
+				throw new ArgumentOutOfRangeException(nameof(contrast), contrast, "The contrast must be from 0 to 100.");
 
 			var buffer = (uint)Math.Round(contrast / 100D * (_maximumContrast - _minimumContrast) + _minimumContrast, MidpointRounding.AwayFromZero);
 
@@ -110,6 +112,29 @@ namespace Monitorian.Core.Models.Monitor
 				this.Contrast = contrast;
 			}
 			return result;
+		}
+
+		public override AccessResult ChangeTemperature()
+		{
+			var (result, current) = MonitorConfiguration.GetTemperature(_handle);
+			if (result.Status == AccessStatus.Succeeded)
+			{
+				var next = GetNext(_capability.Temperatures, current);
+				result = MonitorConfiguration.SetTemperature(_handle, next);
+
+				Debug.WriteLine($"Color Temperature: {current} -> {next}");
+			}
+			return result;
+
+			static byte GetNext(IReadOnlyList<byte> source, byte current)
+			{
+				for (int i = 0; i < source.Count; i++)
+				{
+					if (source[i] == current)
+						return (i < source.Count - 1) ? source[i + 1] : source[0];
+				}
+				return source.First(); // Fallback
+			}
 		}
 
 		#region IDisposable

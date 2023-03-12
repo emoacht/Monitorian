@@ -79,12 +79,12 @@ namespace Monitorian.Core.Models.Monitor
 			uint GetFriendlyName(out string friendlyName);
 		}
 
-		private static uint S_OK = 0x0;
-		private static uint E_ELEMENTNOTFOUND = 0x80070490; // 0x80070490 means 0x0490 -> 1168 -> ERROR_NOT_FOUND
+		private const uint S_OK = 0x0;
+		private const uint E_ELEMENTNOTFOUND = 0x80070490; // 0x80070490 means 0x0490 -> 1168 -> ERROR_NOT_FOUND
 
 		#endregion
 
-		private static Guid SENSOR_TYPE_AMBIENT_LIGHT => new Guid("97F115C8-599A-4153-8894-D2D12899918A");
+		private static Guid SENSOR_TYPE_AMBIENT_LIGHT => new("97F115C8-599A-4153-8894-D2D12899918A");
 
 		public static bool AmbientLightSensorExists => _ambientLightSensorExists.Value;
 		private static readonly Lazy<bool> _ambientLightSensorExists = new(() => SensorExists(SENSOR_TYPE_AMBIENT_LIGHT));

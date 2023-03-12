@@ -15,15 +15,15 @@ namespace ScreenFrame
 		/// <summary>
 		/// Enumerates descendant objects of a specified object.
 		/// </summary>
-		/// <typeparam name="T">Type of descendant object</typeparam>
-		/// <param name="reference">Ancestor object</param>
+		/// <typeparam name="T">Type of descendant dependency object</typeparam>
+		/// <param name="reference">Ancestor dependency object</param>
 		/// <returns>Enumerable collection of descendant objects</returns>
-		public static IEnumerable<T> EnumerateDescendants<T>(DependencyObject reference)
+		public static IEnumerable<T> EnumerateDescendants<T>(DependencyObject reference) where T : DependencyObject
 		{
 			if (reference is null)
 				yield break;
 
-			foreach (var child in LogicalTreeHelper.GetChildren(reference).OfType<DependencyObject>())
+			foreach (DependencyObject child in LogicalTreeHelper.GetChildren(reference).OfType<DependencyObject>())
 			{
 				if (child is T buffer)
 					yield return buffer;

@@ -52,7 +52,7 @@ namespace Monitorian.Core.Helper
 		private static readonly Dictionary<string, bool> _cache = new();
 		private static readonly object _lock = new();
 
-		private static bool IsEqualToOrGreaterThan(int major, int minor = 0, int build = 0, [CallerMemberName] string propertyName = null)
+		private static bool IsEqualToOrGreaterThan(in int major, in int minor = 0, in int build = 0, [CallerMemberName] string propertyName = null)
 		{
 			lock (_lock)
 			{

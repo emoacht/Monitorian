@@ -391,6 +391,18 @@ namespace Monitorian.Core.ViewModels
 
 		#endregion
 
+		#region Temperature
+
+		public bool IsTemperatureSupported => _monitor.IsTemperatureSupported;
+
+		public void ChangeTemperature()
+		{
+			if (IsTemperatureSupported)
+				_monitor.ChangeTemperature();
+		}
+
+		#endregion
+
 		#region Controllable
 
 		public bool IsReachable => _monitor.IsReachable;

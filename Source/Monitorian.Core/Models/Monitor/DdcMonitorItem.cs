@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -19,6 +20,7 @@ namespace Monitorian.Core.Models.Monitor
 		public override bool IsBrightnessSupported => _capability.IsBrightnessSupported;
 		public override bool IsContrastSupported => _capability.IsContrastSupported;
 		public override bool IsPrecleared => _capability.IsPrecleared;
+		public override bool IsTemperatureSupported => _capability.IsTemperatureSupported;
 
 		public DdcMonitorItem(
 			string deviceInstanceId,
@@ -110,6 +112,29 @@ namespace Monitorian.Core.Models.Monitor
 				this.Contrast = contrast;
 			}
 			return result;
+		}
+
+		public override AccessResult ChangeTemperature()
+		{
+			var (result, current) = MonitorConfiguration.GetTemperature(_handle);
+			if (result.Status == AccessStatus.Succeeded)
+			{
+				var next = GetNext(_capability.Temperatures, current);
+				result = MonitorConfiguration.SetTemperature(_handle, next);
+
+				Debug.WriteLine($"Color Temperature: {current} -> {next}");
+			}
+			return result;
+
+			static byte GetNext(IReadOnlyList<byte> source, byte current)
+			{
+				for (int i = 0; i < source.Count; i++)
+				{
+					if (source[i] == current)
+						return (i < source.Count - 1) ? source[i + 1] : source[0];
+				}
+				return source.First(); // Fallback
+			}
 		}
 
 		#region IDisposable

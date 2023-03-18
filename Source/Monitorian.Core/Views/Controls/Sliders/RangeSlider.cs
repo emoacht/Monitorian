@@ -37,12 +37,43 @@ namespace Monitorian.Core.Views.Controls
 
 		#region Range
 
+		/// <summary>
+		/// Attempts to get the current level (from 0 to 1) within selected range. 
+		/// </summary>
+		/// <param name="level">Current level</param>
+		/// <returns>True if the current value is within selected range</returns>
+		/// <remarks>
+		/// This level is translated from/to the current value.
+		/// </remarks>
+		protected virtual bool TryGetLevel(out double level) => TryGetLevel(this.Value, out level);
+
+		protected virtual bool TryGetLevel(double value, out double level)
+		{
+			if (value < this.SelectionStart)
+			{
+				level = 0;
+				return false;
+			}
+			if (value > this.SelectionEnd)
+			{
+				level = 1;
+				return false;
+			}
+			level = (value - this.SelectionStart) / (this.SelectionEnd - this.SelectionStart);
+			return true;
+		}
+
+		protected virtual bool SetLevel(double level)
+		{
+			return UpdateValue(this.SelectionStart + (this.SelectionEnd - this.SelectionStart) * level);
+		}
+
 		protected override bool UpdateValue(double value)
 		{
 			// Overriding CoerceValueCallback of ValueProperty will not be enough to limit the range
 			// of value because it does not coerce a value sent to binding source.
 
-			var adjustedValue = Math.Min(this.SelectionEnd, Math.Max(this.SelectionStart, (double)value));
+			var adjustedValue = Math.Min(this.SelectionEnd, Math.Max(this.SelectionStart, value));
 			if (this.Value == adjustedValue)
 				return false;
 

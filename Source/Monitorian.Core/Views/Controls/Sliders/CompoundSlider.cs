@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Data;
 
 namespace Monitorian.Core.Views.Controls
 {
@@ -17,7 +16,6 @@ namespace Monitorian.Core.Views.Controls
 		{
 			public object Source { get; set; }
 			public List<CompoundSlider> Sliders { get; } = new();
-			public double? BrightnessProtruded { get; set; }
 
 			public Item(object source) => this.Source = source;
 		}
@@ -99,7 +97,7 @@ namespace Monitorian.Core.Views.Controls
 
 		#region Unison
 
-		private static event EventHandler<(object source, double delta, bool update)> Moved; // Static event
+		private static event EventHandler<(object source, double level, bool update)> Moved; // Static event
 
 		public bool IsUnison
 		{
@@ -150,12 +148,10 @@ namespace Monitorian.Core.Views.Controls
 								// This route is handled by OnValueChanged method.
 								instance._update = true;
 							}
-							else if (instance._source is not null)
+							else if ((instance._source is not null)
+								&& instance.TryGetLevel((int)e.NewValue, out double level))
 							{
-								// As DependencyPropertyChangedEventArgs.OldValue property is not always reliable,
-								// this route must be called before this instance's Value property is updated
-								// in order to obtain old value from that Value property.
-								Moved?.Invoke(instance, (instance._source, (int)e.NewValue - instance.Value, update: true));
+								Moved?.Invoke(instance, (instance._source, level, update: true));
 							}
 						}
 					}));
@@ -169,24 +165,14 @@ namespace Monitorian.Core.Views.Controls
 			var update = _update;
 			_update = false;
 
-			if (IsUnison && this.IsFocused && (_source is not null))
+			if (IsUnison && this.IsFocused && (_source is not null)
+				&& this.TryGetLevel(out double level))
 			{
-				var delta = (newValue - oldValue) / GetRangeRate();
-				Moved?.Invoke(this, (_source, delta, update: update));
+				Moved?.Invoke(this, (_source, level, update: update));
 			}
 		}
 
-		protected override void OnGotFocus(RoutedEventArgs e)
-		{
-			base.OnGotFocus(e);
-
-			if (_holder.TryGetItem(_source, out Item item))
-			{
-				item.BrightnessProtruded = null; // Reset;
-			}
-		}
-
-		private void OnMoved(object sender, (object source, double delta, bool update) e)
+		private void OnMoved(object sender, (object source, double level, bool update) e)
 		{
 			if (ReferenceEquals(this, sender) || ReferenceEquals(this._source, e.source))
 				return;
@@ -195,15 +181,12 @@ namespace Monitorian.Core.Views.Controls
 				!ReferenceEquals(item.Sliders.FirstOrDefault(x => x.IsUnison), this))
 				return;
 
-			if (e.delta != 0D)
+			if (e is { level: >= 0 })
 			{
-				item.BrightnessProtruded ??= this.Value;
-				item.BrightnessProtruded += e.delta * GetRangeRate();
-
-				UpdateValue(item.BrightnessProtruded.Value);
+				SetLevel(e.level);
 			}
 
-			if ((e.delta == 0D) || e.update)
+			if (e is { level: < 0, update: true })
 			{
 				base.EnsureUpdateSource();
 			}
@@ -215,7 +198,7 @@ namespace Monitorian.Core.Views.Controls
 
 			if (_source is not null)
 			{
-				Moved?.Invoke(this, (_source, 0D, update: true));
+				Moved?.Invoke(this, (_source, -1, update: true));
 			}
 		}
 

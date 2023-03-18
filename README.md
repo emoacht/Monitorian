@@ -56,7 +56,7 @@ Additional languages:
    ```
 
  * Other:<br>
-:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/4.1.0-Installer/MonitorianInstaller410.zip)
+:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/4.2.0-Installer/MonitorianInstaller420.zip)
 
 ## Install/Uninstall
 
@@ -211,6 +211,10 @@ An alternative language can be shown by adding a Resources (.resx) file into `/S
  - VESA [Monitor Control Command Set (MCCS)](https://www.google.co.jp/search?q=VESA+Monitor+Control+Command+Set+Standard+MCCS) standard
 
 ## History
+
+Ver 4.2 2023-3-19
+
+ - Change function to change in unison
 
 Ver 4.1 2023-3-13
 

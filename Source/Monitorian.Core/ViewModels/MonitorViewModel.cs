@@ -198,7 +198,7 @@ namespace Monitorian.Core.ViewModels
 				return;
 
 			var size = tickSize * GetRangeRate();
-			var count = Math.Floor((Brightness - RangeLowest) / size);
+			var count = Math.Floor((Brightness - RangeLowest) / size + 0.01);
 			int brightness = RangeLowest + (int)Math.Ceiling((count + 1) * size);
 
 			SetBrightness(brightness, isCycle);
@@ -218,7 +218,7 @@ namespace Monitorian.Core.ViewModels
 				return;
 
 			var size = tickSize * GetRangeRate();
-			var count = Math.Ceiling((Brightness - RangeLowest) / size);
+			var count = Math.Ceiling((Brightness - RangeLowest) / size - 0.01);
 			int brightness = RangeLowest + (int)Math.Floor((count - 1) * size);
 
 			SetBrightness(brightness, isCycle);

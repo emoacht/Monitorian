@@ -130,13 +130,13 @@
     <value>Enregistrer le journal des opérations sur le Bureau ?</value>
   </data>
   <data name="EnableUnison" xml:space="preserve">
-    <value>Activer le déplacement à l'unisson</value>
+    <value>Déplacement des curseurs synchronisé</value>
   </data>
   <data name="MakeOperation" xml:space="preserve">
     <value>Créer un journal des opérations</value>
   </data>
   <data name="Probe" xml:space="preserve">
-    <value>Scanner les moniteurs</value>
+    <value>Détecter les moniteurs</value>
   </data>
   <data name="RecordExceptionMessage" xml:space="preserve">
     <value>Une erreur inconnue est survenue. Enregistrer le journal des erreurs sur le Bureau ?</value>
@@ -145,7 +145,7 @@
     <value>Enregistrer le journal de scan sur le bureau ?</value>
   </data>
   <data name="Rescan" xml:space="preserve">
-    <value>Scanner à nouveau les moniteurs</value>
+    <value>Détecter à nouveau les moniteurs</value>
   </data>
   <data name="ShowAdjusted" xml:space="preserve">
     <value>Afficher la luminosité ajustée</value>

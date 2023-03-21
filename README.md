@@ -23,7 +23,7 @@ Additional languages:
  - Catalan (ca) by @ericmp33
  - German (de) by @uDEV2019
  - Spanish (es) by @josemirm and @ericmp33
- - French (fr) by @AlexZeGamer
+ - French (fr) by @AlexZeGamer and @Rikiiiiiii
  - Italian (it) by @GhostyJade
  - Japanese (ja-JP) by @emoacht
  - Korean (ko-KR) by @VenusGirl
@@ -56,7 +56,7 @@ Additional languages:
    ```
 
  * Other:<br>
-:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/4.2.1-Installer/MonitorianInstaller421.zip)
+:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/4.2.2-Installer/MonitorianInstaller422.zip)
 
 ## Install/Uninstall
 
@@ -212,10 +212,11 @@ An alternative language can be shown by adding a Resources (.resx) file into `/S
 
 ## History
 
-Ver 4.2 2023-3-19
+Ver 4.2 2023-3-21
 
  - Change function to change in unison
-
+ - Supplement French (fr) language. Thanks to @Rikiiiiiii!
+ 
 Ver 4.1 2023-3-13
 
  - Improve internal code

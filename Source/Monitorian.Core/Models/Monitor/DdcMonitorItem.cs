@@ -21,6 +21,7 @@ namespace Monitorian.Core.Models.Monitor
 		public override bool IsContrastSupported => _capability.IsContrastSupported;
 		public override bool IsPrecleared => _capability.IsPrecleared;
 		public override bool IsTemperatureSupported => _capability.IsTemperatureSupported;
+		public override bool IsSpeakerVolumeSupported => _capability.IsSpeakerVolumeSupported;
 
 		public DdcMonitorItem(
 			string deviceInstanceId,
@@ -136,6 +137,43 @@ namespace Monitorian.Core.Models.Monitor
 				return source.First(); // Fallback
 			}
 		}
+
+
+		private uint _minimumVolume = 0; // Raw minimum volume (may not always 0)
+		private uint _maximumVolume = 100; // Raw maximum volume (may not always 100)
+
+		public override AccessResult UpdateSpeakerVolume()
+		{
+			var (result, minimum, current, maximum) = MonitorConfiguration.GetSpeakerVolume(_handle);
+			if ((result.Status == AccessStatus.Succeeded) && (minimum < maximum) && (minimum <= current) && (current <= maximum))
+			{
+				this.SpeakerVolume = (int)Math.Round((double)(current - minimum) / (maximum - minimum) * 100D, MidpointRounding.AwayFromZero);
+				this._minimumVolume = minimum;
+				this._maximumVolume = maximum;
+			}
+			else
+			{
+				this.SpeakerVolume = -1; // Default
+			}
+			return result;
+		}
+
+		public override AccessResult SetSpeakerVolume(int volume)
+		{
+			if (volume is < 0 or > 100)
+				throw new ArgumentOutOfRangeException(nameof(volume), volume, "The volume must be from 0 to 100.");
+
+			var buffer = (uint)Math.Round(volume / 100D * (_maximumVolume - _minimumVolume) + _minimumVolume, MidpointRounding.AwayFromZero);
+
+			var result = MonitorConfiguration.SetSpeakerVolume(_handle, buffer);
+
+			if (result.Status == AccessStatus.Succeeded)
+			{
+				this.SpeakerVolume = volume;
+			}
+			return result;
+		}
+
 
 		#region IDisposable
 

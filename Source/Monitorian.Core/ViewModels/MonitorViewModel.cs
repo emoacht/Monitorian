@@ -403,6 +403,87 @@ namespace Monitorian.Core.ViewModels
 
 		#endregion
 
+		#region SpeakerVolume
+
+		public bool IsSpeakerVolumeSupported => _monitor.IsSpeakerVolumeSupported;
+
+		public int SpeakerVolume
+		{
+			get => _monitor.SpeakerVolume;
+			set
+			{
+				if (_monitor.SpeakerVolume == value)
+					return;
+
+				SetSpeakerVolume(value);
+
+				if (IsSelected)
+					_controller.SaveMonitorUserChanged(this);
+			}
+		}
+
+		public bool UpdateSpeakerVolume()
+		{
+			AccessResult result;
+			lock (_lock)
+			{
+				result = _monitor.UpdateSpeakerVolume();
+			}
+
+			switch (result.Status)
+			{
+				case AccessStatus.Succeeded:
+					OnPropertyChanged(nameof(SpeakerVolume));
+					OnSucceeded();
+					return true;
+
+				default:
+					_controller.OnMonitorAccessFailed(result);
+
+					switch (result.Status)
+					{
+						case AccessStatus.NoLongerExist:
+							_controller.OnMonitorsChangeFound();
+							break;
+					}
+					OnFailed();
+					return false;
+			}
+		}
+
+		private bool SetSpeakerVolume(int contrast)
+		{
+			AccessResult result;
+			lock (_lock)
+			{
+				result = _monitor.SetSpeakerVolume(contrast);
+			}
+
+			switch (result.Status)
+			{
+				case AccessStatus.Succeeded:
+					OnPropertyChanged(nameof(SpeakerVolume));
+					OnSucceeded();
+					return true;
+
+				default:
+					_controller.OnMonitorAccessFailed(result);
+
+					switch (result.Status)
+					{
+						case AccessStatus.DdcFailed:
+						case AccessStatus.TransmissionFailed:
+						case AccessStatus.NoLongerExist:
+							_controller.OnMonitorsChangeFound();
+							break;
+					}
+					OnFailed();
+					return false;
+			}
+		}
+
+		#endregion SpeakerVolume
+
 		#region Controllable
 
 		public bool IsReachable => _monitor.IsReachable;

@@ -614,6 +614,7 @@
 							<RowDefinition Height="Auto"/>
 							<RowDefinition Height="Auto"/>
 							<RowDefinition Height="Auto"/>
+							<RowDefinition Height="Auto"/>
 						</Grid.RowDefinitions>
 
 						<Grid Grid.Row="0">
@@ -659,6 +660,7 @@
 							  Visibility="{Binding IsControllable, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverterKey}}">
 							<Grid.ColumnDefinitions>
 								<ColumnDefinition Width="4"/>
+								<ColumnDefinition Width="Auto"/>
 								<ColumnDefinition Width="*"/>
 								<ColumnDefinition Width="Auto"/>
 								<ColumnDefinition Width="Auto"/>
@@ -670,9 +672,11 @@
 									   Fill="{StaticResource Slider.Background.Main.Static}"
 									   Visibility="{Binding IsSelectedByKey, Converter={StaticResource BooleanToVisibilityConverterKey}}"/>
 
+							<TextBlock Grid.Column="1" Margin="8,0,0,0" VerticalAlignment="Center"
+									   Text="&#xE706;" FontFamily="Segoe MDL2 Assets" FontSize="18" Foreground="White"/>
 							<!-- Brightness -->
-							<controls:CompoundSlider Grid.Column="1"
-													 Margin="12,0,4,0" VerticalAlignment="Center"
+							<controls:CompoundSlider Grid.Column="2"
+													 Margin="4,0,4,0" VerticalAlignment="Center"
 													 Style="{StaticResource MainSliderHorizontal}"
 													 Minimum="0" Maximum="100"
 													 Value="{Binding Brightness, Mode=TwoWay, Delay=50}"
@@ -692,7 +696,7 @@
 								</i:Interaction.Behaviors>
 							</controls:CompoundSlider>
 
-							<Label Grid.Column="2"
+							<Label Grid.Column="3"
 								   Width="26" Margin="0,0,4,0"
 								   Style="{StaticResource NumberLabelStyle}"
 								   FontSize="16"
@@ -705,7 +709,7 @@
 								</i:Interaction.Triggers>
 							</Label>
 
-							<Label Grid.Column="3"
+							<Label Grid.Column="4"
 								   Width="48" Margin="0,0,4,0"
 								   Style="{StaticResource NumberLabelStyle}"
 								   FontSize="15"
@@ -716,7 +720,7 @@
 							</Label>
 
 							<!-- Contrast -->
-							<controls:EnhancedSlider Grid.Column="4"
+							<controls:EnhancedSlider Grid.Column="5"
 													 Width="100" Margin="8,0,4,0" VerticalAlignment="Center"
 													 Style="{StaticResource SubSliderHorizontal}"
 													 Minimum="0" Maximum="100"
@@ -728,7 +732,7 @@
 								</i:Interaction.Behaviors>
 							</controls:EnhancedSlider>
 
-							<Label Grid.Column="5"
+							<Label Grid.Column="6"
 								   Width="26" Margin="0,0,4,0"
 								   Style="{StaticResource NumberLabelStyle}"
 								   FontSize="16"
@@ -736,8 +740,36 @@
 								   Visibility="{Binding IsContrastChanging, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverterKey}}"/>
 						</Grid>
 
-						<!-- Message -->
 						<Grid Grid.Row="2"
+							  Margin="0,0,12,0"
+							  Visibility="{Binding IsSpeakerVolumeSupported, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverterKey}}">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="4"/>
+								<ColumnDefinition Width="Auto"/>
+								<ColumnDefinition Width="*"/>
+								<ColumnDefinition Width="Auto"/>
+							</Grid.ColumnDefinitions>
+							<TextBlock Grid.Column="1" Margin="8,0,8,0" VerticalAlignment="Center"
+									   Text="&#xE15D;" FontFamily="Segoe MDL2 Assets" FontSize="18" Foreground="White"/>
+							<!-- Speaker volume -->
+							<controls:CompoundSlider Grid.Column="2"
+													 Margin="0,0,4,0" VerticalAlignment="Center"
+													 Style="{StaticResource MainSliderHorizontal}"
+													 Minimum="0" Maximum="100"
+													 Value="{Binding SpeakerVolume, Mode=TwoWay, Delay=0}"
+													 DefersUpdateSource="{Binding Settings.DefersChange, Mode=OneWay}"/>
+
+							<Grid Grid.Column="3"
+								  Visibility="{Binding Settings.ShowsNumber, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverterKey}}">
+								<Label Width="26" Margin="0,0,4,0"
+									   Style="{StaticResource NumberLabelStyle}"
+									   FontSize="16"
+									   Content="{Binding SpeakerVolume, Mode=OneWay}"/>
+							</Grid>
+						</Grid>
+
+						<!-- Message -->
+						<Grid Grid.Row="3"
 							  Visibility="{Binding Message, Mode=OneWay, Converter={StaticResource ObjectToVisibilityConverterKey}}">
 							<Border Margin="6,6,6,0"
 									Padding="3"

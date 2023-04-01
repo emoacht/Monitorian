@@ -4,7 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-
+using System.Windows.Input;
+using Monitorian.Core.Common;
 using Monitorian.Core.Helper;
 using Monitorian.Core.Models;
 using Monitorian.Core.Models.Monitor;
@@ -23,6 +24,7 @@ namespace Monitorian.Core.ViewModels
 		{
 			this._controller = controller ?? throw new ArgumentNullException(nameof(controller));
 			this._monitor = monitor ?? throw new ArgumentNullException(nameof(monitor));
+			ToggleSpeakerMuteCommand = new RelayCommand(() => ToggleSpeakerMute(), () => IsSpeakerMuteSupported);
 			SetTopLeft();
 
 			LoadCustomization();
@@ -403,9 +405,9 @@ namespace Monitorian.Core.ViewModels
 
 		#endregion
 
-		#region SpeakerVolume
+		#region Speaker Volume
 
-		public bool IsSpeakerVolumeSupported => _monitor.IsSpeakerVolumeSupported;
+		public bool IsSpeakerVolumeSupported => _monitor.IsSpeakerVolumeSupported;		
 
 		public int SpeakerVolume
 		{
@@ -434,6 +436,8 @@ namespace Monitorian.Core.ViewModels
 			{
 				case AccessStatus.Succeeded:
 					OnPropertyChanged(nameof(SpeakerVolume));
+					OnPropertyChanged(nameof(IsSpeakerMute));
+					OnPropertyChanged(nameof(SpeakerSymbol));
 					OnSucceeded();
 					return true;
 
@@ -463,6 +467,8 @@ namespace Monitorian.Core.ViewModels
 			{
 				case AccessStatus.Succeeded:
 					OnPropertyChanged(nameof(SpeakerVolume));
+					OnPropertyChanged(nameof(IsSpeakerMute));
+					OnPropertyChanged(nameof(SpeakerSymbol));
 					OnSucceeded();
 					return true;
 
@@ -482,7 +488,92 @@ namespace Monitorian.Core.ViewModels
 			}
 		}
 
-		#endregion SpeakerVolume
+		#endregion
+
+		#region Speaker Mute
+		public bool IsSpeakerMuteSupported => _monitor.IsSpeakerMuteSupported;
+		public ICommand ToggleSpeakerMuteCommand { get; set; }
+
+		public string SpeakerSymbol => IsSpeakerMute ? "\xE74F" : "\xE767";
+
+		public bool IsSpeakerMute
+		{
+			get => _monitor.IsSpeakerMute;
+			set
+			{
+				if (_monitor.IsSpeakerMute == value)
+					return;
+
+				ToggleSpeakerMute();
+
+				if (IsSelected)
+					_controller.SaveMonitorUserChanged(this);
+			}
+		}
+
+		public bool UpdateIsSpeakerMute()
+		{
+			AccessResult result;
+			lock (_lock)
+			{
+				result = _monitor.UpdateIsSpeakerMute();
+			}
+
+			switch (result.Status)
+			{
+				case AccessStatus.Succeeded:
+					OnPropertyChanged(nameof(IsSpeakerMute));
+					OnPropertyChanged(nameof(SpeakerSymbol));
+					OnSucceeded();
+					return true;
+
+				default:
+					_controller.OnMonitorAccessFailed(result);
+
+					switch (result.Status)
+					{
+						case AccessStatus.NoLongerExist:
+							_controller.OnMonitorsChangeFound();
+							break;
+					}
+					OnFailed();
+					return false;
+			}
+		}
+
+		private bool ToggleSpeakerMute()
+		{
+			AccessResult result;
+			lock (_lock)
+			{
+				result = _monitor.ToggleSpeakerMute();
+			}
+
+			switch (result.Status)
+			{
+				case AccessStatus.Succeeded:
+					OnPropertyChanged(nameof(IsSpeakerMute));
+					OnPropertyChanged(nameof(SpeakerSymbol));
+					OnSucceeded();
+					return true;
+
+				default:
+					_controller.OnMonitorAccessFailed(result);
+
+					switch (result.Status)
+					{
+						case AccessStatus.DdcFailed:
+						case AccessStatus.TransmissionFailed:
+						case AccessStatus.NoLongerExist:
+							_controller.OnMonitorsChangeFound();
+							break;
+					}
+					OnFailed();
+					return false;
+			}
+		}
+
+		#endregion
 
 		#region Controllable
 

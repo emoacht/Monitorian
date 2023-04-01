@@ -20,6 +20,7 @@ namespace Monitorian.Core.Models.Monitor
 		bool IsContrastSupported { get; }
 		bool IsTemperatureSupported { get; }
 		bool IsSpeakerVolumeSupported { get; }
+		bool IsSpeakerMuteSupported { get; }
 
 		int Brightness { get; }
 		int BrightnessSystemAdjusted { get; }
@@ -35,9 +36,12 @@ namespace Monitorian.Core.Models.Monitor
 		AccessResult ChangeTemperature();
 
 		int SpeakerVolume { get; }
-
 		AccessResult UpdateSpeakerVolume();
 		AccessResult SetSpeakerVolume(int volume);
+
+		bool IsSpeakerMute { get; }
+		AccessResult UpdateIsSpeakerMute();
+		AccessResult ToggleSpeakerMute();
 	}
 
 	public enum AccessStatus
@@ -55,6 +59,8 @@ namespace Monitorian.Core.Models.Monitor
 	{
 		public AccessStatus Status { get; }
 		public string Message { get; }
+
+		public bool IsSuccess => Status == AccessStatus.Succeeded;
 
 		public AccessResult(AccessStatus status, string message) => (this.Status, this.Message) = (status, message);
 

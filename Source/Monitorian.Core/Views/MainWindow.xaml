@@ -750,7 +750,11 @@
 								<ColumnDefinition Width="Auto"/>
 							</Grid.ColumnDefinitions>
 							<TextBlock Grid.Column="1" Margin="8,0,8,0" VerticalAlignment="Center"
-									   Text="&#xE15D;" FontFamily="Segoe MDL2 Assets" FontSize="18" Foreground="White"/>
+									   Text="{Binding SpeakerSymbol}" FontFamily="Segoe MDL2 Assets" FontSize="18" Foreground="White">
+								<TextBlock.InputBindings>
+									<MouseBinding Command="{Binding ToggleSpeakerMuteCommand}" MouseAction="LeftClick" />
+								</TextBlock.InputBindings>
+							</TextBlock>
 							<!-- Speaker volume -->
 							<controls:CompoundSlider Grid.Column="2"
 													 Margin="0,0,4,0" VerticalAlignment="Center"

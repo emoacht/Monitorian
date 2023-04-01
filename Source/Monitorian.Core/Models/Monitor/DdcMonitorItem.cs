@@ -22,6 +22,7 @@ namespace Monitorian.Core.Models.Monitor
 		public override bool IsPrecleared => _capability.IsPrecleared;
 		public override bool IsTemperatureSupported => _capability.IsTemperatureSupported;
 		public override bool IsSpeakerVolumeSupported => _capability.IsSpeakerVolumeSupported;
+		public override bool IsSpeakerMuteSupported => _capability.IsSpeakerMuteSupported;
 
 		public DdcMonitorItem(
 			string deviceInstanceId,
@@ -167,9 +168,56 @@ namespace Monitorian.Core.Models.Monitor
 
 			var result = MonitorConfiguration.SetSpeakerVolume(_handle, buffer);
 
-			if (result.Status == AccessStatus.Succeeded)
+			if (result.IsSuccess)
 			{
 				this.SpeakerVolume = volume;
+			}
+
+			if (volume > 0 && IsSpeakerMute)
+			{
+				result = MonitorConfiguration.ToggleSpeakerMute(_handle, false);
+				if (result.IsSuccess)
+				{
+					this.IsSpeakerMute = false;
+				}
+			}
+
+			if(volume == 0 && !IsSpeakerMute)
+			{
+				result = MonitorConfiguration.ToggleSpeakerMute(_handle, true);
+				if (result.IsSuccess)
+				{
+					this.IsSpeakerMute = true;
+				}
+			}
+
+			return result;
+		}
+
+		public override AccessResult UpdateIsSpeakerMute()
+		{
+			var (result, isMute) = MonitorConfiguration.IsSpeakerMute(_handle);
+			if (result.Status == AccessStatus.Succeeded)
+			{
+				this.IsSpeakerMute = isMute;
+			}
+			else
+			{
+				this.IsSpeakerMute = false; // Default
+			}
+			return result;
+		}
+
+		public override AccessResult ToggleSpeakerMute()
+		{
+			if (!this.IsSpeakerMuteSupported)
+				throw new InvalidOperationException("Toggle speaker mute state is not allowed, since Audio Mute is not supported by this monitor");
+
+			var newState = !this.IsSpeakerMute;
+			var result = MonitorConfiguration.ToggleSpeakerMute(_handle, newState);
+			if (result.Status == AccessStatus.Succeeded)
+			{
+				this.IsSpeakerMute = newState;
 			}
 			return result;
 		}

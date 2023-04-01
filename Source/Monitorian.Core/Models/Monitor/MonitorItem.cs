@@ -24,6 +24,7 @@ namespace Monitorian.Core.Models.Monitor
 		public virtual bool IsPrecleared => false;
 		public virtual bool IsTemperatureSupported => false;
 		public virtual bool IsSpeakerVolumeSupported => false;
+		public virtual bool IsSpeakerMuteSupported => false;
 
 		public MonitorItem(
 			string deviceInstanceId,
@@ -65,6 +66,10 @@ namespace Monitorian.Core.Models.Monitor
 		public virtual AccessResult UpdateSpeakerVolume() => AccessResult.NotSupported;
 		public virtual AccessResult SetSpeakerVolume(int volume) => AccessResult.NotSupported;
 
+		public bool IsSpeakerMute { get; protected set; } = false;
+		public virtual AccessResult UpdateIsSpeakerMute() => AccessResult.NotSupported;
+		public virtual AccessResult ToggleSpeakerMute() => AccessResult.NotSupported;
+
 		public override string ToString()
 		{
 			return SimpleSerialization.Serialize(
@@ -83,7 +88,8 @@ namespace Monitorian.Core.Models.Monitor
 				(nameof(Brightness), Brightness),
 				(nameof(BrightnessSystemAdjusted), BrightnessSystemAdjusted),
 				(nameof(Contrast), Contrast),
-				(nameof(SpeakerVolume), SpeakerVolume));
+				(nameof(SpeakerVolume), SpeakerVolume),
+				(nameof(IsSpeakerMute), IsSpeakerMute));
 		}
 
 		#region IDisposable

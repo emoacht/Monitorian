@@ -190,6 +190,7 @@ namespace Monitorian.Core.Models.Monitor
 			Contrast = 0x12,
 			Temperature = 0x14,
 			SpeakerVolume = 0x62,
+			AudioMute = 0x8D,
 			PowerMode = 0xD6,
 		}
 
@@ -271,6 +272,7 @@ namespace Monitorian.Core.Models.Monitor
 						isLowLevelBrightnessSupported: vcpCodeValues.ContainsKey((byte)VcpCode.Luminance),
 						isContrastSupported: vcpCodeValues.ContainsKey((byte)VcpCode.Contrast),
 						isSpeakerVolumeSupported: vcpCodeValues.ContainsKey((byte)VcpCode.SpeakerVolume),
+						isSpeakerMuteSupported: vcpCodeValues.ContainsKey((byte)VcpCode.AudioMute),
 						temperatures: (vcpCodeValues.TryGetValue((byte)VcpCode.Temperature, out byte[] values) ? values : null),
 						capabilitiesString: (verbose ? capabilitiesString : null),
 						capabilitiesReport: (verbose ? MakeCapabilitiesReport(vcpCodeValues) : null),
@@ -281,7 +283,8 @@ namespace Monitorian.Core.Models.Monitor
 				isHighLevelBrightnessSupported: isHighLevelSupported,
 				isLowLevelBrightnessSupported: false,
 				isContrastSupported: false,
-				isSpeakerVolumeSupported: false);
+				isSpeakerVolumeSupported: false,
+				isSpeakerMuteSupported: false);
 
 			static string MakeCapabilitiesReport(IReadOnlyDictionary<byte, byte[]> vcpCodeValues)
 			{
@@ -543,6 +546,20 @@ namespace Monitorian.Core.Models.Monitor
 			return GetVcpValue(physicalMonitorHandle, VcpCode.SpeakerVolume);
 		}
 
+		public static (AccessResult result, bool isMute) IsSpeakerMute(SafePhysicalMonitorHandle physicalMonitorHandle)
+		{
+			var (result, _, current, _) = GetVcpValue(physicalMonitorHandle, VcpCode.AudioMute);
+
+			// From MCCS Standard:
+			//	Provides for the audio to be muted or unmuted. 
+			//	 Byte: SL
+			//		00h Reserved, must be ignored
+			//		01h Mute the audio
+			//		02h Unmute the audio 
+			//		≥ 03h Reserved, must be ignored
+			return (result, current == 1u);
+		}
+
 		private static (AccessResult result, uint minimum, uint current, uint maximum) GetVcpValue(SafePhysicalMonitorHandle physicalMonitorHandle, VcpCode vcpCode)
 		{
 			if (!EnsurePhysicalMonitorHandle(physicalMonitorHandle))
@@ -631,6 +648,26 @@ namespace Monitorian.Core.Models.Monitor
 		public static AccessResult SetSpeakerVolume(SafePhysicalMonitorHandle physicalMonitorHandle, uint volume)
 		{
 			return SetVcpValue(physicalMonitorHandle, VcpCode.SpeakerVolume, volume);
+		}
+
+		/// <summary>
+		/// Set the audio to be muted or unmuted.
+		/// </summary>
+		/// <param name="physicalMonitorHandle">Physical monitor handle</param>
+		/// <param name="mute"><see langword="true"/> to mute the audio, <see langword="false"/> to unmute</param>
+		/// <returns>Result</returns>
+		public static AccessResult ToggleSpeakerMute(SafePhysicalMonitorHandle physicalMonitorHandle, bool mute)
+		{
+			// From MCCS Standard:
+			//	Provides for the audio to be muted or unmuted. 
+			//	 Byte: SL
+			//		00h Reserved, must be ignored
+			//		01h Mute the audio
+			//		02h Unmute the audio 
+			//		≥ 03h Reserved, must be ignored
+
+			uint val = mute ? 1u : 2u;
+			return SetVcpValue(physicalMonitorHandle, VcpCode.AudioMute, val);
 		}
 
 		private static AccessResult SetVcpValue(SafePhysicalMonitorHandle physicalMonitorHandle, VcpCode vcpCode, uint value)
@@ -757,6 +794,9 @@ namespace Monitorian.Core.Models.Monitor
 		[DataMember(Order = 8)]
 		public bool IsSpeakerVolumeSupported { get; }
 
+		[DataMember(Order = 9)]
+		public bool IsSpeakerMuteSupported { get; }
+
 		[OnSerializing]
 		private void OnSerializing(StreamingContext context)
 		{
@@ -770,6 +810,7 @@ namespace Monitorian.Core.Models.Monitor
 			bool isLowLevelBrightnessSupported,
 			bool isContrastSupported,
 			bool isSpeakerVolumeSupported,
+			bool isSpeakerMuteSupported,
 			IReadOnlyList<byte> temperatures = null,
 			string capabilitiesString = null,
 			string capabilitiesReport = null,
@@ -779,6 +820,7 @@ namespace Monitorian.Core.Models.Monitor
 				isContrastSupported: isContrastSupported,
 				isPrecleared: false,
 				isSpeakerVolumeSupported: isSpeakerVolumeSupported,
+				isSpeakerMuteSupported: isSpeakerMuteSupported,
 				temperatures: temperatures,
 				capabilitiesString: capabilitiesString,
 				capabilitiesReport: capabilitiesReport,
@@ -791,6 +833,7 @@ namespace Monitorian.Core.Models.Monitor
 			bool isContrastSupported,
 			bool isPrecleared,
 			bool isSpeakerVolumeSupported,
+			bool isSpeakerMuteSupported,
 			IReadOnlyList<byte> temperatures,
 			string capabilitiesString,
 			string capabilitiesReport,
@@ -801,6 +844,7 @@ namespace Monitorian.Core.Models.Monitor
 			this.IsContrastSupported = isContrastSupported;
 			this.IsPrecleared = isPrecleared;
 			this.IsSpeakerVolumeSupported = isSpeakerVolumeSupported;
+			this.IsSpeakerMuteSupported = isSpeakerMuteSupported;
 			this.Temperatures = temperatures?.Clip<byte>(3, 10).ToArray(); // 3 is warmest and 10 is coldest.
 			this.CapabilitiesString = capabilitiesString;
 			this.CapabilitiesReport = capabilitiesReport;
@@ -814,6 +858,7 @@ namespace Monitorian.Core.Models.Monitor
 				isContrastSupported: true,
 				isPrecleared: true,
 				isSpeakerVolumeSupported: false,
+				isSpeakerMuteSupported: false,
 				temperatures: null,
 				capabilitiesString: null,
 				capabilitiesReport: null,

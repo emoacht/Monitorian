@@ -494,7 +494,19 @@ namespace Monitorian.Core.ViewModels
 		public bool IsSpeakerMuteSupported => _monitor.IsSpeakerMuteSupported;
 		public ICommand ToggleSpeakerMuteCommand { get; set; }
 
-		public string SpeakerSymbol => IsSpeakerMute ? "\xE74F" : "\xE767";
+		public string SpeakerSymbol
+		{
+			get
+			{
+				if (IsSpeakerMute) return "\xE74F";
+
+				if (SpeakerVolume > 65) return "\xE995";
+
+				if (SpeakerVolume > 30) return "\xE994";
+
+				return "\xE993";
+			}
+		}
 
 		public bool IsSpeakerMute
 		{

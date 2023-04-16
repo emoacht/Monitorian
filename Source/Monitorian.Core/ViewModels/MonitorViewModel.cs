@@ -540,6 +540,8 @@ namespace Monitorian.Core.ViewModels
 
 		#endregion
 
+		public bool IsInternal => _monitor.IsInternal;
+
 		public bool IsTarget
 		{
 			get => _isTarget;

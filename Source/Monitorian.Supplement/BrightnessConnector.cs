@@ -55,7 +55,7 @@ namespace Monitorian.Supplement
 			public DateTimeOffset Date { get; }
 
 			/// <summary>
-			/// Illuminance (lux)
+			/// Illuminance in lux
 			/// </summary>
 			public double Illuminance { get; }
 
@@ -98,35 +98,30 @@ namespace Monitorian.Supplement
 
 		private const string ServiceName = "IlluminoService";
 		private const string IdentityName = "IlluminoChecker";
-		private string _familyName;
 
-		private bool TryFindFamilyName(out string familyName)
+		private readonly Lazy<string> _familyName = new(() => FindFamilyName(IdentityName));
+
+		private static string FindFamilyName(string identityName)
 		{
 			var package = new PackageManager()
 				.FindPackagesForUser(string.Empty)
 				.Reverse()
-				.FirstOrDefault(x => x.Id.Name?.Contains(IdentityName) is true);
+				.FirstOrDefault(x => x.Id.Name?.Contains(identityName) is true);
 
-			familyName = package?.Id.FamilyName;
-			return (familyName is not null);
+			return package?.Id.FamilyName;
 		}
 
 		/// <summary>
-		/// Whether a connection via AppService can be opened
+		/// Determines whether a connection via AppService can be opened
 		/// </summary>
-		public virtual bool CanConnect => !string.IsNullOrEmpty(_familyName) && _isAvailable;
+		public virtual bool CanConnect => !string.IsNullOrEmpty(_familyName.Value) && _isAvailable;
 		private bool _isAvailable = true; // default
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		public BrightnessConnector()
-		{
-			if (!TryFindFamilyName(out _familyName))
-			{
-				Debug.WriteLine("Failed: FamilyName not found.");
-			}
-		}
+		{ }
 
 		private Action<int> _onBrightnessChanged;
 		private Action<string> _onError;
@@ -161,7 +156,7 @@ namespace Monitorian.Supplement
 			var appServiceConnection = new AppServiceConnection
 			{
 				AppServiceName = ServiceName,
-				PackageFamilyName = _familyName
+				PackageFamilyName = _familyName.Value
 			};
 
 			var status = await appServiceConnection.OpenAsync();
@@ -234,7 +229,7 @@ namespace Monitorian.Supplement
 
 		private void OnAppServiceConnectionServiceClosed(AppServiceConnection sender, AppServiceClosedEventArgs args)
 		{
-			Debug.WriteLine("Closed");
+			Debug.WriteLine("ServiceClosed");
 			ReleaseAppServiceConnection();
 		}
 

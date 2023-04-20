@@ -115,7 +115,7 @@ namespace ScreenFrame.Movers
 			var distance = new Vector(0, 0);
 			if (OsVersion.Is11OrGreater && KeepsDistance)
 			{
-				distance = (OsVersion.Is11Build22623OrGreater && isMarginIncluded)
+				distance = (OsVersion.Is11Build22621OrGreater && isMarginIncluded)
 					? new Vector(0, Distance)
 					: new Vector(Distance, Distance);
 				distance *= VisualTreeHelperAddition.GetDpi(_window).ToMatrix();
@@ -139,7 +139,7 @@ namespace ScreenFrame.Movers
 					};
 					x -= isLeftToRight ? (windowWidth - windowMargin.Right) : windowMargin.Left;
 
-					if (OsVersion.Is11Build22623OrGreater && WindowHelper.TryGetStartButtonRect(out Rect buttonRect))
+					if (OsVersion.Is11Build22621OrGreater && WindowHelper.TryGetStartButtonRect(out Rect buttonRect))
 						taskbarRect = new Rect(taskbarRect.Left, buttonRect.Top, taskbarRect.Width, buttonRect.Height);
 
 					switch (taskbarAlignment)

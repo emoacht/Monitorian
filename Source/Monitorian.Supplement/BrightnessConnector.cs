@@ -92,7 +92,7 @@ namespace Monitorian.Supplement
 		/// <summary>
 		/// Interval in seconds
 		/// </summary>
-		public float Interval { get; set; } = 1.5F;
+		public float Interval { get; set; } = 1F;
 
 		#endregion
 
@@ -112,7 +112,7 @@ namespace Monitorian.Supplement
 		}
 
 		/// <summary>
-		/// Determines whether a connection via AppService can be opened
+		/// Determines whether a connection with AppService provider can be performed.
 		/// </summary>
 		public virtual bool CanConnect => !string.IsNullOrEmpty(_familyName.Value) && _isAvailable;
 		private bool _isAvailable = true; // default
@@ -127,7 +127,7 @@ namespace Monitorian.Supplement
 		private Action<string> _onError;
 
 		/// <summary>
-		/// Asynchronously initiates.
+		/// Asynchronously initiates and performs the first connection with AppService provider.
 		/// </summary>
 		/// <param name="onBrightnessChanged">Action to be invoked when brightness changed</param>
 		/// <param name="onError">Action to be invoked when error occurred</param>
@@ -142,7 +142,7 @@ namespace Monitorian.Supplement
 		private AppServiceConnection _appServiceConnection;
 
 		/// <summary>
-		/// Asynchronously opens via AppService.
+		/// Asynchronously opens a connection with AppService provider.
 		/// </summary>
 		/// <returns>True if successfully opens</returns>
 		public virtual async Task<bool> OpenAsync()
@@ -179,10 +179,10 @@ namespace Monitorian.Supplement
 		}
 
 		/// <summary>
-		/// Asynchronously connects via AppService.
+		/// Asynchronously performs a connection with AppService provider.
 		/// </summary>
 		/// <param name="isMultiple">Whether to request to report multiple times</param>
-		/// <returns>True if successfully connects</returns>
+		/// <returns>True if successfully performs</returns>
 		public virtual async Task<bool> ConnectAsync(bool isMultiple)
 		{
 			if (!(await OpenAsync()))

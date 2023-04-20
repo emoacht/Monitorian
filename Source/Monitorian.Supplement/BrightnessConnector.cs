@@ -92,7 +92,7 @@ namespace Monitorian.Supplement
 		/// <summary>
 		/// Interval in seconds
 		/// </summary>
-		public float Interval { get; set; } = 1.5F;
+		public float Interval { get; set; } = 1F;
 
 		#endregion
 

@@ -108,7 +108,8 @@ namespace Monitorian.Core
 					if (!_sessionWatcher.IsLocked)
 						Update(null, brightness);
 				},
-				async (message) => await Recorder.RecordAsync(message));
+				async (message) => await Recorder.RecordAsync(message),
+				() => _current.Dispatcher.Invoke(() => _current.MainWindow.Visibility is Visibility.Visible));
 			}
 
 			await CleanAsync();

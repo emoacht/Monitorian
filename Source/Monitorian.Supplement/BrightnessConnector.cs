@@ -49,19 +49,8 @@ namespace Monitorian.Supplement
 
 		private class ReportItem
 		{
-			/// <summary>
-			/// Date
-			/// </summary>
 			public DateTimeOffset Date { get; }
-
-			/// <summary>
-			/// Illuminance in lux
-			/// </summary>
 			public double Illuminance { get; }
-
-			/// <summary>
-			/// Brightness
-			/// </summary>
 			public int Brightness { get; }
 
 			public ReportItem(DateTimeOffset date, double illuminance, int brightness)
@@ -92,7 +81,7 @@ namespace Monitorian.Supplement
 		/// <summary>
 		/// Interval in seconds
 		/// </summary>
-		public float Interval { get; set; } = 1F;
+		public float Interval { get; set; } = 0.1F;
 
 		#endregion
 
@@ -125,16 +114,19 @@ namespace Monitorian.Supplement
 
 		private Action<int> _onBrightnessChanged;
 		private Action<string> _onError;
+		private Func<bool> _onContinue;
 
 		/// <summary>
 		/// Asynchronously initiates and performs the first connection with AppService provider.
 		/// </summary>
 		/// <param name="onBrightnessChanged">Action to be invoked when brightness changed</param>
 		/// <param name="onError">Action to be invoked when error occurred</param>
-		public virtual async Task InitiateAsync(Action<int> onBrightnessChanged, Action<string> onError)
+		/// <param name="onContinue">Action to be invoked when continuation of AppService is determined</param>
+		public virtual async Task InitiateAsync(Action<int> onBrightnessChanged, Action<string> onError, Func<bool> onContinue)
 		{
 			this._onBrightnessChanged = onBrightnessChanged ?? throw new ArgumentNullException(nameof(onBrightnessChanged));
 			this._onError = onError ?? throw new ArgumentNullException(nameof(onError));
+			this._onContinue = onContinue ?? throw new ArgumentNullException(nameof(onContinue));
 
 			await ConnectAsync(true);
 		}
@@ -178,6 +170,8 @@ namespace Monitorian.Supplement
 			}
 		}
 
+		private bool _isMultiple;
+
 		/// <summary>
 		/// Asynchronously performs a connection with AppService provider.
 		/// </summary>
@@ -185,6 +179,8 @@ namespace Monitorian.Supplement
 		/// <returns>True if successfully performs</returns>
 		public virtual async Task<bool> ConnectAsync(bool isMultiple)
 		{
+			_isMultiple = isMultiple;
+
 			if (!(await OpenAsync()))
 				return false;
 
@@ -195,6 +191,7 @@ namespace Monitorian.Supplement
 			if (isMultiple)
 			{
 				requestMessage.Add(nameof(Interval), Interval);
+				requestMessage.Add(nameof(ReportItem), nameof(ReportItem.Brightness));
 			}
 
 			var response = await _appServiceConnection.SendMessageAsync(requestMessage);
@@ -227,10 +224,19 @@ namespace Monitorian.Supplement
 				_onBrightnessChanged?.Invoke(brightness);
 		}
 
-		private void OnAppServiceConnectionServiceClosed(AppServiceConnection sender, AppServiceClosedEventArgs args)
+		private async void OnAppServiceConnectionServiceClosed(AppServiceConnection sender, AppServiceClosedEventArgs args)
 		{
+			// AppService closes when around 25 seconds has elapsed after it opened.
 			Debug.WriteLine("ServiceClosed");
 			ReleaseAppServiceConnection();
+
+			if (_isMultiple)
+			{
+				await Task.Delay(TimeSpan.FromSeconds(Interval));
+
+				if (_onContinue.Invoke())
+					await ConnectAsync(true);
+			}
 		}
 
 		private void ReleaseAppServiceConnection()

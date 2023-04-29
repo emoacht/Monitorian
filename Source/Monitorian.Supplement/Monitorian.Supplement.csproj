@@ -55,6 +55,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BrightnessConnector.cs" />
     <Compile Include="DisplayInformation.cs" />
     <Compile Include="Launcher.cs" />
     <Compile Include="LightInformation.cs" />

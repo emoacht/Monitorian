@@ -56,7 +56,7 @@ Additional languages:
    ```
 
  * Other:<br>
-:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/4.2.2-Installer/MonitorianInstaller422.zip)
+:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/4.3.0-Installer/MonitorianInstaller430.zip)
 
 ## Install/Uninstall
 
@@ -211,6 +211,10 @@ An alternative language can be shown by adding a Resources (.resx) file into `/S
  - VESA [Monitor Control Command Set (MCCS)](https://www.google.co.jp/search?q=VESA+Monitor+Control+Command+Set+Standard+MCCS) standard
 
 ## History
+
+Ver 4.3 2023-4-21
+
+ - Fix window position on Windows 11 Build 22621
 
 Ver 4.2 2023-3-21
 

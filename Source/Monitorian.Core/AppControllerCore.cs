@@ -40,6 +40,7 @@ namespace Monitorian.Core
 		private readonly SessionWatcher _sessionWatcher;
 		private readonly PowerWatcher _powerWatcher;
 		private readonly BrightnessWatcher _brightnessWatcher;
+		private readonly BrightnessConnector _brightnessConnector;
 
 		protected OperationRecorder Recorder { get; } = new();
 
@@ -60,6 +61,7 @@ namespace Monitorian.Core
 			_sessionWatcher = new SessionWatcher();
 			_powerWatcher = new PowerWatcher();
 			_brightnessWatcher = new BrightnessWatcher();
+			_brightnessConnector = new BrightnessConnector();
 		}
 
 		public virtual async Task InitiateAsync()
@@ -99,6 +101,17 @@ namespace Monitorian.Core
 			},
 			async (message) => await Recorder.RecordAsync(message));
 
+			if (_brightnessConnector.CanConnect)
+			{
+				await _brightnessConnector.InitiateAsync((brightness) =>
+				{
+					if (!_sessionWatcher.IsLocked)
+						Update(null, brightness);
+				},
+				async (message) => await Recorder.RecordAsync(message),
+				() => _current.Dispatcher.Invoke(() => _current.MainWindow.Visibility is Visibility.Visible));
+			}
+
 			await CleanAsync();
 		}
 
@@ -113,6 +126,7 @@ namespace Monitorian.Core
 			_sessionWatcher.Dispose();
 			_powerWatcher.Dispose();
 			_brightnessWatcher.Dispose();
+			_brightnessConnector.Dispose();
 		}
 
 		protected virtual Task<string> HandleRequestAsync(IReadOnlyCollection<string> args)
@@ -125,12 +139,18 @@ namespace Monitorian.Core
 		{
 			ShowMainWindow();
 			await CheckUpdateAsync();
+
+			if (_brightnessConnector.CanConnect)
+				await _brightnessConnector.ConnectAsync(true);
 		}
 
 		protected async void OnMainWindowShowRequestedByOther(object sender, EventArgs e)
 		{
 			_current.Dispatcher.Invoke(() => ShowMainWindow());
 			await CheckUpdateAsync();
+
+			if (_brightnessConnector.CanConnect)
+				await _brightnessConnector.ConnectAsync(true);
 		}
 
 		protected void OnMenuWindowShowRequested(object sender, Point e)
@@ -407,7 +427,10 @@ namespace Monitorian.Core
 
 		protected virtual void Update(string instanceName, int brightness)
 		{
-			var monitor = Monitors.FirstOrDefault(x => instanceName.StartsWith(x.DeviceInstanceId, StringComparison.OrdinalIgnoreCase));
+			var monitor = !string.IsNullOrEmpty(instanceName)
+				? Monitors.FirstOrDefault(x => instanceName.StartsWith(x.DeviceInstanceId, StringComparison.OrdinalIgnoreCase))
+				: Monitors.FirstOrDefault(x => x.IsInternal);
+
 			EnsureUnisonWorkable(monitor);
 			monitor?.UpdateBrightness(brightness);
 		}

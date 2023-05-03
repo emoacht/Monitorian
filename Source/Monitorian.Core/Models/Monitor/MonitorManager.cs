@@ -61,7 +61,7 @@ namespace Monitorian.Core.Models.Monitor
 				.TakeWhile(x => x.success)
 				.Select(x => x.id);
 
-			return new HashSet<string>(ids);
+			return new HashSet<string>(ids, StringComparer.OrdinalIgnoreCase);
 		}
 
 		#endregion

@@ -512,7 +512,11 @@ namespace Monitorian.Core
 
 		protected virtual Task CleanAsync()
 		{
-			return Task.Run(() => File.Delete(Path.Combine(Path.GetTempPath(), "License.html")));
+			var orphanFilePath = Path.Combine(Path.GetTempPath(), "License.html");
+			if (!File.Exists(orphanFilePath))
+				return Task.CompletedTask;
+
+			return Task.Run(() => File.Delete(orphanFilePath));
 		}
 
 		#endregion

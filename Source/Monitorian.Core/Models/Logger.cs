@@ -234,7 +234,8 @@ namespace Monitorian.Core.Models
 		{
 			try
 			{
-				var tempFilePath = Path.Combine(Path.GetTempPath(), fileName);
+				if (!TempService.TryGetFilePath(fileName, null, out var tempFilePath))
+					return;
 
 				UpdateContent(tempFilePath, content, capacity);
 			}

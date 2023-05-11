@@ -31,9 +31,13 @@ namespace Monitorian.Core.ViewModels
 			Task.Run(() =>
 			{
 				var licenseFileBody = DocumentService.ReadEmbeddedFile(LicenseFileName);
-				var licenseFilePath = DocumentService.SaveTempFileAsHtml(LicenseFileName, ProductInfo.Product, licenseFileBody);
+				var licenseFileHtml = DocumentService.BuildHtml(LicenseFileName, ProductInfo.Product, licenseFileBody);
+
+				(_licenseFileExists, var licenseFilePath) = TempService.SaveFile(LicenseFileName, "html", licenseFileHtml);
+				if (!_licenseFileExists)
+					return;
+
 				Process.Start(licenseFilePath);
-				_licenseFileExists = true;
 			});
 		}
 
@@ -42,7 +46,7 @@ namespace Monitorian.Core.ViewModels
 			if (!_licenseFileExists)
 				return;
 
-			Task.Run(() => _licenseFileExists = DocumentService.DeleteTempFile(LicenseFileName, TimeSpan.FromHours(1)));
+			Task.Run(() => _licenseFileExists = TempService.DeleteFile(LicenseFileName, "html", TimeSpan.FromHours(1)));
 		}
 
 		#endregion

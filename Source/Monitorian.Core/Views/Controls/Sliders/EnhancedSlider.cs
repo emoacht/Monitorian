@@ -185,7 +185,7 @@ namespace Monitorian.Core.Views.Controls
 
 				_thumbIsDragging.SetValue(_thumb, true);
 
-				var originThumbPoint = getPosition(_thumb);
+				var originThumbPoint = GetOriginThumbPoint(_thumb, getPosition);
 				var originThumbPointToScreen = _thumb.PointToScreen(originThumbPoint);
 				_thumbOriginThumbPoint.SetValue(_thumb, originThumbPoint);
 				_thumbPreviousScreenCoordPosition.SetValue(_thumb, originThumbPointToScreen);
@@ -203,6 +203,22 @@ namespace Monitorian.Core.Views.Controls
 				}
 			}
 			return true;
+
+			static Point GetOriginThumbPoint(Thumb thumb, Func<IInputElement, Point> getPosition)
+			{
+				var relativePoint = getPosition(thumb);
+
+				// Ensure the relative point to Thumb is inside Thumb.
+				if ((relativePoint.X < 0) || (thumb.ActualWidth < relativePoint.X))
+				{
+					relativePoint.X = thumb.ActualWidth / 2D;
+				}
+				if ((relativePoint.Y < 0) || (thumb.ActualHeight < relativePoint.Y))
+				{
+					relativePoint.Y = thumb.ActualHeight / 2D;
+				}
+				return relativePoint;
+			}
 		}
 
 		protected override void OnThumbDragStarted(DragStartedEventArgs e)

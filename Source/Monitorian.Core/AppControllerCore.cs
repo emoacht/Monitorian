@@ -358,6 +358,8 @@ namespace Monitorian.Core
 									{
 										x.IsTarget = true;
 									}
+									x.UpdateSpeakerVolume();
+									x.UpdateIsSpeakerMute();
 									return x.IsControllable;
 								});
 							}

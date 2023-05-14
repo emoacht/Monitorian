@@ -94,12 +94,15 @@ namespace Monitorian.Core
 			_sessionWatcher.Subscribe((e) => OnMonitorsChangeInferred(nameof(SessionWatcher), e));
 			_powerWatcher.Subscribe((e) => OnMonitorsChangeInferred(nameof(PowerWatcher), e));
 
-			_brightnessWatcher.Subscribe((instanceName, brightness) =>
+			if (Monitors.Any(x => x.IsInternal))
 			{
-				if (!_sessionWatcher.IsLocked)
-					Update(instanceName, brightness);
-			},
-			async (message) => await Recorder.RecordAsync(message));
+				_brightnessWatcher.Subscribe((instanceName, brightness) =>
+				{
+					if (!_sessionWatcher.IsLocked)
+						Update(instanceName, brightness);
+				},
+				async (message) => await Recorder.RecordAsync(message));
+			}
 
 			if (_brightnessConnector.CanConnect)
 			{

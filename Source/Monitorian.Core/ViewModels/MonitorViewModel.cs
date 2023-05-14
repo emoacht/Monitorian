@@ -52,6 +52,7 @@ namespace Monitorian.Core.ViewModels
 		public byte DisplayIndex => _monitor.DisplayIndex;
 		public byte MonitorIndex => _monitor.MonitorIndex;
 		public Rect MonitorRect => _monitor.MonitorRect;
+		public bool IsInternal => _monitor.IsInternal;
 
 		#region Customization
 
@@ -539,8 +540,6 @@ namespace Monitorian.Core.ViewModels
 		}
 
 		#endregion
-
-		public bool IsInternal => _monitor.IsInternal;
 
 		public bool IsTarget
 		{

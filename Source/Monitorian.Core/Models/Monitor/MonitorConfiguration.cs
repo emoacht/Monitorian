@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
@@ -188,9 +189,21 @@ namespace Monitorian.Core.Models.Monitor
 			None = 0x0,
 			Luminance = 0x10,
 			Contrast = 0x12,
-			Temperature = 0x14,
+			Temperature = 0x14, // Select Color Preset
+			InputSource = 0x60, // Input Select
 			SpeakerVolume = 0x62,
 			PowerMode = 0xD6,
+		}
+
+		private static bool TryConvertVcpCode(byte code, out VcpCode vcpCode)
+		{
+			if (Enum.IsDefined(typeof(VcpCode), code))
+			{
+				vcpCode = (VcpCode)code;
+				return true;
+			}
+			vcpCode = default;
+			return false;
 		}
 
 		public static IEnumerable<PhysicalItem> EnumeratePhysicalMonitors(IntPtr monitorHandle, bool verbose = false)
@@ -264,16 +277,16 @@ namespace Monitorian.Core.Models.Monitor
 					capabilitiesStringLength))
 				{
 					var capabilitiesString = buffer.ToString();
-					IReadOnlyDictionary<byte, byte[]> vcpCodeValues = GetVcpCodeValues(capabilitiesString);
+					Dictionary<byte, byte[]> vcpCodes = ExtractVcpCodes(capabilitiesString);
 
 					return new MonitorCapability(
 						isHighLevelBrightnessSupported: isHighLevelSupported,
-						isLowLevelBrightnessSupported: vcpCodeValues.ContainsKey((byte)VcpCode.Luminance),
-						isContrastSupported: vcpCodeValues.ContainsKey((byte)VcpCode.Contrast),
-						temperatures: (vcpCodeValues.TryGetValue((byte)VcpCode.Temperature, out byte[] values) ? values : null),
+						isLowLevelBrightnessSupported: vcpCodes.ContainsKey((byte)VcpCode.Luminance),
+						isContrastSupported: vcpCodes.ContainsKey((byte)VcpCode.Contrast),
+						capabilitiesCodes: FilterVcpCodes(vcpCodes),
 						capabilitiesString: (verbose ? capabilitiesString : null),
-						capabilitiesReport: (verbose ? MakeCapabilitiesReport(vcpCodeValues) : null),
-						capabilitiesData: (verbose && !vcpCodeValues.Any() ? GetCapabilitiesData(physicalMonitorHandle, capabilitiesStringLength) : null));
+						capabilitiesReport: (verbose ? MakeCapabilitiesReport(vcpCodes) : null),
+						capabilitiesData: (verbose && !vcpCodes.Any() ? GetCapabilitiesData(physicalMonitorHandle, capabilitiesStringLength) : null));
 				}
 			}
 			return new MonitorCapability(
@@ -283,14 +296,10 @@ namespace Monitorian.Core.Models.Monitor
 
 			static string MakeCapabilitiesReport(IReadOnlyDictionary<byte, byte[]> vcpCodeValues)
 			{
-				var temperatureString = vcpCodeValues.TryGetValue((byte)VcpCode.Temperature, out byte[] values)
-					&& (values is { Length: > 0 })
-						? $"{true} ({string.Join(" ", values)})"
-						: false.ToString();
-
 				return $"Luminance: {vcpCodeValues.ContainsKey((byte)VcpCode.Luminance)}, " +
 					   $"Contrast: {vcpCodeValues.ContainsKey((byte)VcpCode.Contrast)}, " +
-					   $"Color Temperature: {temperatureString}, " +
+					   $"Temperature: {vcpCodeValues.ContainsKey((byte)VcpCode.Temperature)}, " +
+					   $"Input Source: {vcpCodeValues.ContainsKey((byte)VcpCode.InputSource)}, " +
 					   $"Speaker Volume: {vcpCodeValues.ContainsKey((byte)VcpCode.SpeakerVolume)}, " +
 					   $"Power Mode: {vcpCodeValues.ContainsKey((byte)VcpCode.PowerMode)}";
 			}
@@ -372,7 +381,7 @@ namespace Monitorian.Core.Models.Monitor
 			static bool IsHexNumber(char c) => c is (>= '0' and <= '9') or (>= 'A' and <= 'F') or (>= 'a' and <= 'f');
 		}
 
-		private static Dictionary<byte, byte[]> GetVcpCodeValues(string source)
+		private static Dictionary<byte, byte[]> ExtractVcpCodes(string source)
 		{
 			var dic = new Dictionary<byte, byte[]>();
 
@@ -456,6 +465,26 @@ namespace Monitorian.Core.Models.Monitor
 			static bool IsHexNumber(char c) => c is (>= '0' and <= '9') or (>= 'A' and <= 'F') or (>= 'a' and <= 'f');
 		}
 
+		private static Dictionary<byte, byte[]> FilterVcpCodes(Dictionary<byte, byte[]> dic)
+		{
+			if (dic.TryGetValue((byte)VcpCode.Temperature, out byte[] values))
+			{
+				// The following color temperatures are defined.
+				//  3:  4000° K
+				//  4:  5000° K
+				//  5:  6500° K
+				//  6:  7500° K
+				//  7:  8200° K
+				//  8:  9300° K
+				//  9: 10000° K
+				// 10: 11500° K
+				// Not all temperatures are supported in practice.
+				// An additional temperature can be inserted depending on a specific model.
+				dic[(byte)VcpCode.Temperature] = values.Clip<byte>(3, 10).ToArray(); // 3 is warmest and 10 is coldest.
+			}
+			return dic;
+		}
+
 		/// <summary>
 		/// Gets raw brightnesses not represented in percentage.
 		/// </summary>
@@ -512,18 +541,12 @@ namespace Monitorian.Core.Models.Monitor
 			return GetVcpValue(physicalMonitorHandle, VcpCode.Contrast);
 		}
 
-		/// <summary>
-		/// Gets raw color temperature.
-		/// </summary>
-		/// <param name="physicalMonitorHandle">Physical monitor handle</param>
-		/// <returns>
-		/// <para>result: Result</para>
-		/// <para>current: Raw current color temperature</para>
-		/// </returns>
-		public static (AccessResult result, byte current) GetTemperature(SafePhysicalMonitorHandle physicalMonitorHandle)
+		public static (AccessResult result, uint minimum, uint current, uint maximum) GetValue(SafePhysicalMonitorHandle physicalMonitorHandle, byte code)
 		{
-			var (result, _, current, _) = GetVcpValue(physicalMonitorHandle, VcpCode.Temperature);
-			return (result, (byte)current);
+			if (!TryConvertVcpCode(code, out VcpCode vcpCode))
+				return (result: AccessResult.NotSupported, 0, 0, 0);
+
+			return GetVcpValue(physicalMonitorHandle, vcpCode);
 		}
 
 		private static (AccessResult result, uint minimum, uint current, uint maximum) GetVcpValue(SafePhysicalMonitorHandle physicalMonitorHandle, VcpCode vcpCode)
@@ -594,15 +617,12 @@ namespace Monitorian.Core.Models.Monitor
 			return SetVcpValue(physicalMonitorHandle, VcpCode.Contrast, contrast);
 		}
 
-		/// <summary>
-		/// Sets raw color temperature.
-		/// </summary>
-		/// <param name="physicalMonitorHandle">Physical monitor handle</param>
-		/// <param name="temperature">Raw color temperature</param>
-		/// <returns></returns>
-		public static AccessResult SetTemperature(SafePhysicalMonitorHandle physicalMonitorHandle, byte temperature)
+		public static AccessResult SetValue(SafePhysicalMonitorHandle physicalMonitorHandle, byte code, uint value)
 		{
-			return SetVcpValue(physicalMonitorHandle, VcpCode.Temperature, temperature);
+			if (!TryConvertVcpCode(code, out VcpCode vcpCode))
+				return AccessResult.NotSupported;
+
+			return SetVcpValue(physicalMonitorHandle, vcpCode, value);
 		}
 
 		private static AccessResult SetVcpValue(SafePhysicalMonitorHandle physicalMonitorHandle, VcpCode vcpCode, uint value)
@@ -695,50 +715,22 @@ namespace Monitorian.Core.Models.Monitor
 		[DataMember(Order = 3)]
 		public bool IsPrecleared { get; }
 
-		/// <summary>
-		/// Supported color temperatures
-		/// </summary>
-		/// <remarks>
-		/// The following temperatures are defined.
-		///  3:  4000° K
-		///  4:  5000° K
-		///  5:  6500° K
-		///  6:  7500° K
-		///  7:  8200° K
-		///  8:  9300° K
-		///  9: 10000° K
-		/// 10: 11500° K
-		/// Not all temperatures are supported in practice.
-		/// An additional temperature can be inserted depending on a specific model.
-		/// </remarks>
-		public IReadOnlyList<byte> Temperatures { get; }
+		public IReadOnlyDictionary<byte, IReadOnlyList<byte>> CapabilitiesCodes { get; }
 
-		public bool IsTemperatureSupported => (Temperatures is { Count: > 0 });
-		[DataMember(Order = 4, Name = nameof(IsTemperatureSupported))]
-		private string _isTemperatureSupportedString;
-
-		[DataMember(Order = 5)]
+		[DataMember(Order = 4)]
 		public string CapabilitiesString { get; }
 
-		[DataMember(Order = 6)]
+		[DataMember(Order = 5)]
 		public string CapabilitiesReport { get; }
 
-		[DataMember(Order = 7)]
+		[DataMember(Order = 6)]
 		public string CapabilitiesData { get; }
-
-		[OnSerializing]
-		private void OnSerializing(StreamingContext context)
-		{
-			_isTemperatureSupportedString = IsTemperatureSupported
-				? $"true ({string.Join(" ", Temperatures)})"
-				: "false";
-		}
 
 		public MonitorCapability(
 			bool isHighLevelBrightnessSupported,
 			bool isLowLevelBrightnessSupported,
 			bool isContrastSupported,
-			IReadOnlyList<byte> temperatures = null,
+			IReadOnlyDictionary<byte, byte[]> capabilitiesCodes = null,
 			string capabilitiesString = null,
 			string capabilitiesReport = null,
 			byte[] capabilitiesData = null) : this(
@@ -746,7 +738,7 @@ namespace Monitorian.Core.Models.Monitor
 				isLowLevelBrightnessSupported: isLowLevelBrightnessSupported,
 				isContrastSupported: isContrastSupported,
 				isPrecleared: false,
-				temperatures: temperatures,
+				capabilitiesCodes: capabilitiesCodes,
 				capabilitiesString: capabilitiesString,
 				capabilitiesReport: capabilitiesReport,
 				capabilitiesData: capabilitiesData)
@@ -757,7 +749,7 @@ namespace Monitorian.Core.Models.Monitor
 			bool isLowLevelBrightnessSupported,
 			bool isContrastSupported,
 			bool isPrecleared,
-			IReadOnlyList<byte> temperatures,
+			IReadOnlyDictionary<byte, byte[]> capabilitiesCodes,
 			string capabilitiesString,
 			string capabilitiesReport,
 			byte[] capabilitiesData)
@@ -766,7 +758,7 @@ namespace Monitorian.Core.Models.Monitor
 			this.IsLowLevelBrightnessSupported = isLowLevelBrightnessSupported;
 			this.IsContrastSupported = isContrastSupported;
 			this.IsPrecleared = isPrecleared;
-			this.Temperatures = temperatures?.Clip<byte>(3, 10).ToArray(); // 3 is warmest and 10 is coldest.
+			this.CapabilitiesCodes = (capabilitiesCodes is not null) ? new ReadOnlyDictionary<byte, IReadOnlyList<byte>>(capabilitiesCodes.ToDictionary(x => x.Key, x => (x.Value is not null) ? (IReadOnlyList<byte>)Array.AsReadOnly(x.Value) : null)) : null;
 			this.CapabilitiesString = capabilitiesString;
 			this.CapabilitiesReport = capabilitiesReport;
 			this.CapabilitiesData = (capabilitiesData is not null) ? Convert.ToBase64String(capabilitiesData) : null;
@@ -778,7 +770,7 @@ namespace Monitorian.Core.Models.Monitor
 				isLowLevelBrightnessSupported: true,
 				isContrastSupported: true,
 				isPrecleared: true,
-				temperatures: null,
+				capabilitiesCodes: null,
 				capabilitiesString: null,
 				capabilitiesReport: null,
 				capabilitiesData: null));

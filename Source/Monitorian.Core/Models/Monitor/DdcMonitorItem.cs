@@ -20,7 +20,6 @@ namespace Monitorian.Core.Models.Monitor
 		public override bool IsBrightnessSupported => _capability.IsBrightnessSupported;
 		public override bool IsContrastSupported => _capability.IsContrastSupported;
 		public override bool IsPrecleared => _capability.IsPrecleared;
-		public override bool IsTemperatureSupported => _capability.IsTemperatureSupported;
 
 		public DdcMonitorItem(
 			string deviceInstanceId,
@@ -114,15 +113,20 @@ namespace Monitorian.Core.Models.Monitor
 			return result;
 		}
 
-		public override AccessResult ChangeTemperature()
+		public override AccessResult ChangeValue(byte code, int value = -1)
 		{
-			var (result, current) = MonitorConfiguration.GetTemperature(_handle);
+			if ((_capability.CapabilitiesCodes is null)
+				|| !_capability.CapabilitiesCodes.TryGetValue(code, out var values)
+				|| (values is not { Count: > 1 }))
+				return AccessResult.NotSupported;
+
+			var (result, _, current, _) = MonitorConfiguration.GetValue(_handle, code);
 			if (result.Status == AccessStatus.Succeeded)
 			{
-				var next = GetNext(_capability.Temperatures, current);
-				result = MonitorConfiguration.SetTemperature(_handle, next);
+				var next = ((value >= 0) && values.Contains((byte)value)) ? (byte)value : GetNext(values, (byte)current);
+				result = MonitorConfiguration.SetValue(_handle, code, next);
 
-				Debug.WriteLine($"Color Temperature: {current} -> {next}");
+				Debug.WriteLine($"Change {code:X2}: {(byte)current} -> {next}");
 			}
 			return result;
 

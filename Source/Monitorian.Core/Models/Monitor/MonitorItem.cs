@@ -22,7 +22,6 @@ namespace Monitorian.Core.Models.Monitor
 		public virtual bool IsBrightnessSupported => IsReachable;
 		public virtual bool IsContrastSupported => false;
 		public virtual bool IsPrecleared => false;
-		public virtual bool IsTemperatureSupported => false;
 
 		public MonitorItem(
 			string deviceInstanceId,
@@ -58,7 +57,7 @@ namespace Monitorian.Core.Models.Monitor
 		public virtual AccessResult UpdateContrast() => AccessResult.NotSupported;
 		public virtual AccessResult SetContrast(int contrast) => AccessResult.NotSupported;
 
-		public virtual AccessResult ChangeTemperature() => AccessResult.NotSupported;
+		public virtual AccessResult ChangeValue(byte code, int value = -1) => AccessResult.NotSupported;
 
 		public override string ToString()
 		{
@@ -74,7 +73,6 @@ namespace Monitorian.Core.Models.Monitor
 				(nameof(IsBrightnessSupported), IsBrightnessSupported),
 				(nameof(IsContrastSupported), IsContrastSupported),
 				(nameof(IsPrecleared), IsPrecleared),
-				(nameof(IsTemperatureSupported), IsTemperatureSupported),
 				(nameof(Brightness), Brightness),
 				(nameof(BrightnessSystemAdjusted), BrightnessSystemAdjusted),
 				(nameof(Contrast), Contrast));

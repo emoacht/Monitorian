@@ -52,6 +52,7 @@ namespace Monitorian.Core.ViewModels
 		public byte DisplayIndex => _monitor.DisplayIndex;
 		public byte MonitorIndex => _monitor.MonitorIndex;
 		public Rect MonitorRect => _monitor.MonitorRect;
+		public bool IsInternal => _monitor.IsInternal;
 
 		#region Customization
 
@@ -391,14 +392,35 @@ namespace Monitorian.Core.ViewModels
 
 		#endregion
 
-		#region Temperature
+		#region Non-Continuous
 
-		public bool IsTemperatureSupported => _monitor.IsTemperatureSupported;
-
-		public void ChangeTemperature()
+		public void ChangeValue(byte code, int value = -1)
 		{
-			if (IsTemperatureSupported)
-				_monitor.ChangeTemperature();
+			AccessResult result;
+			lock (_lock)
+			{
+				result = _monitor.ChangeValue(code, value);
+			}
+
+			switch (result.Status)
+			{
+				case AccessStatus.NotSupported:
+				case AccessStatus.Succeeded:
+					break;
+
+				default:
+					_controller.OnMonitorAccessFailed(result);
+
+					switch (result.Status)
+					{
+						case AccessStatus.DdcFailed:
+						case AccessStatus.TransmissionFailed:
+						case AccessStatus.NoLongerExist:
+							_controller.OnMonitorsChangeFound();
+							break;
+					}
+					break;
+			}
 		}
 
 		#endregion
@@ -539,8 +561,6 @@ namespace Monitorian.Core.ViewModels
 		}
 
 		#endregion
-
-		public bool IsInternal => _monitor.IsInternal;
 
 		public bool IsTarget
 		{

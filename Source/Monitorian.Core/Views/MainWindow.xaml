@@ -687,7 +687,8 @@
 													 SelectionEnd="{Binding RangeHighest, Mode=TwoWay, Delay=50}">
 								<i:Interaction.Behaviors>
 									<behaviors:ItemSliderBehavior IsSelected="{Binding IsSelected, Mode=OneWay}"
-																  IsByKey="{Binding IsByKey, Mode=TwoWay}"/>
+																  IsByKey="{Binding IsByKey, Mode=TwoWay}"
+																  SecondObject="{Binding ElementName=ContrastSlider, Mode=OneTime}"/>
 									<behaviors:MouseHorizontalWheelBehavior/>
 								</i:Interaction.Behaviors>
 							</controls:CompoundSlider>
@@ -717,6 +718,7 @@
 
 							<!-- Contrast -->
 							<controls:EnhancedSlider Grid.Column="4"
+													 x:Name="ContrastSlider"
 													 Width="100" Margin="8,0,4,0" VerticalAlignment="Center"
 													 Style="{StaticResource SubSliderHorizontal}"
 													 Minimum="0" Maximum="100"
@@ -724,6 +726,7 @@
 													 DefersUpdateSource="{Binding Settings.DefersChange, Mode=OneWay}"
 													 Visibility="{Binding IsContrastChanging, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverterKey}}">
 								<i:Interaction.Behaviors>
+									<behaviors:ItemSliderBehavior/>
 									<behaviors:MouseHorizontalWheelBehavior/>
 								</i:Interaction.Behaviors>
 							</controls:EnhancedSlider>

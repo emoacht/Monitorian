@@ -394,7 +394,7 @@ namespace Monitorian.Core.ViewModels
 
 		#region Non-Continuous
 
-		public void ChangeValue(byte code, int value = -1)
+		public (bool? success, string message) ChangeValue(byte code, int value = -1)
 		{
 			AccessResult result;
 			lock (_lock)
@@ -405,8 +405,10 @@ namespace Monitorian.Core.ViewModels
 			switch (result.Status)
 			{
 				case AccessStatus.NotSupported:
+					return (null, null);
+
 				case AccessStatus.Succeeded:
-					break;
+					return (true, result.Message);
 
 				default:
 					_controller.OnMonitorAccessFailed(result);
@@ -419,7 +421,7 @@ namespace Monitorian.Core.ViewModels
 							_controller.OnMonitorsChangeFound();
 							break;
 					}
-					break;
+					return (false, result.Message);
 			}
 		}
 
@@ -473,7 +475,7 @@ namespace Monitorian.Core.ViewModels
 				if (formerCount <= InitialCount)
 				{
 					OnPropertyChanged(nameof(IsControllable));
-					OnPropertyChanged(nameof(Message));
+					WarningMessage = CreateWarningMessage();
 				}
 
 				_isConfirmed = true;
@@ -485,29 +487,57 @@ namespace Monitorian.Core.ViewModels
 			if (--_controllableCount == 0)
 			{
 				OnPropertyChanged(nameof(IsControllable));
-				OnPropertyChanged(nameof(Message));
+				WarningMessage = CreateWarningMessage();
 			}
 		}
 
-		public string Message
+		private string CreateWarningMessage()
 		{
-			get
+			if (IsReachable && (0 < _controllableCount))
+				return null;
+
+			LanguageService.Switch();
+
+			var reason = _monitor switch
 			{
-				if (IsReachable && (0 < _controllableCount))
-					return null;
+				DdcMonitorItem => Resources.StatusReasonDdcFailing,
+				UnreachableMonitorItem { IsInternal: false } => Resources.StatusReasonDdcNotEnabled,
+				_ => null,
+			};
 
-				LanguageService.Switch();
-
-				var reason = _monitor switch
-				{
-					DdcMonitorItem => Resources.StatusReasonDdcFailing,
-					UnreachableMonitorItem { IsInternal: false } => Resources.StatusReasonDdcNotEnabled,
-					_ => null,
-				};
-
-				return Resources.StatusNotControllable + (reason is null ? string.Empty : Environment.NewLine + reason);
-			}
+			return Resources.StatusNotControllable + (reason is null ? string.Empty : Environment.NewLine + reason);
 		}
+
+		#endregion
+
+		#region Message
+
+		private Throttle _show;
+
+		public async Task ShowNormalMessageAsync(string message, TimeSpan duration)
+		{
+			_show ??= new Throttle(
+				duration,
+				() => NormalMessage = null);
+
+			NormalMessage = message;
+
+			await _show.PushAsync();
+		}
+
+		public string NormalMessage
+		{
+			get => _normalMessage;
+			private set => SetProperty(ref _normalMessage, value);
+		}
+		private string _normalMessage;
+
+		public string WarningMessage
+		{
+			get => _warningMessage;
+			private set => SetProperty(ref _warningMessage, value);
+		}
+		private string _warningMessage;
 
 		#endregion
 

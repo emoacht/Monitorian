@@ -614,6 +614,7 @@
 							<RowDefinition Height="Auto"/>
 							<RowDefinition Height="Auto"/>
 							<RowDefinition Height="Auto"/>
+							<RowDefinition Height="Auto"/>
 						</Grid.RowDefinitions>
 
 						<Grid Grid.Row="0">
@@ -687,7 +688,8 @@
 													 SelectionEnd="{Binding RangeHighest, Mode=TwoWay, Delay=50}">
 								<i:Interaction.Behaviors>
 									<behaviors:ItemSliderBehavior IsSelected="{Binding IsSelected, Mode=OneWay}"
-																  IsByKey="{Binding IsByKey, Mode=TwoWay}"/>
+																  IsByKey="{Binding IsByKey, Mode=TwoWay}"
+																  SecondObject="{Binding ElementName=ContrastSlider, Mode=OneTime}"/>
 									<behaviors:MouseHorizontalWheelBehavior/>
 								</i:Interaction.Behaviors>
 							</controls:CompoundSlider>
@@ -717,6 +719,7 @@
 
 							<!-- Contrast -->
 							<controls:EnhancedSlider Grid.Column="4"
+													 x:Name="ContrastSlider"
 													 Width="100" Margin="8,0,4,0" VerticalAlignment="Center"
 													 Style="{StaticResource SubSliderHorizontal}"
 													 Minimum="0" Maximum="100"
@@ -724,6 +727,7 @@
 													 DefersUpdateSource="{Binding Settings.DefersChange, Mode=OneWay}"
 													 Visibility="{Binding IsContrastChanging, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverterKey}}">
 								<i:Interaction.Behaviors>
+									<behaviors:ItemSliderBehavior/>
 									<behaviors:MouseHorizontalWheelBehavior/>
 								</i:Interaction.Behaviors>
 							</controls:EnhancedSlider>
@@ -738,14 +742,18 @@
 
 						<!-- Message -->
 						<Grid Grid.Row="2"
-							  Visibility="{Binding Message, Mode=OneWay, Converter={StaticResource ObjectToVisibilityConverterKey}}">
-							<Border Margin="6,6,6,0"
-									Padding="3"
-									BorderBrush="{StaticResource App.Foreground.Invalid}" BorderThickness="1">
-								<TextBlock Style="{StaticResource InvalidTextStyle}"
-										   TextWrapping="Wrap"
-										   Text="{Binding Message, Mode=OneWay}"/>
-							</Border>
+							  Visibility="{Binding NormalMessage, Mode=OneWay, Converter={StaticResource ObjectToVisibilityConverterKey}}">
+							<TextBlock Style="{StaticResource PlainTextStyle}"
+									   Margin="12,2,12,2"
+									   TextWrapping="Wrap"
+									   Text="{Binding NormalMessage, Mode=OneWay}"/>
+						</Grid>
+						<Grid Grid.Row="3"
+							  Visibility="{Binding WarningMessage, Mode=OneWay, Converter={StaticResource ObjectToVisibilityConverterKey}}">
+							<TextBlock Style="{StaticResource InvalidTextStyle}"
+									   Margin="12,2,12,2"
+									   TextWrapping="Wrap"
+									   Text="{Binding WarningMessage, Mode=OneWay}"/>
 						</Grid>
 					</Grid>
 				</DataTemplate>

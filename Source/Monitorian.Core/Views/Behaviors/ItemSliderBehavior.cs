@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Data;
 using System.Windows.Input;
 using Microsoft.Xaml.Behaviors;
 
@@ -18,26 +19,35 @@ namespace Monitorian.Core.Views.Behaviors
 		/// </summary>
 		private Window _window;
 
+		/// <summary>
+		/// Item container which hosts first and second Sliders
+		/// </summary>
 		private ListBoxItem _container;
 
 		protected override void OnAttached()
 		{
 			base.OnAttached();
 
+			_window = Window.GetWindow(this.AssociatedObject);
+			_container = this.AssociatedObject.GetSelfAndAncestors().OfType<ListBoxItem>().FirstOrDefault();
+
 			this.AssociatedObject.Initialized += OnInitialized;
-			this.AssociatedObject.Loaded += OnLoaded;
 			this.AssociatedObject.Unloaded += OnUnloaded;
-			this.AssociatedObject.GotFocus += OnGotFocus;
 			this.AssociatedObject.PreviewKeyDown += OnPreviewKeyDown;
 
-			_window = Window.GetWindow(this.AssociatedObject);
-
-			_container = this.AssociatedObject.GetSelfAndAncestors().OfType<ListBoxItem>().FirstOrDefault();
 			if (_container is not null)
 			{
-				_container.Selected += OnSelected;
-				_container.Unselected += OnUnselected;
-				_container.GotFocus += OnSelected;
+				this.AssociatedObject.GotFocus += OnGotFocus;
+
+				var expression = BindingOperations.GetBindingExpression(this, IsSelectedProperty);
+				if (expression is not null) // IsSelectedProperty is bound.
+				{
+					this.AssociatedObject.Loaded += OnLoaded;
+
+					_container.Selected += OnContainerSelected;
+					_container.Unselected += OnContainerUnselected;
+					_container.GotFocus += OnContainerSelected;
+				}
 			}
 		}
 
@@ -45,16 +55,17 @@ namespace Monitorian.Core.Views.Behaviors
 		{
 			base.OnDetaching();
 
-			this.AssociatedObject.Loaded -= OnLoaded;
 			this.AssociatedObject.Unloaded -= OnUnloaded;
-			this.AssociatedObject.GotFocus -= OnGotFocus;
 			this.AssociatedObject.PreviewKeyDown -= OnPreviewKeyDown;
 
 			if (_container is not null)
 			{
-				_container.Selected -= OnSelected;
-				_container.Unselected -= OnUnselected;
-				_container.GotFocus -= OnSelected;
+				this.AssociatedObject.Loaded -= OnLoaded;
+				this.AssociatedObject.GotFocus -= OnGotFocus;
+
+				_container.Selected -= OnContainerSelected;
+				_container.Unselected -= OnContainerUnselected;
+				_container.GotFocus -= OnContainerSelected;
 			}
 		}
 
@@ -67,19 +78,23 @@ namespace Monitorian.Core.Views.Behaviors
 
 		private void OnLoaded(object sender, RoutedEventArgs e)
 		{
-			if (IsSelected && (_container is not null))
-				OnSelected(null, null);
+			this.AssociatedObject.Loaded -= OnLoaded;
+
+			if (IsSelected)
+				OnContainerSelected(null, new RoutedEventArgs());
 		}
 
 		private void OnUnloaded(object sender, RoutedEventArgs e)
 		{
+			this.AssociatedObject.Unloaded -= OnUnloaded;
+
 			Unsubscribe();
 			this.Detach();
 		}
 
 		private void OnGotFocus(object sender, RoutedEventArgs e)
 		{
-			if ((_container is not null) && !_container.IsSelected)
+			if (!_container.IsSelected)
 				Selector.SetIsSelected(_container, true);
 		}
 
@@ -122,14 +137,30 @@ namespace Monitorian.Core.Views.Behaviors
 
 							case Key.Tab:
 								e.Handled = true;
-								if (!this.AssociatedObject.MoveFocus(new TraversalRequest(FocusNavigationDirection.Down)))
-								{
-									UIElement element = this.AssociatedObject;
-									while (element.PredictFocus(FocusNavigationDirection.Up) is UIElement buffer)
-										element = buffer;
 
-									if (!ReferenceEquals(element, this.AssociatedObject))
-										element.Focus();
+								if (SecondObject is { Visibility: Visibility.Visible })
+								{
+									try
+									{
+										this.AssociatedObject.Focusable = false;
+										SecondObject.Focus();
+									}
+									finally
+									{
+										this.AssociatedObject.Focusable = true;
+									}
+								}
+								else
+								{
+									if (!this.AssociatedObject.MoveFocus(new TraversalRequest(FocusNavigationDirection.Down)))
+									{
+										UIElement element = this.AssociatedObject;
+										while (element.PredictFocus(FocusNavigationDirection.Up) is UIElement buffer)
+											element = buffer;
+
+										if (!ReferenceEquals(element, this.AssociatedObject))
+											element.Focus();
+									}
 								}
 								break;
 						}
@@ -148,20 +179,37 @@ namespace Monitorian.Core.Views.Behaviors
 				"IsSelected",
 				typeof(bool),
 				typeof(ItemSliderBehavior),
-				new PropertyMetadata(false));
+				new PropertyMetadata(defaultValue: false));
 
-		private void OnSelected(object sender, RoutedEventArgs e)
+		private void OnContainerSelected(object sender, RoutedEventArgs e)
 		{
-			if (!this.AssociatedObject.IsFocused)
+			if ((SecondObject is not null) && ReferenceEquals(e.OriginalSource, SecondObject))
+			{
+				_container.Focusable = false;
+				SecondObject.Focus();
+			}
+			else if (!this.AssociatedObject.IsFocused)
 			{
 				_container.Focusable = false;
 				this.AssociatedObject.Focus();
 			}
 		}
 
-		private void OnUnselected(object sender, RoutedEventArgs e)
+		private void OnContainerUnselected(object sender, RoutedEventArgs e)
 		{
 			_container.Focusable = true;
 		}
+
+		public Slider SecondObject
+		{
+			get { return (Slider)GetValue(SecondObjectProperty); }
+			set { SetValue(SecondObjectProperty, value); }
+		}
+		public static readonly DependencyProperty SecondObjectProperty =
+			DependencyProperty.Register(
+				"SecondObject",
+				typeof(Slider),
+				typeof(ItemSliderBehavior),
+				new PropertyMetadata(defaultValue: null));
 	}
 }

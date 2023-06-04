@@ -123,21 +123,35 @@ namespace Monitorian.Core.Models.Monitor
 			var (result, _, current, _) = MonitorConfiguration.GetValue(_handle, code);
 			if (result.Status == AccessStatus.Succeeded)
 			{
-				var next = ((value >= 0) && values.Contains((byte)value)) ? (byte)value : GetNext(values, (byte)current);
+				var (next, index) = GetNext(values, value, current);
 				result = MonitorConfiguration.SetValue(_handle, code, next);
 
 				Debug.WriteLine($"Change {code:X2}: {(byte)current} -> {next}");
+
+				if (result.Status == AccessStatus.Succeeded)
+					result = new AccessResult(AccessStatus.Succeeded, $"{index + 1}/{values.Count}");
 			}
 			return result;
 
-			static byte GetNext(IReadOnlyList<byte> source, byte current)
+			static (byte next, int index) GetNext(IReadOnlyList<byte> source, int specified, uint current)
 			{
+				var isSpecified = specified is >= byte.MinValue and <= byte.MaxValue;
+				int index = 0;
 				for (int i = 0; i < source.Count; i++)
 				{
-					if (source[i] == current)
-						return (i < source.Count - 1) ? source[i + 1] : source[0];
+					if (isSpecified && (source[i] == (byte)specified))
+					{
+						index = i;
+						break;
+					}
+					if ((i < source.Count - 1) && (source[i] == (byte)current))
+					{
+						index = i + 1;
+						if (!isSpecified)
+							break;
+					}
 				}
-				return source.First(); // Fallback
+				return (source[index], index);
 			}
 		}
 

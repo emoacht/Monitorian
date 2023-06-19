@@ -129,7 +129,7 @@ namespace Monitorian.Core.Models.Monitor
 				Debug.WriteLine($"Change {code:X2}: {(byte)current} -> {next}");
 
 				if (result.Status == AccessStatus.Succeeded)
-					result = new AccessResult(AccessStatus.Succeeded, $"{index + 1}/{values.Count}");
+					result = new AccessResult(AccessStatus.Succeeded, new int[] { next, index, values.Count });
 			}
 			return result;
 

@@ -394,7 +394,7 @@ namespace Monitorian.Core.ViewModels
 
 		#region Non-Continuous
 
-		public (bool? success, string message) ChangeValue(byte code, int value = -1)
+		public (bool? success, object data) ChangeValue(byte code, int value = -1)
 		{
 			AccessResult result;
 			lock (_lock)
@@ -408,7 +408,7 @@ namespace Monitorian.Core.ViewModels
 					return (null, null);
 
 				case AccessStatus.Succeeded:
-					return (true, result.Message);
+					return (true, result.Data);
 
 				default:
 					_controller.OnMonitorAccessFailed(result);
@@ -421,7 +421,7 @@ namespace Monitorian.Core.ViewModels
 							_controller.OnMonitorsChangeFound();
 							break;
 					}
-					return (false, result.Message);
+					return (false, result.Data);
 			}
 		}
 

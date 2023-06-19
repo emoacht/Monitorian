@@ -48,8 +48,10 @@ namespace Monitorian.Core.Models.Monitor
 	{
 		public AccessStatus Status { get; }
 		public string Message { get; }
+		public object Data { get; }
 
 		public AccessResult(AccessStatus status, string message) => (this.Status, this.Message) = (status, message);
+		public AccessResult(AccessStatus status, object data) => (this.Status, this.Data) = (status, data);
 
 		public static readonly AccessResult Succeeded = new(AccessStatus.Succeeded, null);
 		public static readonly AccessResult Failed = new(AccessStatus.Failed, null);

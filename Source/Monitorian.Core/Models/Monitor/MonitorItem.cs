@@ -57,7 +57,8 @@ namespace Monitorian.Core.Models.Monitor
 		public virtual AccessResult UpdateContrast() => AccessResult.NotSupported;
 		public virtual AccessResult SetContrast(int contrast) => AccessResult.NotSupported;
 
-		public virtual AccessResult ChangeValue(byte code, int value = -1) => AccessResult.NotSupported;
+		public virtual (AccessResult result, ValueData data) GetValue(byte code) => (AccessResult.NotSupported, null);
+		public virtual (AccessResult result, ValueData data) SetValue(byte code, int value) => (AccessResult.NotSupported, null);
 
 		public override string ToString()
 		{

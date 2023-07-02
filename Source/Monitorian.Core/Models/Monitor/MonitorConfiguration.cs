@@ -467,7 +467,8 @@ namespace Monitorian.Core.Models.Monitor
 
 		private static Dictionary<byte, byte[]> FilterVcpCodes(Dictionary<byte, byte[]> dic)
 		{
-			if (dic.TryGetValue((byte)VcpCode.Temperature, out byte[] values))
+			if (dic.TryGetValue((byte)VcpCode.Temperature, out byte[] values)
+				&& (values is not null))
 			{
 				// The following color temperatures are defined.
 				//  3:  4000° K

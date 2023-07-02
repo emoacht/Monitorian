@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,7 +31,8 @@ namespace Monitorian.Core.Models.Monitor
 		AccessResult UpdateContrast();
 		AccessResult SetContrast(int contrast);
 
-		AccessResult ChangeValue(byte code, int value = -1);
+		(AccessResult result, ValueData data) GetValue(byte code);
+		(AccessResult result, ValueData data) SetValue(byte code, int value);
 	}
 
 	public enum AccessStatus
@@ -48,13 +50,23 @@ namespace Monitorian.Core.Models.Monitor
 	{
 		public AccessStatus Status { get; }
 		public string Message { get; }
-		public object Data { get; }
 
 		public AccessResult(AccessStatus status, string message) => (this.Status, this.Message) = (status, message);
-		public AccessResult(AccessStatus status, object data) => (this.Status, this.Data) = (status, data);
 
 		public static readonly AccessResult Succeeded = new(AccessStatus.Succeeded, null);
 		public static readonly AccessResult Failed = new(AccessStatus.Failed, null);
 		public static readonly AccessResult NotSupported = new(AccessStatus.NotSupported, null);
+	}
+
+	public class ValueData
+	{
+		public byte Value { get; }
+		public ReadOnlyCollection<byte> Values { get; }
+
+		public ValueData(byte value, IEnumerable<byte> values)
+		{
+			this.Value = value;
+			this.Values = Array.AsReadOnly(values.ToArray());
+		}
 	}
 }

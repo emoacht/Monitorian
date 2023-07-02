@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -113,46 +112,34 @@ namespace Monitorian.Core.Models.Monitor
 			return result;
 		}
 
-		public override AccessResult ChangeValue(byte code, int value = -1)
+		public override (AccessResult result, ValueData data) GetValue(byte code)
 		{
 			if ((_capability.CapabilitiesCodes is null)
-				|| !_capability.CapabilitiesCodes.TryGetValue(code, out var values)
-				|| (values is not { Count: > 1 }))
-				return AccessResult.NotSupported;
+				|| !_capability.CapabilitiesCodes.TryGetValue(code, out var values))
+				return (AccessResult.NotSupported, null);
 
 			var (result, _, current, _) = MonitorConfiguration.GetValue(_handle, code);
 			if (result.Status == AccessStatus.Succeeded)
 			{
-				var (next, index) = GetNext(values, value, current);
-				result = MonitorConfiguration.SetValue(_handle, code, next);
-
-				Debug.WriteLine($"Change {code:X2}: {(byte)current} -> {next}");
-
-				if (result.Status == AccessStatus.Succeeded)
-					result = new AccessResult(AccessStatus.Succeeded, new int[] { next, index, values.Count });
+				return (result, new ValueData((byte)current, values));
 			}
-			return result;
+			return (result, null);
+		}
 
-			static (byte next, int index) GetNext(IReadOnlyList<byte> source, int specified, uint current)
+		public override (AccessResult result, ValueData data) SetValue(byte code, int value)
+		{
+			if ((_capability.CapabilitiesCodes is null)
+				|| !_capability.CapabilitiesCodes.TryGetValue(code, out var values)
+				|| (value is < byte.MinValue or > byte.MaxValue)
+				|| (values?.Contains((byte)value) is false))
+				return (AccessResult.NotSupported, null);
+
+			var result = MonitorConfiguration.SetValue(_handle, code, (uint)value);
+			if (result.Status == AccessStatus.Succeeded)
 			{
-				var isSpecified = specified is >= byte.MinValue and <= byte.MaxValue;
-				int index = 0;
-				for (int i = 0; i < source.Count; i++)
-				{
-					if (isSpecified && (source[i] == (byte)specified))
-					{
-						index = i;
-						break;
-					}
-					if ((i < source.Count - 1) && (source[i] == (byte)current))
-					{
-						index = i + 1;
-						if (!isSpecified)
-							break;
-					}
-				}
-				return (source[index], index);
+				return (result, new ValueData((byte)value, values));
 			}
+			return (result, null);
 		}
 
 		#region IDisposable

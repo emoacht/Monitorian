@@ -296,6 +296,19 @@ namespace Monitorian.Test
 			Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Temperature, 5, 6, 8));
 		}
 
+		[TestMethod]
+		public void TestMonitorCapability_V1_1()
+		{
+			// ViewSonic VX2370
+			var source = @"(prot(monitor)type(LCD)model(VSC)cmds(01 02 03 07 0C E3 F3)vcp(02 04 05 08 0B 0C 10 12 14(01 08 06 05 04 0B) 16 18 1A 52 60(01 03 0F) 62 6C 6E 70 87 8D AC AE B2 B6 C6 C8 C9 CA CC(02 03 04 0a 05 16 09 06 07 0d 01) D6(01 04) DF E1)mswhql(1)asset_eep(40)mccs_ver(2.0))";
+			var (success, vcpCodes) = TestExtractVcpCodes(source);
+			Assert.IsTrue(success);
+			Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Luminance));
+			Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Contrast));
+			Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.SpeakerVolume)); // True
+			Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Temperature));
+		}
+
 		private enum VcpCode : byte
 		{
 			None = 0x0,

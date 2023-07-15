@@ -334,7 +334,7 @@ namespace Monitorian.Core.Models.Monitor
 			if (string.IsNullOrEmpty(source))
 				yield break;
 
-			int index = source.IndexOf("vcp", StringComparison.Ordinal);
+			int index = source.IndexOf("vcp", StringComparison.OrdinalIgnoreCase);
 			if (index < 0)
 				yield break;
 
@@ -388,7 +388,7 @@ namespace Monitorian.Core.Models.Monitor
 			if (string.IsNullOrEmpty(source))
 				return dic;
 
-			int index = source.IndexOf("vcp", StringComparison.Ordinal);
+			int index = source.IndexOf("vcp", StringComparison.OrdinalIgnoreCase);
 			if (index < 0)
 				return dic;
 

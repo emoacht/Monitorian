@@ -245,6 +245,19 @@ namespace Monitorian.Test
 		}
 
 		[TestMethod]
+		public void TestMonitorCapability_A1_2()
+		{
+			// ASUS VG279Q
+			var source = @"(prot(monitor) type(LCD)model(VG279Q) cmds(01 02 03 07 0C F3) vcp(02 04 05 08 10 12 14(05 06 08 0B) 16 18 1A 52 60(03 0F 11) 62 86(02 0B) 87(00 0A 14 1E 28 32 3C 46 50 5A 64) 8A 8D(01 02) AC AE B6 C6 C8 CC(01 02 03 04 05 06 07 08 09 0A 0C 0D 11 12 14 1A 1E 1F 23 30 31) D6(01 05) DF DC(03 0B 0D 0E 11 12 13 14) E0(01 02 03) E1(00 01) E2(00 14 28 3C 50 64) E3(00 19 32 4B 64) E4(00 01) E6(00 01 02 03 04) E7(00 01) E9(00 01) EA(00 01) EB(00 01))mccs_ver(2.2)asset_eep(32)mpu(01)mswhql(1))";
+			var (success, vcpCodes) = TestExtractVcpCodes(source);
+			Assert.IsTrue(success);
+			Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Luminance));
+			Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Contrast));
+			Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.SpeakerVolume)); // True
+			Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Temperature, 5, 6, 8));
+		}
+
+		[TestMethod]
 		public void TestMonitorCapability_A2_1()
 		{
 			// Acer XB271HU
@@ -294,6 +307,19 @@ namespace Monitorian.Test
 			Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Contrast));
 			Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.SpeakerVolume)); // True
 			Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Temperature, 5, 6, 8));
+		}
+
+		[TestMethod]
+		public void TestMonitorCapability_A4_1()
+		{
+			// Apple Cinema Display
+			var source = @"prot(monitor) type(LCD) model(LED Cinema Display) cmds(01 02 03 E3 F3) VCP(02 05 10 52 62 66 8D 93 B6 C0 C8 C9 CA D6(00 01 02 03 04) DF) mccs_ver(2.2)";
+			var (success, vcpCodes) = TestExtractVcpCodes(source);
+			Assert.IsTrue(success);
+			Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Luminance));
+			Assert.IsFalse(AreIncluded(vcpCodes, VcpCode.Contrast)); // False
+			Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.SpeakerVolume)); // True
+			Assert.IsFalse(AreIncluded(vcpCodes, VcpCode.Temperature)); // False
 		}
 
 		[TestMethod]

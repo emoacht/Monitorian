@@ -52,11 +52,11 @@ Additional languages:
 
  * Winget (a.k.a. [Windows Package Manager](https://docs.microsoft.com/en-us/windows/package-manager), App Installer):
    ```
-   winget install Monitorian
+   winget install Monitorian -s msstore
    ```
 
  * Other:<br>
-:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/4.4.1-Installer/MonitorianInstaller441.zip)
+:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/4.4.2-Installer/MonitorianInstaller442.zip)
 
 ## Install/Uninstall
 

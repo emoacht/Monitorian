@@ -14,7 +14,7 @@
 		<KeyBinding Command="ApplicationCommands.Close" Key="Esc"/>
 	</Window.InputBindings>
 	<Window.CommandBindings>
-		<CommandBinding Command="ApplicationCommands.Close" Executed="OnCloseTriggered"/>
+		<CommandBinding Command="ApplicationCommands.Close" Executed="OnDeactivated"/>
 	</Window.CommandBindings>
 
 	<StackPanel Margin="0,4">

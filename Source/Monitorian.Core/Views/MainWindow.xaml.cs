@@ -36,6 +36,7 @@ namespace Monitorian.Core.Views
 			{
 				KeepsDistance = true
 			};
+			_mover.ForegroundWindowChanged += OnDeactivated;
 
 			controller.WindowPainter.Add(this);
 			controller.WindowPainter.ThemeChanged += (_, _) =>
@@ -190,11 +191,25 @@ namespace Monitorian.Core.Views
 		public bool CanBeShown => (_preventionTime < DateTimeOffset.Now);
 		private DateTimeOffset _preventionTime;
 
+		private void OnDeactivated(object sender, EventArgs e)
+		{
+			ProceedHide();
+		}
+
 		protected override void OnDeactivated(EventArgs e)
 		{
 			base.OnDeactivated(e);
 
+			ProceedHide();
+		}
+
+		private void ProceedHide()
+		{
 			if (this.Visibility != Visibility.Visible)
+				return;
+
+			// Compare time to prevent hiding procedure from repeating.
+			if (_preventionTime > DateTimeOffset.Now)
 				return;
 
 			ViewModel.Deactivate();

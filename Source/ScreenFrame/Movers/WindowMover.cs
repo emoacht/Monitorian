@@ -39,6 +39,7 @@ namespace ScreenFrame.Movers
 		}
 
 		private HwndSource _source;
+		private WindowWatcher _watcher;
 
 		private void OnSourceInitialized(object sender, EventArgs e)
 		{
@@ -55,6 +56,7 @@ namespace ScreenFrame.Movers
 		private void OnClosed(object sender, EventArgs e)
 		{
 			_source?.RemoveHook(WndProc);
+			_watcher?.RemoveHook();
 		}
 
 		private void OnDpiChanged(object sender, DpiChangedEventArgs e)
@@ -83,6 +85,7 @@ namespace ScreenFrame.Movers
 		private const int WM_WINDOWPOSCHANGED = 0x0047;
 		private const int WM_DPICHANGED = 0x02E0;
 		private const int WM_DISPLAYCHANGE = 0x007E;
+		private const int WM_SHOWWINDOW = 0x0018;
 		private const int WM_ACTIVATEAPP = 0x001C;
 
 		/// <summary>
@@ -108,6 +111,10 @@ namespace ScreenFrame.Movers
 					HandleDisplayChange(hwnd, msg, wParam, lParam, ref handled);
 					break;
 
+				case WM_SHOWWINDOW:
+					HandleShowWindow(hwnd, msg, wParam, lParam, ref handled);
+					break;
+
 				case WM_ACTIVATEAPP:
 					HandleActivateApp(hwnd, msg, wParam, lParam, ref handled);
 					break;
@@ -116,17 +123,17 @@ namespace ScreenFrame.Movers
 		}
 
 		/// <summary>
-		/// Handles window position changing event.
+		/// Handles event when window position is about to change.
 		/// </summary>
 		protected abstract void HandleWindowPosChanging(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled);
 
 		/// <summary>
-		/// Handles window position changed event.
+		/// Handles event when window position has changed.
 		/// </summary>
 		protected abstract void HandleWindowPosChanged(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled);
 
 		/// <summary>
-		/// Handles DPI changed event.
+		/// Handles event when DPI for the window has changed.
 		/// </summary>
 		protected virtual void HandleDpiChanged(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
 		{
@@ -145,22 +152,46 @@ namespace ScreenFrame.Movers
 		}
 
 		/// <summary>
-		/// Handles display change event.
+		/// Handles event when the display resolution has changed.
 		/// </summary>
 		protected abstract void HandleDisplayChange(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled);
 
 		/// <summary>
-		/// Occurs when the application to which the window belongs is activated.
+		/// Occurs when foreground window of other processes has changed during the window is shown.
+		/// </summary>
+		public event EventHandler ForegroundWindowChanged;
+
+		private const uint EVENT_SYSTEM_FOREGROUND = 0x0003;
+
+		/// <summary>
+		/// Handles event when the window is about to be shown/hidden.
+		/// </summary>
+		protected virtual void HandleShowWindow(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+		{
+			var isShown = Convert.ToBoolean(wParam.ToInt32());
+			if (isShown)
+			{
+				_watcher ??= new WindowWatcher(EVENT_SYSTEM_FOREGROUND, () => ForegroundWindowChanged?.Invoke(this, EventArgs.Empty));
+				_watcher.AddHook();
+			}
+			else
+			{
+				_watcher?.RemoveHook();
+			}
+		}
+
+		/// <summary>
+		/// Occurs when the application to which the window belongs is about to be activated.
 		/// </summary>
 		public event EventHandler AppActivated;
 
 		/// <summary>
-		/// Occurs when the application to which the window belongs is deactivated. 
+		/// Occurs when the application to which the window belongs is about to be deactivated.
 		/// </summary>
 		public event EventHandler AppDeactivated;
 
 		/// <summary>
-		/// Handles application activated/deactivated event.
+		/// Handles event when the application is about to be activated/deactivated.
 		/// </summary>
 		protected virtual void HandleActivateApp(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
 		{

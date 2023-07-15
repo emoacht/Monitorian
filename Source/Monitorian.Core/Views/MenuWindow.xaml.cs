@@ -35,7 +35,8 @@ namespace Monitorian.Core.Views
 			this.DataContext = new MenuWindowViewModel(controller);
 
 			_mover = new FloatWindowMover(this, pivot);
-			_mover.AppDeactivated += OnCloseTriggered;
+			_mover.ForegroundWindowChanged += OnDeactivated;
+			_mover.AppDeactivated += OnDeactivated;			
 
 			controller.WindowPainter.Add(this);
 		}
@@ -92,7 +93,7 @@ namespace Monitorian.Core.Views
 
 		private bool _isClosing = false;
 
-		private void OnCloseTriggered(object sender, EventArgs e)
+		private void OnDeactivated(object sender, EventArgs e)
 		{
 			if (!_isClosing && this.IsLoaded)
 				this.Close();

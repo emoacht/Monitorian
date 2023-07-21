@@ -102,6 +102,19 @@ namespace Monitorian.Test
 		}
 
 		[TestMethod]
+		public void TestMonitorCapability_D1_8()
+		{
+			// DELL P2717H
+			var source = @"(prot(monitor)type(LCD)model(P2717H)cmds(01 02 03 07 0C E3 F3)vcp(02 04 05 08 10 12 14(05 08 0B 0C) 16 18 1A 52 60(01 0F 11) AA(01 02) AC AE B2 B6 C6 C8 C9 D6(01 04 05) DC(00 02 03 05) DF E0 E1 E2(00 1D 01 02 04 0E 12 14) F0(0C) F1 F2 FD)mswhql(1)asset_eep(40)mccs_ver(2.1))";
+			var (success, vcpCodes) = TestExtractVcpCodes(source);
+			Assert.IsTrue(success);
+			Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Luminance));
+			Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Contrast));
+			Assert.IsFalse(AreIncluded(vcpCodes, VcpCode.SpeakerVolume));
+			Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Temperature, 5, 8));
+		}
+
+		[TestMethod]
 		public void TestMonitorCapability_H1_1()
 		{
 			// HP LE1711

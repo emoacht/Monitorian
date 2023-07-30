@@ -185,7 +185,7 @@ namespace Monitorian.Core.Views
 			public void Revert() => Color = _originalColor;
 		}
 
-		private readonly Lazy<ColorContainer> _staticColorContaier = new(() => new("App.Background.Accent.StaticColor"));
+		private readonly Lazy<ColorContainer> _staticColorContainer = new(() => new("App.Background.Accent.StaticColor"));
 		private readonly Lazy<ColorContainer> _mouseOverColorContainer = new(() => new("App.Background.Accent.MouseOverColor"));
 		private readonly Lazy<ColorContainer> _pressedColorContainer = new(() => new("App.Background.Accent.PressedColor"));
 
@@ -203,14 +203,14 @@ namespace Monitorian.Core.Views
 		{
 			RespondsAccentColorChanged = false;
 
-			_staticColorContaier.Value.Revert();
+			_staticColorContainer.Value.Revert();
 			_mouseOverColorContainer.Value.Revert();
 			_pressedColorContainer.Value.Revert();
 		}
 
 		protected override void ChangeAccentColors()
 		{
-			_staticColorContaier.Value.Color = UIInformation.GetAccentColor();
+			_staticColorContainer.Value.Color = UIInformation.GetAccentColor();
 			_mouseOverColorContainer.Value.Color = UIInformation.GetAccentLightColor();
 			_pressedColorContainer.Value.Color = _mouseOverColorContainer.Value.Color;
 		}

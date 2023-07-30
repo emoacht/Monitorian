@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using Microsoft.Xaml.Behaviors;
 
@@ -31,6 +32,13 @@ namespace Monitorian.Core.Views.Behaviors
 		private void OnMouseLeave(object sender, MouseEventArgs e)
 		{
 			var scope = FocusManager.GetFocusScope(this.AssociatedObject);
+			var element = FocusManager.GetFocusedElement(scope);
+
+			// On Windows 11, enabling IME on TextBox causes MouseLeave event and changing the focus after
+			// such event will hinder the input by IME. Thus, the case of TextBox shall be excluded.
+			if (element is TextBoxBase)
+				return;
+
 			FocusManager.SetFocusedElement(scope, this.AssociatedObject); // UIElement.Focus method is not enough.
 		}
 

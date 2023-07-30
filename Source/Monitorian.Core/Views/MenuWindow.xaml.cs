@@ -36,7 +36,7 @@ namespace Monitorian.Core.Views
 
 			_mover = new FloatWindowMover(this, pivot);
 			_mover.ForegroundWindowChanged += OnDeactivated;
-			_mover.AppDeactivated += OnDeactivated;			
+			_mover.AppDeactivated += OnDeactivated;
 
 			controller.WindowPainter.Add(this);
 		}

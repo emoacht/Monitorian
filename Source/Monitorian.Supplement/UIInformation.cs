@@ -12,8 +12,8 @@ namespace Monitorian.Supplement
 	/// A wrapper class of <see cref="Windows.UI.ViewManagement.UISettings"/>
 	/// </summary>
 	/// <remarks>
-	/// <see cref="Windows.UI.ViewManagement.UISettings"/> is available
-	/// on Windows 10 (version 10.0.10240.0) or newer.
+	/// <see cref="Windows.UI.ViewManagement.UISettings"/> is only available
+	/// on Windows 10 (version 10.0.10240.0) or greater.
 	/// </remarks>
 	public static class UIInformation
 	{

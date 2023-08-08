@@ -17,8 +17,8 @@ namespace Monitorian.Supplement
 		/// <param name="uri">Uri</param>
 		/// <returns>True if successfully launches</returns>
 		/// <remarks>
-		/// <see cref="Windows.System.Launcher"/> is available on Windows 10 (version 10.0.10240.0)
-		/// or newer.
+		/// <see cref="Windows.System.Launcher"/> is only available on Windows 10 (version 10.0.10240.0)
+		/// or greater.
 		/// </remarks>
 		public static Task<bool> LaunchAsync(Uri uri)
 		{

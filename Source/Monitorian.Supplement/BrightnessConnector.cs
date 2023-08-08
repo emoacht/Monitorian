@@ -13,6 +13,10 @@ namespace Monitorian.Supplement
 	/// <summary>
 	/// A wrapper class of <see cref="Windows.Graphics.Display.BrightnessOverride"/>
 	/// </summary>
+	/// <remarks>
+	/// This class uses <see cref="Windows.ApplicationModel.AppService.AppServiceConnection"/> which
+	/// is only available on Windows 10 (version 10.0.10240.0) or greater.
+	/// </remarks>
 	public class BrightnessConnector : IDisposable
 	{
 		#region Type
@@ -103,7 +107,7 @@ namespace Monitorian.Supplement
 		/// <summary>
 		/// Determines whether a connection with AppService provider can be performed.
 		/// </summary>
-		public virtual bool CanConnect => !string.IsNullOrEmpty(_familyName.Value) && _isAvailable;
+		public virtual bool CanConnect => _isAvailable && !string.IsNullOrEmpty(_familyName.Value);
 		private bool _isAvailable = true; // default
 
 		/// <summary>
@@ -241,6 +245,12 @@ namespace Monitorian.Supplement
 
 		private void ReleaseAppServiceConnection()
 		{
+			// Calling this method itself causes System.TypeLoadException due to AppServiceConnection
+			// on Windows 8.1 or lesser regardless of the procedure in this method.
+
+			if (_appServiceConnection is null)
+				return;
+
 			try
 			{
 				_appServiceConnection.RequestReceived -= OnAppServiceConnectionRequestReceived;
@@ -278,7 +288,8 @@ namespace Monitorian.Supplement
 			if (disposing)
 			{
 				// Free any other managed objects here.
-				ReleaseAppServiceConnection();
+				if (CanConnect)
+					ReleaseAppServiceConnection();
 			}
 
 			// Free any unmanaged objects here.

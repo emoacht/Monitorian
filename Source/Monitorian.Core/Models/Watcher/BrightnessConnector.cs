@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Monitorian.Core.Helper;
+
 namespace Monitorian.Core.Models.Watcher
 {
 	public class BrightnessConnector : Monitorian.Supplement.BrightnessConnector
@@ -15,15 +17,13 @@ namespace Monitorian.Core.Models.Watcher
 
 		private const string ConnectOption = "/connect";
 
-		public override bool CanConnect => _canConnect && base.CanConnect;
-		private readonly bool _canConnect = false;
+		public override bool CanConnect => _isSpecified && base.CanConnect;
+		private readonly bool _isSpecified;
 
 		public BrightnessConnector() : base()
 		{
-			if (AppKeeper.StandardArguments.Select(x => x.ToLower()).Contains(ConnectOption))
-			{
-				_canConnect = true;
-			}
+			_isSpecified = OsVersion.Is10OrGreater &&
+				AppKeeper.StandardArguments.Select(x => x.ToLower()).Contains(ConnectOption);
 		}
 
 		#region IDisposable

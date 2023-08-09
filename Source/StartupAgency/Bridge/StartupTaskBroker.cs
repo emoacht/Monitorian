@@ -12,7 +12,7 @@ namespace StartupAgency.Bridge
 	/// </summary>
 	/// <remarks>
 	/// This class wraps <see cref="Windows.ApplicationModel.StartupTask"/> which is only available
-	/// on Windows 10 (version 10.0.14393.0) or newer.
+	/// on Windows 10 (version 10.0.14393.0) or greater.
 	/// </remarks>
 	public static class StartupTaskBroker
 	{

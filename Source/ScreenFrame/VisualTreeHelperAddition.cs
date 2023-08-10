@@ -177,7 +177,7 @@ namespace ScreenFrame
 			return GetDpiWindow(notificationAreaHandle);
 		}
 
-		private static DpiScale GetDpiWindow(IntPtr windowHandle)
+		internal static DpiScale GetDpiWindow(IntPtr windowHandle)
 		{
 			var monitorHandle = MonitorFromWindow(
 				windowHandle,

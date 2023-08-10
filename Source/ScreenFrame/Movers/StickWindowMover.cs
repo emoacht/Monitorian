@@ -45,7 +45,7 @@ namespace ScreenFrame.Movers
 		private enum IconPlacement
 		{
 			/// <summary>
-			/// The location of NotifyIcon is unknown.
+			/// The location of NotifyIcon is unknown. Or the taskbar is hidden.
 			/// </summary>
 			Unknown = 0,
 
@@ -88,22 +88,33 @@ namespace ScreenFrame.Movers
 			}
 
 			var iconPlacement = IconPlacement.Unknown;
+			var iconRect = default(Rect);
 			var overflowAreaRect = default(Rect);
 			var isMarginIncluded = false;
 
-			if (NotifyIconHelper.TryGetNotifyIconRect(_notifyIcon, out Rect iconRect))
+			if (isShown)
 			{
-				if (taskbarRect.Contains(
-					iconRect.X + iconRect.Width / 2D,
-					iconRect.Y + iconRect.Height / 2D))
+				if (OsVersion.Is11Build22621OrGreater &&
+					(WindowHelper.TryGetStartButtonRect(out Rect buttonRect) ||
+					 WindowHelper.TryGetSystemPrimaryTaskbar(out buttonRect, out _)))
 				{
-					iconPlacement = IconPlacement.InTaskbar;
+					taskbarRect = new Rect(taskbarRect.Left, buttonRect.Top, taskbarRect.Width, buttonRect.Height);
 				}
-				else if (WindowHelper.TryGetOverflowAreaRect(out overflowAreaRect, out bool buffer)
-					&& overflowAreaRect.Contains(iconRect))
+
+				if (NotifyIconHelper.TryGetNotifyIconRect(_notifyIcon, out iconRect))
 				{
-					iconPlacement = IconPlacement.InOverflowArea;
-					isMarginIncluded = buffer;
+					if (taskbarRect.Contains(
+						iconRect.X + iconRect.Width / 2D,
+						iconRect.Y + iconRect.Height / 2D))
+					{
+						iconPlacement = IconPlacement.InTaskbar;
+					}
+					else if (WindowHelper.TryGetOverflowAreaRect(out overflowAreaRect, out bool buffer)
+						&& overflowAreaRect.Contains(iconRect))
+					{
+						iconPlacement = IconPlacement.InOverflowArea;
+						isMarginIncluded = buffer;
+					}
 				}
 			}
 
@@ -138,9 +149,6 @@ namespace ScreenFrame.Movers
 						_ => isLeftToRight ? (taskbarRect.Right - distance.X) : (taskbarRect.Left + distance.X), // Fallback
 					};
 					x -= isLeftToRight ? (windowWidth - windowMargin.Right) : windowMargin.Left;
-
-					if (OsVersion.Is11Build22621OrGreater && WindowHelper.TryGetStartButtonRect(out Rect buttonRect))
-						taskbarRect = new Rect(taskbarRect.Left, buttonRect.Top, taskbarRect.Width, buttonRect.Height);
 
 					switch (taskbarAlignment)
 					{

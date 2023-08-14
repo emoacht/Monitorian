@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31410.357
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34003.232
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Monitorian", "Monitorian\Monitorian.csproj", "{A4CC5362-9B08-465B-AD64-5CFABC72A4C7}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -10,12 +10,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Monitorian", "Monitorian\Mo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Monitorian.Core", "Monitorian.Core\Monitorian.Core.csproj", "{0C509B78-FF37-4F5D-9582-189EE5316C27}"
 	ProjectSection(ProjectDependencies) = postProject
-		{6E338214-E33C-4014-9BDD-6D914E6C536D} = {6E338214-E33C-4014-9BDD-6D914E6C536D}
 		{F44EA754-E653-4696-8A12-C86224292908} = {F44EA754-E653-4696-8A12-C86224292908}
 		{EDD1C1B9-C241-4D89-8334-0D29F95C2445} = {EDD1C1B9-C241-4D89-8334-0D29F95C2445}
 	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Monitorian.Supplement", "Monitorian.Supplement\Monitorian.Supplement.csproj", "{6E338214-E33C-4014-9BDD-6D914E6C536D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Monitorian.Test", "Monitorian.Test\Monitorian.Test.csproj", "{338B3627-9128-45CF-92C2-86B04318C24B}"
 EndProject
@@ -51,14 +48,6 @@ Global
 		{0C509B78-FF37-4F5D-9582-189EE5316C27}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0C509B78-FF37-4F5D-9582-189EE5316C27}.Release|x86.ActiveCfg = Release|Any CPU
 		{0C509B78-FF37-4F5D-9582-189EE5316C27}.Release|x86.Build.0 = Release|Any CPU
-		{6E338214-E33C-4014-9BDD-6D914E6C536D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6E338214-E33C-4014-9BDD-6D914E6C536D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6E338214-E33C-4014-9BDD-6D914E6C536D}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{6E338214-E33C-4014-9BDD-6D914E6C536D}.Debug|x86.Build.0 = Debug|Any CPU
-		{6E338214-E33C-4014-9BDD-6D914E6C536D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6E338214-E33C-4014-9BDD-6D914E6C536D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6E338214-E33C-4014-9BDD-6D914E6C536D}.Release|x86.ActiveCfg = Release|Any CPU
-		{6E338214-E33C-4014-9BDD-6D914E6C536D}.Release|x86.Build.0 = Release|Any CPU
 		{338B3627-9128-45CF-92C2-86B04318C24B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{338B3627-9128-45CF-92C2-86B04318C24B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{338B3627-9128-45CF-92C2-86B04318C24B}.Debug|x86.ActiveCfg = Debug|Any CPU

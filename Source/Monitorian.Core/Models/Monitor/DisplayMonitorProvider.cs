@@ -1,63 +1,75 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using Windows.Devices.Display;
-using Windows.Devices.Enumeration;
 
-namespace Monitorian.Supplement
+namespace Monitorian.Core.Models.Monitor
 {
+	internal interface IDisplayItem
+	{
+		public string DeviceInstanceId { get; }
+		public string DisplayName { get; }
+		public bool IsInternal { get; }
+		public string ConnectionDescription { get; }
+	}
+
 	/// <summary>
-	/// A wrapper class of <see cref="Windows.Devices.Display.DisplayMonitor"/>
+	/// A factory class for <see cref="Windows.Devices.Display.DisplayMonitor"/>
 	/// </summary>
 	/// <remarks>
 	/// <see cref="Windows.Devices.Display.DisplayMonitor"/> is only available
 	/// on Windows 10 (version 10.0.17134.0) or greater.
 	/// </remarks>
-	public static class DisplayInformation
+	internal class DisplayMonitorProvider
 	{
 		#region Type
 
-		/// <summary>
-		/// Display monitor information
-		/// </summary>
-		public record DisplayItem
+		[DataContract]
+		public record DisplayItem : IDisplayItem
 		{
 			/// <summary>
 			/// Device ID (Not device interface ID)
 			/// </summary>
+			[DataMember(Order = 0)]
 			public string DeviceInstanceId { get; }
 
 			/// <summary>
 			/// Display name
 			/// </summary>
+			[DataMember(Order = 1)]
 			public string DisplayName { get; }
 
 			/// <summary>
 			/// Native resolution in raw pixels.
 			/// </summary>
+			[DataMember(Order = 2)]
 			public Size NativeResolution { get; }
 
 			/// <summary>
 			/// Physical size in inches
 			/// </summary>
+			[DataMember(Order = 3)]
 			public Size PhysicalSize { get; }
 
 			/// <summary>
 			/// Physical diagonal Length in inches
 			/// </summary>
-			public float PhysicalDiagonalLength => GetDiagonal(PhysicalSize);
+			[DataMember(Order = 4)]
+			public float PhysicalDiagonalLength { get; }
 
 			/// <summary>
 			/// Whether the display is connected internally
 			/// </summary>
+			[DataMember(Order = 5)]
 			public bool IsInternal { get; }
 
 			/// <summary>
 			/// Connection description
 			/// </summary>
+			[DataMember(Order = 6)]
 			public string ConnectionDescription { get; }
 
 			internal DisplayItem(
@@ -72,6 +84,7 @@ namespace Monitorian.Supplement
 				this.DisplayName = displayName;
 				this.NativeResolution = new Size(nativeResolution.Width, nativeResolution.Height);
 				this.PhysicalSize = new Size(physicalSize.Width, physicalSize.Height);
+				this.PhysicalDiagonalLength = GetDiagonal(PhysicalSize);
 				this.IsInternal = isInternal;
 				this.ConnectionDescription = connectionDescription;
 			}
@@ -104,7 +117,7 @@ namespace Monitorian.Supplement
 
 			try
 			{
-				var devices = await DeviceInformation.FindAllAsync(DisplayMonitor.GetDeviceSelector(), new[] { deviceInstanceIdKey });
+				var devices = await Windows.Devices.Enumeration.DeviceInformation.FindAllAsync(Windows.Devices.Display.DisplayMonitor.GetDeviceSelector(), new[] { deviceInstanceIdKey });
 				if (devices is { Count: > 0 })
 				{
 					var items = new List<DisplayItem>(devices.Count);
@@ -117,8 +130,8 @@ namespace Monitorian.Supplement
 						if (string.IsNullOrWhiteSpace(deviceInstanceId))
 							continue;
 
-						var displayMonitor = await DisplayMonitor.FromInterfaceIdAsync(device.Id);
-						//var displayMonitor = await DisplayMonitor.FromIdAsync(deviceInstanceId);
+						var displayMonitor = await Windows.Devices.Display.DisplayMonitor.FromInterfaceIdAsync(device.Id);
+						//var displayMonitor = await Windows.Devices.Display.DisplayMonitor.FromIdAsync(deviceInstanceId);
 						if (displayMonitor is null)
 							continue;
 
@@ -133,7 +146,7 @@ namespace Monitorian.Supplement
 							displayName: displayMonitor.DisplayName,
 							nativeResolution: displayMonitor.NativeResolutionInRawPixels,
 							physicalSize: displayMonitor.PhysicalSizeInInches ?? default,
-							isInternal: (displayMonitor.ConnectionKind == DisplayMonitorConnectionKind.Internal),
+							isInternal: (displayMonitor.ConnectionKind == Windows.Devices.Display.DisplayMonitorConnectionKind.Internal),
 							connectionDescription: GetConnectionDescription(displayMonitor.ConnectionKind, displayMonitor.PhysicalConnector)));
 					}
 					return items.ToArray();
@@ -148,29 +161,29 @@ namespace Monitorian.Supplement
 			return Array.Empty<DisplayItem>();
 		}
 
-		private static string GetConnectionDescription(DisplayMonitorConnectionKind connectionKind, DisplayMonitorPhysicalConnectorKind connectorKind)
+		private static string GetConnectionDescription(Windows.Devices.Display.DisplayMonitorConnectionKind connectionKind, Windows.Devices.Display.DisplayMonitorPhysicalConnectorKind connectorKind)
 		{
 			switch (connectionKind)
 			{
-				case DisplayMonitorConnectionKind.Internal:
-				case DisplayMonitorConnectionKind.Virtual:
-				case DisplayMonitorConnectionKind.Wireless:
+				case Windows.Devices.Display.DisplayMonitorConnectionKind.Internal:
+				case Windows.Devices.Display.DisplayMonitorConnectionKind.Virtual:
+				case Windows.Devices.Display.DisplayMonitorConnectionKind.Wireless:
 					return connectionKind.ToString();
 
-				case DisplayMonitorConnectionKind.Wired:
+				case Windows.Devices.Display.DisplayMonitorConnectionKind.Wired:
 					switch (connectorKind)
 					{
-						case DisplayMonitorPhysicalConnectorKind.HD15:
+						case Windows.Devices.Display.DisplayMonitorPhysicalConnectorKind.HD15:
 							return "VGA";
 
-						case DisplayMonitorPhysicalConnectorKind.AnalogTV:
-						case DisplayMonitorPhysicalConnectorKind.DisplayPort:
+						case Windows.Devices.Display.DisplayMonitorPhysicalConnectorKind.AnalogTV:
+						case Windows.Devices.Display.DisplayMonitorPhysicalConnectorKind.DisplayPort:
 							return connectorKind.ToString();
 
-						case DisplayMonitorPhysicalConnectorKind.Dvi:
-						case DisplayMonitorPhysicalConnectorKind.Hdmi:
-						case DisplayMonitorPhysicalConnectorKind.Lvds:
-						case DisplayMonitorPhysicalConnectorKind.Sdi:
+						case Windows.Devices.Display.DisplayMonitorPhysicalConnectorKind.Dvi:
+						case Windows.Devices.Display.DisplayMonitorPhysicalConnectorKind.Hdmi:
+						case Windows.Devices.Display.DisplayMonitorPhysicalConnectorKind.Lvds:
+						case Windows.Devices.Display.DisplayMonitorPhysicalConnectorKind.Sdi:
 							return connectorKind.ToString().ToUpper();
 					}
 					break;

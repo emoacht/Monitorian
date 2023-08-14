@@ -104,7 +104,7 @@ namespace Monitorian.Core
 				async (message) => await Recorder.RecordAsync(message));
 			}
 
-			if (_brightnessConnector.CanConnect)
+			if (_brightnessConnector.IsEnabled)
 			{
 				await _brightnessConnector.InitiateAsync((brightness) =>
 				{
@@ -143,7 +143,7 @@ namespace Monitorian.Core
 			ShowMainWindow();
 			await CheckUpdateAsync();
 
-			if (_brightnessConnector.CanConnect)
+			if (_brightnessConnector.IsEnabled)
 				await _brightnessConnector.ConnectAsync(true);
 		}
 
@@ -152,7 +152,7 @@ namespace Monitorian.Core
 			_current.Dispatcher.Invoke(() => ShowMainWindow());
 			await CheckUpdateAsync();
 
-			if (_brightnessConnector.CanConnect)
+			if (_brightnessConnector.IsEnabled)
 				await _brightnessConnector.ConnectAsync(true);
 		}
 

@@ -74,7 +74,7 @@ namespace Monitorian.Core.Models.Monitor
 			_foundIds = new HashSet<string>(deviceItems.Select(x => x.DeviceInstanceId));
 
 			IDisplayItem[] displayItems = OsVersion.Is10Build17134OrGreater
-				? await DisplayMonitor.GetDisplayMonitorsAsync()
+				? await DisplayMonitorProvider.GetDisplayMonitorsAsync()
 				: DisplayConfig.EnumerateDisplayConfigs().ToArray();
 
 			IEnumerable<BasicItem> EnumerateBasicItems()
@@ -302,7 +302,7 @@ namespace Monitorian.Core.Models.Monitor
 			public DeviceContext.DeviceItem[] DeviceItems { get; private set; }
 
 			[DataMember(Order = 2, Name = "DisplayMonitor - DisplayItems")]
-			public DisplayMonitor.DisplayItem[] DisplayMonitorItems { get; private set; }
+			public DisplayMonitorProvider.DisplayItem[] DisplayMonitorItems { get; private set; }
 
 			[DataMember(Order = 3, Name = "Display Config - DisplayItems")]
 			public DisplayConfig.DisplayItem[] DisplayConfigItems { get; private set; }
@@ -336,7 +336,7 @@ namespace Monitorian.Core.Models.Monitor
 					GetTask(nameof(DisplayMonitorItems), async () =>
 					{
 						if (OsVersion.Is10Build17134OrGreater)
-							DisplayMonitorItems = await DisplayMonitor.GetDisplayMonitorsAsync();
+							DisplayMonitorItems = await DisplayMonitorProvider.GetDisplayMonitorsAsync();
 					}),
 
 					GetTask(nameof(DisplayConfigItems), () =>

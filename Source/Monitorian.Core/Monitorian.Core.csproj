@@ -67,7 +67,7 @@
     <Compile Include="Models\Monitor\DeviceConversion.cs" />
     <Compile Include="Models\Monitor\DeviceInformation.cs" />
     <Compile Include="Models\Monitor\DisplayConfig.cs" />
-    <Compile Include="Models\Monitor\DisplayMonitor.cs" />
+    <Compile Include="Models\Monitor\DisplayMonitorProvider.cs" />
     <Compile Include="Models\Monitor\Error.cs" />
     <Compile Include="Models\Monitor\IMonitor.cs" />
     <Compile Include="Models\Monitor\LightSensor.cs" />
@@ -90,6 +90,7 @@
     <Compile Include="Models\ConsoleService.cs" />
     <Compile Include="Models\DocumentService.cs" />
     <Compile Include="Models\LanguageService.cs" />
+    <Compile Include="Models\Launcher.cs" />
     <Compile Include="Models\Logger.cs" />
     <Compile Include="Models\OperationRecorder.cs" />
     <Compile Include="Models\ProductInfo.cs" />
@@ -107,11 +108,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Supplement\BrightnessConnector.cs" />
-    <Compile Include="Supplement\DisplayInformation.cs" />
-    <Compile Include="Supplement\Launcher.cs" />
-    <Compile Include="Supplement\LightInformation.cs" />
-    <Compile Include="Supplement\UIInformation.cs" />
     <Compile Include="ViewModels\DevSectionViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\MenuWindowViewModel.cs" />
@@ -153,6 +149,7 @@
     <Compile Include="Views\MenuWindow.xaml.cs">
       <DependentUpon>MenuWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\UISettings.cs" />
     <Compile Include="Views\WindowPainter.cs" />
   </ItemGroup>
   <ItemGroup>

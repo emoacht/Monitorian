@@ -66,11 +66,6 @@
 					  Source="$(var.Monitorian.TargetDir)" Name="$(var.Monitorian.TargetName).Core.dll" KeyPath="yes"/>
 			</Component>
 
-			<Component Id="SupplementLibrary" Guid="{E2329FC3-7343-4072-AEDD-EC020397080C}">
-				<File Id="SupplementLibrary"
-					  Source="$(var.Monitorian.TargetDir)" Name="$(var.Monitorian.TargetName).Supplement.dll" KeyPath="yes"/>
-			</Component>
-
 			<Component Id="FrameLibrary" Guid="{9BAED8CA-C9C3-4ECD-8D28-289758577A8E}">
 				<File Id="FrameLibrary"
 					  Source="$(var.Monitorian.TargetDir)" Name="ScreenFrame.dll" KeyPath="yes"/>
@@ -223,7 +218,6 @@
 			<ComponentRef Id="MainExecutableConfig"/>
 			<ComponentRef Id="BehaviorsLibrary"/>
 			<ComponentRef Id="CoreLibrary"/>
-			<ComponentRef Id="SupplementLibrary"/>
 			<ComponentRef Id="FrameLibrary"/>
 			<ComponentRef Id="StartupLibrary"/>
 			<ComponentRef Id="VisualManifest"/>

@@ -75,7 +75,8 @@ namespace Monitorian.Core
 				MonitorManager.Options,
 				LanguageService.Options,
 				WindowPainter.Options,
-				BrightnessConnector.Options
+				BrightnessConnector.Options,
+				DisplayInformationWatcher.Options
 			}
 			.SelectMany(x => x);
 

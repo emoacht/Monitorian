@@ -27,14 +27,16 @@ namespace Monitorian.Core.Models.Monitor
 			byte monitorIndex,
 			Rect monitorRect,
 			SafePhysicalMonitorHandle handle,
-			MonitorCapability capability) : base(
+			MonitorCapability capability,
+			Action onDisposed = null) : base(
 				deviceInstanceId: deviceInstanceId,
 				description: description,
 				displayIndex: displayIndex,
 				monitorIndex: monitorIndex,
 				monitorRect: monitorRect,
 				isInternal: false,
-				isReachable: true)
+				isReachable: true,
+				onDisposed: onDisposed)
 		{
 			this._handle = handle ?? throw new ArgumentNullException(nameof(handle));
 			this._capability = capability ?? throw new ArgumentNullException(nameof(capability));

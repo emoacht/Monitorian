@@ -6,16 +6,22 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
+using Monitorian.Core.Helper;
+
 namespace Monitorian.Core.Models.Monitor
 {
-	internal class LightSensor
+	/// <summary>
+	/// A wrapper class of <see cref="Windows.Devices.Sensors.LightSensor"/>
+	/// </summary>
+	/// <remarks>
+	/// <see cref="Windows.Devices.Sensors.LightSensor"/> has been available
+	/// since Windows 8.1 but is officially supported on Windows 10 (version 10.0.10240.0) or greater.
+	/// </remarks>
+	public static class LightSensor
 	{
 		#region COM
 
-		/// <summary>
-		/// A partial wrapper for ISensorManager interface
-		/// </summary>
-		/// <remarks>This interface is defined in SensorsApi.h.</remarks>
+		// From SensorsApi.h
 		[ComImport, Guid("BD77DB67-45A8-42DC-8D00-6DCF15F8377A"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 		private interface ISensorManager
 		{
@@ -35,18 +41,10 @@ namespace Monitorian.Core.Models.Monitor
 				[MarshalAs(UnmanagedType.Interface)] out ISensor ppSensor);
 		}
 
-		/// <summary>
-		/// A wrapper for SensorManager class
-		/// </summary>
-		/// <remarks>This class is defined in SensorsApi.h.</remarks>
 		[ComImport, Guid("77A1C827-FCD2-4689-8915-9D613CC5FA3E"), ClassInterface(ClassInterfaceType.None)]
 		private class SensorManager
 		{ }
 
-		/// <summary>
-		/// A partial wrapper for ISensorCollection interface
-		/// </summary>
-		/// <remarks>This interface is defined in SensorsApi.h.</remarks>
 		[ComImport, Guid("23571E11-E545-4DD8-A337-B89BF44B10DF"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 		private interface ISensorCollection
 		{
@@ -59,10 +57,6 @@ namespace Monitorian.Core.Models.Monitor
 			uint GetCount(out uint pCount);
 		}
 
-		/// <summary>
-		/// A partial wrapper for ISensor interface
-		/// </summary>
-		/// <remarks>This interface is defined in SensorsApi.h.</remarks>
 		[ComImport, Guid("5FA08F80-2657-458E-AF75-46F73FA6AC5C"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 		private interface ISensor
 		{
@@ -84,10 +78,19 @@ namespace Monitorian.Core.Models.Monitor
 
 		#endregion
 
-		private static Guid SENSOR_TYPE_AMBIENT_LIGHT => new("97F115C8-599A-4153-8894-D2D12899918A");
-
+		/// <summary>
+		/// Determines whether an integrated ambient light sensor exists.
+		/// </summary>
+		/// <returns>True if exists</returns>
 		public static bool AmbientLightSensorExists => _ambientLightSensorExists.Value;
-		private static readonly Lazy<bool> _ambientLightSensorExists = new(() => SensorExists(SENSOR_TYPE_AMBIENT_LIGHT));
+		private static readonly Lazy<bool> _ambientLightSensorExists = new(() =>
+		{
+			return (OsVersion.Is10OrGreater)
+				? (Windows.Devices.Sensors.LightSensor.GetDefault() is not null) // WinRT
+				: SensorExists(SENSOR_TYPE_AMBIENT_LIGHT); // COM
+		});
+
+		private static Guid SENSOR_TYPE_AMBIENT_LIGHT => new("97F115C8-599A-4153-8894-D2D12899918A");
 
 		private static bool SensorExists(Guid sensorTypeGuid)
 		{
@@ -137,6 +140,101 @@ namespace Monitorian.Core.Models.Monitor
 				if (sensorCollection is not null)
 					Marshal.FinalReleaseComObject(sensorCollection);
 			}
+		}
+
+		/// <summary>
+		/// Attempts to get ambient light illuminance.
+		/// </summary>
+		/// <param name="illuminance">Illuminance in lux</param>
+		/// <returns>True if successfully gets</returns>
+		public static bool TryGetAmbientLight(out float illuminance)
+		{
+			var reading = Windows.Devices.Sensors.LightSensor.GetDefault()?.GetCurrentReading();
+			if (reading is null)
+			{
+				illuminance = default;
+				return false;
+			}
+			illuminance = reading.IlluminanceInLux;
+			return true;
+		}
+
+		private static Windows.Devices.Sensors.LightSensor _sensor;
+		private static readonly object _lock = new();
+
+		/// <summary>
+		/// Report interval for ambient light sensor
+		/// </summary>
+		public static TimeSpan ReportInterval
+		{
+			get => TimeSpan.FromMilliseconds(_reportInterval);
+			set
+			{
+				lock (_lock)
+				{
+					_reportInterval = 0;
+					if (TimeSpan.Zero < value)
+					{
+						var sensor = _sensor ?? Windows.Devices.Sensors.LightSensor.GetDefault();
+						if (sensor is not null)
+						{
+							_reportInterval = Math.Max(sensor.MinimumReportInterval, (uint)value.TotalMilliseconds);
+						}
+					}
+
+					if (_sensor is null)
+						return;
+
+					_sensor.ReportInterval = _reportInterval; // Setting zero requests the sensor to use its default interval.
+				}
+			}
+		}
+		private static uint _reportInterval = 0;
+
+		/// <summary>
+		/// Occurs when ambient light illuminance has changed.
+		/// </summary>
+		/// <remarks>EventArgs indicates illuminance in lux.</remarks>
+		public static event EventHandler<float> AmbientLightChanged
+		{
+			add
+			{
+				lock (_lock)
+				{
+					_sensor ??= Windows.Devices.Sensors.LightSensor.GetDefault();
+					if (_sensor is null)
+						return;
+
+					_ambientLightChanged += value;
+					if (_ambientLightChanged.GetInvocationList().Length > 1)
+						return;
+
+					_sensor.ReportInterval = _reportInterval;
+					_sensor.ReadingChanged += OnReadingChanged;
+				}
+			}
+			remove
+			{
+				lock (_lock)
+				{
+					if (_sensor is null)
+						return;
+
+					_ambientLightChanged -= value;
+					if (_ambientLightChanged is not null)
+						return;
+
+					_sensor.ReportInterval = 0; // Resetting to the default interval is necessary when ending subscription.
+					_sensor.ReadingChanged -= OnReadingChanged;
+					_sensor = null;
+				}
+			}
+		}
+		private static event EventHandler<float> _ambientLightChanged;
+
+		private static void OnReadingChanged(Windows.Devices.Sensors.LightSensor sender, Windows.Devices.Sensors.LightSensorReadingChangedEventArgs args)
+		{
+			_ambientLightChanged?.Invoke(sender, args.Reading.IlluminanceInLux);
 		}
 	}
 }

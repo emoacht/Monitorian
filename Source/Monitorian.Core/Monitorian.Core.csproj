@@ -67,7 +67,8 @@
     <Compile Include="Models\Monitor\DeviceConversion.cs" />
     <Compile Include="Models\Monitor\DeviceInformation.cs" />
     <Compile Include="Models\Monitor\DisplayConfig.cs" />
-    <Compile Include="Models\Monitor\DisplayMonitor.cs" />
+    <Compile Include="Models\Monitor\DisplayInformationProvider.cs" />
+    <Compile Include="Models\Monitor\DisplayMonitorProvider.cs" />
     <Compile Include="Models\Monitor\Error.cs" />
     <Compile Include="Models\Monitor\IMonitor.cs" />
     <Compile Include="Models\Monitor\LightSensor.cs" />
@@ -80,7 +81,8 @@
     <Compile Include="Models\Monitor\WmiMonitorItem.cs" />
     <Compile Include="Models\Watcher\BrightnessConnector.cs" />
     <Compile Include="Models\Watcher\BrightnessWatcher.cs" />
-    <Compile Include="Models\Watcher\DisplayWatcher.cs" />
+    <Compile Include="Models\Watcher\DisplayInformationWatcher.cs" />
+    <Compile Include="Models\Watcher\DisplaySettingsWatcher.cs" />
     <Compile Include="Models\Watcher\ICountEventArgs.cs" />
     <Compile Include="Models\Watcher\PowerWatcher.cs" />
     <Compile Include="Models\Watcher\SessionWatcher.cs" />
@@ -90,6 +92,7 @@
     <Compile Include="Models\ConsoleService.cs" />
     <Compile Include="Models\DocumentService.cs" />
     <Compile Include="Models\LanguageService.cs" />
+    <Compile Include="Models\Launcher.cs" />
     <Compile Include="Models\Logger.cs" />
     <Compile Include="Models\OperationRecorder.cs" />
     <Compile Include="Models\ProductInfo.cs" />
@@ -148,13 +151,10 @@
     <Compile Include="Views\MenuWindow.xaml.cs">
       <DependentUpon>MenuWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\UISettings.cs" />
     <Compile Include="Views\WindowPainter.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Monitorian.Supplement\Monitorian.Supplement.csproj">
-      <Project>{6e338214-e33c-4014-9bdd-6d914e6c536d}</Project>
-      <Name>Monitorian.Supplement</Name>
-    </ProjectReference>
     <ProjectReference Include="..\ScreenFrame\ScreenFrame.csproj">
       <Project>{edd1c1b9-c241-4d89-8334-0d29f95c2445}</Project>
       <Name>ScreenFrame</Name>
@@ -274,6 +274,9 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.Windows.SDK.Contracts">
+      <Version>10.0.22621.755</Version>
+    </PackageReference>
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf">
       <Version>1.1.39</Version>
     </PackageReference>

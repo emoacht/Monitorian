@@ -11,6 +11,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using Monitorian.Core.Helper;
+using Monitorian.Core.Models.Watcher;
 
 namespace Monitorian.Core.Models.Monitor
 {
@@ -167,7 +168,8 @@ namespace Monitorian.Core.Models.Monitor
 							monitorIndex: basicItem.MonitorIndex,
 							monitorRect: handleItem.MonitorRect,
 							handle: physicalItem.Handle,
-							capability: capability);
+							capability: capability,
+							onDisposed: DisplayInformationWatcher.RegisterMonitor(basicItem.DeviceInstanceId, handleItem.MonitorHandle));
 
 						basicItems.RemoveAt(index);
 						if (basicItems.Count == 0)
@@ -197,7 +199,8 @@ namespace Monitorian.Core.Models.Monitor
 							monitorIndex: basicItem.MonitorIndex,
 							monitorRect: handleItem.MonitorRect,
 							isInternal: basicItem.IsInternal,
-							brightnessLevels: desktopItem.BrightnessLevels);
+							brightnessLevels: desktopItem.BrightnessLevels,
+							onDisposed: DisplayInformationWatcher.RegisterMonitor(basicItem.DeviceInstanceId, handleItem.MonitorHandle));
 
 						basicItems.RemoveAt(index);
 						if (basicItems.Count == 0)

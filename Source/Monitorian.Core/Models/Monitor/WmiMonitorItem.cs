@@ -23,14 +23,16 @@ namespace Monitorian.Core.Models.Monitor
 			byte monitorIndex,
 			Rect monitorRect,
 			bool isInternal,
-			IEnumerable<byte> brightnessLevels) : base(
+			IEnumerable<byte> brightnessLevels,
+			Action onDisposed = null) : base(
 				deviceInstanceId: deviceInstanceId,
 				description: description,
 				displayIndex: displayIndex,
 				monitorIndex: monitorIndex,
 				monitorRect: monitorRect,
 				isInternal: isInternal,
-				isReachable: true)
+				isReachable: true,
+				onDisposed: onDisposed)
 		{
 			this._brightnessLevels = brightnessLevels?.ToArray() ?? throw new ArgumentNullException(nameof(brightnessLevels));
 		}

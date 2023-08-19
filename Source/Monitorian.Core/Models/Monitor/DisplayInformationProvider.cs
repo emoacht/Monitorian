@@ -73,11 +73,16 @@ namespace Monitorian.Core.Models.Monitor
 			public readonly string DeviceInstanceId;
 			public Windows.Graphics.Display.DisplayInformation DisplayInfo { get; private set; }
 			public int Count = 1;
+			public bool IsActive { get; private set; } = true; // default
+
+			private Windows.Graphics.Display.AdvancedColorInfo _currentColorInfo;
+			private readonly object _closeLock = new();
 
 			public Holder(string deviceInstanceId, Windows.Graphics.Display.DisplayInformation displayInfo)
 			{
 				this.DeviceInstanceId = deviceInstanceId;
 				this.DisplayInfo = displayInfo;
+				_currentColorInfo = displayInfo.GetAdvancedColorInfo();
 
 				// An event handler to DisplayInformation's events must be registered within
 				// a callback of DispatcherQueueController.DispatcherQueue.TryEnqueue method.
@@ -86,10 +91,40 @@ namespace Monitorian.Core.Models.Monitor
 
 			private void OnAdvancedColorInfoChanged(Windows.Graphics.Display.DisplayInformation sender, object args)
 			{
+				lock (_closeLock)
+				{
+					var oldColorInfo = _currentColorInfo;
+					_currentColorInfo = sender.GetAdvancedColorInfo();
+
+					if (_currentColorInfo.CurrentAdvancedColorKind != oldColorInfo.CurrentAdvancedColorKind)
+					{
+						// It is observed that in the case of non-primary monitor, after AdvancedColorKind changes,
+						// this event will no longer be fired by existing DisplayInformation. Thus it is necessary
+						// to replace it with new one which is obtained after that change.
+						// In addition, if an event handler is unregistered within a callback of
+						// DispatcherQueueController.DispatcherQueue.TryEnqueue method, ArgumentException will be
+						// thrown saying Delegate to an instance method cannot have null 'this'
+						sender.AdvancedColorInfoChanged -= OnAdvancedColorInfoChanged;
+						IsActive = false;
+					}
+				}
+
 				DisplayInformationProvider.AdvancedColorInfoChanged?.Invoke(sender, DeviceInstanceId);
 			}
 
-			private readonly object _closeLock = new();
+			public void Replace(Windows.Graphics.Display.DisplayInformation displayInfo)
+			{
+				lock (_closeLock)
+				{
+					_currentColorInfo = displayInfo.GetAdvancedColorInfo();
+
+					this.DisplayInfo = displayInfo;
+					this.DisplayInfo.AdvancedColorInfoChanged += OnAdvancedColorInfoChanged;
+					IsActive = true;
+				}
+
+				DisplayInformationProvider.AdvancedColorInfoChanged?.Invoke(displayInfo, DeviceInstanceId);
+			}
 
 			public void Close()
 			{
@@ -117,14 +152,22 @@ namespace Monitorian.Core.Models.Monitor
 			lock (_registerLock)
 			{
 				var holder = _holders.FirstOrDefault(x => x.DeviceInstanceId == deviceInstanceId);
-				if (holder is null)
+				if (holder is not { IsActive: true })
 				{
 					_dispatcherQueueController.DispatcherQueue.TryEnqueue(() =>
 					{
 						var displayInfo = GetForMonitor(monitorHandle);
 						if (displayInfo is not null)
 						{
-							_holders.Add(new Holder(deviceInstanceId, displayInfo));
+							if (holder is null)
+							{
+								_holders.Add(new Holder(deviceInstanceId, displayInfo));
+							}
+							else
+							{
+								holder.Replace(displayInfo);
+								holder.Count++;
+							}
 						}
 					});
 				}

@@ -149,9 +149,9 @@ This function has been tested and worked well in most cases. Therefore, if a mon
 
 1. The cable, converter, or docking station which connects the PC and the monitor is not compatible with DDC/CI. Thunderbolt/USB-C cables are generally compatible but converters aren't. Surface Dock and Surface Dock 2 are known to be compatible. 
 
-1. The monitor or the PC have issues including contact failture in connector. This is particularly the case for old monitors.
+1. The monitor or the PC have issues including contact failure in connector. This is particularly the case for old monitors.
 
-If you think it is worth to report, read [reporting](#reporting) and then create an issue with logs and other relevant information. Please note that an issue which does not include any meaningful clue will be closed.
+If you think it is worth to report, read [reporting](#reporting) and then create an issue with logs and other relevant information.
 
 ## Development
 
@@ -197,7 +197,7 @@ In any case, reporting on the controllability of a monitor MUST include probe.lo
 | Windows 10 SDK (10.0.19041.0)                               | TargetPlatformVersion  |
 
 3. Load the solution by specifying `/Source/Monitorian.sln`. Then go to the solution explorer and right click the solution name and execute `Restore NuGet Packages`.
-4. To open installer project, install [WiX Toolset Build Tools](https://wixtoolset.org/releases/) and [WiX Toolset Visual Studio Extension](https://marketplace.visualstudio.com/items?itemName=WixToolset.WiXToolset). For Visual Studio 2022, Use [latest release](https://github.com/wixtoolset/VisualStudioExtension/releases/tag/v1.0.0.18).
+4. To open installer project, install [WiX Toolset Build Tools](https://wixtoolset.org/releases/) and [WiX Toolset Visual Studio Extension](https://marketplace.visualstudio.com/items?itemName=WixToolset.WiXToolset).
 
 ### Globalization
 

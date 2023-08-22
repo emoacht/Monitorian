@@ -534,11 +534,12 @@ namespace ScreenFrame
 		/// <para>parent: Parent window's identifier</para>
 		/// <para>child: Child window's identifier</para>
 		/// <para>name: Child window's class name</para>
+		/// <para>rect: Child window's rectangle</para>
 		/// </returns>
 		/// <remarks>This method is for research.</remarks>
-		public static IReadOnlyList<(int parent, int child, string name)> GetAllWindows()
+		public static IReadOnlyList<(int parent, int child, string name, Rect rect)> GetAllWindows()
 		{
-			var list = new List<(int parent, int child, string name)>();
+			var list = new List<(int parent, int child, string name, Rect rect)>();
 			int count = 0;
 
 			EnumWindows(
@@ -559,7 +560,12 @@ namespace ScreenFrame
 					int parent = lParam.ToInt32();
 					int child = ++count;
 					var name = buffer.ToString();
-					list.Add((parent, child, name));
+
+					GetWindowRect(
+						windowHandle,
+						out RECT rect);
+
+					list.Add((parent, child, name, rect));
 
 					EnumChildWindows(
 						windowHandle,
@@ -650,6 +656,35 @@ namespace ScreenFrame
 				{
 					windowRect = rect;
 					return true;
+				}
+			}
+			windowRect = default;
+			return false;
+		}
+
+		private static bool TryGetChildWindow(string parentClassName, string childClassName, out IntPtr windowHandle, out Rect windowRect)
+		{
+			windowHandle = FindWindowEx(
+				IntPtr.Zero,
+				IntPtr.Zero,
+				parentClassName,
+				null);
+			if (windowHandle != IntPtr.Zero)
+			{
+				windowHandle = FindWindowEx(
+					windowHandle,
+					IntPtr.Zero,
+					childClassName,
+					null);
+				if (windowHandle != IntPtr.Zero)
+				{
+					if (GetWindowRect(
+						windowHandle,
+						out RECT rect))
+					{
+						windowRect = rect;
+						return true;
+					}
 				}
 			}
 			windowRect = default;
@@ -775,34 +810,26 @@ namespace ScreenFrame
 		}
 
 		/// <summary>
-		/// Attempts to get the rectangle of Start button.
+		/// Attempts to get the rectangle of Start button or ToolBar.
 		/// </summary>
-		/// <param name="buttonRect">Rectangle of Start button</param>
+		/// <param name="buttonRect">Rectangle of Start button or ToolBar</param>
 		/// <returns>True if successfully gets</returns>
 		internal static bool TryGetStartButtonRect(out Rect buttonRect)
 		{
-			var windowHandle = FindWindowEx(
-				IntPtr.Zero,
-				IntPtr.Zero,
-				PrimaryTaskbarWindowClassName,
-				null);
-			if (windowHandle != IntPtr.Zero)
+			// As of Windows 11 10.0.22621.xxx, the traditional window of primary taskbar
+			// (Shell_TrayWnd) no longer indicates the actual height of primary taskbar. Instead,
+			// other windows (Start, ReBarWindow32) can be used to get the actual height.
+			if (TryGetChildWindow(PrimaryTaskbarWindowClassName, "Start", out _, out Rect windowRect)
+				&& IsValid(windowRect))
 			{
-				windowHandle = FindWindowEx(
-					windowHandle,
-					IntPtr.Zero,
-					"Start",
-					null);
-				if (windowHandle != IntPtr.Zero)
-				{
-					if (GetWindowRect(
-						windowHandle,
-						out RECT rect))
-					{
-						buttonRect = rect;
-						return true;
-					}
-				}
+				buttonRect = windowRect;
+				return true;
+			}
+			if (TryGetChildWindow(PrimaryTaskbarWindowClassName, "ReBarWindow32", out _, out windowRect)
+				&& IsValid(windowRect))
+			{
+				buttonRect = windowRect;
+				return true;
 			}
 			buttonRect = default;
 			return false;
@@ -821,7 +848,7 @@ namespace ScreenFrame
 		/// </remarks>
 		internal static bool TryGetOverflowAreaRect(out Rect overflowAreaRect, out bool isMarginIncluded)
 		{
-			// As of Windows 11 10.0.22623.xxx, the traditional window of overflow area
+			// As of Windows 11 10.0.22621.xxx, the traditional window of overflow area
 			// (NotifyIconOverflowWindow) still exists but seems no longer used. Instead, another
 			// window (TopLevelWindowForOverflowXamlIsland) hosts overflow area. Its rectangle
 			// includes margin surrounding it.
@@ -842,8 +869,50 @@ namespace ScreenFrame
 			overflowAreaRect = default;
 			isMarginIncluded = false;
 			return false;
+		}
 
-			static bool IsValid(Rect rect) => rect is { Width: > 0, Height: > 0 };
+		private static bool IsValid(Rect rect) => rect is { Width: > 0, Height: > 0 };
+
+		/// <summary>
+		/// Attempts to get the information on primary taskbar from <see cref="System.Windows.SystemParameters"/>.
+		/// </summary>
+		/// <param name="taskbarRect">Primary taskbar rectange</param>
+		/// <param name="taskbarAlignment">Primary taskbar alignment</param>
+		/// <returns>True if successfully gets</returns>
+		/// <remarks>
+		/// If primary taskbar is set to auto hide, this method will fail even when primary taskbar
+		/// is shown temporarily.
+		/// </remarks>
+		internal static bool TryGetSystemPrimaryTaskbar(out Rect taskbarRect, out TaskbarAlignment taskbarAlignment)
+		{
+			var wa = SystemParameters.WorkArea;
+			var gapWidth = SystemParameters.PrimaryScreenWidth - wa.Width;
+			var gapHeight = SystemParameters.PrimaryScreenHeight - wa.Height;
+
+			(taskbarRect, taskbarAlignment) = (wa.X, wa.Y, gapWidth, gapHeight) switch
+			{
+				( > 0, 0, > 0, 0) => (Create(0, 0, gapWidth, wa.Height), TaskbarAlignment.Left),
+				(0, > 0, 0, > 0) => (Create(0, 0, wa.Width, gapHeight), TaskbarAlignment.Top),
+				(0, 0, > 0, 0) => (Create(wa.Width, 0, gapWidth, wa.Height), TaskbarAlignment.Right),
+				(0, 0, 0, > 0) => (Create(0, wa.Height, wa.Width, gapHeight), TaskbarAlignment.Bottom),
+				_ => default // Auto hide
+			};
+			return (taskbarAlignment != TaskbarAlignment.None);
+
+			static Rect Create(double x, double y, double width, double height)
+			{
+				var monitorHandle = MonitorFromWindow(
+					IntPtr.Zero,
+					MONITOR_DEFAULTTO.MONITOR_DEFAULTTOPRIMARY);
+
+				var dpi = VisualTreeHelperAddition.GetDpiWindow(monitorHandle);
+
+				return new Rect(
+					x * dpi.DpiScaleX,
+					y * dpi.DpiScaleY,
+					width * dpi.DpiScaleX,
+					height * dpi.DpiScaleY);
+			}
 		}
 
 		#endregion

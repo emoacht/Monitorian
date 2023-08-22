@@ -21,7 +21,8 @@ namespace Monitorian.Core.Models.Monitor
 				monitorIndex: monitorIndex,
 				monitorRect: Rect.Empty,
 				isInternal: isInternal,
-				isReachable: false)
+				isReachable: false,
+				onDisposed: null)
 		{
 		}
 

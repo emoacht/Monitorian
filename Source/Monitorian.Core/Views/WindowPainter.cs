@@ -7,7 +7,6 @@ using System.Windows;
 using System.Windows.Media;
 
 using Monitorian.Core.Helper;
-using Monitorian.Supplement;
 using ScreenFrame.Painter;
 
 namespace Monitorian.Core.Views
@@ -210,8 +209,8 @@ namespace Monitorian.Core.Views
 
 		protected override void ChangeAccentColors()
 		{
-			_staticColorContainer.Value.Color = UIInformation.GetAccentColor();
-			_mouseOverColorContainer.Value.Color = UIInformation.GetAccentLightColor();
+			_staticColorContainer.Value.Color = UISettings.GetAccentColor();
+			_mouseOverColorContainer.Value.Color = UISettings.GetAccentLightColor();
 			_pressedColorContainer.Value.Color = _mouseOverColorContainer.Value.Color;
 		}
 

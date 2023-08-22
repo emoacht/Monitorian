@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-	<Product Id="*" Name="Monitorian" Manufacturer="emoacht" Version="4.4.6"
+	<Product Id="*" Name="Monitorian" Manufacturer="emoacht" Version="4.4.8"
 			 Language="1033" Codepage="1252" UpgradeCode="{81A4D148-75D3-462E-938D-8C208FB48E3C}">
 		<Package Id="*" InstallerVersion="500" Compressed="yes"
 				 InstallScope="perMachine" InstallPrivileges="elevated"
@@ -64,11 +64,6 @@
 			<Component Id="CoreLibrary" Guid="{1E9CB31F-C53B-4E83-B593-F30ADC7468CB}">
 				<File Id="CoreLibrary"
 					  Source="$(var.Monitorian.TargetDir)" Name="$(var.Monitorian.TargetName).Core.dll" KeyPath="yes"/>
-			</Component>
-
-			<Component Id="SupplementLibrary" Guid="{E2329FC3-7343-4072-AEDD-EC020397080C}">
-				<File Id="SupplementLibrary"
-					  Source="$(var.Monitorian.TargetDir)" Name="$(var.Monitorian.TargetName).Supplement.dll" KeyPath="yes"/>
 			</Component>
 
 			<Component Id="FrameLibrary" Guid="{9BAED8CA-C9C3-4ECD-8D28-289758577A8E}">
@@ -223,7 +218,6 @@
 			<ComponentRef Id="MainExecutableConfig"/>
 			<ComponentRef Id="BehaviorsLibrary"/>
 			<ComponentRef Id="CoreLibrary"/>
-			<ComponentRef Id="SupplementLibrary"/>
 			<ComponentRef Id="FrameLibrary"/>
 			<ComponentRef Id="StartupLibrary"/>
 			<ComponentRef Id="VisualManifest"/>

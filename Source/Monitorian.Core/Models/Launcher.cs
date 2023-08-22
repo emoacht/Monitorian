@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Monitorian.Supplement
+namespace Monitorian.Core.Models
 {
 	/// <summary>
 	/// A wrapper class of <see cref="Windows.System.Launcher"/>

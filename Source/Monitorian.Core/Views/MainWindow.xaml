@@ -676,6 +676,7 @@
 													 Margin="12,0,4,0" VerticalAlignment="Center"
 													 Style="{StaticResource MainSliderHorizontal}"
 													 Minimum="0" Maximum="100"
+													 SmallChange="1"
 													 Value="{Binding Brightness, Mode=TwoWay, Delay=50}"
 													 DefersUpdateSource="{Binding Settings.DefersChange, Mode=OneWay}"
 													 IsShadowVisible="{Binding Settings.ShowsAdjusted, Mode=OneWay}"
@@ -723,6 +724,7 @@
 													 Width="100" Margin="8,0,4,0" VerticalAlignment="Center"
 													 Style="{StaticResource SubSliderHorizontal}"
 													 Minimum="0" Maximum="100"
+													 SmallChange="1"
 													 Value="{Binding Contrast, Mode=TwoWay, Delay=50}"
 													 DefersUpdateSource="{Binding Settings.DefersChange, Mode=OneWay}"
 													 Visibility="{Binding IsContrastChanging, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverterKey}}">

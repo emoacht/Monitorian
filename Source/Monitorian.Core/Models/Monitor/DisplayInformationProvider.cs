@@ -103,7 +103,7 @@ namespace Monitorian.Core.Models.Monitor
 						// to replace it with new one which is obtained after that change.
 						// In addition, if an event handler is unregistered within a callback of
 						// DispatcherQueueController.DispatcherQueue.TryEnqueue method, ArgumentException will be
-						// thrown saying Delegate to an instance method cannot have null 'this'
+						// thrown with a message: Delegate to an instance method cannot have null 'this'
 						sender.AdvancedColorInfoChanged -= OnAdvancedColorInfoChanged;
 						IsActive = false;
 					}

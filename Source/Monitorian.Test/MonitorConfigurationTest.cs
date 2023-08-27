@@ -284,6 +284,19 @@ namespace Monitorian.Test
 		}
 
 		[TestMethod]
+		public void TestMonitorCapability_A2_2()
+		{
+			// Acer XV272U KV
+			var source = @"(prot(monitor)type(LCD)model(ACER XV272UKV)cmds(01 02 03 07 0C E3 F3)vcp(04 10 12 14(05 06 08 0B) 16 18 1A 59 5A 5B 5C 5D 5E 60(0F 11 12) 62 6C 6E 70 8D 9B 9C 9D 9E 9F A0 D6 E0(00 04 05) E1(00 01 02) E2(00 01 02 03 05 06 07 0B 20 21 22) E3 E4 E5 E7(00 01 02) E8(00 01 02 03 04)) mswhql(1)asset_eep(40)mccs_ver(2.2))";
+			var (success, vcpCodes) = TestExtractVcpCodes(source);
+			Assert.IsTrue(success);
+			Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Luminance));
+			Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Contrast));
+			Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.SpeakerVolume));
+			Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Temperature, 5, 6, 8));
+		}
+
+		[TestMethod]
 		public void TestMonitorCapability_A3_1()
 		{
 			// AOC G2460PG

@@ -37,6 +37,19 @@ namespace Monitorian.Core.Views.Controls
 
 		#region Range
 
+		protected override void OnPreviewKeyDown(KeyEventArgs e)
+		{
+			switch (e.Key)
+			{
+				case Key.Left when (this.Value <= this.SelectionStart):
+				case Key.Right when (this.Value >= this.SelectionEnd):
+					// Stop movement by left or right arrow key.
+					e.Handled = true;
+					break;
+			}
+			base.OnPreviewKeyDown(e);
+		}
+
 		/// <summary>
 		/// Attempts to get the current level (from 0 to 1) within selected range. 
 		/// </summary>

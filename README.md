@@ -56,7 +56,7 @@ Additional languages:
    ```
 
  * Other:<br>
-:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/4.4.9-Installer/MonitorianInstaller449.zip)
+:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/4.4.12-Installer/MonitorianInstaller4412.zip)
 
 ## Install/Uninstall
 

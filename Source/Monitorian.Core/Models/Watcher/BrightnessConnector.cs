@@ -36,7 +36,7 @@ namespace Monitorian.Core.Models.Watcher
 			None = 0,
 
 			/// <summary>
-			/// Rrequest is OK.
+			/// Request is OK.
 			/// </summary>
 			OK,
 
@@ -85,7 +85,7 @@ namespace Monitorian.Core.Models.Watcher
 		/// <summary>
 		/// Interval in seconds
 		/// </summary>
-		public float Interval { get; set; } = 0.1F;
+		public float Interval { get; set; } = 0.5F;
 
 		#endregion
 
@@ -131,13 +131,13 @@ namespace Monitorian.Core.Models.Watcher
 		/// <param name="onBrightnessChanged">Action to be invoked when brightness changed</param>
 		/// <param name="onError">Action to be invoked when error occurred</param>
 		/// <param name="onContinue">Action to be invoked when continuation of AppService is determined</param>
-		public virtual async Task InitiateAsync(Action<int> onBrightnessChanged, Action<string> onError, Func<bool> onContinue)
+		public virtual Task InitiateAsync(Action<int> onBrightnessChanged, Action<string> onError, Func<bool> onContinue)
 		{
 			this._onBrightnessChanged = onBrightnessChanged ?? throw new ArgumentNullException(nameof(onBrightnessChanged));
 			this._onError = onError ?? throw new ArgumentNullException(nameof(onError));
 			this._onContinue = onContinue ?? throw new ArgumentNullException(nameof(onContinue));
 
-			await ConnectAsync(true);
+			return ConnectAsync(true);
 		}
 
 		private AppService.AppServiceConnection _appServiceConnection;
@@ -169,11 +169,14 @@ namespace Monitorian.Core.Models.Watcher
 					_appServiceConnection.ServiceClosed += OnAppServiceConnectionServiceClosed;
 					return true;
 
-				default:
+				case not AppService.AppServiceConnectionStatus.AppUnavailable:
+					// AppServiceConnectionStatus.AppUnavailable means temporarily unavailable and
+					// thus it is excluded because AppServiceConnection can be available later.
 					// https://learn.microsoft.com/en-us/uwp/api/windows.applicationmodel.appservice.appserviceconnectionstatus
-					if (status is not AppService.AppServiceConnectionStatus.AppUnavailable)
-						_isAvailable = false;
+					_isAvailable = false;
+					goto default;
 
+				default:
 					_onError?.Invoke($"Failed: {status}");
 					return false;
 			}
@@ -235,17 +238,13 @@ namespace Monitorian.Core.Models.Watcher
 
 		private async void OnAppServiceConnectionServiceClosed(AppService.AppServiceConnection sender, AppService.AppServiceClosedEventArgs args)
 		{
-			// AppService closes when around 25 seconds has elapsed after it opened.
+			// AppService closes after 25 seconds has elapsed. It is explained as that AppService
+			// is executed as background task.
 			Debug.WriteLine("ServiceClosed");
 			ReleaseAppServiceConnection();
 
-			if (_isMultiple)
-			{
-				await Task.Delay(TimeSpan.FromSeconds(Interval));
-
-				if (_onContinue.Invoke())
-					await ConnectAsync(true);
-			}
+			if (_onContinue.Invoke())
+				await ConnectAsync(_isMultiple);
 		}
 
 		private void ReleaseAppServiceConnection()

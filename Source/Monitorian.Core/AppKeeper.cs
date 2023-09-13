@@ -8,7 +8,6 @@ using System.Windows.Threading;
 
 using Monitorian.Core.Models;
 using Monitorian.Core.Models.Monitor;
-using Monitorian.Core.Models.Watcher;
 using Monitorian.Core.Views;
 using StartupAgency;
 
@@ -74,9 +73,7 @@ namespace Monitorian.Core
 				StartupAgent.Options,
 				MonitorManager.Options,
 				LanguageService.Options,
-				WindowPainter.Options,
-				BrightnessConnector.Options,
-				DisplayInformationWatcher.Options
+				WindowPainter.Options
 			}
 			.SelectMany(x => x);
 

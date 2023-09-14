@@ -90,6 +90,19 @@ namespace Monitorian.Core.Models.Monitor
 		// AC/DC power source derived from winnt.h
 		private static readonly Guid ACDC_POWER_SOURCE = new("5d3e9a59-e9d5-4b00-a6bd-ff34ff516548");
 
+		/// <summary>
+		/// Options
+		/// </summary>
+		public static IReadOnlyCollection<string> Options => new[] { PowerBindOption };
+
+		private const string PowerBindOption = "/powerbind";
+
+		public static bool IsBound => _isBound.Value;
+		private static readonly Lazy<bool> _isBound = new(() =>
+		{
+			return AppKeeper.StandardArguments.Select(x => x.ToLower()).Contains(PowerBindOption);
+		});
+
 		public static Guid GetActiveScheme()
 		{
 			if (PowerGetActiveScheme(
@@ -330,7 +343,7 @@ namespace Monitorian.Core.Models.Monitor
 
 			var schemeGuid = GetActiveScheme();
 
-			if (isOnline.Value)
+			if (isOnline.Value || IsBound)
 			{
 				if (PowerWriteACValueIndex(
 					IntPtr.Zero,
@@ -343,7 +356,7 @@ namespace Monitorian.Core.Models.Monitor
 					return false;
 				}
 			}
-			else
+			if (!isOnline.Value || IsBound)
 			{
 				if (PowerWriteDCValueIndex(
 					IntPtr.Zero,

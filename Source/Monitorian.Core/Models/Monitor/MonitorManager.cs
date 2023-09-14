@@ -43,9 +43,13 @@ namespace Monitorian.Core.Models.Monitor
 
 		#endregion
 
-		#region Preclusion/Preclearance
+		#region Options
 
-		public static IReadOnlyCollection<string> Options => new[] { PrecludeOption, PreclearOption };
+		public static IReadOnlyCollection<string> Options => (new[] { PrecludeOption, PreclearOption })
+			.Concat(PowerManagement.Options)
+			.Concat(BrightnessConnector.Options)
+			.Concat(DisplayInformationWatcher.Options)
+			.ToArray();
 
 		private const string PrecludeOption = "/preclude";
 		private const string PreclearOption = "/preclear";

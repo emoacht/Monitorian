@@ -104,16 +104,16 @@ namespace Monitorian.Core.Models.Watcher
 			return package?.Id.FamilyName;
 		}
 
-		public virtual bool IsEnabled => _isSpecified && _isAvailable && !string.IsNullOrEmpty(_familyName.Value);
-		private readonly bool _isSpecified;
-		private bool _isAvailable = true; // default
-
 		/// <summary>
 		/// Options
 		/// </summary>
 		public static IReadOnlyCollection<string> Options => new[] { ConnectOption };
 
 		private const string ConnectOption = "/connect";
+
+		public virtual bool IsEnabled => _isSpecified && _isAvailable && !string.IsNullOrEmpty(_familyName.Value);
+		private readonly bool _isSpecified;
+		private bool _isAvailable = true; // default
 
 		public BrightnessConnector()
 		{

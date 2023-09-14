@@ -46,6 +46,7 @@ namespace Monitorian.Core.Models.Monitor
 		#region Options
 
 		public static IReadOnlyCollection<string> Options => (new[] { PrecludeOption, PreclearOption })
+			.Concat(PowerManagement.Options)
 			.Concat(BrightnessConnector.Options)
 			.Concat(DisplayInformationWatcher.Options)
 			.ToArray();

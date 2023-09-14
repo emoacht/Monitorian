@@ -249,8 +249,9 @@ namespace Monitorian.Core.Models.Watcher
 
 		private void ReleaseAppServiceConnection()
 		{
-			// Calling this method itself causes System.TypeLoadException due to AppServiceConnection
-			// on Windows 8.1 or lesser regardless of the procedure in this method.
+			// Referring Windows.ApplicationModel.AppService.AppServiceConnection itself makes
+			// this method to cause System.TypeLoadException on Windows 8.1 or lesser regardless of
+			// the procedure in this method.
 
 			if (_appServiceConnection is null)
 				return;

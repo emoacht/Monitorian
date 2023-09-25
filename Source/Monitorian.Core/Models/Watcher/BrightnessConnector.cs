@@ -177,7 +177,7 @@ namespace Monitorian.Core.Models.Watcher
 					goto default;
 
 				default:
-					_onError?.Invoke($"Failed: {status}");
+					_onError?.Invoke($"Failed to open AppService connection: {status}");
 					return false;
 			}
 		}
@@ -220,12 +220,12 @@ namespace Monitorian.Core.Models.Watcher
 					{
 						_onBrightnessChanged?.Invoke(brightness);
 					}
-					Debug.WriteLine($"Succeeded: {response.Status} | {result}");
+					Debug.WriteLine($"Succeeded to perform AppService connection: {response.Status} | {result}");
 					return true;
 
 				default:
-					Debug.WriteLine($"Failed: {response.Status} | {result}");
-					_onError?.Invoke($"Failed: {response.Status} | {result}");
+					Debug.WriteLine($"Failed to perform AppService connection: {response.Status} | {result}");
+					_onError?.Invoke($"Failed to perform AppService connection: {response.Status} | {result}");
 					return false;
 			}
 		}
@@ -240,7 +240,7 @@ namespace Monitorian.Core.Models.Watcher
 		{
 			// AppService closes after 25 seconds has elapsed. It is explained as that AppService
 			// is executed as background task.
-			Debug.WriteLine("ServiceClosed");
+			Debug.WriteLine("Closed AppService connection");
 			ReleaseAppServiceConnection();
 
 			if (_onContinue.Invoke())
@@ -265,7 +265,7 @@ namespace Monitorian.Core.Models.Watcher
 			}
 			catch (Exception ex)
 			{
-				_onError?.Invoke($"Failed: {ex.Message}");
+				_onError?.Invoke($"Failed to release AppService connection: {ex.Message}");
 			}
 		}
 

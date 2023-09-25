@@ -71,7 +71,6 @@
     <Compile Include="Models\Monitor\DisplayMonitorProvider.cs" />
     <Compile Include="Models\Monitor\Error.cs" />
     <Compile Include="Models\Monitor\IMonitor.cs" />
-    <Compile Include="Models\Monitor\LightSensor.cs" />
     <Compile Include="Models\Monitor\MonitorConfiguration.cs" />
     <Compile Include="Models\Monitor\MonitorItem.cs" />
     <Compile Include="Models\Monitor\MonitorManager.cs" />
@@ -79,6 +78,7 @@
     <Compile Include="Models\Monitor\PowerManagement.cs" />
     <Compile Include="Models\Monitor\UnreachableMonitorItem.cs" />
     <Compile Include="Models\Monitor\WmiMonitorItem.cs" />
+    <Compile Include="Models\Sensor\LightSensor.cs" />
     <Compile Include="Models\Watcher\BrightnessConnector.cs" />
     <Compile Include="Models\Watcher\BrightnessWatcher.cs" />
     <Compile Include="Models\Watcher\DisplayInformationWatcher.cs" />

@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Win32;
 
+using Monitorian.Core.Models.Sensor;
 using Monitorian.Core.Models.Watcher;
 
 namespace Monitorian.Core.Models.Monitor

@@ -1,44 +1,37 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 
 using Monitorian.Core;
 
-namespace Monitorian
+namespace Monitorian;
+
+public partial class App : Application
 {
-	public partial class App : Application
+	private AppKeeper _keeper;
+	private AppController _controller;
+
+	protected override async void OnStartup(StartupEventArgs e)
 	{
-		private AppKeeper _keeper;
-		private AppController _controller;
+		base.OnStartup(e);
 
-		protected override async void OnStartup(StartupEventArgs e)
+		_keeper = new AppKeeper();
+		if (!await _keeper.StartAsync(e))
 		{
-			base.OnStartup(e);
-
-			_keeper = new AppKeeper();
-			if (!await _keeper.StartAsync(e))
-			{
-				this.Shutdown(0); // This shutdown is expected behavior.
-				return;
-			}
-
-			_controller = new AppController(_keeper);
-			await _controller.InitiateAsync();
-
-			//this.MainWindow = new MainWindow();
-			//this.MainWindow.Show();
+			this.Shutdown(0); // This shutdown is expected behavior.
+			return;
 		}
 
-		protected override void OnExit(ExitEventArgs e)
-		{
-			_controller?.End();
-			_keeper.End();
+		_controller = new AppController(_keeper);
+		await _controller.InitiateAsync();
 
-			base.OnExit(e);
-		}
+		//this.MainWindow = new MainWindow();
+		//this.MainWindow.Show();
+	}
+
+	protected override void OnExit(ExitEventArgs e)
+	{
+		_controller?.End();
+		_keeper.End();
+
+		base.OnExit(e);
 	}
 }

@@ -1,153 +1,150 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 
-namespace Monitorian.Core.Helper
+namespace Monitorian.Core.Helper;
+
+/// <summary>
+/// Rx Throttle like operator
+/// </summary>
+public class Throttle
 {
-	/// <summary>
-	/// Rx Throttle like operator
-	/// </summary>
-	public class Throttle
+	protected readonly SemaphoreSlim _semaphore = new(1, 1);
+	protected readonly DispatcherTimer _timer;
+	protected readonly Action _action;
+
+	public Throttle(TimeSpan dueTime, Action action)
 	{
-		protected readonly SemaphoreSlim _semaphore = new(1, 1);
-		protected readonly DispatcherTimer _timer;
-		protected readonly Action _action;
+		if (dueTime <= TimeSpan.Zero)
+			throw new ArgumentOutOfRangeException(nameof(dueTime), dueTime, "The time must be positive.");
 
-		public Throttle(TimeSpan dueTime, Action action)
+		_timer = new(
+			interval: dueTime,
+			priority: DispatcherPriority.Background,
+			callback: OnTick,
+			dispatcher: Application.Current.Dispatcher);
+
+		this._action = action;
+	}
+
+	private async void OnTick(object sender, EventArgs e)
+	{
+		try
 		{
-			if (dueTime <= TimeSpan.Zero)
-				throw new ArgumentOutOfRangeException(nameof(dueTime), dueTime, "The time must be positive.");
+			await _semaphore.WaitAsync();
 
-			_timer = new(
-				interval: dueTime,
-				priority: DispatcherPriority.Background,
-				callback: OnTick,
-				dispatcher: Application.Current.Dispatcher);
+			if (!_timer.IsEnabled)
+				return;
 
-			this._action = action;
+			_timer.Stop();
+			_action?.Invoke();
 		}
-
-		private async void OnTick(object sender, EventArgs e)
+		finally
 		{
-			try
-			{
-				await _semaphore.WaitAsync();
-
-				if (!_timer.IsEnabled)
-					return;
-
-				_timer.Stop();
-				_action?.Invoke();
-			}
-			finally
-			{
-				_semaphore.Release();
-			}
-		}
-
-		public virtual async Task PushAsync()
-		{
-			try
-			{
-				await _semaphore.WaitAsync();
-
-				_timer.Stop();
-				_timer.Start();
-			}
-			finally
-			{
-				_semaphore.Release();
-			}
+			_semaphore.Release();
 		}
 	}
 
-	/// <summary>
-	/// Rx Throttle like operator which holds generic objects in a queue
-	/// </summary>
-	public class Throttle<T>
+	public virtual async Task PushAsync()
 	{
-		protected readonly SemaphoreSlim _semaphore = new(1, 1);
-		protected readonly DispatcherTimer _timer;
-		protected readonly Queue<T> _queue = new();
-		protected readonly Action<T[]> _action;
-
-		public Throttle(TimeSpan dueTime, Action<T[]> action)
+		try
 		{
-			if (dueTime <= TimeSpan.Zero)
-				throw new ArgumentOutOfRangeException(nameof(dueTime), dueTime, "The time must be positive.");
+			await _semaphore.WaitAsync();
 
-			_timer = new(
-				interval: dueTime,
-				priority: DispatcherPriority.Background,
-				callback: OnTick,
-				dispatcher: Application.Current.Dispatcher);
-
-			this._action = action;
+			_timer.Stop();
+			_timer.Start();
 		}
-
-		private async void OnTick(object sender, EventArgs e)
+		finally
 		{
-			try
-			{
-				await _semaphore.WaitAsync();
-
-				if (!_timer.IsEnabled)
-					return;
-
-				_timer.Stop();
-				_action?.Invoke(_queue.ToArray());
-				_queue.Clear();
-
-			}
-			finally
-			{
-				_semaphore.Release();
-			}
+			_semaphore.Release();
 		}
+	}
+}
 
-		public virtual async Task PushAsync(T item)
+/// <summary>
+/// Rx Throttle like operator which holds generic objects in a queue
+/// </summary>
+public class Throttle<T>
+{
+	protected readonly SemaphoreSlim _semaphore = new(1, 1);
+	protected readonly DispatcherTimer _timer;
+	protected readonly Queue<T> _queue = new();
+	protected readonly Action<T[]> _action;
+
+	public Throttle(TimeSpan dueTime, Action<T[]> action)
+	{
+		if (dueTime <= TimeSpan.Zero)
+			throw new ArgumentOutOfRangeException(nameof(dueTime), dueTime, "The time must be positive.");
+
+		_timer = new(
+			interval: dueTime,
+			priority: DispatcherPriority.Background,
+			callback: OnTick,
+			dispatcher: Application.Current.Dispatcher);
+
+		this._action = action;
+	}
+
+	private async void OnTick(object sender, EventArgs e)
+	{
+		try
 		{
-			try
-			{
-				await _semaphore.WaitAsync();
+			await _semaphore.WaitAsync();
 
-				_timer.Stop();
-				_queue.Enqueue(item);
-				_timer.Start();
-			}
-			finally
-			{
-				_semaphore.Release();
-			}
+			if (!_timer.IsEnabled)
+				return;
+
+			_timer.Stop();
+			_action?.Invoke(_queue.ToArray());
+			_queue.Clear();
+
+		}
+		finally
+		{
+			_semaphore.Release();
 		}
 	}
 
-	/// <summary>
-	/// Rx Sample like operator
-	/// </summary>
-	public class Sample : Throttle
+	public virtual async Task PushAsync(T item)
 	{
-		public Sample(TimeSpan dueTime, Action action) : base(dueTime, action)
-		{ }
-
-		public override async Task PushAsync()
+		try
 		{
-			try
-			{
-				await _semaphore.WaitAsync();
+			await _semaphore.WaitAsync();
 
-				if (!_timer.IsEnabled)
-					_timer.Start();
-			}
-			finally
-			{
-				_semaphore.Release();
-			}
+			_timer.Stop();
+			_queue.Enqueue(item);
+			_timer.Start();
+		}
+		finally
+		{
+			_semaphore.Release();
+		}
+	}
+}
+
+/// <summary>
+/// Rx Sample like operator
+/// </summary>
+public class Sample : Throttle
+{
+	public Sample(TimeSpan dueTime, Action action) : base(dueTime, action)
+	{ }
+
+	public override async Task PushAsync()
+	{
+		try
+		{
+			await _semaphore.WaitAsync();
+
+			if (!_timer.IsEnabled)
+				_timer.Start();
+		}
+		finally
+		{
+			_semaphore.Release();
 		}
 	}
 }

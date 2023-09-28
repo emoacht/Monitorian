@@ -1,61 +1,58 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Monitorian.Core.Models
+namespace Monitorian.Core.Models;
+
+internal class DocumentService
 {
-	internal class DocumentService
+	public static string ReadEmbeddedFile(string fileName)
 	{
-		public static string ReadEmbeddedFile(string fileName)
+		var assembly = Assembly.GetEntryAssembly();
+
+		try
 		{
-			var assembly = Assembly.GetEntryAssembly();
-
-			try
-			{
-				var resourceName = assembly.GetManifestResourceNames().FirstOrDefault(x => x.EndsWith(fileName));
-				if (resourceName is null)
-					return null;
-
-				using var s = assembly.GetManifestResourceStream(resourceName);
-				using var sr = new StreamReader(s);
-				return sr.ReadToEnd();
-			}
-			catch (Exception ex)
-			{
-				Debug.WriteLine("Failed to read an embedded file." + Environment.NewLine
-					+ ex);
+			var resourceName = assembly.GetManifestResourceNames().FirstOrDefault(x => x.EndsWith(fileName));
+			if (resourceName is null)
 				return null;
-			}
+
+			using var s = assembly.GetManifestResourceStream(resourceName);
+			using var sr = new StreamReader(s);
+			return sr.ReadToEnd();
 		}
-
-		public static string BuildHtml(string fileName, string title, string body)
+		catch (Exception ex)
 		{
-			if (string.IsNullOrWhiteSpace(title) &&
-				!string.IsNullOrWhiteSpace(fileName))
-				title = Path.GetFileNameWithoutExtension(fileName);
+			Debug.WriteLine("Failed to read an embedded file." + Environment.NewLine
+				+ ex);
+			return null;
+		}
+	}
 
-			body = body?
-				.Split(new[] { "\r\n\r\n", "\n\n" /* two consecutive line breaks */ }, StringSplitOptions.RemoveEmptyEntries)
-				.Select(x =>
+	public static string BuildHtml(string fileName, string title, string body)
+	{
+		if (string.IsNullOrWhiteSpace(title) &&
+			!string.IsNullOrWhiteSpace(fileName))
+			title = Path.GetFileNameWithoutExtension(fileName);
+
+		body = body?
+			.Split(new[] { "\r\n\r\n", "\n\n" /* two consecutive line breaks */ }, StringSplitOptions.RemoveEmptyEntries)
+			.Select(x =>
+			{
+				var array = x.Split(Array.Empty<char>(), 2, StringSplitOptions.RemoveEmptyEntries);
+				var (tag, content) = array.First() switch
 				{
-					var array = x.Split(Array.Empty<char>(), 2, StringSplitOptions.RemoveEmptyEntries);
-					var (tag, content) = array.First() switch
-					{
-						"#" => ("h1", array.Last()),
-						"##" => ("h2", array.Last()),
-						"###" => ("h3", array.Last()),
-						_ => ("p", x)
-					};
-					return $"<{tag}>{content}</{tag}>";
-				})
-				.Aggregate((w, n) => $"{w}\r\n{n}");
+					"#" => ("h1", array.Last()),
+					"##" => ("h2", array.Last()),
+					"###" => ("h3", array.Last()),
+					_ => ("p", x)
+				};
+				return $"<{tag}>{content}</{tag}>";
+			})
+			.Aggregate((w, n) => $"{w}\r\n{n}");
 
-			return $@"<!DOCTYPE html>
+		return $@"<!DOCTYPE html>
 <html>
 <head>
 <meta charset=""utf-8""/>
@@ -68,6 +65,5 @@ namespace Monitorian.Core.Models
 {body}
 </body>
 </html>";
-		}
 	}
 }

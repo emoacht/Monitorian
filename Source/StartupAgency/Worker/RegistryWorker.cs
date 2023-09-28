@@ -1,71 +1,67 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Win32;
 
-namespace StartupAgency.Worker
+namespace StartupAgency.Worker;
+
+/// <summary>
+/// Registry worker
+/// </summary>
+internal class RegistryWorker : IStartupWorker
 {
-	/// <summary>
-	/// Registry worker
-	/// </summary>
-	internal class RegistryWorker : IStartupWorker
+	private const string Run = @"Software\Microsoft\Windows\CurrentVersion\Run"; // HKCU
+	private const string Option = "/startup";
+
+	private readonly string _name;
+	private readonly string _pathWithOption;
+
+	public RegistryWorker(string name, string path)
 	{
-		private const string Run = @"Software\Microsoft\Windows\CurrentVersion\Run"; // HKCU
-		private const string Option = "/startup";
+		if (string.IsNullOrWhiteSpace(name))
+			throw new ArgumentNullException(nameof(name));
+		if (string.IsNullOrWhiteSpace(path))
+			throw new ArgumentNullException(nameof(path));
 
-		private readonly string _name;
-		private readonly string _pathWithOption;
+		this._name = name;
+		this._pathWithOption = $"{path} {Option}";
+	}
 
-		public RegistryWorker(string name, string path)
+	public bool IsStartedOnSignIn()
+	{
+		return Environment.GetCommandLineArgs().Skip(1).Contains(Option);
+	}
+
+	public bool CanRegister() => true;
+
+	public bool IsRegistered()
+	{
+		using (var key = Registry.CurrentUser.OpenSubKey(Run, false))
 		{
-			if (string.IsNullOrWhiteSpace(name))
-				throw new ArgumentNullException(nameof(name));
-			if (string.IsNullOrWhiteSpace(path))
-				throw new ArgumentNullException(nameof(path));
-
-			this._name = name;
-			this._pathWithOption = $"{path} {Option}";
+			var existingValue = key.GetValue(_name) as string;
+			return string.Equals(existingValue, _pathWithOption, StringComparison.OrdinalIgnoreCase);
 		}
+	}
 
-		public bool IsStartedOnSignIn()
+	public bool Register()
+	{
+		if (IsRegistered())
+			return false;
+
+		using (var key = Registry.CurrentUser.OpenSubKey(Run, true))
 		{
-			return Environment.GetCommandLineArgs().Skip(1).Contains(Option);
+			key.SetValue(_name, _pathWithOption, RegistryValueKind.String);
+			return true;
 		}
+	}
 
-		public bool CanRegister() => true;
-
-		public bool IsRegistered()
+	public void Unregister()
+	{
+		using (var key = Registry.CurrentUser.OpenSubKey(Run, true))
 		{
-			using (var key = Registry.CurrentUser.OpenSubKey(Run, false))
-			{
-				var existingValue = key.GetValue(_name) as string;
-				return string.Equals(existingValue, _pathWithOption, StringComparison.OrdinalIgnoreCase);
-			}
-		}
+			if (!key.GetValueNames().Contains(_name)) // The content of value doesn't matter.
+				return;
 
-		public bool Register()
-		{
-			if (IsRegistered())
-				return false;
-
-			using (var key = Registry.CurrentUser.OpenSubKey(Run, true))
-			{
-				key.SetValue(_name, _pathWithOption, RegistryValueKind.String);
-				return true;
-			}
-		}
-
-		public void Unregister()
-		{
-			using (var key = Registry.CurrentUser.OpenSubKey(Run, true))
-			{
-				if (!key.GetValueNames().Contains(_name)) // The content of value doesn't matter.
-					return;
-
-				key.DeleteValue(_name, false);
-			}
+			key.DeleteValue(_name, false);
 		}
 	}
 }

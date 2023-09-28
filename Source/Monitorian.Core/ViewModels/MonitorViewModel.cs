@@ -501,14 +501,13 @@ namespace Monitorian.Core.ViewModels
 
 			LanguageService.Switch();
 
-			var reason = _monitor switch
+			return _monitor switch
 			{
-				DdcMonitorItem => Resources.StatusReasonDdcFailing,
-				UnreachableMonitorItem { IsInternal: false } => Resources.StatusReasonDdcNotEnabled,
-				_ => null,
+				DdcMonitorItem { IsPrecleared: true } => null,
+				DdcMonitorItem => Resources.StatusNotControllable + Environment.NewLine + Resources.StatusReasonDdcFailing,
+				UnreachableMonitorItem { IsInternal: false } => Resources.StatusNotControllable + Environment.NewLine + Resources.StatusReasonDdcNotEnabled,
+				_ => Resources.StatusNotControllable
 			};
-
-			return Resources.StatusNotControllable + (reason is null ? string.Empty : Environment.NewLine + reason);
 		}
 
 		#endregion

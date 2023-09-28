@@ -1,31 +1,26 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 
-namespace IconImage
+namespace IconImage;
+
+[ValueConversion(typeof(double), typeof(double))]
+public class ScaleConverter : IValueConverter
 {
-	[ValueConversion(typeof(double), typeof(double))]
-	public class ScaleConverter : IValueConverter
+	public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 	{
-		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-		{
-			if ((value is not double sourceValue) || !double.TryParse(parameter?.ToString(), out double factor))
-				return DependencyProperty.UnsetValue;
+		if ((value is not double sourceValue) || !double.TryParse(parameter?.ToString(), out double factor))
+			return DependencyProperty.UnsetValue;
 
-			return sourceValue / factor;
-		}
+		return sourceValue / factor;
+	}
 
-		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-		{
-			if ((value is not double targetValue) || !double.TryParse(parameter?.ToString(), out double factor))
-				return DependencyProperty.UnsetValue;
+	public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+	{
+		if ((value is not double targetValue) || !double.TryParse(parameter?.ToString(), out double factor))
+			return DependencyProperty.UnsetValue;
 
-			return targetValue * factor;
-		}
+		return targetValue * factor;
 	}
 }

@@ -1,37 +1,32 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using StartupAgency.Storage;
 
-namespace StartupAgency.Bridge
+namespace StartupAgency.Bridge;
+
+/// <summary>
+/// Startup data
+/// </summary>
+public class StartupData
 {
 	/// <summary>
-	/// Startup data
+	/// Last start time of application
 	/// </summary>
-	public class StartupData
+	/// <remarks>
+	/// The underlying value of this property will be updated when accessed the first time after
+	/// system boot.
+	/// </remarks>
+	public static DateTimeOffset LastStartTime
 	{
-		/// <summary>
-		/// Last start time of application
-		/// </summary>
-		/// <remarks>
-		/// The underlying value of this property will be updated when accessed the first time after
-		/// system boot.
-		/// </remarks>
-		public static DateTimeOffset LastStartTime
+		get
 		{
-			get
+			if (!_lastStartTime.HasValue)
 			{
-				if (!_lastStartTime.HasValue)
-				{
-					_lastStartTime = SettingsAccessor.Local.GetValue<DateTimeOffset>();
-					SettingsAccessor.Local.SetValue(DateTimeOffset.Now);
-				}
-				return _lastStartTime.Value;
+				_lastStartTime = SettingsAccessor.Local.GetValue<DateTimeOffset>();
+				SettingsAccessor.Local.SetValue(DateTimeOffset.Now);
 			}
+			return _lastStartTime.Value;
 		}
-		private static DateTimeOffset? _lastStartTime;
 	}
+	private static DateTimeOffset? _lastStartTime;
 }

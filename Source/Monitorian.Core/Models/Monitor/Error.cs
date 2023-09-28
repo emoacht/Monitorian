@@ -1,56 +1,52 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace Monitorian.Core.Models.Monitor
+namespace Monitorian.Core.Models.Monitor;
+
+internal static class Error
 {
-	internal static class Error
+	#region Win32
+
+	[DllImport("Kernel32.dll", SetLastError = true)]
+	private static extern uint FormatMessage(
+		uint dwFlags,
+		IntPtr lpSource,
+		uint dwMessageId,
+		uint dwLanguageId,
+		StringBuilder lpBuffer,
+		int nSize,
+		IntPtr Arguments);
+
+	private const uint FORMAT_MESSAGE_FROM_SYSTEM = 0x00001000;
+
+	#endregion
+
+	public static (int errorCode, string message) GetCodeMessage()
 	{
-		#region Win32
+		var errorCode = Marshal.GetLastWin32Error();
+		return (errorCode, GetMessage(errorCode));
+	}
 
-		[DllImport("Kernel32.dll", SetLastError = true)]
-		private static extern uint FormatMessage(
-			uint dwFlags,
-			IntPtr lpSource,
-			uint dwMessageId,
-			uint dwLanguageId,
-			StringBuilder lpBuffer,
-			int nSize,
-			IntPtr Arguments);
+	public static string GetMessage() => GetMessage(Marshal.GetLastWin32Error());
 
-		private const uint FORMAT_MESSAGE_FROM_SYSTEM = 0x00001000;
+	public static string GetMessage(int errorCode)
+	{
+		var message = new StringBuilder($"Code: {errorCode}");
 
-		#endregion
-
-		public static (int errorCode, string message) GetCodeMessage()
+		var buffer = new StringBuilder(512); // This 512 capacity is arbitrary.
+		if (FormatMessage(
+			FORMAT_MESSAGE_FROM_SYSTEM,
+			IntPtr.Zero,
+			(uint)errorCode,
+			0x0409, // US (English)
+			buffer,
+			buffer.Capacity,
+			IntPtr.Zero) > 0)
 		{
-			var errorCode = Marshal.GetLastWin32Error();
-			return (errorCode, GetMessage(errorCode));
+			message.Append($", Message: ").Append(buffer);
 		}
 
-		public static string GetMessage() => GetMessage(Marshal.GetLastWin32Error());
-
-		public static string GetMessage(int errorCode)
-		{
-			var message = new StringBuilder($"Code: {errorCode}");
-
-			var buffer = new StringBuilder(512); // This 512 capacity is arbitrary.
-			if (FormatMessage(
-				FORMAT_MESSAGE_FROM_SYSTEM,
-				IntPtr.Zero,
-				(uint)errorCode,
-				0x0409, // US (English)
-				buffer,
-				buffer.Capacity,
-				IntPtr.Zero) > 0)
-			{
-				message.Append($", Message: ").Append(buffer);
-			}
-
-			return message.ToString();
-		}
+		return message.ToString();
 	}
 }

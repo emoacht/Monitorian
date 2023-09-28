@@ -2,235 +2,229 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 
 using Monitorian.Core.Helper;
 using Monitorian.Core.Models;
 using Monitorian.Core.ViewModels;
 using ScreenFrame.Movers;
 
-namespace Monitorian.Core.Views
+namespace Monitorian.Core.Views;
+
+public partial class MainWindow : Window
 {
-	public partial class MainWindow : Window
+	private readonly StickWindowMover _mover;
+	public MainWindowViewModel ViewModel => (MainWindowViewModel)this.DataContext;
+
+	public MainWindow(AppControllerCore controller)
 	{
-		private readonly StickWindowMover _mover;
-		public MainWindowViewModel ViewModel => (MainWindowViewModel)this.DataContext;
+		LanguageService.Switch();
 
-		public MainWindow(AppControllerCore controller)
+		InitializeComponent();
+
+		this.DataContext = new MainWindowViewModel(controller);
+
+		_mover = new StickWindowMover(this, controller.NotifyIconContainer.NotifyIcon)
 		{
-			LanguageService.Switch();
+			KeepsDistance = true
+		};
+		_mover.ForegroundWindowChanged += OnDeactivated;
 
-			InitializeComponent();
-
-			this.DataContext = new MainWindowViewModel(controller);
-
-			_mover = new StickWindowMover(this, controller.NotifyIconContainer.NotifyIcon)
-			{
-				KeepsDistance = true
-			};
-			_mover.ForegroundWindowChanged += OnDeactivated;
-
-			controller.WindowPainter.Add(this);
-			controller.WindowPainter.ThemeChanged += (_, _) =>
-			{
-				ViewModel.MonitorsView.Refresh();
-			};
-			//controller.WindowPainter.AccentColorChanged += (_, _) =>
-			//{
-			//};
-		}
-
-		public override void OnApplyTemplate()
+		controller.WindowPainter.Add(this);
+		controller.WindowPainter.ThemeChanged += (_, _) =>
 		{
-			base.OnApplyTemplate();
+			ViewModel.MonitorsView.Refresh();
+		};
+		//controller.WindowPainter.AccentColorChanged += (_, _) =>
+		//{
+		//};
+	}
 
-			CheckDefaultHeights();
+	public override void OnApplyTemplate()
+	{
+		base.OnApplyTemplate();
 
-			BindingOperations.SetBinding(
-				this,
-				UsesLargeElementsProperty,
-				new Binding(nameof(SettingsCore.UsesLargeElements))
+		CheckDefaultHeights();
+
+		BindingOperations.SetBinding(
+			this,
+			UsesLargeElementsProperty,
+			new Binding(nameof(SettingsCore.UsesLargeElements))
+			{
+				Source = ViewModel.Settings,
+				Mode = BindingMode.OneWay
+			});
+
+		//this.InvalidateProperty(UsesLargeElementsProperty);
+	}
+
+	protected override void OnClosed(EventArgs e)
+	{
+		BindingOperations.ClearBinding(
+			this,
+			UsesLargeElementsProperty);
+
+		base.OnClosed(e);
+	}
+
+	#region Elements
+
+	private const double ShrinkFactor = 0.64;
+	private Dictionary<string, double> _defaultHeights;
+	private const string SliderHeightName = "SliderHeight";
+
+	private void CheckDefaultHeights()
+	{
+		_defaultHeights = this.Resources.Cast<DictionaryEntry>()
+			.Where(x => (x.Key is string key) && key.EndsWith("Height", StringComparison.Ordinal))
+			.Where(x => x.Value is double height and > 0D)
+			.ToDictionary(x => (string)x.Key, x => (double)x.Value);
+	}
+
+	public bool UsesLargeElements
+	{
+		get { return (bool)GetValue(UsesLargeElementsProperty); }
+		set { SetValue(UsesLargeElementsProperty, value); }
+	}
+	public static readonly DependencyProperty UsesLargeElementsProperty =
+		DependencyProperty.Register(
+			"UsesLargeElements",
+			typeof(bool),
+			typeof(MainWindow),
+			new PropertyMetadata(
+				true,
+				(d, e) =>
 				{
-					Source = ViewModel.Settings,
-					Mode = BindingMode.OneWay
-				});
+					// Setting the same value will not trigger calling this method.
 
-			//this.InvalidateProperty(UsesLargeElementsProperty);
-		}
+					var window = (MainWindow)d;
+					if (window._defaultHeights is null)
+						return;
 
-		protected override void OnClosed(EventArgs e)
-		{
-			BindingOperations.ClearBinding(
-				this,
-				UsesLargeElementsProperty);
+					var factor = (bool)e.NewValue ? 1D : ShrinkFactor;
 
-			base.OnClosed(e);
-		}
-
-		#region Elements
-
-		private const double ShrinkFactor = 0.64;
-		private Dictionary<string, double> _defaultHeights;
-		private const string SliderHeightName = "SliderHeight";
-
-		private void CheckDefaultHeights()
-		{
-			_defaultHeights = this.Resources.Cast<DictionaryEntry>()
-				.Where(x => (x.Key is string key) && key.EndsWith("Height", StringComparison.Ordinal))
-				.Where(x => x.Value is double height and > 0D)
-				.ToDictionary(x => (string)x.Key, x => (double)x.Value);
-		}
-
-		public bool UsesLargeElements
-		{
-			get { return (bool)GetValue(UsesLargeElementsProperty); }
-			set { SetValue(UsesLargeElementsProperty, value); }
-		}
-		public static readonly DependencyProperty UsesLargeElementsProperty =
-			DependencyProperty.Register(
-				"UsesLargeElements",
-				typeof(bool),
-				typeof(MainWindow),
-				new PropertyMetadata(
-					true,
-					(d, e) =>
+					foreach (var (key, value) in window._defaultHeights)
 					{
-						// Setting the same value will not trigger calling this method.
+						var buffer = value * factor;
+						if (key == SliderHeightName)
+							buffer = Math.Ceiling(buffer / 4) * 4;
 
-						var window = (MainWindow)d;
-						if (window._defaultHeights is null)
-							return;
+						window.Resources[key] = buffer;
+					}
+				}));
 
-						var factor = (bool)e.NewValue ? 1D : ShrinkFactor;
+	#endregion
 
-						foreach (var (key, value) in window._defaultHeights)
-						{
-							var buffer = value * factor;
-							if (key == SliderHeightName)
-								buffer = Math.Ceiling(buffer / 4) * 4;
+	#region Show/Hide
 
-							window.Resources[key] = buffer;
-						}
-					}));
+	public bool IsForeground => _mover.IsForeground();
 
-		#endregion
-
-		#region Show/Hide
-
-		public bool IsForeground => _mover.IsForeground();
-
-		public void ShowForeground()
+	public void ShowForeground()
+	{
+		try
 		{
-			try
-			{
-				this.Topmost = true;
+			this.Topmost = true;
 
-				// When window is deactivated, a focused element will lose focus and usually,
-				// no element has focus until window is activated again and the last focused element
-				// will automatically get focus back. Therefore, in usual case, no focused element
-				// exists before Window.Show method. However, during window is not active, it is
-				// possible to set focus on an element and such focused element is found here.
-				// The issue is that such focused element will lose focus because the element which
-				// had focus before window was deactivated will restore focus even though any other
-				// element has focus. To prevent this unintended change of focus, it is necessary
-				// to set focus back on the element which had focus before Window.Show method.
-				var currentFocusedElement = FocusManager.GetFocusedElement(this);
+			// When window is deactivated, a focused element will lose focus and usually,
+			// no element has focus until window is activated again and the last focused element
+			// will automatically get focus back. Therefore, in usual case, no focused element
+			// exists before Window.Show method. However, during window is not active, it is
+			// possible to set focus on an element and such focused element is found here.
+			// The issue is that such focused element will lose focus because the element which
+			// had focus before window was deactivated will restore focus even though any other
+			// element has focus. To prevent this unintended change of focus, it is necessary
+			// to set focus back on the element which had focus before Window.Show method.
+			var currentFocusedElement = FocusManager.GetFocusedElement(this);
 
-				base.Show();
+			base.Show();
 
-				if (currentFocusedElement is not null)
-				{
-					var restoredFocusedElement = FocusManager.GetFocusedElement(this);
-					if (restoredFocusedElement != currentFocusedElement)
-						FocusManager.SetFocusedElement(this, currentFocusedElement);
-				}
-			}
-			catch (ArgumentException ex) when ((uint)ex.HResult is 0x80070057)
+			if (currentFocusedElement is not null)
 			{
-				// Window.Show method can cause ArgumentException when internally calling
-				// CompositionTarget.SetRootVisual method.
-			}
-			finally
-			{
-				this.Topmost = false;
+				var restoredFocusedElement = FocusManager.GetFocusedElement(this);
+				if (restoredFocusedElement != currentFocusedElement)
+					FocusManager.SetFocusedElement(this, currentFocusedElement);
 			}
 		}
-
-		public void ShowUnnoticed()
+		catch (ArgumentException ex) when ((uint)ex.HResult is 0x80070057)
 		{
-			var width = this.Width;
-			var height = this.Height;
-			var sizeToContent = this.SizeToContent;
-			try
-			{
-				// Set window size as small as possible to make it almost unnoticed.
-				this.Width = 1;
-				this.Height = 1;
-				this.SizeToContent = SizeToContent.Manual;
-
-				base.Show();
-				this.Hide();
-			}
-			finally
-			{
-				// Restore window size.
-				this.Width = width;
-				this.Height = height;
-				this.SizeToContent = sizeToContent;
-			}
+			// Window.Show method can cause ArgumentException when internally calling
+			// CompositionTarget.SetRootVisual method.
 		}
-
-		public bool CanBeShown => (_preventionTime < DateTimeOffset.Now);
-		private DateTimeOffset _preventionTime;
-
-		private void OnDeactivated(object sender, EventArgs e)
+		finally
 		{
-			ProceedHide();
+			this.Topmost = false;
 		}
+	}
 
-		protected override void OnDeactivated(EventArgs e)
+	public void ShowUnnoticed()
+	{
+		var width = this.Width;
+		var height = this.Height;
+		var sizeToContent = this.SizeToContent;
+		try
 		{
-			base.OnDeactivated(e);
+			// Set window size as small as possible to make it almost unnoticed.
+			this.Width = 1;
+			this.Height = 1;
+			this.SizeToContent = SizeToContent.Manual;
 
-			ProceedHide();
-		}
-
-		private void ProceedHide()
-		{
-			if (this.Visibility != Visibility.Visible)
-				return;
-
-			// Compare time to prevent hiding procedure from repeating.
-			if (_preventionTime > DateTimeOffset.Now)
-				return;
-
-			ViewModel.Deactivate();
-
-			// Set time to prevent this window from being shown unintentionally.
-			_preventionTime = DateTimeOffset.Now + TimeSpan.FromSeconds(0.2);
-
-			ClearHide();
-		}
-
-		public async void ClearHide()
-		{
-			// Clear focus.
-			FocusManager.SetFocusedElement(this, null);
-
-			// Wait for this window to be refreshed before being hidden.
-			await Task.Delay(TimeSpan.FromSeconds(0.1));
-
+			base.Show();
 			this.Hide();
 		}
-
-		#endregion
+		finally
+		{
+			// Restore window size.
+			this.Width = width;
+			this.Height = height;
+			this.SizeToContent = sizeToContent;
+		}
 	}
+
+	public bool CanBeShown => (_preventionTime < DateTimeOffset.Now);
+	private DateTimeOffset _preventionTime;
+
+	private void OnDeactivated(object sender, EventArgs e)
+	{
+		ProceedHide();
+	}
+
+	protected override void OnDeactivated(EventArgs e)
+	{
+		base.OnDeactivated(e);
+
+		ProceedHide();
+	}
+
+	private void ProceedHide()
+	{
+		if (this.Visibility != Visibility.Visible)
+			return;
+
+		// Compare time to prevent hiding procedure from repeating.
+		if (_preventionTime > DateTimeOffset.Now)
+			return;
+
+		ViewModel.Deactivate();
+
+		// Set time to prevent this window from being shown unintentionally.
+		_preventionTime = DateTimeOffset.Now + TimeSpan.FromSeconds(0.2);
+
+		ClearHide();
+	}
+
+	public async void ClearHide()
+	{
+		// Clear focus.
+		FocusManager.SetFocusedElement(this, null);
+
+		// Wait for this window to be refreshed before being hidden.
+		await Task.Delay(TimeSpan.FromSeconds(0.1));
+
+		this.Hide();
+	}
+
+	#endregion
 }

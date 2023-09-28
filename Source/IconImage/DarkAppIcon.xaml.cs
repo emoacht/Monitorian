@@ -1,23 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
+﻿using System.Windows.Controls;
 
-namespace IconImage
+namespace IconImage;
+
+public partial class DarkAppIcon : UserControl
 {
-	public partial class DarkAppIcon : UserControl
+	public DarkAppIcon()
 	{
-		public DarkAppIcon()
-		{
-			InitializeComponent();
-		}
+		InitializeComponent();
 	}
 }

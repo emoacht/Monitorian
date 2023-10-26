@@ -256,7 +256,7 @@ Ver 3.13 2022-8-29
  
 Ver 3.12 2022-7-4
 
- - Enable mouse horizontal wheel to change brigtness concurrently (except that in unison)
+ - Enable mouse horizontal wheel to change brightness concurrently (except that in unison)
 
 Ver 3.11 2022-6-2
 

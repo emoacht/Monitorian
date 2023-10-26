@@ -245,8 +245,17 @@ public static class LightSensor
 	public static bool AmbientLightSensorExists => _ambientLightSensorExists.Value;
 	private static readonly Lazy<bool> _ambientLightSensorExists = new(() =>
 	{
-		return OsVersion.Is10OrGreater
-			? WinRTLightSensor.AmbientLightSensorExists()
-			: ComLightSensor.AmbientLightSensorExists();
+		if (OsVersion.Is10OrGreater)
+		{
+			try
+			{
+				return WinRTLightSensor.AmbientLightSensorExists();
+			}
+			catch (TypeLoadException)
+			{
+				// Even on Windows 10, WinRT may not be installed.
+			}
+		}
+		return ComLightSensor.AmbientLightSensorExists();
 	});
 }

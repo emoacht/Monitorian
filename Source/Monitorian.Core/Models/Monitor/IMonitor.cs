@@ -64,6 +64,10 @@ public class ValueData
 	public ValueData(byte value, IEnumerable<byte> values)
 	{
 		this.Value = value;
-		this.Values = Array.AsReadOnly(values.ToArray());
+
+		if (values is not null)
+		{
+			this.Values = Array.AsReadOnly(values.ToArray());
+		}
 	}
 }

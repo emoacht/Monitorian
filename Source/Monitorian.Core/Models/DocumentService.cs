@@ -37,7 +37,7 @@ internal class DocumentService
 			title = Path.GetFileNameWithoutExtension(fileName);
 
 		body = body?
-			.Split(new[] { "\r\n\r\n", "\n\n" /* two consecutive line breaks */ }, StringSplitOptions.RemoveEmptyEntries)
+			.Split(["\r\n\r\n", "\n\n" /* two consecutive line breaks */ ], StringSplitOptions.RemoveEmptyEntries)
 			.Select(x =>
 			{
 				var array = x.Split(Array.Empty<char>(), 2, StringSplitOptions.RemoveEmptyEntries);

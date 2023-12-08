@@ -12,7 +12,7 @@ namespace Monitorian.Core.Models;
 
 public class LanguageService
 {
-	public static IReadOnlyCollection<string> Options => new[] { Option };
+	public static IReadOnlyCollection<string> Options => [Option];
 
 	private const string Option = "/lang";
 

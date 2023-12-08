@@ -306,7 +306,7 @@ internal static class TouchpadHelper
 			hwndTarget = windowHandle
 		};
 
-		return RegisterRawInputDevices(new[] { device }, 1, (uint)Marshal.SizeOf<RAWINPUTDEVICE>());
+		return RegisterRawInputDevices([device], 1, (uint)Marshal.SizeOf<RAWINPUTDEVICE>());
 	}
 
 	public static bool UnregisterInput()
@@ -319,7 +319,7 @@ internal static class TouchpadHelper
 			hwndTarget = IntPtr.Zero
 		};
 
-		return RegisterRawInputDevices(new[] { device }, 1, (uint)Marshal.SizeOf<RAWINPUTDEVICE>());
+		return RegisterRawInputDevices([device], 1, (uint)Marshal.SizeOf<RAWINPUTDEVICE>());
 	}
 
 	#endregion
@@ -428,7 +428,7 @@ internal static class TouchpadHelper
 			uint scanTime = 0;
 			uint contactCount = 0;
 			TouchpadContactCreator creator = new();
-			List<TouchpadContact> contacts = new();
+			List<TouchpadContact> contacts = [];
 
 			foreach (var valueCap in valueCaps.OrderBy(x => x.LinkCollection))
 			{

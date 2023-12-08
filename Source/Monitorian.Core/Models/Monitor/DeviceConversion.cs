@@ -47,7 +47,7 @@ public static class DeviceConversion
 		{
 			if (buffer.StartsWith("DISPLAY", StringComparison.Ordinal))
 			{
-				var fields = buffer.Split(new[] { @"\" }, StringSplitOptions.RemoveEmptyEntries);
+				var fields = buffer.Split([@"\"], StringSplitOptions.RemoveEmptyEntries);
 				if (fields is { Length: 3 })
 				{
 					deviceInstanceId = string.Join(@"\", fields);

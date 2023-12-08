@@ -30,7 +30,7 @@ internal class MSMonitor
 		[OnSerializing]
 		private void OnSerializing(StreamingContext context)
 		{
-			_brightnessLevelsString = string.Join(" ", BrightnessLevels ?? Enumerable.Empty<byte>());
+			_brightnessLevelsString = string.Join(" ", BrightnessLevels ?? []);
 		}
 
 		public DesktopItem(

@@ -66,11 +66,9 @@ public class SimpleSerialization
 		IsPrettified ? Indent + ConvertValue(value) : value;
 }
 
-public class StringWrapper
+public class StringWrapper(string value)
 {
-	private readonly string _value;
-
-	public StringWrapper(string value) => this._value = value;
+	private readonly string _value = value;
 
 	public override string ToString() => _value;
 }

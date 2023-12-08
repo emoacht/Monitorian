@@ -106,7 +106,7 @@ public class BrightnessConnector : IDisposable
 	/// <summary>
 	/// Options
 	/// </summary>
-	public static IReadOnlyCollection<string> Options => new[] { ConnectOption };
+	public static IReadOnlyCollection<string> Options => [ConnectOption];
 
 	private const string ConnectOption = "/connect";
 

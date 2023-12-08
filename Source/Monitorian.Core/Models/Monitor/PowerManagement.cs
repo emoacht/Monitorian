@@ -92,7 +92,7 @@ internal class PowerManagement
 	/// <summary>
 	/// Options
 	/// </summary>
-	public static IReadOnlyCollection<string> Options => new[] { PowerBindOption };
+	public static IReadOnlyCollection<string> Options => [PowerBindOption];
 
 	private const string PowerBindOption = "/powerbind";
 

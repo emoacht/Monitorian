@@ -71,7 +71,7 @@ public class Throttle<T>
 {
 	protected readonly SemaphoreSlim _semaphore = new(1, 1);
 	protected readonly DispatcherTimer _timer;
-	protected readonly Queue<T> _queue = new();
+	protected readonly Queue<T> _queue = [];
 	protected readonly Action<T[]> _action;
 
 	public Throttle(TimeSpan dueTime, Action<T[]> action)

@@ -24,6 +24,7 @@ Additional languages:
  - German (de) by @uDEV2019
  - Spanish (es) by @josemirm and @ericmp33
  - French (fr) by @AlexZeGamer and @Rikiiiiiii
+ - Greek (el-GR) by @NickMihal
  - Italian (it) by @GhostyJade
  - Japanese (ja-JP) by @emoacht
  - Korean (ko-KR) by @VenusGirl
@@ -56,7 +57,7 @@ Additional languages:
    ```
 
  * Other:<br>
-:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/4.5.1-Installer/MonitorianInstaller451.zip)
+:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/4.6.0-Installer/MonitorianInstaller460.zip)
 
 ## Install/Uninstall
 
@@ -211,6 +212,11 @@ An alternative language can be shown by adding a Resources (.resx) file into `/S
  - VESA [Monitor Control Command Set (MCCS)](https://www.google.co.jp/search?q=VESA+Monitor+Control+Command+Set+Standard+MCCS) standard
 
 ## History
+
+Ver 4.6 2023-12-8
+
+ - Modify app icon
+ - Add Greek (el-GR) language. Thanks to @NickMihal!
 
 Ver 4.5 2023-9-29
 

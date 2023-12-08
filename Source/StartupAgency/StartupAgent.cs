@@ -100,7 +100,7 @@ public class StartupAgent : IDisposable
 	/// <summary>
 	/// Options
 	/// </summary>
-	public static IReadOnlyCollection<string> Options => new[] { HideOption };
+	public static IReadOnlyCollection<string> Options => [HideOption];
 
 	private const string HideOption = "/hide";
 

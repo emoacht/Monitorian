@@ -268,7 +268,7 @@ public class EnhancedSlider : Slider
 			{
 				case (AutoToolTipPlacement.TopLeft, Orientation.Horizontal):
 					// Place popup at top of thumb
-					return new[] { new CustomPopupPlacement(new Point((targetSize.Width - popupSize.Width) * 0.5, -popupSize.Height), PopupPrimaryAxis.Horizontal) };
+					return [new CustomPopupPlacement(new Point((targetSize.Width - popupSize.Width) * 0.5, -popupSize.Height), PopupPrimaryAxis.Horizontal)];
 				default:
 					throw new InvalidOperationException();
 			}

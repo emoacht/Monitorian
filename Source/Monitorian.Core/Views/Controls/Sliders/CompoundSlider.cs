@@ -10,17 +10,16 @@ public class CompoundSlider : ShadowSlider
 {
 	#region Type
 
-	private class Item
+	private class Item(object source)
 	{
-		public object Source { get; set; }
-		public List<CompoundSlider> Sliders { get; } = new();
+		public object Source { get; set; } = source;
 
-		public Item(object source) => this.Source = source;
+		public List<CompoundSlider> Sliders { get; } = [];
 	}
 
 	private class ItemHolder
 	{
-		private readonly List<Item> _items = new();
+		private readonly List<Item> _items = [];
 
 		public void Add(object source, CompoundSlider slider)
 		{

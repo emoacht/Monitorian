@@ -306,7 +306,7 @@ public class Logger
 
 		static string TruncateSections(string content, string sectionHeader, int sectionCount)
 		{
-			var firstIndex = content.StartsWith(sectionHeader, StringComparison.Ordinal) ? new[] { 0 } : Enumerable.Empty<int>();
+			var firstIndex = content.StartsWith(sectionHeader, StringComparison.Ordinal) ? new[] { 0 } : [];
 			var secondIndices = content.IndicesOf('\n' /* either CR+Lf or Lf */ + sectionHeader, StringComparison.Ordinal).Select(x => x + 1);
 			var indices = firstIndex.Concat(secondIndices).ToArray();
 

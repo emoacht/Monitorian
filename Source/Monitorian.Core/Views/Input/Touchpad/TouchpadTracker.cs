@@ -9,7 +9,7 @@ namespace Monitorian.Core.Views.Input.Touchpad;
 
 public class TouchpadTracker
 {
-	private static readonly Dictionary<Window, TouchpadTracker> _windows = new();
+	private static readonly Dictionary<Window, TouchpadTracker> _windows = [];
 
 	public static TouchpadTracker Create(UIElement element)
 	{

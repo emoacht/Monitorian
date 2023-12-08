@@ -182,15 +182,15 @@ internal class PipeHolder
 		{
 			if (args is { Length: > 0 })
 			{
-				// Filter out null bacause it causes NullReferenceException in WriteLineAsync method
+				// Filter out null because it causes NullReferenceException in WriteLineAsync method
 				// on .NET Framework.
 				// Filter out string.Empty because it is used to indicate the end of writing.
 				foreach (var arg in args.Where(x => !string.IsNullOrEmpty(x)))
 					await writer.WriteLineAsync(arg).ConfigureAwait(false);
 			}
 
-			// WriteLineAsync method (w/o value) writes a line terminater and when server read it
-			// by ReadLineAsync method, it becomes string.Empty as the line terminater is removed.
+			// WriteLineAsync method (w/o value) writes a line terminator and when server read it
+			// by ReadLineAsync method, it becomes string.Empty as the line terminator is removed.
 			// It is used to inform server of the end of writing.
 			await writer.WriteLineAsync().ConfigureAwait(false);
 		}

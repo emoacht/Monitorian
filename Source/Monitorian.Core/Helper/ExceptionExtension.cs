@@ -22,7 +22,7 @@ public static class ExceptionExtension
 		{
 			innerExceptions = (ex.InnerException is not null)
 				? new Exception[] { ex.InnerException }
-				: Array.Empty<Exception>();
+				: [];
 
 			foreach (var property in EnumerateAddedProperties(ex))
 			{
@@ -61,12 +61,12 @@ public static class ExceptionExtension
 
 	private static string GetEnvironmentString(string key)
 	{
-		var method = typeof(Environment).GetMethod("GetResourceString", BindingFlags.NonPublic | BindingFlags.Static, null, new Type[] { typeof(string) }, null);
+		var method = typeof(Environment).GetMethod("GetResourceString", BindingFlags.NonPublic | BindingFlags.Static, null, [typeof(string)], null);
 
 		string buffer = null;
 		try
 		{
-			buffer = method?.Invoke(null, new object[] { key }) as string;
+			buffer = method?.Invoke(null, [key]) as string;
 		}
 		catch
 		{

@@ -115,7 +115,7 @@ internal class DisplayMonitorProvider
 
 		try
 		{
-			var devices = await Windows.Devices.Enumeration.DeviceInformation.FindAllAsync(Windows.Devices.Display.DisplayMonitor.GetDeviceSelector(), new[] { deviceInstanceIdKey });
+			var devices = await Windows.Devices.Enumeration.DeviceInformation.FindAllAsync(Windows.Devices.Display.DisplayMonitor.GetDeviceSelector(), [deviceInstanceIdKey]);
 			if (devices is { Count: > 0 })
 			{
 				var items = new List<DisplayItem>(devices.Count);

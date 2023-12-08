@@ -140,7 +140,7 @@ internal static class DisplayInformationProvider
 
 	public static event EventHandler<string> AdvancedColorInfoChanged;
 
-	private static readonly List<Holder> _holders = new();
+	private static readonly List<Holder> _holders = [];
 	private static readonly object _registerLock = new();
 
 	public static Action RegisterMonitor(string deviceInstanceId, IntPtr monitorHandle)

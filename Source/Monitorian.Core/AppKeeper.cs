@@ -21,7 +21,7 @@ public class AppKeeper
 		StartupAgent = new StartupAgent();
 	}
 
-	public Task<bool> StartAsync(StartupEventArgs e) => StartAsync(e, Enumerable.Empty<string>());
+	public Task<bool> StartAsync(StartupEventArgs e) => StartAsync(e, []);
 
 	public async Task<bool> StartAsync(StartupEventArgs e, IEnumerable<string> additionalOptions)
 	{
@@ -60,10 +60,10 @@ public class AppKeeper
 
 	#region Arguments
 
-	public static IReadOnlyList<string> StandardArguments => _standardArguments?.ToArray() ?? Array.Empty<string>();
+	public static IReadOnlyList<string> StandardArguments => _standardArguments?.ToArray() ?? [];
 	private static string[] _standardArguments;
 
-	public static IReadOnlyList<string> OtherArguments => _otherArguments?.ToArray() ?? Array.Empty<string>();
+	public static IReadOnlyList<string> OtherArguments => _otherArguments?.ToArray() ?? [];
 	private static string[] _otherArguments;
 
 	public static IEnumerable<string> EnumerateStandardOptions() =>
@@ -79,7 +79,7 @@ public class AppKeeper
 	private async Task ParseArgumentsAsync(StartupEventArgs e, string[] standardOptions)
 	{
 		// Load persistent arguments.
-		var args = (await LoadArgumentsAsync())?.Split() ?? Array.Empty<string>();
+		var args = (await LoadArgumentsAsync())?.Split() ?? [];
 
 		// Concatenate current and persistent arguments.
 		// The first element of StartupEventArgs.Args is not executing assembly's path unlike

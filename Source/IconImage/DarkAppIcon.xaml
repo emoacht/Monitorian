@@ -18,7 +18,8 @@
 	</UserControl.Resources>
 
 	<Grid Background="{x:Null}">
-		<Rectangle Fill="{StaticResource BackBrush}"/>
+		<!--<Rectangle Fill="{StaticResource BackBrush}"/>-->
+		<Rectangle Fill="{StaticResource BackBrush}" RadiusX="20" RadiusY="20"/>
 
 		<Grid>
 			<Border BorderBrush="{StaticResource EdgeBrush}"

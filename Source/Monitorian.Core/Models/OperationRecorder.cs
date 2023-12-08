@@ -51,7 +51,7 @@ public class OperationRecorder
 	public void StartLineRecord(string key, string actionName)
 	{
 		if (IsEnabled)
-			_actionLines.Value[key] = new List<string>(new[] { actionName });
+			_actionLines.Value[key] = new List<string>([actionName]);
 	}
 
 	public void AddLineRecord(string key, string lineString)

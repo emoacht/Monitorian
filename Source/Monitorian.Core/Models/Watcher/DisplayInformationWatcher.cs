@@ -12,7 +12,7 @@ internal class DisplayInformationWatcher : IDisposable
 	/// <summary>
 	/// Options
 	/// </summary>
-	public static IReadOnlyCollection<string> Options => new[] { AdvancedColorOption };
+	public static IReadOnlyCollection<string> Options => [AdvancedColorOption];
 
 	private const string AdvancedColorOption = "/advancedcolor";
 
@@ -39,10 +39,10 @@ internal class DisplayInformationWatcher : IDisposable
 			return;
 
 		this._onDisplayInformationChanged = onDisplayInformationChanged ?? throw new ArgumentNullException(nameof(onDisplayInformationChanged));
-		DisplayInformationProvider.AdvancedColorInfoChanged += OnAdvanctedColorInfoChanged;
+		DisplayInformationProvider.AdvancedColorInfoChanged += OnAdvancedColorInfoChanged;
 	}
 
-	private void OnAdvanctedColorInfoChanged(object sender, string e)
+	private void OnAdvancedColorInfoChanged(object sender, string e)
 	{
 		var colorInfo = ((Windows.Graphics.Display.DisplayInformation)sender).GetAdvancedColorInfo();
 		_onDisplayInformationChanged?.Invoke(e, $"SDR WL: {colorInfo.SdrWhiteLevelInNits} Min: {colorInfo.MinLuminanceInNits:f1} Max: {colorInfo.MaxLuminanceInNits:f1} [{colorInfo.CurrentAdvancedColorKind}]");
@@ -74,7 +74,7 @@ internal class DisplayInformationWatcher : IDisposable
 		if (disposing)
 		{
 			// Free any other managed objects here.
-			DisplayInformationProvider.AdvancedColorInfoChanged -= OnAdvanctedColorInfoChanged;
+			DisplayInformationProvider.AdvancedColorInfoChanged -= OnAdvancedColorInfoChanged;
 			DisplayInformationProvider.ClearMonitors();
 		}
 

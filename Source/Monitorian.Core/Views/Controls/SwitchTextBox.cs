@@ -34,6 +34,29 @@ public class SwitchTextBox : TextBox
 	private bool _isContextMenuOpenable = true;
 	private DispatcherTimer _switchTimer;
 
+	protected override void OnInitialized(EventArgs e)
+	{
+		base.OnInitialized(e);
+
+		var window = Window.GetWindow(this);
+		if (window is not null)
+		{
+			window.Closed += OnClosed;
+		}
+
+		void OnClosed(object sender, EventArgs e)
+		{
+			var window = (Window)sender;
+			window.Closed -= OnClosed;
+
+			if (_switchTimer is not null)
+			{
+				_switchTimer.Stop();
+				_switchTimer.Tick -= OnTick;
+			}
+		}
+	}
+
 	private void OnDeviceDown(InputDevice device, bool isContextMenuOpenable)
 	{
 		if (!this.IsReadOnly)

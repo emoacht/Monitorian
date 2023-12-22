@@ -76,6 +76,7 @@ internal abstract class TimerWatcher : IDisposable
 		{
 			// Free any other managed objects here.
 			_timer.Stop();
+			_timer.Tick -= OnTick;
 		}
 
 		// Free any unmanaged objects here.

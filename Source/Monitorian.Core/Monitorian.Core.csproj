@@ -124,6 +124,7 @@
     <Compile Include="Views\Behaviors\MouseHorizontalWheelBehavior.cs" />
     <Compile Include="Views\Controls\Sliders\CompoundSlider.cs" />
     <Compile Include="Views\Controls\Sliders\EnhancedSlider.cs" />
+    <Compile Include="Views\Controls\Sliders\RangeConverter.cs" />
     <Compile Include="Views\Controls\Sliders\RangeSlider.cs" />
     <Compile Include="Views\Controls\Sliders\ShadowSlider.cs" />
     <Compile Include="Views\Controls\FrameworkElementMargin.cs" />

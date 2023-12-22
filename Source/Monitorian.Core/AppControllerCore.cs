@@ -183,7 +183,11 @@ public class AppControllerCore
 
 	protected virtual void HideMainWindow()
 	{
-		((MainWindow)_current.MainWindow).ClearHide();
+		var window = (MainWindow)_current.MainWindow;
+		if (window is { Visibility: Visibility.Hidden })
+			return;
+
+		window.ClearHide();
 	}
 
 	protected virtual void ShowMenuWindow(Point pivot)

@@ -47,10 +47,10 @@ public class RangeSlider : EnhancedSlider
 	}
 
 	/// <summary>
-	/// Attempts to get the current level (from 0 to 1) within selected range. 
+	/// Attempts to get the current level (from 0 to 1) within the selected range. 
 	/// </summary>
 	/// <param name="level">Current level</param>
-	/// <returns>True if the current value is within selected range</returns>
+	/// <returns>True if the current value is within the range</returns>
 	/// <remarks>
 	/// This level is translated from/to the current value.
 	/// </remarks>
@@ -58,23 +58,13 @@ public class RangeSlider : EnhancedSlider
 
 	protected virtual bool TryGetLevel(double value, out double level)
 	{
-		if (value < this.SelectionStart)
-		{
-			level = 0;
-			return false;
-		}
-		if (value > this.SelectionEnd)
-		{
-			level = 1;
-			return false;
-		}
-		level = (value - this.SelectionStart) / (this.SelectionEnd - this.SelectionStart);
-		return true;
+		return RangeConverter.TryConvertToLevel(value, this.SelectionStart, this.SelectionEnd, out level);
 	}
 
 	protected virtual bool SetLevel(double level)
 	{
-		return UpdateValue(this.SelectionStart + (this.SelectionEnd - this.SelectionStart) * level);
+		return RangeConverter.TryConvertFromLevel(level, this.SelectionStart, this.SelectionEnd, out double value)
+			&& UpdateValue(value);
 	}
 
 	protected override bool UpdateValue(double value)

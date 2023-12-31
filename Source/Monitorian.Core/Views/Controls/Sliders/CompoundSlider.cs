@@ -12,6 +12,9 @@ public class CompoundSlider : ShadowSlider
 
 	private class Item(object source)
 	{
+		/// <summary>
+		/// Binding source
+		/// </summary>
 		public object Source { get; set; } = source;
 
 		public List<CompoundSlider> Sliders { get; } = [];
@@ -70,7 +73,10 @@ public class CompoundSlider : ShadowSlider
 
 	private static readonly ItemHolder _holder = new();
 
-	private object _source; // Binding source
+	/// <summary>
+	/// Binding source bound to this instance
+	/// </summary>
+	private object _source;
 
 	public override void OnApplyTemplate()
 	{
@@ -182,8 +188,7 @@ public class CompoundSlider : ShadowSlider
 		{
 			SetLevel(e.level);
 		}
-
-		if (e is { level: < 0, update: true })
+		else if (e is { update: true })
 		{
 			base.EnsureUpdateSource();
 		}
@@ -191,8 +196,10 @@ public class CompoundSlider : ShadowSlider
 
 	public override void EnsureUpdateSource()
 	{
+		// Ensure the binding source bound to this instance is updated.
 		base.EnsureUpdateSource();
 
+		// Ensure the binding sources bound to other instances are updated.
 		if (_source is not null)
 		{
 			Moved?.Invoke(this, (_source, -1, update: true));

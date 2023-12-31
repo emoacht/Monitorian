@@ -37,8 +37,13 @@ public abstract class WindowMover
 	private HwndSource _source;
 	private WindowWatcher _watcher;
 
-	private void OnSourceInitialized(object sender, EventArgs e)
+	/// <summary>
+	/// Called when SourceInitialized event of window is raised. 
+	/// </summary>
+	protected virtual void OnSourceInitialized(object sender, EventArgs e)
 	{
+		_window.SourceInitialized -= OnSourceInitialized;
+
 		_source = PresentationSource.FromVisual(_window) as HwndSource;
 		_source?.AddHook(WndProc);
 
@@ -49,8 +54,13 @@ public abstract class WindowMover
 		}
 	}
 
-	private void OnClosed(object sender, EventArgs e)
+	/// <summary>
+	/// Called when Closed event of window is raised.
+	/// </summary>
+	protected virtual void OnClosed(object sender, EventArgs e)
 	{
+		_window.Closed -= OnClosed;
+
 		_source?.RemoveHook(WndProc);
 		_watcher?.RemoveHook();
 	}

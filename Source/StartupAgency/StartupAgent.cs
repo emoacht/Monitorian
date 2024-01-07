@@ -22,7 +22,7 @@ public class StartupAgent : IDisposable
 	/// </summary>
 	/// <param name="name">Name</param>
 	/// <param name="startupTaskId">Startup task ID</param>
-	/// <param name="args">Arguments to another instance</param>
+	/// <param name="args">Arguments being forwarded to another instance</param>
 	/// <returns>
 	/// <para>success: True if no other instance exists and this instance successfully starts</para>
 	/// <para>response: Response from another instance if that instance exists and returns an response</para> 

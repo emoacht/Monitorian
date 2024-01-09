@@ -113,7 +113,7 @@ public class AppKeeper
 
 	public Task<string> LoadArgumentsAsync() => AppDataService.ReadAsync(ArgumentsFileName);
 
-	public Task SaveArgumentsAsync(string content) => AppDataService.WriteAsync(ArgumentsFileName, false, content);
+	public Task SaveArgumentsAsync(string content) => AppDataService.WriteAsync(ArgumentsFileName, append: false, delete: true, content);
 
 	#endregion
 

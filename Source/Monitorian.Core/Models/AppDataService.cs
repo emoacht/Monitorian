@@ -44,9 +44,22 @@ public static class AppDataService
 		return await sr.ReadToEndAsync();
 	}
 
-	public static async Task WriteAsync(string fileName, bool append, string content)
+	/// <summary>
+	/// Asynchronously writes to a specified file.
+	/// </summary>
+	/// <param name="fileName">File name to write to</param>
+	/// <param name="append">True to append to the file; False to overwrite the file</param>
+	/// <param name="delete">True to delete the file if content is null or empty; False to leave the file</param>
+	/// <param name="content">Content to write to the file</param>
+	public static async Task WriteAsync(string fileName, bool append, bool delete, string content)
 	{
 		var filePath = Path.Combine(EnsureFolderPath(), fileName);
+
+		if (delete && string.IsNullOrEmpty(content))
+		{
+			File.Delete(filePath);
+			return;
+		}
 
 		using var sw = new StreamWriter(filePath, append, Encoding.UTF8); // BOM will be emitted.
 		await sw.WriteAsync(content);

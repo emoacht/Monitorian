@@ -21,13 +21,13 @@ public class AppKeeper
 		StartupAgent = new StartupAgent();
 	}
 
-	public Task<bool> StartAsync(StartupEventArgs e) => StartAsync(e, []);
+	public Task<bool> StartAsync(StartupEventArgs e) => StartAsync(e, null);
 
 	public async Task<bool> StartAsync(StartupEventArgs e, IEnumerable<string> additionalOptions)
 	{
 		// This method must be called before StandardArguments or OtherArguments property is consumed.
 		// An exception thrown in this method will not be handled.
-		await ParseArgumentsAsync(e, EnumerateStandardOptions().Concat(additionalOptions).ToArray());
+		await ParseArgumentsAsync(e, EnumerateStandardOptions().Concat(additionalOptions ?? []).ToArray());
 #if DEBUG
 		ConsoleService.TryStartWrite();
 #else
@@ -99,7 +99,7 @@ public class AppKeeper
 			const char optionMark = '/';
 			var isStandard = false;
 
-			var buffer = args
+			var buffer = args?
 				.Where(x => !string.IsNullOrWhiteSpace(x))
 				.GroupBy(x => (x[0] == optionMark) ? (isStandard = standardOptions.Contains(x.ToLower())) : isStandard)
 				.ToArray() ?? [];
@@ -113,7 +113,7 @@ public class AppKeeper
 
 	public Task<string> LoadArgumentsAsync() => AppDataService.ReadAsync(ArgumentsFileName);
 
-	public Task SaveArgumentsAsync(string content) => AppDataService.WriteAsync(ArgumentsFileName, false, content);
+	public Task SaveArgumentsAsync(string content) => AppDataService.WriteAsync(ArgumentsFileName, append: false, delete: true, content);
 
 	#endregion
 

@@ -105,7 +105,7 @@ public class Logger
 			if (fileNames.Any())
 			{
 				content += await AppDataService.ReadAsync(fileNames.First());
-				await AppDataService.WriteAsync(fileNames.First(), append: false, content);
+				await AppDataService.WriteAsync(fileNames.First(), append: false, delete: false, content);
 				AppDataService.Delete(OperationFileName);
 			}
 			else
@@ -134,7 +134,7 @@ public class Logger
 
 		try
 		{
-			await AppDataService.WriteAsync(fileName, append: true, content);
+			await AppDataService.WriteAsync(fileName, append: true, delete: false, content);
 		}
 		catch (Exception ex)
 		{

@@ -21,13 +21,13 @@ public class AppKeeper
 		StartupAgent = new StartupAgent();
 	}
 
-	public Task<bool> StartAsync(StartupEventArgs e) => StartAsync(e, []);
+	public Task<bool> StartAsync(StartupEventArgs e) => StartAsync(e, null);
 
 	public async Task<bool> StartAsync(StartupEventArgs e, IEnumerable<string> additionalOptions)
 	{
 		// This method must be called before StandardArguments or OtherArguments property is consumed.
 		// An exception thrown in this method will not be handled.
-		await ParseArgumentsAsync(e, EnumerateStandardOptions().Concat(additionalOptions).ToArray());
+		await ParseArgumentsAsync(e, EnumerateStandardOptions().Concat(additionalOptions ?? []).ToArray());
 #if DEBUG
 		ConsoleService.TryStartWrite();
 #else

@@ -99,7 +99,7 @@ public class AppKeeper
 			const char optionMark = '/';
 			var isStandard = false;
 
-			var buffer = args
+			var buffer = args?
 				.Where(x => !string.IsNullOrWhiteSpace(x))
 				.GroupBy(x => (x[0] == optionMark) ? (isStandard = standardOptions.Contains(x.ToLower())) : isStandard)
 				.ToArray() ?? [];

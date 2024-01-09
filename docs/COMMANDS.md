@@ -68,6 +68,7 @@ There are a few remarks:
   "definitions": {
     "Command": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
         "Option": {
           "type": "string",
@@ -76,8 +77,11 @@ There are a few remarks:
             "SetContrast"
           ]
         },
-        "DeviceInstanceId": {
-          "type": [ "string", "null" ]
+       "DeviceInstanceId": {
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "IsAll": {
           "type": "boolean"
@@ -88,7 +92,6 @@ There are a few remarks:
           "maximum": 100
         }
       },
-      "additionalProperties": false,
       "required": [
         "Option",
         "Value"
@@ -96,6 +99,7 @@ There are a few remarks:
     },
     "ConditionalCommand": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
         "ConditionalDeviceInstanceId": {
           "type": "string"
@@ -112,7 +116,6 @@ There are a few remarks:
           }
         }
       },
-      "additionalProperties": false,
       "required": [
         "ConditionalDeviceInstanceId",
         "ConditionalValue",

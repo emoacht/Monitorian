@@ -47,4 +47,20 @@ public static class ArraySearch
 		else
 			return indexAfter;
 	}
+
+	public static int GetLowerNearestIndex<T>(T[] array, T target) where T : IComparable
+	{
+		if (array is not { Length: > 0 })
+			throw new ArgumentNullException(nameof(array));
+
+		// The source array must be sorted beforehand.
+		int indexExact = Array.BinarySearch(array, target);
+
+		if (indexExact >= 0)
+			return indexExact;
+
+		int indexAfter = ~indexExact; // Index of first element that is larger than target
+
+		return indexAfter - 1; // If 0, this produces -1.
+	}
 }

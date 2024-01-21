@@ -16,7 +16,7 @@ public class MultiToggleButton : ToggleButton
 			"SubContent",
 			typeof(object),
 			typeof(MultiToggleButton),
-			new PropertyMetadata((object)null));
+			new PropertyMetadata(defaultValue: null));
 
 	public bool IsCheckable
 	{

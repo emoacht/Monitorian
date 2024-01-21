@@ -88,8 +88,8 @@ public static class WindowHelper
 		public int right;
 		public int bottom;
 
-		public int Width => (right - left);
-		public int Height => (bottom - top);
+		public readonly int Width => (right - left);
+		public readonly int Height => (bottom - top);
 
 		public static implicit operator Rect(RECT rect)
 		{

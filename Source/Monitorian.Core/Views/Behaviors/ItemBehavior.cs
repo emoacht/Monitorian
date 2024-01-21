@@ -15,7 +15,7 @@ public interface IItemBehavior
 public class ItemBehaviorGroup
 {
 	public bool Value { get; set; }
-	public HashSet<IItemBehavior> Behaviors { get; } = new HashSet<IItemBehavior>();
+	public HashSet<IItemBehavior> Behaviors { get; } = [];
 }
 
 public abstract class ItemBehavior<T> : Behavior<T>, IItemBehavior where T : DependencyObject

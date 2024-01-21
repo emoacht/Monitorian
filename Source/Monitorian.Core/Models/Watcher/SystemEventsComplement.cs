@@ -124,7 +124,7 @@ internal class SystemEventsComplement
 		if (ensureSystemEventsMethod is null)
 			return false;
 
-		ensureSystemEventsMethod.Invoke(null, new object[] { true, true });
+		ensureSystemEventsMethod.Invoke(null, [true, true]);
 		return true;
 	}
 

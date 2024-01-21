@@ -96,7 +96,7 @@ public class ItemSliderBehavior : ItemBehavior<Slider>
 			Selector.SetIsSelected(_container, true);
 	}
 
-	public static HashSet<Key> ReservedKeys { get; } = new HashSet<Key>(); // Static property
+	public static HashSet<Key> ReservedKeys { get; } = []; // Static property
 
 	private void OnPreviewKeyDown(object sender, KeyEventArgs e)
 	{
@@ -177,7 +177,7 @@ public class ItemSliderBehavior : ItemBehavior<Slider>
 			"IsSelected",
 			typeof(bool),
 			typeof(ItemSliderBehavior),
-			new PropertyMetadata(defaultValue: false));
+			new PropertyMetadata(false));
 
 	private void OnContainerSelected(object sender, RoutedEventArgs e)
 	{

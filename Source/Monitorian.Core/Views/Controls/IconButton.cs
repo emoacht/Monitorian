@@ -23,7 +23,7 @@ public class IconButton : ToggleButton
 			"StrokeIconData",
 			typeof(Geometry),
 			typeof(IconButton),
-			new PropertyMetadata(null));
+			new PropertyMetadata(defaultValue: null));
 
 	public Geometry FillIconData
 	{
@@ -35,7 +35,7 @@ public class IconButton : ToggleButton
 			"FillIconData",
 			typeof(Geometry),
 			typeof(IconButton),
-			new PropertyMetadata(null));
+			new PropertyMetadata(defaultValue: null));
 
 	#endregion
 

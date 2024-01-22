@@ -204,7 +204,7 @@ internal class MSMonitor
 					var instanceName = (string)instance.GetPropertyValue("InstanceName");
 					if (instanceName.StartsWith(deviceInstanceId, StringComparison.OrdinalIgnoreCase))
 					{
-						object result = instance.InvokeMethod("WmiSetBrightness", new object[] { (uint)timeout, (byte)brightness });
+						object result = instance.InvokeMethod("WmiSetBrightness", [(uint)timeout, (byte)brightness]);
 
 						var isSuccess = (result is null); // Return value will be null if succeeded.
 						if (!isSuccess)

@@ -15,7 +15,7 @@ public class MouseHorizontalWheelBehavior : Behavior<UIElement>
 	static MouseHorizontalWheelBehavior()
 	{
 		// Get UIElement.OnMouseWheel method information.
-		_onMouseWheel = typeof(UIElement).GetMethod("OnMouseWheel", BindingFlags.Instance | BindingFlags.NonPublic, null, CallingConventions.Any, new Type[] { typeof(MouseWheelEventArgs) }, null);
+		_onMouseWheel = typeof(UIElement).GetMethod("OnMouseWheel", BindingFlags.Instance | BindingFlags.NonPublic, null, CallingConventions.Any, [typeof(MouseWheelEventArgs)], null);
 	}
 
 	protected override void OnAttached()
@@ -34,6 +34,6 @@ public class MouseHorizontalWheelBehavior : Behavior<UIElement>
 
 	private void OnMouseHorizontalWheel(object sender, MouseWheelEventArgs e)
 	{
-		_onMouseWheel?.Invoke(this.AssociatedObject, new object[] { e });
+		_onMouseWheel?.Invoke(this.AssociatedObject, [e]);
 	}
 }

@@ -4,6 +4,7 @@ Commands is one of command-line options that are available as add-on features of
 
 - [Conditional Commands](#conditional-commands)
 - [Time Commands](#time-commands)
+- [Key Commands](#key-commands)
 
 ### Conditional Commands
 
@@ -23,8 +24,8 @@ monitorian /load conditional [file path of JSON file enclosed in quotes]
 
 There are a few remarks:
 
+ - While conditional/time/key commands are executed, other conditional/time/key commands will not be executed. Thus, the brightness set by conditional commands will not invoke other conditional commands.
  - If the conditional monitor is in unison, the commands will not be executed.
- - The brightness set by conditional commands will not invoke another conditional commands.
  - Loading new conditional commands will replace all existing conditional commands, if any.
 
 #### JSON Sample
@@ -154,8 +155,7 @@ monitorian /load time [file path of JSON file enclosed in quotes]
 
 There are a few remarks:
 
- - If conditional commands are executed during a due time, the time commands specified for the due time will not be executed, and vice versa.
- - The brightness set by time commands will not invoke conditional commands. 
+ - While conditional/time/key commands are executed, other conditional/time/key commands will not be executed. Thus, the brightness set by time commands will not invoke conditional commands.
  - Loading new time commands will replace all existing time commands, if any.
 
 #### JSON Sample
@@ -270,6 +270,132 @@ There are a few remarks:
   "type": "array",
   "items": {
     "$ref": "#/definitions/TimeCommand"
+  }
+}
+```
+
+### Key Commands
+
+A set of key commands is a series of commands to be executed when a specified hot key is pressed. It consists of the following elements:
+
+ - __Key Gesture:__ Key gesture (combination of modifier keys and a key delimited by '+') of hot key
+ - __Description:__ Description of hot key
+ - __Commands:__ Commands to be executed when the hot key is pressed
+
+A command can set brightness or contrast of a monitor or all monitors. If you want to run multiple commands by the hot key, those commands must be included in one set of key commands. Otherwise, other commands specified for the same hot key will be ignored.
+
+As for the available modifier keys (Alt, Ctrl, Shift, Windows) and keys, please refer the following pages.
+
+- [ModifierKeys Enum](https://learn.microsoft.com/en-us/dotnet/api/system.windows.input.modifierkeys)
+- [Key Enum](https://learn.microsoft.com/en-us/dotnet/api/system.windows.input.key)
+
+If the specified hot key has been already used by the OS or other apps, such hot key cannot be set. In addition, some combinations are not supported as hot keys.
+
+The sets of key commands must be specified in an array in JSON format. Then the JSON file must be loaded with `/load` option and `key` sub-option. The usage of this option is as follows.
+
+```
+monitorian /load key [file path of JSON file enclosed in quotes]
+```
+
+There are a few remarks:
+
+ - While conditional/time/key commands are executed, other conditional/time/key commands will not be executed. Thus, the brightness set by key commands will not invoke conditional commands.
+ - Keys must be enabled in Key Settings.
+ - Loading new key commands will replace all existing key commands, if any.
+
+#### JSON Sample
+
+``` json
+[
+  {
+    "KeyGesture": "Ctrl+Alt+O",
+    "Description": "Monitor 1 to 60",
+    "Commands": [
+      {
+        "Option": "SetBrightness",
+        "DeviceInstanceId": "[Device Instance ID of monitor 1]",
+        "IsAll": false,
+        "Value": 60
+      }
+    ]
+  },
+  {
+    "KeyGesture": "Ctrl+Alt+P",
+    "Description": "All to 40",
+    "Commands": [
+      {
+        "Option": "SetBrightness",
+        "DeviceInstanceId": null,
+        "IsAll": true,
+        "Value": 40
+      }
+    ]
+  }
+]
+```
+
+#### JSON Schema
+
+``` json
+{
+  "definitions": {
+    "Command": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "Option": {
+          "type": "string",
+          "enum": [
+            "SetBrightness",
+            "SetContrast"
+          ]
+        },
+        "DeviceInstanceId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "IsAll": {
+          "type": "boolean"
+        },
+        "Value": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        }
+      },
+      "required": [
+        "Option",
+        "Value"
+      ]
+    },
+    "KeyCommand": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "KeyGesture": {
+          "type": "string"
+        },
+        "Description": {
+          "type": "string"
+        },
+        "Commands": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Command"
+          }
+        }
+      },
+      "required": [
+        "KeyGesture",
+        "Commands"
+      ]
+    }
+  },
+  "type": "array",
+  "items": {
+    "$ref": "#/definitions/KeyCommand"
   }
 }
 ```

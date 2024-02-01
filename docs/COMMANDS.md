@@ -282,7 +282,7 @@ A set of key commands is a series of commands to be executed when a specified ho
  - __Description:__ Description of hot key
  - __Commands:__ Commands to be executed when the hot key is pressed
 
-A command can set brightness or contrast of a monitor or all monitors. If you want to run multiple commands by the hot key, those commands must be included in one set of key commands. Otherwise, other commands specified for the same hot key will be ignored.
+A command can set brightness or contrast of a monitor or all monitors, or input source of a monitor. If you want to run multiple commands by the hot key, those commands must be included in one set of key commands. Otherwise, other commands specified for the same hot key will be ignored.
 
 As for the available modifier keys (Alt, Ctrl, Shift, Windows) and keys, please refer the following pages.
 
@@ -296,6 +296,21 @@ The sets of key commands must be specified in an array in JSON format. Then the 
 ```
 monitorian /load key [file path of JSON file enclosed in quotes]
 ```
+
+As for input source, the valid values vary depending on each model. To get those values, you can use `/get` option and `input` sub-option as shown below.
+
+```
+monitorian /get input [Device Instance ID of monitor enclosed in quotes]
+```
+
+The valid values will be shown in parentheses. The following are typical values defined in the standard but newer ones such as USB-C are not.
+
+| Value | Type          |
+|-------|---------------|
+| 15    | DisplayPort 1 |
+| 16    | DisplayPort 2 |
+| 17    | HDMI 1        |
+| 18    | HDMI 2        |
 
 There are a few remarks:
 
@@ -330,6 +345,18 @@ There are a few remarks:
         "Value": 40
       }
     ]
+  },
+    {
+    "KeyGesture": "Ctrl+Alt+Y",
+    "Description": "Monitor 1 to HDMI 1",
+    "Commands": [
+      {
+        "Option": "SetInput",
+        "DeviceInstanceId": "[Device Instance ID of monitor 1]",
+        "IsAll": false,
+        "Value": 17
+      }
+    ]
   }
 ]
 ```
@@ -347,7 +374,8 @@ There are a few remarks:
           "type": "string",
           "enum": [
             "SetBrightness",
-            "SetContrast"
+            "SetContrast",
+            "SetInput"
           ]
         },
         "DeviceInstanceId": {
@@ -378,7 +406,10 @@ There are a few remarks:
           "type": "string"
         },
         "Description": {
-          "type": "string"
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "Commands": {
           "type": "array",

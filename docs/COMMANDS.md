@@ -140,12 +140,12 @@ A set of time commands is a series of commands to be executed when a specified d
 
  - __Due Time Hours:__ Hours (from 0 to 23) of daily due time of commands
  - __Due Time Minutes:__ Minutes (from 0 to 59) of daily due time of commands
- - __Duration Minutes:__ Minutes (from 1 to 1440) of duration after due time while the commands will be executed
+ - __Duration Minutes:__ Minutes (from 1 to 1439) of duration after due time while the commands will be executed
  - __Commands:__ Commands to be executed when the due time comes
 
 A command can set brightness or contrast of a monitor or all monitors. If you want to run multiple commands at the same due time, those commands must be included in one set of time commands. Otherwise, other commands specified for the same due time will be ignored.
 
-The duration minutes is for the case where the system starts or resumes after a due time. For example, assuming the due time is __08:50__ and the duration is __30__ minutes, if the system is turned on at __09:00__, the commands that should have been executed at __08:50__ will be executed. However, if the system is turned on at __9:30__, the commands will not be executed. The longest duration is 1 day (1440 minutes).
+The duration minutes is for the case where the system starts or resumes after a due time. For example, assuming the due time is __08:50__ and the duration is __30__ minutes, if the system is turned on at __09:00__, the commands that should have been executed at __08:50__ will be executed. However, if the system is turned on at __9:30__, the commands will not be executed. The longest duration is around 1 day (1439 minutes).
 
 The sets of time commands must be specified in an array in JSON format. Then the JSON file must be loaded with `/load` option and `time` sub-option. The usage of this option is as follows.
 
@@ -250,7 +250,7 @@ There are a few remarks:
         "DurationMinutes": {
           "type": "integer",
           "minimum": 1,
-          "maximum": 1440
+          "maximum": 1439
         },
         "Commands": {
           "type": "array",
@@ -430,3 +430,8 @@ There are a few remarks:
   }
 }
 ```
+
+After loading the commands, you can browse the current commands on Command Settings.
+
+![Screenshot](../Images/Screenshot_commands.png)<br>
+(Device Instance IDs are dummy)

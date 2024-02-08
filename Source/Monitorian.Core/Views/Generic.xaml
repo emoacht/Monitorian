@@ -334,4 +334,77 @@
 		</Setter>
 	</Style>
 
+	<!-- Plain ScrollBar -->
+	<Style x:Key="ScrollBarTrackButton" TargetType="{x:Type RepeatButton}">
+		<Setter Property="OverridesDefaultStyle" Value="True"/>
+		<Setter Property="Focusable" Value="False"/>
+		<Setter Property="IsTabStop" Value="False"/>
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type RepeatButton}">
+					<Rectangle Width="{TemplateBinding Width}"
+							   Height="{TemplateBinding Height}"
+							   Fill="Transparent"/>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<Style x:Key="ScrollBarTrackThumb" TargetType="{x:Type Thumb}">
+		<Setter Property="OverridesDefaultStyle" Value="True"/>
+		<Setter Property="IsTabStop" Value="False"/>
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type Thumb}">
+					<Rectangle x:Name="rectangle"
+							   Width="{TemplateBinding Width}"
+							   Height="{TemplateBinding Height}"
+							   Fill="{StaticResource ScrollBar.Thumb.Normal}"
+							   SnapsToDevicePixels="True" UseLayoutRounding="True"/>
+					<ControlTemplate.Triggers>
+						<Trigger Property="IsMouseOver" Value="True">
+							<Setter TargetName="rectangle" Property="Fill" Value="{StaticResource ScrollBar.Thumb.MouseOver}"/>
+						</Trigger>
+						<Trigger Property="IsDragging" Value="True">
+							<Setter TargetName="rectangle" Property="Fill" Value="{StaticResource ScrollBar.Thumb.Pressed}"/>
+						</Trigger>
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<Style x:Key="PlainScrollBarStyle" TargetType="{x:Type ScrollBar}">
+		<Setter Property="Stylus.IsPressAndHoldEnabled" Value="False"/>
+		<Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
+		<Setter Property="Width" Value="{DynamicResource {x:Static SystemParameters.VerticalScrollBarWidthKey}}"/>
+		<Setter Property="MinWidth" Value="{DynamicResource {x:Static SystemParameters.VerticalScrollBarWidthKey}}"/>
+		<Setter Property="BorderThickness" Value="0"/>
+		<Setter Property="Background" Value="Transparent"/>
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type ScrollBar}">
+					<Grid SnapsToDevicePixels="True">
+						<Border Background="{TemplateBinding Background}"/>
+						<Track x:Name="PART_Track"
+							   IsDirectionReversed="True"
+							   IsEnabled="{TemplateBinding IsMouseOver}">
+							<Track.DecreaseRepeatButton>
+								<RepeatButton Style="{StaticResource ScrollBarTrackButton}"
+											  Command="{x:Static ScrollBar.PageUpCommand}"/>
+							</Track.DecreaseRepeatButton>
+							<Track.IncreaseRepeatButton>
+								<RepeatButton Style="{StaticResource ScrollBarTrackButton}"
+											  Command="{x:Static ScrollBar.PageDownCommand}"/>
+							</Track.IncreaseRepeatButton>
+							<Track.Thumb>
+								<Thumb Style="{StaticResource ScrollBarTrackThumb}"/>
+							</Track.Thumb>
+						</Track>
+					</Grid>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
 </ResourceDictionary>

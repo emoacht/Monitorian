@@ -39,19 +39,22 @@ public partial class DevSection : UserControl
 		if (++_count != CountThreshold)
 			return;
 
-		if (this.Resources["Content"] is not StackPanel content)
-			return;
+		if (this.Resources["Content"] is ControlTemplate template)
+			this.Template = template;
+	}
 
-		if (_additionalItems is { Length: > 0 })
+	private void ContentPanel_Initialized(object sender, EventArgs e)
+	{
+		if ((sender is StackPanel panel) &&
+			(_additionalItems is { Length: > 0 }))
 		{
 			foreach (var (item, index) in _additionalItems)
 			{
-				int i = index ?? Math.Max(0, content.Children.Count - 1);
-				content.Children.Insert(i, item);
+				int i = index ?? Math.Max(0, panel.Children.Count - 1);
+				panel.Children.Insert(i, item);
 			}
 		}
 
-		this.Content = content;
 		MenuWindow.EnsureFlowDirection(this);
 	}
 }

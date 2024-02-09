@@ -3,7 +3,7 @@ using Microsoft.Xaml.Behaviors;
 
 namespace Monitorian.Core.Views.Behaviors;
 
-public class FocusElementAction : TriggerAction<DependencyObject>
+public class FocusElementAction : TriggerAction<UIElement>
 {
 	public UIElement TargetElement
 	{
@@ -19,7 +19,8 @@ public class FocusElementAction : TriggerAction<DependencyObject>
 
 	protected override void Invoke(object parameter)
 	{
-		if (TargetElement is { Focusable: true, IsFocused: false })
-			TargetElement.Focus();
+		var target = TargetElement ?? AssociatedObject;
+		if (target is { Focusable: true, IsFocused: false })
+			target.Focus();
 	}
 }

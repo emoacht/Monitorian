@@ -122,6 +122,7 @@
     <Compile Include="Views\Behaviors\ItemSliderBehavior.cs" />
     <Compile Include="Views\Behaviors\MouseDownParentAction.cs" />
     <Compile Include="Views\Behaviors\MouseHorizontalWheelBehavior.cs" />
+    <Compile Include="Views\Behaviors\UpdateSourceAction.cs" />
     <Compile Include="Views\Controls\Sliders\CompoundSlider.cs" />
     <Compile Include="Views\Controls\Sliders\EnhancedSlider.cs" />
     <Compile Include="Views\Controls\Sliders\RangeConverter.cs" />

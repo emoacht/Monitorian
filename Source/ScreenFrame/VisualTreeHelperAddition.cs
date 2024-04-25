@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
@@ -66,6 +67,11 @@ public static class VisualTreeHelperAddition
 		/// </summary>
 		MDT_Default = MDT_Effective_DPI
 	}
+
+	[DllImport("Shcore.dll")]
+	private static extern int GetScaleFactorForMonitor(
+		IntPtr hMon,
+		out uint pScale);
 
 	#endregion
 
@@ -195,6 +201,16 @@ public static class VisualTreeHelperAddition
 			out uint dpiY);
 		if (result != S_OK)
 			return SystemDpi;
+
+#if DEBUG
+		result = GetScaleFactorForMonitor(
+			monitorHandle,
+			out uint factor);
+		if (result == S_OK)
+		{
+			Debug.Assert(factor == (dpiX / DefaultPixelsPerInch * 100));
+		}
+#endif
 
 		return new DpiScale(dpiX / DefaultPixelsPerInch, dpiY / DefaultPixelsPerInch);
 	}

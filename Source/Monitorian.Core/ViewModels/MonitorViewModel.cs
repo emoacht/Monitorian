@@ -351,7 +351,7 @@ public class MonitorViewModel : ViewModelBase
 		SetContrast(contrast);
 	}
 
-	private bool SetContrast(int contrast)
+	public bool SetContrast(int contrast)
 	{
 		contrast = Math.Min(100, Math.Max(0, contrast));
 

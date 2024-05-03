@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
 using System.Windows;
+using Windows.Devices.Display.Core;
 
 namespace Monitorian.Core.Models.Monitor;
 
@@ -147,6 +150,21 @@ internal class DisplayMonitorProvider
 						isInternal: (displayMonitor.ConnectionKind == Windows.Devices.Display.DisplayMonitorConnectionKind.Internal),
 						connectionDescription: GetConnectionDescription(displayMonitor.ConnectionKind, displayMonitor.PhysicalConnector)));
 				}
+
+#if DEBUG
+				using var manager = DisplayManager.Create(DisplayManagerOptions.None);
+				var state = manager.TryReadCurrentStateForAllTargets().State;
+				foreach (var target in state.Views
+					.SelectMany(x => x.Paths)
+					.Select(x => x.Target)
+					.Where(x => x.IsConnected))
+				{
+					var displayMonitor = target.TryGetMonitor();
+					var deviceInstanceId = DeviceConversion.ConvertToDeviceInstanceId(displayMonitor.DeviceId);
+					Debug.Assert(items.Any(x => x.DeviceInstanceId == deviceInstanceId));
+				}
+#endif
+
 				return items.ToArray();
 			}
 		}

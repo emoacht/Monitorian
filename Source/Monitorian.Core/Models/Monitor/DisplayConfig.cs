@@ -32,6 +32,10 @@ internal class DisplayConfig
 	private static extern int DisplayConfigGetDeviceInfo(
 		ref DISPLAYCONFIG_TARGET_DEVICE_NAME requestPacket);
 
+	[DllImport("User32.dll")]
+	private static extern int DisplayConfigGetDeviceInfo(
+		ref DISPLAYCONFIG_SOURCE_DEVICE_NAME requestPacket);
+
 	// All derived from wingdi.h
 	[StructLayout(LayoutKind.Sequential)]
 	private struct DISPLAYCONFIG_PATH_INFO
@@ -78,6 +82,15 @@ internal class DisplayConfig
 
 		[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
 		public string monitorDevicePath;
+	}
+
+	[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+	private struct DISPLAYCONFIG_SOURCE_DEVICE_NAME
+	{
+		public DISPLAYCONFIG_DEVICE_INFO_HEADER header;
+
+		[MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+		public string viewGdiDeviceName;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]

@@ -72,15 +72,31 @@ internal class MonitorManager
 	#endregion
 
 	private static HashSet<string> _foundIds;
+	private static bool _isDisplayMonitorAvailable = true; // Default
+
+	private static async Task<DisplayMonitorProvider.DisplayItem[]> GetDisplayMonitorsAsync()
+	{
+		if (OsVersion.Is10Build17134OrGreater && _isDisplayMonitorAvailable)
+		{
+			try
+			{
+				return await DisplayMonitorProvider.GetDisplayMonitorsAsync();
+			}
+			catch (FileNotFoundException)
+			{
+				_isDisplayMonitorAvailable = false;
+			}
+		}
+		return null;
+	}
 
 	public static async Task<IEnumerable<IMonitor>> EnumerateMonitorsAsync(TimeSpan timeout, CancellationToken cancellationToken = default)
 	{
 		var deviceItems = DeviceContext.EnumerateMonitorDevices().ToArray();
 		_foundIds = new HashSet<string>(deviceItems.Select(x => x.DeviceInstanceId));
 
-		IDisplayItem[] displayItems = OsVersion.Is10Build17134OrGreater
-			? await DisplayMonitorProvider.GetDisplayMonitorsAsync()
-			: DisplayConfig.EnumerateDisplayConfigs().ToArray();
+		IDisplayItem[] displayItems = await GetDisplayMonitorsAsync();
+		displayItems ??= DisplayConfig.EnumerateDisplayConfigs().ToArray();
 
 		IEnumerable<BasicItem> EnumerateBasicItems()
 		{
@@ -341,10 +357,7 @@ internal class MonitorManager
 					DeviceItems = DeviceContext.EnumerateMonitorDevices().ToArray()),
 
 				GetTask(nameof(DisplayMonitorItems), async () =>
-				{
-					if (OsVersion.Is10Build17134OrGreater)
-						DisplayMonitorItems = await DisplayMonitorProvider.GetDisplayMonitorsAsync();
-				}),
+					DisplayMonitorItems = await GetDisplayMonitorsAsync()),
 
 				GetTask(nameof(DisplayConfigItems), () =>
 					DisplayConfigItems = DisplayConfig.EnumerateDisplayConfigs().ToArray()),

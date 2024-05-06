@@ -78,6 +78,7 @@ In such case, please note the following:
  - To adjust the brightness by a touchpad, place two fingers on it and swipe horizontally. The touchpad must be a precision touchpad.
  - The number of monitors shown at a time is up to 4.
  - In case an external monitor is not shown, read [detection of external monitors](#detection-of-external-monitors).
+ - This app identifies each monitor by an unique identifier given by the OS. Even with the same PC and monitor, this identifier may vary depending on the type of connection (e.g. USB-C DisplayPort Alt mode) or the selection of connectors of the same type. Consequently, if a monitor is reconnected to the different connector, it may not be regarded as the same monitor and some functions may not work as expected.
 
 ## Add-on Features
 

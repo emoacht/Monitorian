@@ -8,14 +8,21 @@ namespace ScreenFrame.Helper;
 /// </summary>
 internal class Throttle
 {
-	private static readonly TimeSpan _dueTime = TimeSpan.FromSeconds(0.2);
-	private readonly Action _action;
+	protected readonly TimeSpan _dueTime;
+	protected readonly Action _action;
 
-	public Throttle(Action action) => this._action = action;
+	public Throttle(TimeSpan dueTime, Action action)
+	{
+		if (dueTime <= TimeSpan.Zero)
+			throw new ArgumentOutOfRangeException(nameof(dueTime), dueTime, "The time must be positive.");
 
-	private Task _lastWaitTask;
+		this._dueTime = dueTime;
+		this._action = action;
+	}
 
-	public async Task PushAsync()
+	protected Task _lastWaitTask;
+
+	public virtual async Task PushAsync()
 	{
 		var currentWaitTask = Task.Delay(_dueTime);
 		_lastWaitTask = currentWaitTask;
@@ -29,14 +36,21 @@ internal class Throttle
 
 internal class Throttle<T>
 {
-	private static readonly TimeSpan _dueTime = TimeSpan.FromSeconds(0.2);
-	private readonly Action<T> _action;
+	protected readonly TimeSpan _dueTime;
+	protected readonly Action<T> _action;
 
-	public Throttle(Action<T> action) => this._action = action;
+	public Throttle(TimeSpan dueTime, Action<T> action)
+	{
+		if (dueTime <= TimeSpan.Zero)
+			throw new ArgumentOutOfRangeException(nameof(dueTime), dueTime, "The time must be positive.");
 
-	private Task _lastWaitTask;
+		this._dueTime = dueTime;
+		this._action = action;
+	}
 
-	public async Task PushAsync(T value)
+	protected Task _lastWaitTask;
+
+	public virtual async Task PushAsync(T value)
 	{
 		var currentWaitTask = Task.Delay(_dueTime);
 		_lastWaitTask = currentWaitTask;
@@ -45,5 +59,25 @@ internal class Throttle<T>
 		{
 			_action?.Invoke(value);
 		}
+	}
+}
+
+/// <summary>
+/// Rx Sample like operator
+/// </summary>
+internal class Sample : Throttle
+{
+	public Sample(TimeSpan dueTime, Action action) : base(dueTime, action)
+	{ }
+
+	public override async Task PushAsync()
+	{
+		if (_lastWaitTask is not null)
+			return;
+
+		_lastWaitTask = Task.Delay(_dueTime);
+		await _lastWaitTask;
+		_action?.Invoke();
+		_lastWaitTask = null;
 	}
 }

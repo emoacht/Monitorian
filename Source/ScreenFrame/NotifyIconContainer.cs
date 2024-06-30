@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Forms;
 
+using ScreenFrame.Helper;
+
 namespace ScreenFrame;
 
 /// <summary>
@@ -80,6 +82,7 @@ public class NotifyIconContainer : IDisposable
 		NotifyIcon = new NotifyIcon();
 		NotifyIcon.MouseClick += OnMouseClick;
 		NotifyIcon.MouseDoubleClick += OnMouseDoubleClick;
+		NotifyIcon.MouseMove += OnMouseMove;
 
 		// The internal window of NotifyIcon seems to belong to the primary monitor and
 		// its DPI information cannot be used as is taking into account the primary taskbar which
@@ -263,6 +266,36 @@ public class NotifyIconContainer : IDisposable
 		MouseLeftButtonClick?.Invoke(this, EventArgs.Empty);
 
 		CheckDpiChanged();
+	}
+
+	#endregion
+
+	#region Hover
+
+	/// <summary>
+	/// Occurs when mouse pointer is over NotifyIcon for a moment.
+	/// </summary>
+	public event EventHandler MouseHover;
+
+	private Sample _reactMouseHover;
+	private bool _isHover;
+
+	private async void OnMouseMove(object sender, MouseEventArgs e)
+	{
+		_reactMouseHover ??= new Sample(
+			TimeSpan.FromSeconds(0.2),
+			() =>
+			{
+				if (_isHover != NotifyIconHelper.TryGetNotifyIconCursorLocation(NotifyIcon, out _, isSubstitutable: false))
+				{
+					_isHover = !_isHover;
+					if (_isHover)
+					{
+						MouseHover?.Invoke(this, EventArgs.Empty);
+					}
+				}
+			});
+		await _reactMouseHover.PushAsync();
 	}
 
 	#endregion

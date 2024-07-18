@@ -51,7 +51,7 @@ public class FloatWindowMover : BasicWindowMover
 	/// <returns>True if successfully gets</returns>
 	protected bool TryGetAdjacentLocationToPivot(double windowWidth, double windowHeight, out Rect location)
 	{
-		if (!WindowHelper.TryGetTaskbar(out _, out TaskbarAlignment taskbarAlignment, out _))
+		if (!WindowHelper.TryGetTaskbar(out _, out TaskbarAlignment taskbarAlignment))
 		{
 			location = default;
 			return false;

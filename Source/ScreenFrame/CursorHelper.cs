@@ -19,18 +19,18 @@ public static class CursorHelper
 	#endregion
 
 	/// <summary>
-	/// Gets the current point of cursor.
+	/// Gets the current location of cursor.
 	/// </summary>
-	/// <returns>The point of cursor</returns>
-	public static Point GetCursorPoint()
+	/// <returns>Location of cursor</returns>
+	public static Point GetCursorLocation()
 	{
-		return TryGetCursorPoint(out POINT point)
-			? point
+		return TryGetCursorLocation(out POINT location)
+			? location
 			: default(Point); // (0, 0)
 	}
 
-	internal static bool TryGetCursorPoint(out POINT point)
+	internal static bool TryGetCursorLocation(out POINT location)
 	{
-		return GetCursorPos(out point);
+		return GetCursorPos(out location);
 	}
 }

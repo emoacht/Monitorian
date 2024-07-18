@@ -594,9 +594,8 @@ public static class WindowHelper
 	/// </summary>
 	/// <param name="taskbarRect">Primary taskbar rectange</param>
 	/// <param name="taskbarAlignment">Primary taskbar alignment</param>
-	/// <param name="isShown">Whether primary taskbar is shown or hidden</param>
 	/// <returns>True if successfully gets</returns>
-	internal static bool TryGetTaskbar(out Rect taskbarRect, out TaskbarAlignment taskbarAlignment, out bool isShown)
+	internal static bool TryGetTaskbar(out Rect taskbarRect, out TaskbarAlignment taskbarAlignment)
 	{
 		var data = new APPBARDATA { cbSize = (uint)Marshal.SizeOf<APPBARDATA>() };
 
@@ -607,20 +606,10 @@ public static class WindowHelper
 		{
 			taskbarRect = data.rc;
 			taskbarAlignment = ConvertToTaskbarAlignment(data.uEdge);
-
-			if (TryGetWindow(PrimaryTaskbarWindowClassName, out _, out Rect rect))
-			{
-				// SHAppBarMessage function returns primary taskbar rectangle as if the taskbar
-				// is fully shown even when it is actually hidden. In contrast, GetWindowRect
-				// function returns actual, current primary taskbar rectangle. Thus, if those
-				// rectangles do not match, the taskbar is hidden in full or part.
-				isShown = (taskbarRect == rect);
-				return true;
-			}
+			return true;
 		}
 		taskbarRect = Rect.Empty;
 		taskbarAlignment = default;
-		isShown = default;
 		return false;
 
 		static TaskbarAlignment ConvertToTaskbarAlignment(ABE value)
@@ -634,6 +623,52 @@ public static class WindowHelper
 				_ => throw new NotSupportedException("The value is unknown."),
 			};
 		}
+	}
+
+	/// <summary>
+	/// Attempts to get the information on primary taskbar.
+	/// </summary>
+	/// <param name="taskbarRect">Primary taskbar rectange</param>
+	/// <param name="taskbarAlignment">Primary taskbar alignment</param>
+	/// <param name="isShown">Whether primary taskbar is shown or hidden</param>
+	/// <returns>True if successfully gets</returns>
+	internal static bool TryGetTaskbar(out Rect taskbarRect, out TaskbarAlignment taskbarAlignment, out bool isShown)
+	{
+		if (TryGetTaskbar(out taskbarRect, out taskbarAlignment)
+			&& TryGetWindow(PrimaryTaskbarWindowClassName, out _, out Rect rect)
+			&& TryGetMonitorRect(taskbarRect, out Rect monitorRect, out Rect workRect))
+		{
+			// SHAppBarMessage function returns primary taskbar rectangle as if the taskbar
+			// is fully shown even when it is actually hidden. In contrast, GetWindowRect
+			// function returns actual, current primary taskbar rectangle. Thus, if those
+			// rectangles match, the taskbar is fully shown.
+			isShown = (taskbarRect == rect)
+				// As of Windows 11 10.0.22621.xxx, current primary taskbar rectangle obtained
+				// specifying the traditional window of primary taskbar (Shell_TrayWnd)
+				// no longer indicates actual height of primary taskbar. Even so, if current
+				// primary taskbar rectangle is contained in monitor rectangle to which primary
+				// taskbar rectangle belongs, the taskbar is fully shown.
+				|| monitorRect.Contains(rect);
+
+			if (isShown)
+			{
+				// As a result of the change explained above, primary taskbar rectangle may not
+				// match the rectangle calculated by monitor rectangle and working area rectangle.
+				// In such case, the calculated rectangle seems reliable.
+				var height = (monitorRect.Height - workRect.Height);
+				if ((height > 0) && (taskbarRect.Height != height))
+				{
+					taskbarRect = new Rect(
+						taskbarRect.Left,
+						((monitorRect.Top != workRect.Top) ? monitorRect.Top : workRect.Bottom),
+						taskbarRect.Width,
+						height);
+				}
+			}
+			return true;
+		}
+		isShown = default;
+		return false;
 	}
 
 	// Primary taskbar does not necessarily locate in primary monitor.
@@ -806,32 +841,6 @@ public static class WindowHelper
 			(true, top: false, true, true) => TaskbarAlignment.Bottom,
 			_ => default
 		};
-	}
-
-	/// <summary>
-	/// Attempts to get the rectangle of Start button or ToolBar.
-	/// </summary>
-	/// <param name="buttonRect">Rectangle of Start button or ToolBar</param>
-	/// <returns>True if successfully gets</returns>
-	internal static bool TryGetStartButtonRect(out Rect buttonRect)
-	{
-		// As of Windows 11 10.0.22621.xxx, the traditional window of primary taskbar
-		// (Shell_TrayWnd) no longer indicates the actual height of primary taskbar. Instead,
-		// other windows (Start, ReBarWindow32) can be used to get the actual height.
-		if (TryGetChildWindow(PrimaryTaskbarWindowClassName, "Start", out _, out Rect windowRect)
-			&& IsValid(windowRect))
-		{
-			buttonRect = windowRect;
-			return true;
-		}
-		if (TryGetChildWindow(PrimaryTaskbarWindowClassName, "ReBarWindow32", out _, out windowRect)
-			&& IsValid(windowRect))
-		{
-			buttonRect = windowRect;
-			return true;
-		}
-		buttonRect = default;
-		return false;
 	}
 
 	/// <summary>

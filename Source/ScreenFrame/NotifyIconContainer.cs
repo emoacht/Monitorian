@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Forms;
 
+using ScreenFrame.Helper;
+
 namespace ScreenFrame;
 
 /// <summary>
@@ -247,8 +249,8 @@ public class NotifyIconContainer : IDisposable
 
 		if (e.Button == MouseButtons.Right)
 		{
-			if (NotifyIconHelper.TryGetNotifyIconClickedPoint(NotifyIcon, out Point point))
-				MouseRightButtonClick?.Invoke(this, point);
+			if (NotifyIconHelper.TryGetNotifyIconCursorLocation(NotifyIcon, out Point location, isSubstitutable: true))
+				MouseRightButtonClick?.Invoke(this, location);
 		}
 		else
 		{
@@ -263,6 +265,103 @@ public class NotifyIconContainer : IDisposable
 		MouseLeftButtonClick?.Invoke(this, EventArgs.Empty);
 
 		CheckDpiChanged();
+	}
+
+	#endregion
+
+	#region Hover
+
+	private readonly object _lock = new();
+
+	/// <summary>
+	/// Occurs when mouse pointer entered the rectangle of NotifyIcon.
+	/// </summary>
+	public event EventHandler MouseHover
+	{
+		add
+		{
+			lock (_lock)
+			{
+				RegisterMouseMove();
+				_mouseHover += value;
+			}
+		}
+		remove
+		{
+			lock (_lock)
+			{
+				_mouseHover -= value;
+				UnregisterMouseMove();
+			}
+		}
+	}
+	private event EventHandler _mouseHover;
+
+	/// <summary>
+	/// Occurs when mouse pointer left the rectangle of NotifyIcon.
+	/// </summary>
+	public event EventHandler MouseUnhover
+	{
+		add
+		{
+			lock (_lock)
+			{
+				RegisterMouseMove();
+				_mouseUnhover += value;
+			}
+		}
+		remove
+		{
+			lock (_lock)
+			{
+				_mouseUnhover -= value;
+				UnregisterMouseMove();
+			}
+		}
+	}
+	private event EventHandler _mouseUnhover;
+
+	private void RegisterMouseMove()
+	{
+		if ((_mouseHover is null) &&
+			(_mouseUnhover is null))
+		{
+			NotifyIcon.MouseMove += OnMouseMove;
+		}
+	}
+
+	private void UnregisterMouseMove()
+	{
+		if ((_mouseHover is null) &&
+			(_mouseUnhover is null))
+		{
+			NotifyIcon.MouseMove -= OnMouseMove;
+		}
+	}
+
+	private Sample _reactMouseHover;
+	private bool _isHover;
+
+	private async void OnMouseMove(object sender, MouseEventArgs e)
+	{
+		_reactMouseHover ??= new Sample(
+			TimeSpan.FromSeconds(0.1),
+			() =>
+			{
+				if (_isHover != NotifyIconHelper.TryGetNotifyIconCursorLocation(NotifyIcon, out _, isSubstitutable: false))
+				{
+					_isHover = !_isHover;
+					if (_isHover)
+					{
+						_mouseHover?.Invoke(this, EventArgs.Empty);
+					}
+					else
+					{
+						_mouseUnhover?.Invoke(this, EventArgs.Empty);
+					}
+				}
+			});
+		await _reactMouseHover.PushAsync();
 	}
 
 	#endregion

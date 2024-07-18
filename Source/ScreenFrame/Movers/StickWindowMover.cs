@@ -90,13 +90,6 @@ public class StickWindowMover : BasicWindowMover
 
 		if (isShown)
 		{
-			if (OsVersion.Is11Build22621OrGreater &&
-				(WindowHelper.TryGetStartButtonRect(out Rect buttonRect) ||
-				 WindowHelper.TryGetSystemPrimaryTaskbar(out buttonRect, out _)))
-			{
-				taskbarRect = new Rect(taskbarRect.Left, buttonRect.Top, taskbarRect.Width, buttonRect.Height);
-			}
-
 			if (NotifyIconHelper.TryGetNotifyIconRect(_notifyIcon, out iconRect))
 			{
 				if (taskbarRect.Contains(

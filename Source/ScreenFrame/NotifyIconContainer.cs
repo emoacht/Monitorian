@@ -247,8 +247,8 @@ public class NotifyIconContainer : IDisposable
 
 		if (e.Button == MouseButtons.Right)
 		{
-			if (NotifyIconHelper.TryGetNotifyIconClickedPoint(NotifyIcon, out Point point))
-				MouseRightButtonClick?.Invoke(this, point);
+			if (NotifyIconHelper.TryGetNotifyIconCursorLocation(NotifyIcon, out Point location, isSubstitutable: true))
+				MouseRightButtonClick?.Invoke(this, location);
 		}
 		else
 		{

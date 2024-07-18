@@ -42,26 +42,30 @@ internal static class NotifyIconHelper
 	}
 
 	/// <summary>
-	/// Attempts to get the point where a specified NotifyIcon is clicked.
+	/// Attempts to get the location of cursor when cursor is over a specified NotifyIcon.
 	/// </summary>
 	/// <param name="notifyIcon">NotifyIcon</param>
-	/// <param name="point">Clicked point</param>
+	/// <param name="location">Location of cursor</param>
+	/// <param name="isSubstitutable">Whether to substitute the NotifyIcon for cursor when cursor is not over the NotifyIcon</param>
 	/// <returns>True if successfully gets</returns>
 	/// <remarks>MouseEventArgs.Location property of MouseClick event does not contain data.</remarks>
-	public static bool TryGetNotifyIconClickedPoint(NotifyIcon notifyIcon, out Point point)
+	public static bool TryGetNotifyIconCursorLocation(NotifyIcon notifyIcon, out Point location, bool isSubstitutable)
 	{
 		if (TryGetNotifyIconRect(notifyIcon, out Rect iconRect))
 		{
-			if (CursorHelper.TryGetCursorPoint(out POINT source))
+			if (CursorHelper.TryGetCursorLocation(out POINT source))
 			{
-				point = source;
-				if (iconRect.Contains(point))
+				location = source;
+				if (iconRect.Contains(location))
 					return true;
 			}
-			point = iconRect.Location; // Fallback
-			return true;
+			if (isSubstitutable)
+			{
+				location = iconRect.Location;
+				return true;
+			}
 		}
-		point = default;
+		location = default;
 		return false;
 	}
 

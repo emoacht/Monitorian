@@ -22,9 +22,9 @@ Additional languages:
  - Arabic (ar) by @MohammadShughri
  - Catalan (ca) by @ericmp33
  - German (de) by @uDEV2019
+ - Greek (el-GR) by @NickMihal
  - Spanish (es) by @josemirm and @ericmp33
  - French (fr) by @AlexZeGamer and @Rikiiiiiii
- - Greek (el-GR) by @NickMihal
  - Italian (it) by @GhostyJade
  - Japanese (ja-JP) by @emoacht
  - Korean (ko-KR) by @VenusGirl
@@ -33,6 +33,7 @@ Additional languages:
  - Portuguese (pt-BR) by @guilhermgonzaga
  - Romanian (ro) by @calini
  - Russian (ru-RU) by @SigmaTel71 and @San4es
+ - Albanian (sq) by @RDN000
  - Turkish (tr-TR) by @webbudesign
  - Ukrainian (uk-UA) by @kaplun07
  - Simplified Chinese (zh-Hans) by @ComMouse, @zhujunsan, @XMuli, @FISHandCHEAP and @FrzMtrsprt
@@ -57,7 +58,7 @@ Additional languages:
    ```
 
  * Other:<br>
-:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/4.6.15-Installer/MonitorianInstaller4615.zip)
+:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/4.7.0-Installer/MonitorianInstaller470.zip)
 
 ## Install/Uninstall
 
@@ -213,6 +214,11 @@ An alternative language can be shown by adding a Resources (.resx) file into `/S
  - VESA [Monitor Control Command Set (MCCS)](https://www.google.co.jp/search?q=VESA+Monitor+Control+Command+Set+Standard+MCCS) standard
 
 ## History
+
+Ver 4.7 2024-7-21
+
+ - Improve internal code
+ - Albanian (sq) language. Thanks to @RDN000Add!
 
 Ver 4.6 2023-12-8
 

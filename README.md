@@ -19,6 +19,7 @@ https://user-images.githubusercontent.com/7205690/210137118-66cfdd6e-9847-41b3-a
 
 Additional languages:
 
+ - Albanian (sq) by @RDN000
  - Arabic (ar) by @MohammadShughri
  - Catalan (ca) by @ericmp33
  - German (de) by @uDEV2019

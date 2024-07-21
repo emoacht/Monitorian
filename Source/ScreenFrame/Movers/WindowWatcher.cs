@@ -63,7 +63,7 @@ internal class WindowWatcher
 			if (_eventHook != IntPtr.Zero)
 				return;
 
-			_eventProc = EventProc; // Prevent delegate of non-static method from being gabage collected.
+			_eventProc = EventProc; // Prevent delegate of non-static method from being garbage collected.
 			_eventHook = SetWinEventHook(
 				_eventValue,
 				_eventValue,

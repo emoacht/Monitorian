@@ -18,7 +18,7 @@ public abstract class WindowMover
 	protected readonly Window _window;
 
 	/// <summary>
-	/// Per-Monitor DPI of window
+	/// Per-Monitor DPI of the window
 	/// </summary>
 	public DpiScale Dpi => VisualTreeHelperAddition.GetDpi(_window);
 
@@ -71,7 +71,7 @@ public abstract class WindowMover
 	}
 
 	/// <summary>
-	/// Adjusts DPI of window.
+	/// Adjusts DPI of the window.
 	/// </summary>
 	/// <param name="dpi">DPI information</param>
 	protected virtual void AdjustWindow(DpiScale dpi)
@@ -139,7 +139,7 @@ public abstract class WindowMover
 	protected abstract void HandleWindowPosChanged(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled);
 
 	/// <summary>
-	/// Handles event when DPI for the window has changed.
+	/// Handles event when DPI of the window has changed.
 	/// </summary>
 	protected virtual void HandleDpiChanged(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
 	{

@@ -11,7 +11,7 @@ namespace ScreenFrame.Movers;
 public class SwitchWindowMover : StickWindowMover
 {
 	/// <summary>
-	/// Whether the window is departed from taskbar
+	/// Whether the window is departed from the taskbar
 	/// </summary>
 	public bool IsDeparted
 	{

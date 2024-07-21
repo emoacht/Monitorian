@@ -530,20 +530,18 @@ public static class WindowHelper
 	/// Gets all windows.
 	/// </summary>
 	/// <returns>
-	/// <para>parent: Parent window's identifier</para>
-	/// <para>child: Child window's identifier</para>
-	/// <para>name: Child window's class name</para>
-	/// <para>rect: Child window's rectangle</para>
+	/// <para>generation: Window's generation</para>
+	/// <para>name: Window's class name</para>
+	/// <para>rect: Window's rectangle</para>
 	/// </returns>
-	/// <remarks>This method is for research.</remarks>
-	public static IReadOnlyList<(int parent, int child, string name, Rect rect)> GetAllWindows()
+	/// <remarks>This method is for research purposes.</remarks>
+	public static IReadOnlyList<(int generation, string name, Rect rect)> GetAllWindows()
 	{
-		var list = new List<(int parent, int child, string name, Rect rect)>();
-		int count = 0;
+		var list = new List<(int generation, string name, Rect rect)>();
 
 		EnumWindows(
 			Proc,
-			new IntPtr(count));
+			new IntPtr(0));
 
 		return list.AsReadOnly();
 
@@ -556,20 +554,20 @@ public static class WindowHelper
 				buffer,
 				buffer.Capacity) > 0)
 			{
-				int parent = lParam.ToInt32();
-				int child = ++count;
+				int currentGeneration = lParam.ToInt32();
+				int nextGeneration = currentGeneration + 1;
 				var name = buffer.ToString();
 
 				GetWindowRect(
 					windowHandle,
 					out RECT rect);
 
-				list.Add((parent, child, name, rect));
+				list.Add((currentGeneration, name, rect));
 
 				EnumChildWindows(
 					windowHandle,
 					Proc,
-					new IntPtr(child));
+					new IntPtr(nextGeneration));
 			}
 			return true;
 		}
@@ -592,7 +590,7 @@ public static class WindowHelper
 	/// <summary>
 	/// Attempts to get the information on primary taskbar.
 	/// </summary>
-	/// <param name="taskbarRect">Primary taskbar rectange</param>
+	/// <param name="taskbarRect">Primary taskbar rectangle</param>
 	/// <param name="taskbarAlignment">Primary taskbar alignment</param>
 	/// <returns>True if successfully gets</returns>
 	internal static bool TryGetTaskbar(out Rect taskbarRect, out TaskbarAlignment taskbarAlignment)
@@ -628,7 +626,7 @@ public static class WindowHelper
 	/// <summary>
 	/// Attempts to get the information on primary taskbar.
 	/// </summary>
-	/// <param name="taskbarRect">Primary taskbar rectange</param>
+	/// <param name="taskbarRect">Primary taskbar rectangle</param>
 	/// <param name="taskbarAlignment">Primary taskbar alignment</param>
 	/// <param name="isShown">Whether primary taskbar is shown or hidden</param>
 	/// <returns>True if successfully gets</returns>
@@ -884,7 +882,7 @@ public static class WindowHelper
 	/// <summary>
 	/// Attempts to get the information on primary taskbar from <see cref="System.Windows.SystemParameters"/>.
 	/// </summary>
-	/// <param name="taskbarRect">Primary taskbar rectange</param>
+	/// <param name="taskbarRect">Primary taskbar rectangle</param>
 	/// <param name="taskbarAlignment">Primary taskbar alignment</param>
 	/// <returns>True if successfully gets</returns>
 	/// <remarks>

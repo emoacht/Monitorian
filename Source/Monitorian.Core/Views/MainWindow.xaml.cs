@@ -128,15 +128,15 @@ public partial class MainWindow : Window
 		{
 			this.Topmost = true;
 
-			// When window is deactivated, a focused element will lose focus and usually,
-			// no element has focus until window is activated again and the last focused element
-			// will automatically get focus back. Therefore, in usual case, no focused element
-			// exists before Window.Show method. However, during window is not active, it is
-			// possible to set focus on an element and such focused element is found here.
-			// The issue is that such focused element will lose focus because the element which
-			// had focus before window was deactivated will restore focus even though any other
-			// element has focus. To prevent this unintended change of focus, it is necessary
-			// to set focus back on the element which had focus before Window.Show method.
+			// When a window is deactivated, a focused element will lose focus and usually,
+			// no element will have focus until the window is activated again and the last focused
+			// element automatically gets focus back. Therefore, in usual case, no focused element
+			// exists before Window.Show method is called. However, it is possible to set focus on
+			// an element during window is not active and such focused element is found here.
+			// The issue is that such focused element will lose focus because the element which had
+			// focus before the window was deactivated will restore focus even though any other
+			// element has focus. To prevent this unintended change of focus, it is necessary to
+			// set focus back on the element which has focus before Window.Show method is called.
 			var currentFocusedElement = FocusManager.GetFocusedElement(this);
 
 			base.Show();

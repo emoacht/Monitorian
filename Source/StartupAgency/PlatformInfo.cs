@@ -21,7 +21,7 @@ public static class PlatformInfo
 			var package = Package.Current;
 			return !string.IsNullOrEmpty(package.Id.FamilyName);
 		}
-		catch (InvalidOperationException ex) when ((uint)ex.HResult == 0x80073D54)
+		catch (InvalidOperationException ex) when ((uint)ex.HResult is 0x80073D54)
 		{
 			// Message: The process has no package identity. (Exception from HRESULT: 0x80073D54)
 			// 0x80073D54 means 0x3D54 -> 15700 -> APPMODEL_ERROR_NO_PACKAGE

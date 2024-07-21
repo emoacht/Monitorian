@@ -153,7 +153,7 @@ public class WindowPainter : ScreenFrame.Painter.WindowPainter
 	/// Whether the accent color is supported
 	/// </summary>
 	/// <remarks>
-	/// The accent color on Windows 8.1 seems not have shaded variants and so is not considered
+	/// The accent color on Windows 8.1 seems not to have shaded variants and so is not considered
 	/// as utilizable here.
 	/// </remarks>
 	public bool IsAccentColorSupported { get; } = OsVersion.Is10OrGreater;

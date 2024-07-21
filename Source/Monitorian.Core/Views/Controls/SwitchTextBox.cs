@@ -132,9 +132,9 @@ public class SwitchTextBox : TextBox
 	protected override void OnLostFocus(RoutedEventArgs e)
 	{
 		// If a TextBox has focus when the window is deactivated, LostFocus event will occur
-		// after Window.Deactivated event. Since a TextBox's text will be updated to source when
-		// LostFocus event occurs by default, Window.Deactivated event is not always appropriate
-		// to update the latest text.
+		// after Window.Deactivated event. Since a TextBox's text will be updated to source
+		// when LostFocus event occurs by default, Window.Deactivated event is not always
+		// appropriate to update the latest text.
 
 		if (_window is { IsActive: false })
 			_timer?.Stop();

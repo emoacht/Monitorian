@@ -114,6 +114,19 @@ public class MonitorConfigurationTest
 	}
 
 	[TestMethod]
+	public void TestMonitorCapability_D1_9()
+	{
+		// DELL U2723QE
+		var source = @"(prot(monitor)type(lcd)model(U2723QE)cmds(01 02 03 07 0C E3 F3)vcp(02 04 05 08 10 12 14(01 04 05 06 08 09 0B 0C) 16 18 1A 52 60( 1B 0F 11) AA(01 02 04) AC AE B2 B6 C6 C8 C9 CC(02 03 04 06 09 0A 0D 0E) D6(01 04 05) DC(00 03 05) DF E0 E1 E2(00 02 04 0C 0D 0F 10 11 13 0B 1B 1A 14 23 24 27 3A) E5 E7(02 03) E8 E9(00 01 02 21 22 24) EA EF F0(00 05 06 09 0A 31 32 34 36) F1 F2 FE FD)mccs_ver(2.1)mswhql(1))";
+		var (success, vcpCodes) = TestExtractVcpCodes(source);
+		Assert.IsTrue(success);
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Luminance));
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Contrast));
+		Assert.IsFalse(AreIncluded(vcpCodes, VcpCode.SpeakerVolume));
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Temperature, 4, 5, 6, 8, 9));
+	}
+
+	[TestMethod]
 	public void TestMonitorCapability_H1_1()
 	{
 		// HP LE1711

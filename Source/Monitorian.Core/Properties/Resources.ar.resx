@@ -181,10 +181,13 @@
     <value>الشاشة غير متوافقة</value>
   </data>
   <data name="StatusReasonDdcFailing" xml:space="preserve">
-    <value>DDC / CI بإرجاع الأخطاء باستمرار</value>
+    <value>DDC/CI بإرجاع الأخطاء باستمرار</value>
   </data>
   <data name="StatusReasonDdcNotEnabled" xml:space="preserve">
-    <value>DDC / CI غير معتمد أو غير نشط</value>
+    <value>DDC/CI is not supported or enabled.</value>
+  </data>
+  <data name="UseAccentColor" xml:space="preserve">
+    <value>Use accent color for brightness</value>
   </data>
   <data name="UseLargeElements" xml:space="preserve">
     <value>استخدام عناصر كبيرة</value>

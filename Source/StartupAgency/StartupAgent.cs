@@ -110,7 +110,7 @@ public class StartupAgent : IDisposable
 	/// <returns>True if expected to be show its window</returns>
 	public bool IsWindowShowExpected()
 	{
-		return !IsStartedOnSignIn()
+		return (IsStartedOnSignIn() == false)
 			&& !Environment.GetCommandLineArgs().Skip(1).Contains(HideOption);
 	}
 
@@ -120,7 +120,7 @@ public class StartupAgent : IDisposable
 	/// Determines whether caller instance is presumed to have started on sign in.
 	/// </summary>
 	/// <returns>True if presumed to have started on sign in</returns>
-	public bool IsStartedOnSignIn()
+	public bool? IsStartedOnSignIn()
 	{
 		CheckWorker();
 		return _worker.IsStartedOnSignIn();

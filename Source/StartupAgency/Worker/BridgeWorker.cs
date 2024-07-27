@@ -1,8 +1,9 @@
 ﻿using System;
-using System.Diagnostics;
-using System.Management;
+using Windows.ApplicationModel;
+using Windows.ApplicationModel.Activation;
 
 using StartupAgency.Bridge;
+using StartupAgency.Helper;
 
 namespace StartupAgency.Worker;
 
@@ -30,17 +31,15 @@ internal class BridgeWorker : IStartupWorker
 		_lastStartTime = StartupData.LastStartTime;
 	}
 
-	public bool IsStartedOnSignIn()
+	public bool? IsStartedOnSignIn()
 	{
 		if (!IsRegistered())
 			return false;
 
-		// Compare last start time with session start time.
-		if (TryGetLogonSessionStartTime(out DateTimeOffset sessionStartTime) &&
-			(sessionStartTime < _lastStartTime))
-			return false;
+		if (OsVersion.Is10Build17134OrGreater)
+			return IsActivatedByStartupTask();
 
-		return true;
+		return null;
 	}
 
 	public bool CanRegister() => StartupTaskBroker.CanEnable(_taskId);
@@ -51,40 +50,12 @@ internal class BridgeWorker : IStartupWorker
 
 	public void Unregister() => StartupTaskBroker.Disable(_taskId);
 
-	#region Session
-
-	private static bool TryGetLogonSessionStartTime(out DateTimeOffset startTime)
+	private static bool? IsActivatedByStartupTask()
 	{
-		var query = new SelectQuery("Win32_LogonSession", "LogonType = 2");
+		var args = AppInstance.GetActivatedEventArgs();
+		if (args is null)
+			return null;
 
-		try
-		{
-			using (var searcher = new ManagementObjectSearcher(query))
-			using (var sessions = searcher.Get())
-			{
-				foreach (ManagementObject session in sessions)
-				{
-					using (session)
-					{
-						var startTimeString = (string)session.GetPropertyValue("StartTime");
-						if (string.IsNullOrEmpty(startTimeString))
-							continue;
-
-						startTime = new DateTimeOffset(ManagementDateTimeConverter.ToDateTime(startTimeString));
-						return true;
-					}
-				}
-			}
-		}
-		catch (ManagementException me)
-		{
-			Debug.WriteLine($"Failed to get logon session start time. HResult: {me.HResult} ErrorCode: {me.ErrorCode}" + Environment.NewLine
-				+ me);
-		}
-
-		startTime = default;
-		return false;
+		return (args.Kind == ActivationKind.StartupTask);
 	}
-
-	#endregion
 }

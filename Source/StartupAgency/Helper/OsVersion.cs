@@ -36,6 +36,11 @@ internal static class OsVersion
 	public static bool Is10Build14393OrGreater => IsEqualToOrGreaterThan(10, 0, 14393);
 
 	/// <summary>
+	/// Whether OS is Windows 10 (10.0.17134) or greater
+	/// </summary>
+	public static bool Is10Build17134OrGreater => IsEqualToOrGreaterThan(10, 0, 17134);
+
+	/// <summary>
 	/// Whether OS is Windows 11 (10.0.22000) or greater
 	/// </summary>
 	public static bool Is11OrGreater => IsEqualToOrGreaterThan(10, 0, 22000);

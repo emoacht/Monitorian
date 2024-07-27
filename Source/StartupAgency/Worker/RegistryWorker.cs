@@ -26,7 +26,7 @@ internal class RegistryWorker : IStartupWorker
 		this._pathWithOption = $"{path} {Option}";
 	}
 
-	public bool IsStartedOnSignIn()
+	public bool? IsStartedOnSignIn()
 	{
 		return Environment.GetCommandLineArgs().Skip(1).Contains(Option);
 	}

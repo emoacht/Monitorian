@@ -257,6 +257,19 @@ public class MonitorConfigurationTest
 	}
 
 	[TestMethod]
+	public void TestMonitorCapability_B1_3()
+	{
+		// BenQ RD280U
+		var source = @"(prot(monitor)type(LCD)model(RD280U)cmds(01 02 03 07 0C E3 F3)vcp(02 04 08 10 12 14(04 05 08 0B) 16 18 1A 52 60(0F 11 13) 62 72(50 64 78 8C A0) 86(02 05) 87 8A 8D(01 02) C1 C2 C9 CA(01 02) CC(01 02 03 04 05 06 07 09 0A 0B 0D 0E 0F 12 14 1A 1E 1F) D0(01 02 03 04 05 06 07 08 09 0A) D1(00 01 02) D2 D7 D9 DC(0A 0F 12 1F 23 30 31 32) DF E1 E2(00 FF) E3(00 01) E5 E6(00 01) E7(00 05 0A 14 1E 3C) E9(01 02 03) EB(00 01 02 03) EE(00 01 02) EF(00 01) F0(00 01 02) F1(00 1E 20 3C) F8(00 0A 14 1E) FD(00 03 04))mswhql(1)asset_eep(40)mccs_ver(2.2))";
+		var (success, vcpCodes) = TestExtractVcpCodes(source);
+		Assert.IsTrue(success);
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Luminance));
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Contrast));
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.SpeakerVolume)); // True
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Temperature, 4, 5, 8));
+	}
+
+	[TestMethod]
 	public void TestMonitorCapability_A1_1()
 	{
 		// ASUS PB277Q

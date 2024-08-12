@@ -6,7 +6,7 @@ internal interface IStartupWorker
 	/// <summary>
 	/// Determines whether caller instance is presumed to have started on sign in.
 	/// </summary>
-	bool IsStartedOnSignIn();
+	bool? IsStartedOnSignIn();
 
 	/// <summary>
 	/// Determines whether caller instance can be registered in startup.

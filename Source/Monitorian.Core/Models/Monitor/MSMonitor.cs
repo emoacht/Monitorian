@@ -87,7 +87,7 @@ internal class MSMonitor
 			}
 			catch (ManagementException me)
 			{
-				Debug.WriteLine($"Failed to get and enumerate instances by Win32_DesktopMonitor. HResult: {me.HResult} ErrorCode: {me.ErrorCode}" + Environment.NewLine
+				Debug.WriteLine($"Failed to get and enumerate instances by Win32_DesktopMonitor. HResult: 0x{me.HResult:x8} ErrorCode: {me.ErrorCode}" + Environment.NewLine
 					+ me);
 				yield break;
 			}
@@ -103,7 +103,7 @@ internal class MSMonitor
 			}
 			catch (ManagementException me)
 			{
-				Debug.WriteLine($"Failed to get instances by WmiMonitorBrightness. HResult: {me.HResult} ErrorCode: {me.ErrorCode}" + Environment.NewLine
+				Debug.WriteLine($"Failed to get instances by WmiMonitorBrightness. HResult: 0x{me.HResult:x8} ErrorCode: {me.ErrorCode}" + Environment.NewLine
 							+ me);
 				yield break;
 			}
@@ -128,7 +128,7 @@ internal class MSMonitor
 						// ErrorCode is ManagementStatus.NotSupported,
 						// ErrorCode is ManagementStatus.CallCanceled,
 						// HResult is 0x80131501.
-						Debug.WriteLine($"Failed to enumerate instances by WmiMonitorBrightness. HResult: {me.HResult} ErrorCode: {me.ErrorCode}" + Environment.NewLine
+						Debug.WriteLine($"Failed to enumerate instances by WmiMonitorBrightness. HResult: 0x{me.HResult:x8} ErrorCode: {me.ErrorCode}" + Environment.NewLine
 							+ me);
 						yield break;
 					}
@@ -179,7 +179,7 @@ internal class MSMonitor
 		}
 		catch (ManagementException me)
 		{
-			Debug.WriteLine($"Failed to get brightness by WmiMonitorBrightness. HResult: {me.HResult} ErrorCode: {me.ErrorCode}" + Environment.NewLine
+			Debug.WriteLine($"Failed to get brightness by WmiMonitorBrightness. HResult: 0x{me.HResult:x8} ErrorCode: {me.ErrorCode}" + Environment.NewLine
 				+ me);
 			return -1;
 		}
@@ -224,7 +224,7 @@ internal class MSMonitor
 		}
 		catch (ManagementException me)
 		{
-			Debug.WriteLine($"Failed to set brightness by WmiSetBrightness. HResult: {me.HResult} ErrorCode: {me.ErrorCode}" + Environment.NewLine
+			Debug.WriteLine($"Failed to set brightness by WmiSetBrightness. HResult: 0x{me.HResult:x8} ErrorCode: {me.ErrorCode}" + Environment.NewLine
 				+ me);
 			return false;
 		}
@@ -251,7 +251,7 @@ internal class MSMonitor
 		}
 		catch (ManagementException me)
 		{
-			var message = $"Failed to start watcher for WmiMonitorBrightnessEvent. HResult: {me.HResult} ErrorCode: {me.ErrorCode}";
+			var message = $"Failed to start watcher for WmiMonitorBrightnessEvent. HResult: 0x{me.HResult:x8} ErrorCode: {me.ErrorCode}";
 			Debug.WriteLine(message + Environment.NewLine
 				+ me);
 

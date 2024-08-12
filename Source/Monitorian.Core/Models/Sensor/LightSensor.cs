@@ -215,14 +215,13 @@ public static class LightSensor
 				switch ((uint)ex.HResult)
 				{
 					case 0x800704EC:
-						// Message: This program is blocked by group policy. For more information, 
-						// contact your system administrator. (Exception from HRESULT: 0x800704EC).
-						// 0x800704EC means 0x04EC -> 1260 -> ERROR_ACCESS_DISABLED_BY_POLICY
+						// Error message: This program is blocked by group policy. For more information, contact your system administrator.
+						// Error code: 0x800704EC -> 0x04EC = 1260 = ERROR_ACCESS_DISABLED_BY_POLICY
 						return false;
 
 					case 0x80040154:
-						// Message: Class not registered (Exception from HRESULT: 0x80040154 
-						// (REGDB_E_CLASSNOTREG)).
+						// Error message: Class not registered.
+						// Error code: 0x80040154 -> REGDB_E_CLASSNOTREG
 						return false;
 				}
 				throw;

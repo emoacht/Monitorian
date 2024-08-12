@@ -11,7 +11,7 @@ public static class ExceptionExtension
 	public static string ToDetailedString(this Exception ex)
 	{
 		var buffer = new StringBuilder(ex.GetType().ToString());
-		buffer.Append($": {ex.Message} HResult: {ex.HResult}");
+		buffer.Append($": {ex.Message} HResult: 0x{ex.HResult:x8}");
 
 		IEnumerable<Exception> innerExceptions;
 		if (ex is AggregateException ae)

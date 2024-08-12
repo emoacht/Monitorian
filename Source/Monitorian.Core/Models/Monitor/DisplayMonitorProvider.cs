@@ -95,16 +95,16 @@ internal class DisplayMonitorProvider
 
 	#endregion
 
-	// System error code: 0x80070057 = 0x57 = ERROR_INVALID_PARAMETER
 	// Error message: The parameter is incorrect.
+	// Error code: 0x80070057 -> 0x57 = ERROR_INVALID_PARAMETER
 	private const uint ERROR_INVALID_PARAMETER = 0x80070057;
 
-	// System error code: 0x8007001F = 0x1F = ERROR_GEN_FAILURE
 	// Error message: A device attached to the system is not functioning.
+	// Error code: 0x8007001F -> 0x1F = ERROR_GEN_FAILURE
 	private const uint ERROR_GEN_FAILURE = 0x8007001F;
 
-	// System error code: 0x8002802B
 	// Error message: Element not found.
+	// Error code: 0x8002802B
 	private const uint TYPE_E_ELEMENTNOTFOUND = 0x8002802B;
 
 	/// <summary>

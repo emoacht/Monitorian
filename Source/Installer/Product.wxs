@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-	<Product Id="*" Name="Monitorian" Manufacturer="emoacht" Version="4.7.1"
+	<Product Id="*" Name="Monitorian" Manufacturer="emoacht" Version="4.7.2"
 			 Language="1033" Codepage="1252" UpgradeCode="{81A4D148-75D3-462E-938D-8C208FB48E3C}">
 		<Package Id="*" InstallerVersion="500" Compressed="yes"
 				 InstallScope="perMachine" InstallPrivileges="elevated"

@@ -277,6 +277,12 @@ internal class MonitorManager
 		[DataMember(Order = 4)]
 		public string SetBrightness { get; private set; }
 
+		[DataMember(Order = 5)]
+		public string GetContrast { get; private set; }
+
+		[DataMember(Order = 6)]
+		public string SetContrast { get; private set; }
+
 		public PhysicalItemPlus(
 			MonitorConfiguration.PhysicalItem item) : base(
 				description: item.Description,
@@ -285,22 +291,15 @@ internal class MonitorManager
 				capability: item.Capability)
 		{
 			TestBrightness();
+			TestContrast();
 		}
 
 		private void TestBrightness()
 		{
 			var (getResult, minimum, current, maximum) = MonitorConfiguration.GetBrightness(Handle, Capability.IsHighLevelBrightnessSupported);
 			var isGetSuccess = (getResult.Status == AccessStatus.Succeeded);
-			var isValid = (minimum < maximum) && (minimum <= current) && (current <= maximum);
+			var (isValid, expected) = GetExpected(isGetSuccess, minimum, current, maximum);
 			GetBrightness = $"Success: {isGetSuccess}" + (isGetSuccess ? $", Valid: {isValid} (Minimum: {minimum}, Current: {current}, Maximum: {maximum})" : string.Empty);
-
-			var difference = (uint)(DateTime.Now.Ticks % 6 + 5); // Integer from 5 to 10
-			var expected = difference;
-			if (isGetSuccess && isValid)
-			{
-				expected = (current - minimum > maximum - current) ? current - difference : current + difference;
-				expected = Math.Min(maximum, Math.Max(minimum, expected));
-			}
 
 			var setResult = MonitorConfiguration.SetBrightness(Handle, expected, Capability.IsHighLevelBrightnessSupported);
 			var isSetSuccess = (setResult.Status == AccessStatus.Succeeded);
@@ -309,6 +308,46 @@ internal class MonitorManager
 
 			if (isSetSuccess)
 				MonitorConfiguration.SetBrightness(Handle, current, Capability.IsHighLevelBrightnessSupported);
+		}
+
+		private void TestContrast()
+		{
+			var (getResult, minimum, current, maximum) = MonitorConfiguration.GetContrast(Handle);
+			var isGetSuccess = (getResult.Status == AccessStatus.Succeeded);
+			var (isValid, expected) = GetExpected(isGetSuccess, minimum, current, maximum);
+			GetContrast = $"Success: {isGetSuccess}" + (isGetSuccess ? $", Valid: {isValid} (Minimum: {minimum}, Current: {current}, Maximum: {maximum})" : string.Empty);
+
+			var setResult = MonitorConfiguration.SetContrast(Handle, expected);
+			var isSetSuccess = (setResult.Status == AccessStatus.Succeeded);
+			var (_, _, actual, _) = MonitorConfiguration.GetContrast(Handle);
+			SetContrast = $"Success: {isSetSuccess}" + (isSetSuccess ? $", Match: {expected == actual} (Expected: {expected}, Actual: {actual})" : string.Empty);
+
+			if (isSetSuccess)
+				MonitorConfiguration.SetContrast(Handle, current);
+		}
+
+		private static (bool, uint) GetExpected(bool isSuccess, uint minimum, uint current, uint maximum)
+		{
+			const uint m = 5;
+
+			var isValid = (maximum - minimum >= m * 2) && (minimum <= current) && (current <= maximum);
+
+			if (!isSuccess)
+			{
+				return (isValid, (uint)(DateTime.Now.Ticks % 101));
+			}
+
+			uint lower = current - (isValid ? minimum : 0);
+			uint higher = (isValid ? maximum : 100) - current;
+
+			if (lower > higher)
+			{
+				return (isValid, current - m - (uint)(DateTime.Now.Ticks % (lower - m + 1)));
+			}
+			else
+			{
+				return (isValid, current + m + (uint)(DateTime.Now.Ticks % (higher - m + 1)));
+			}
 		}
 	}
 

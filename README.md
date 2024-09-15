@@ -85,13 +85,13 @@ In such case, please note the following:
 
 Add-on features are available for Microsoft Store version on a subscription basis.
 
-### Hot keys & Shortcut keys
+### Hot keys & Shortcut keys (Add-on features)
 
 ![Screenshot](Images/Screenshot_keys_en.png)
 
 All hot keys for brightness can be switched to contrast by `To contrast` hot key. It can be switched back to brightness by `To brightness` hot key.
 
-### Command-line options
+### Command-line options (Add-on features)
 
 You can use command-line options to get/set the brightness or contrast.
 

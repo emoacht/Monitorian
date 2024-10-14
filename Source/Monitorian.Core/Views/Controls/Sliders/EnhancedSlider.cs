@@ -359,6 +359,20 @@ public class EnhancedSlider : Slider
 
 	#endregion
 
+	#region Key
+
+	protected override void OnKeyUp(KeyEventArgs e)
+	{
+		base.OnKeyUp(e);
+
+		if (e.Key is (Key.Left or Key.Right))
+		{
+			EnsureUpdateSource();
+		}
+	}
+
+	#endregion
+
 	#region Deferral
 
 	public bool DefersUpdateSource

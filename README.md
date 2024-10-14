@@ -58,7 +58,7 @@ Additional languages:
    ```
 
  * Other:<br>
-:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/4.7.0-Installer/MonitorianInstaller470.zip)
+:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/4.8.0-Installer/MonitorianInstaller480.zip)
 
 ## Install/Uninstall
 
@@ -131,6 +131,12 @@ The options can be executed consecutively (e.g. `monitorian /set 20 /set contras
 You can call this app by its name `Monitorian` in command prompt or bat file. From Task Scheduler, it can be performed by the path to its alias `%LOCALAPPDATA%\Microsoft\WindowsApps\Monitorian.exe`. For example, to increase brightness of all monitors by 30%, the Action will be the following:
 
 ![Task Scheduler](Images/TaskScheduler_action.png)
+
+You can also define commands and make them executed when a specified condition is met, when a specified daily due time comes, or when a specified hot key is pressed:
+
+ - [Conditional Commands](https://github.com/emoacht/Monitorian/blob/master/docs/COMMANDS.md#conditional-commands)
+ - [Time Commands](https://github.com/emoacht/Monitorian/blob/master/docs/COMMANDS.md#time-commands)
+ - [Key Commands](https://github.com/emoacht/Monitorian/blob/master/docs/COMMANDS.md#key-commands)
 
 The code for add-on features is not included in this repository.
 
@@ -214,6 +220,10 @@ An alternative language can be shown by adding a Resources (.resx) file into `/S
  - VESA [Monitor Control Command Set (MCCS)](https://www.google.co.jp/search?q=VESA+Monitor+Control+Command+Set+Standard+MCCS) standard
 
 ## History
+
+Ver 4.8 2024-10-15
+
+ - Fix bug
 
 Ver 4.7 2024-7-21
 

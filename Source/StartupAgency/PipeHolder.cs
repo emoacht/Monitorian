@@ -31,7 +31,6 @@ internal class PipeHolder
 
 	private Semaphore _semaphore;
 
-	private readonly Lazy<List<NamedPipeServerStream>> _servers = new(() => new());
 	private readonly Lazy<CancellationTokenSource> _cts = new(() => new());
 
 	/// <summary>
@@ -82,16 +81,6 @@ internal class PipeHolder
 	public void Release()
 	{
 		_cts.Value.Cancel();
-
-		// List of servers is created only when server is started.
-		if (_servers.IsValueCreated)
-		{
-			foreach (var server in _servers.Value)
-				server.Dispose();
-
-			_servers.Value.Clear();
-		}
-
 		_semaphore?.Dispose();
 	}
 
@@ -102,23 +91,28 @@ internal class PipeHolder
 		if (cancellationToken.IsCancellationRequested)
 			return;
 
-		var server = new NamedPipeServerStream(PipeName, PipeDirection.InOut, 4, PipeTransmissionMode.Message);
-		_servers.Value.Add(server);
+		Task.Run(async () =>
+		{
+			while (true)
+			{
+				await WaitAndConnectClientAsync(cancellationToken);
 
-		server.WaitForConnectionAsync(cancellationToken)
-			.ContinueWith(async _ => await HandleConnectionAsync(server, cancellationToken), cancellationToken);
+				if (cancellationToken.IsCancellationRequested)
+					break;
+			}
+		}, cancellationToken);
 	}
 
-	private async Task HandleConnectionAsync(NamedPipeServerStream server, CancellationToken cancellationToken)
+	private async Task WaitAndConnectClientAsync(CancellationToken cancellationToken)
 	{
-		if (cancellationToken.IsCancellationRequested)
-			return;
-
 		// Because this method is not awaited on main thread, exceptions must be caught within
 		// this method.
+
+		NamedPipeServerStream server = null;
 		try
 		{
-			StartServer(cancellationToken);
+			server = new NamedPipeServerStream(PipeName, PipeDirection.InOut, 1, PipeTransmissionMode.Message);
+			await server.WaitForConnectionAsync(cancellationToken);
 
 			var buffer = new List<string>();
 			using (var reader = new StreamReader(server, Encoding.UTF8, true, 1024, leaveOpen: true))
@@ -153,8 +147,7 @@ internal class PipeHolder
 		}
 		finally
 		{
-			server.Dispose();
-			_servers.Value.Remove(server);
+			server?.Dispose();
 		}
 	}
 

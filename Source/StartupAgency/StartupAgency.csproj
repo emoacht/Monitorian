@@ -42,10 +42,8 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Bridge\StartupData.cs" />
     <Compile Include="Bridge\StartupTaskBroker.cs" />
     <Compile Include="Helper\OsVersion.cs" />
-    <Compile Include="Storage\SettingsAccessor.cs" />
     <Compile Include="Worker\BridgeWorker.cs" />
     <Compile Include="Worker\IStartupWorker.cs" />
     <Compile Include="Worker\RegistryWorker.cs" />

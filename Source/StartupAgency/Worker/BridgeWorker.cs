@@ -32,9 +32,22 @@ internal class BridgeWorker : IStartupWorker
 			return false;
 
 		if (OsVersion.Is10Build17134OrGreater)
-			return IsActivatedByStartupTask();
+			return _isActivatedByStartupTask.Value;
 
 		return null;
+	}
+
+	private readonly static Lazy<bool?> _isActivatedByStartupTask = new(() => IsActivatedByStartupTask());
+
+	private static bool? IsActivatedByStartupTask()
+	{
+		// This method only returns arguments on its first call.
+		// https://learn.microsoft.com/en-us/uwp/api/windows.applicationmodel.appinstance.getactivatedeventargs
+		var args = AppInstance.GetActivatedEventArgs();
+		if (args is null)
+			return null;
+
+		return (args.Kind == ActivationKind.StartupTask);
 	}
 
 	public bool CanRegister() => StartupTaskBroker.CanEnable(_taskId);
@@ -44,13 +57,4 @@ internal class BridgeWorker : IStartupWorker
 	public bool Register() => StartupTaskBroker.Enable(_taskId);
 
 	public void Unregister() => StartupTaskBroker.Disable(_taskId);
-
-	private static bool? IsActivatedByStartupTask()
-	{
-		var args = AppInstance.GetActivatedEventArgs();
-		if (args is null)
-			return null;
-
-		return (args.Kind == ActivationKind.StartupTask);
-	}
 }

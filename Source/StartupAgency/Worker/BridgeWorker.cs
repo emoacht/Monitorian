@@ -18,17 +18,12 @@ internal class BridgeWorker : IStartupWorker
 	/// <remarks>Startup task ID must match that in AppxManifest.xml.</remarks>
 	private readonly string _taskId;
 
-	private DateTimeOffset _lastStartTime;
-
 	public BridgeWorker(string taskId)
 	{
 		if (string.IsNullOrWhiteSpace(taskId))
 			throw new ArgumentNullException(nameof(taskId));
 
 		this._taskId = taskId;
-
-		// Get and update last start time.
-		_lastStartTime = StartupData.LastStartTime;
 	}
 
 	public bool? IsStartedOnSignIn()

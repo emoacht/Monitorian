@@ -89,6 +89,7 @@ public class AppControllerCore
 
 		NotifyIconContainer.MouseLeftButtonClick += OnMainWindowShowRequestedBySelf;
 		NotifyIconContainer.MouseRightButtonClick += OnMenuWindowShowRequested;
+		NotifyIconContainer.MouseWheel += OnMenuMouseWheel;
 
 		_sessionWatcher.Subscribe((e) => OnMonitorsChangeInferred(nameof(SessionWatcher), e));
 		_powerWatcher.Subscribe((e) => OnMonitorsChangeInferred(nameof(PowerWatcher), e));
@@ -125,6 +126,22 @@ public class AppControllerCore
 		}
 
 		await CleanAsync();
+	}
+
+	void OnMenuMouseWheel(object sender, System.Windows.Forms.MouseEventArgs e)
+	{
+		var monitors = Monitors.Where(x => x.IsControllable);
+
+		if (e.Delta > 0)
+		{
+			foreach (var monitor in monitors)
+				monitor?.IncrementBrightness(5, isCycle: false);
+		}
+		else if (e.Delta < 0)
+		{
+			foreach (var monitor in monitors)
+				monitor?.DecrementBrightness(5, isCycle: false);
+		}
 	}
 
 	public virtual void End()

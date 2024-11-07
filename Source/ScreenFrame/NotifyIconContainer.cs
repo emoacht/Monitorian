@@ -60,6 +60,8 @@ public class NotifyIconContainer : IDisposable
 
 	private NotifyIconWindowListener _listener;
 
+	MouseWheelHook _mouseWheelHook;
+
 	/// <summary>
 	/// NotifyIcon window handle (available only after ShowIcon method is called)
 	/// </summary>
@@ -91,6 +93,10 @@ public class NotifyIconContainer : IDisposable
 			CheckDpiChanged();
 			m.Result = IntPtr.Zero;
 		};
+
+		_mouseWheelHook = new();
+		_mouseWheelHook.MouseWheelEvent += OnMouseWheel;
+		_mouseWheelHook.SetHook();
 	}
 
 	/// <summary>
@@ -366,6 +372,22 @@ public class NotifyIconContainer : IDisposable
 
 	#endregion
 
+	#region MouseWheel
+
+	/// <summary>
+	/// Occurs when mouse wheel is rotated while mouse pointer is over NotifyIcon.
+	/// </summary>
+	public event EventHandler<MouseEventArgs> MouseWheel;
+
+	int OnMouseWheel(object sender, MouseEventArgs e)
+	{
+		if (NotifyIconHelper.TryGetNotifyIconRect(NotifyIcon, out var iconRect) && iconRect.Contains(e.X, e.Y))
+			MouseWheel?.Invoke(this, e);
+		return 0;
+	}
+
+	#endregion
+
 	#region IDisposable
 
 	private bool _isDisposed = false;
@@ -391,6 +413,7 @@ public class NotifyIconContainer : IDisposable
 		{
 			_listener?.Close();
 			NotifyIcon.Dispose();
+			_mouseWheelHook.Unhook();
 		}
 
 		_isDisposed = true;

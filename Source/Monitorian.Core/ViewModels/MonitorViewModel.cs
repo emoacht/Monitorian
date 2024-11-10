@@ -135,7 +135,7 @@ public class MonitorViewModel : ViewModelBase
 			SetBrightness(value, false);
 
 			if (IsSelected)
-				_controller.SaveMonitorUserChanged(this);
+				_controller.SelectedMonitor = this;
 		}
 	}
 
@@ -187,7 +187,7 @@ public class MonitorViewModel : ViewModelBase
 		IncrementBrightness(10);
 
 		if (IsSelected)
-			_controller.SaveMonitorUserChanged(this);
+			_controller.SelectedMonitor = this;
 	}
 
 	public void IncrementBrightness(int tickSize, bool isCycle = true)
@@ -207,7 +207,7 @@ public class MonitorViewModel : ViewModelBase
 		DecrementBrightness(10);
 
 		if (IsSelected)
-			_controller.SaveMonitorUserChanged(this);
+			_controller.SelectedMonitor = this;
 	}
 
 	public void DecrementBrightness(int tickSize, bool isCycle = true)
@@ -291,7 +291,7 @@ public class MonitorViewModel : ViewModelBase
 			SetContrast(value);
 
 			if (IsSelected)
-				_controller.SaveMonitorUserChanged(this);
+				_controller.SelectedMonitor = this;
 		}
 	}
 

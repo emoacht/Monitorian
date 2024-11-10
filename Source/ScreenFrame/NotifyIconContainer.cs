@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Forms;
 
-using ScreenFrame.Helper;
-
 namespace ScreenFrame;
 
 /// <summary>
@@ -247,14 +245,17 @@ public class NotifyIconContainer : IDisposable
 	{
 		NotifyIconHelper.SetNotifyIconWindowForeground(NotifyIcon);
 
-		if (e.Button == MouseButtons.Right)
+		switch (e.Button)
 		{
-			if (NotifyIconHelper.TryGetNotifyIconCursorLocation(NotifyIcon, out Point location, isSubstitutable: true))
-				MouseRightButtonClick?.Invoke(this, location);
-		}
-		else
-		{
-			MouseLeftButtonClick?.Invoke(this, EventArgs.Empty);
+			case MouseButtons.Left:
+				MouseLeftButtonClick?.Invoke(sender, EventArgs.Empty);
+				break;
+
+			case MouseButtons.Right:
+				if (NotifyIconHelper.TryGetNotifyIconCursorLocation(NotifyIcon, out Point location, isSubstitutable: true))
+					MouseRightButtonClick?.Invoke(sender, location);
+
+				break;
 		}
 
 		CheckDpiChanged();
@@ -262,7 +263,7 @@ public class NotifyIconContainer : IDisposable
 
 	private void OnMouseDoubleClick(object sender, MouseEventArgs e)
 	{
-		MouseLeftButtonClick?.Invoke(this, EventArgs.Empty);
+		MouseLeftButtonClick?.Invoke(sender, EventArgs.Empty);
 
 		CheckDpiChanged();
 	}
@@ -274,57 +275,32 @@ public class NotifyIconContainer : IDisposable
 	private readonly object _lock = new();
 
 	/// <summary>
-	/// Occurs when mouse pointer entered the rectangle of NotifyIcon.
+	/// Occurs when mouse wheel is rotated while mouse pointer is over NotifyIcon.
 	/// </summary>
-	public event EventHandler MouseHover
+	public event EventHandler<int> MouseWheel
 	{
 		add
 		{
 			lock (_lock)
 			{
 				RegisterMouseMove();
-				_mouseHover += value;
+				_mouseWheel += value;
 			}
 		}
 		remove
 		{
 			lock (_lock)
 			{
-				_mouseHover -= value;
+				_mouseWheel -= value;
 				UnregisterMouseMove();
 			}
 		}
 	}
-	private event EventHandler _mouseHover;
-
-	/// <summary>
-	/// Occurs when mouse pointer left the rectangle of NotifyIcon.
-	/// </summary>
-	public event EventHandler MouseUnhover
-	{
-		add
-		{
-			lock (_lock)
-			{
-				RegisterMouseMove();
-				_mouseUnhover += value;
-			}
-		}
-		remove
-		{
-			lock (_lock)
-			{
-				_mouseUnhover -= value;
-				UnregisterMouseMove();
-			}
-		}
-	}
-	private event EventHandler _mouseUnhover;
+	private event EventHandler<int> _mouseWheel;
 
 	private void RegisterMouseMove()
 	{
-		if ((_mouseHover is null) &&
-			(_mouseUnhover is null))
+		if (_mouseWheel is null)
 		{
 			NotifyIcon.MouseMove += OnMouseMove;
 		}
@@ -332,36 +308,82 @@ public class NotifyIconContainer : IDisposable
 
 	private void UnregisterMouseMove()
 	{
-		if ((_mouseHover is null) &&
-			(_mouseUnhover is null))
+		if (_mouseWheel is null)
 		{
 			NotifyIcon.MouseMove -= OnMouseMove;
 		}
 	}
 
-	private Sample _reactMouseHover;
-	private bool _isHover;
-
-	private async void OnMouseMove(object sender, MouseEventArgs e)
+	private void OnMouseMove(object sender, MouseEventArgs e)
 	{
-		_reactMouseHover ??= new Sample(
-			TimeSpan.FromSeconds(0.1),
-			() =>
+		ShowOverlayWindow();
+	}
+
+	private Window _window;
+
+	private void ShowOverlayWindow()
+	{
+		if (_window?.Visibility is Visibility.Visible)
+			return;
+
+		if (_window is null)
+		{
+			// Create a semi-transparent topmost Window.
+			_window = new Window
 			{
-				if (_isHover != NotifyIconHelper.TryGetNotifyIconCursorLocation(NotifyIcon, out _, isSubstitutable: false))
-				{
-					_isHover = !_isHover;
-					if (_isHover)
-					{
-						_mouseHover?.Invoke(this, EventArgs.Empty);
-					}
-					else
-					{
-						_mouseUnhover?.Invoke(this, EventArgs.Empty);
-					}
-				}
-			});
-		await _reactMouseHover.PushAsync();
+				WindowStyle = WindowStyle.None,
+				AllowsTransparency = true,
+				Background = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromArgb(1, 0, 0, 0)),
+				Topmost = true,
+				ShowActivated = false,
+				ShowInTaskbar = false,
+				Width = 1,
+				Height = 1,
+			};
+
+			_window.MouseUp += OnWindowMouseUp;
+			_window.MouseDoubleClick += OnWindowMouseDoubleClick;
+			_window.MouseWheel += OnWindowMouseWheel;
+			_window.MouseLeave += OnWindowMouseLeave;
+		}
+
+		if (NotifyIconHelper.TryGetNotifyIconRect(NotifyIcon, out Rect rct))
+		{
+			_window.ToolTip = this.Text;
+			_window.Visibility = Visibility.Visible;
+			_window.Show();
+			WindowHelper.SetWindowPosition(_window, rct, false);
+		}
+
+		void OnWindowMouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+		{
+			var button = e.ChangedButton switch
+			{
+				System.Windows.Input.MouseButton.Left => MouseButtons.Left,
+				System.Windows.Input.MouseButton.Middle => MouseButtons.Middle,
+				System.Windows.Input.MouseButton.Right => MouseButtons.Right,
+				_ => default
+			};
+			OnMouseClick(sender, new MouseEventArgs(button, e.ClickCount, 0, 0, 0));
+		}
+
+		void OnWindowMouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+		{
+			OnMouseDoubleClick(sender, new MouseEventArgs(MouseButtons.Left, e.ClickCount, 0, 0, 0));
+		}
+
+		void OnWindowMouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
+		{
+			_mouseWheel?.Invoke(sender, e.Delta);
+		}
+
+		void OnWindowMouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+		{
+			_window.Visibility = Visibility.Collapsed;
+
+			// Changing WindowState of a Window which is Topmost will deactivate the app.
+			//_window.WindowState = WindowState.Minimized;
+		}
 	}
 
 	#endregion
@@ -391,6 +413,7 @@ public class NotifyIconContainer : IDisposable
 		{
 			_listener?.Close();
 			NotifyIcon.Dispose();
+			_window?.Close();
 		}
 
 		_isDisposed = true;

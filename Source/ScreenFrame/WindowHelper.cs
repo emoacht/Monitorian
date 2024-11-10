@@ -396,9 +396,12 @@ public static class WindowHelper
 
 	#region Window
 
-	internal static bool SetWindowPosition(Window window, Rect position)
+	internal static bool SetWindowPosition(Window window, Rect position, bool activate = true)
 	{
 		var windowHandle = new WindowInteropHelper(window).Handle;
+		var flags = SWP.SWP_NOZORDER;
+		if (!activate)
+			flags |= SWP.SWP_NOACTIVATE;
 
 		return SetWindowPos(
 			windowHandle,
@@ -407,7 +410,7 @@ public static class WindowHelper
 			(int)position.Y,
 			(int)position.Width,
 			(int)position.Height,
-			SWP.SWP_NOZORDER);
+			flags);
 	}
 
 	internal static bool TryGetWindowRect(Window window, out Rect windowRect)

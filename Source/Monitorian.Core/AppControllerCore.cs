@@ -90,6 +90,9 @@ public class AppControllerCore
 		NotifyIconContainer.MouseLeftButtonClick += OnMainWindowShowRequestedBySelf;
 		NotifyIconContainer.MouseRightButtonClick += OnMenuWindowShowRequested;
 
+		if (MonitorManager.IsIconWheelEnabled())
+			NotifyIconContainer.MouseWheel += (_, delta) => ReflectMouseWheel(delta);
+
 		_sessionWatcher.Subscribe((e) => OnMonitorsChangeInferred(nameof(SessionWatcher), e));
 		_powerWatcher.Subscribe((e) => OnMonitorsChangeInferred(nameof(PowerWatcher), e));
 		_displaySettingsWatcher.Subscribe((e) => OnMonitorsChangeInferred(nameof(DisplaySettingsWatcher), e));
@@ -456,6 +459,22 @@ public class AppControllerCore
 		if (monitor is not null)
 		{
 			await monitor.ShowNormalMessageAsync(message, TimeSpan.FromSeconds(30));
+		}
+	}
+
+	private void ReflectMouseWheel(int delta)
+	{
+		var monitor = SelectedMonitor;
+		if (monitor is not { IsTarget: true, IsControllable: true })
+			return;
+
+		if (delta > 0)
+		{
+			monitor.IncrementBrightness(5, false);
+		}
+		else
+		{
+			monitor.DecrementBrightness(5, false);
 		}
 	}
 

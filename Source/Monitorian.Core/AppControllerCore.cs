@@ -459,21 +459,24 @@ public class AppControllerCore
 		}
 	}
 
+	protected internal MonitorViewModel SelectedMonitor
+	{
+		get => _selectedMonitor ??= Monitors.FirstOrDefault(x => string.Equals(x.DeviceInstanceId, Settings.SelectedDeviceInstanceId));
+		set
+		{
+			if ((value is null) || ReferenceEquals(_selectedMonitor, value))
+				return;
+
+			_selectedMonitor = value;
+			Settings.SelectedDeviceInstanceId = value.DeviceInstanceId;
+		}
+	}
+	private MonitorViewModel _selectedMonitor;
+
 	private void MonitorsDispose()
 	{
 		foreach (var m in Monitors)
 			m.Dispose();
-	}
-
-	protected MonitorViewModel SelectedMonitor { get; private set; }
-
-	protected internal virtual void SaveMonitorUserChanged(MonitorViewModel monitor)
-	{
-		if ((monitor is null) || ReferenceEquals(SelectedMonitor, monitor))
-			return;
-
-		SelectedMonitor = monitor;
-		Settings.SelectedDeviceInstanceId = monitor.DeviceInstanceId;
 	}
 
 	#endregion

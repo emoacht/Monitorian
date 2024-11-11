@@ -347,12 +347,23 @@ public class NotifyIconContainer : IDisposable
 			_window.MouseLeave += OnWindowMouseLeave;
 		}
 
-		if (NotifyIconHelper.TryGetNotifyIconRect(NotifyIcon, out Rect rct))
+		if (NotifyIconHelper.TryGetNotifyIconRect(NotifyIcon, out Rect iconRect))
 		{
-			_window.ToolTip = this.Text;
+			_window.ToolTip = Text;
+
+			if (WindowHelper.TryGetTaskbar(out _, out TaskbarAlignment taskbarAlignment))
+			{
+				var placement = taskbarAlignment switch
+				{
+					TaskbarAlignment.Top => System.Windows.Controls.Primitives.PlacementMode.Bottom,
+					_ => System.Windows.Controls.Primitives.PlacementMode.Top
+				};
+				System.Windows.Controls.ToolTipService.SetPlacement(_window, placement);
+			}
+
 			_window.Visibility = Visibility.Visible;
 			_window.Show();
-			WindowHelper.SetWindowPosition(_window, rct, false);
+			WindowHelper.SetWindowPosition(_window, iconRect, false);
 		}
 
 		void OnWindowMouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)

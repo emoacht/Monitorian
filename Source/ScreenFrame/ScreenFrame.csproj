@@ -59,10 +59,10 @@
     <Compile Include="Movers\StickWindowMover.cs" />
     <Compile Include="Movers\SwitchWindowMover.cs" />
     <Compile Include="Movers\WindowMover.cs" />
-    <Compile Include="Movers\WindowWatcher.cs" />
     <Compile Include="Painter\ThemeInfo.cs" />
     <Compile Include="Painter\WindowEffect.cs" />
     <Compile Include="Painter\WindowPainter.cs" />
+    <Compile Include="Watcher\WindowWatcher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CursorHelper.cs" />
     <Compile Include="LogicalTreeHelperAddition.cs" />

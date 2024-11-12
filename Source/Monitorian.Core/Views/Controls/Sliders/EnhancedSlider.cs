@@ -320,8 +320,6 @@ public class EnhancedSlider : Slider
 
 	#region MouseWheel
 
-	public static int WheelFactor { get; set; } = 5;
-
 	protected override void OnMouseWheel(MouseWheelEventArgs e)
 	{
 		base.OnMouseWheel(e);
@@ -352,7 +350,7 @@ public class EnhancedSlider : Slider
 		// https://docs.microsoft.com/en-us/dotnet/api/system.windows.forms.mouseeventargs.delta
 		//
 		// Mouse.MouseWheelDeltaForOneLine should be casted to double in case the delta is smaller than 120.
-		var newValue = this.Value + (delta / (double)Mouse.MouseWheelDeltaForOneLine * WheelFactor);
+		var newValue = this.Value + (delta / (double)Mouse.MouseWheelDeltaForOneLine * ViewSettings.WheelFactor);
 		UpdateValue(newValue);
 		EnsureUpdateSource();
 	}

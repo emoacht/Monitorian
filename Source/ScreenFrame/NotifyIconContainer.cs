@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Forms;
 
+using ScreenFrame.Watcher;
+
 namespace ScreenFrame;
 
 /// <summary>
@@ -320,6 +322,7 @@ public class NotifyIconContainer : IDisposable
 	}
 
 	private Window _window;
+	private ForegroundWindowWatcher _watcher;
 
 	private void ShowOverlayWindow()
 	{
@@ -364,6 +367,13 @@ public class NotifyIconContainer : IDisposable
 			_window.Visibility = Visibility.Visible;
 			_window.Show();
 			WindowHelper.SetWindowPosition(_window, iconRect, false);
+
+			_watcher ??= new ForegroundWindowWatcher(() =>
+			{
+				_window.Visibility = Visibility.Collapsed;
+				_watcher.RemoveHook();
+			});
+			_watcher.AddHook();
 		}
 
 		void OnWindowMouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -425,6 +435,7 @@ public class NotifyIconContainer : IDisposable
 			_listener?.Close();
 			NotifyIcon.Dispose();
 			_window?.Close();
+			_watcher?.RemoveHook();
 		}
 
 		_isDisposed = true;

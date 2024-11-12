@@ -154,6 +154,7 @@
       <DependentUpon>MenuWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\UISettings.cs" />
+    <Compile Include="Views\ViewSettings.cs" />
     <Compile Include="Views\WindowPainter.cs" />
   </ItemGroup>
   <ItemGroup>

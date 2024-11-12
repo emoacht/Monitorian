@@ -468,13 +468,15 @@ public class AppControllerCore
 		if (monitor is not { IsTarget: true, IsControllable: true })
 			return;
 
+		EnsureUnisonWorkable(monitor);
+
 		if (delta > 0)
 		{
-			monitor.IncrementBrightness(5, false);
+			monitor.IncrementBrightness(ViewSettings.WheelFactor, false);
 		}
 		else
 		{
-			monitor.DecrementBrightness(5, false);
+			monitor.DecrementBrightness(ViewSettings.WheelFactor, false);
 		}
 	}
 

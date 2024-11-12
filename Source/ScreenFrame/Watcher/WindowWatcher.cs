@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 
-namespace ScreenFrame.Movers;
+namespace ScreenFrame.Watcher;
 
 internal class WindowWatcher
 {
@@ -100,4 +100,14 @@ internal class WindowWatcher
 			_onGenerated.Invoke();
 		}
 	}
+}
+
+internal class ForegroundWindowWatcher : WindowWatcher
+{
+	// The foreground window has changed.
+	// https://learn.microsoft.com/en-us/windows/win32/winauto/event-constants
+	private const uint EVENT_SYSTEM_FOREGROUND = 0x0003;
+
+	public ForegroundWindowWatcher(Action onGenerated) : base(EVENT_SYSTEM_FOREGROUND, onGenerated)
+	{ }
 }

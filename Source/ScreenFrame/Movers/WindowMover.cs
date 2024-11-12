@@ -4,6 +4,7 @@ using System.Windows.Interop;
 using System.Windows.Media;
 
 using ScreenFrame.Helper;
+using ScreenFrame.Watcher;
 
 namespace ScreenFrame.Movers;
 
@@ -167,8 +168,6 @@ public abstract class WindowMover
 	/// </summary>
 	public event EventHandler ForegroundWindowChanged;
 
-	private const uint EVENT_SYSTEM_FOREGROUND = 0x0003;
-
 	/// <summary>
 	/// Handles event when the window is about to be shown/hidden.
 	/// </summary>
@@ -177,7 +176,7 @@ public abstract class WindowMover
 		var isShown = Convert.ToBoolean(wParam.ToInt32());
 		if (isShown)
 		{
-			_watcher ??= new WindowWatcher(EVENT_SYSTEM_FOREGROUND, () => ForegroundWindowChanged?.Invoke(this, EventArgs.Empty));
+			_watcher ??= new ForegroundWindowWatcher(() => ForegroundWindowChanged?.Invoke(this, EventArgs.Empty));
 			_watcher.AddHook();
 		}
 		else

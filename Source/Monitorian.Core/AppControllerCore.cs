@@ -470,11 +470,11 @@ public class AppControllerCore
 
 		if (delta > 0)
 		{
-			monitor.IncrementBrightness(5, false);
+			monitor.IncrementBrightness(ViewSettings.WheelFactor, false);
 		}
 		else
 		{
-			monitor.DecrementBrightness(5, false);
+			monitor.DecrementBrightness(ViewSettings.WheelFactor, false);
 		}
 	}
 

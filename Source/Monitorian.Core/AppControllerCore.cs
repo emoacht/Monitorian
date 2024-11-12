@@ -468,6 +468,8 @@ public class AppControllerCore
 		if (monitor is not { IsTarget: true, IsControllable: true })
 			return;
 
+		EnsureUnisonWorkable(monitor);
+
 		if (delta > 0)
 		{
 			monitor.IncrementBrightness(ViewSettings.WheelFactor, false);

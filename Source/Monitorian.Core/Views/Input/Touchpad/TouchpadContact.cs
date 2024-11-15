@@ -17,7 +17,7 @@ internal readonly struct TouchpadContact : IEquatable<TouchpadContact>
 	public override bool Equals(object obj) => (obj is TouchpadContact other) && Equals(other);
 
 	public bool Equals(TouchpadContact other) =>
-		(this.ContactId == other.ContactId) && (this.X == other.X) && (this.Y == other.Y);
+		(this.ContactId, this.X, this.Y) == (other.ContactId, other.X, other.Y);
 
 	public static bool operator ==(TouchpadContact a, TouchpadContact b) => a.Equals(b);
 	public static bool operator !=(TouchpadContact a, TouchpadContact b) => !a.Equals(b);

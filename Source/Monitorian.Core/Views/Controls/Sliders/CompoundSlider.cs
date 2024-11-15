@@ -188,7 +188,7 @@ public class CompoundSlider : ShadowSlider
 		{
 			SetLevel(e.level);
 		}
-		else if (e is { update: true })
+		if (e is { update: true })
 		{
 			base.EnsureUpdateSource();
 		}

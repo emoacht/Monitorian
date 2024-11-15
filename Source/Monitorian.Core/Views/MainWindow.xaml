@@ -682,7 +682,7 @@
 													 IsShadowVisible="{Binding Settings.ShowsAdjusted, Mode=OneWay}"
 													 ValueShadow="{Binding BrightnessSystemAdjusted, Mode=OneWay}"
 													 IsUnison="{Binding IsUnison, Mode=TwoWay}"
-													 ValueUnison="{Binding BrightnessSystemChanged, Mode=OneWay}"
+													 ValueUnison="{Binding BrightnessUnison, Mode=OneWay}"
 													 MinimumSelectionRange="10"
 													 IsSelectionRangeChanging="{Binding IsRangeChanging, Mode=OneWay}"
 													 SelectionStart="{Binding RangeLowest, Mode=TwoWay, Delay=50}"

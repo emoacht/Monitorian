@@ -235,6 +235,6 @@ public class MonitorCustomizationItem
 	{
 		get => (Name is null)
 			&& (IsUnison == default)
-			&& (Lowest == 0) && (Highest == 100);
+			&& (Lowest, Highest) is (0, 100);
 	}
 }

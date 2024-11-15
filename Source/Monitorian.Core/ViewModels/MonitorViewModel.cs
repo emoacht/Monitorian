@@ -140,7 +140,7 @@ public class MonitorViewModel : ViewModelBase
 	}
 
 	public int BrightnessSystemAdjusted => _monitor.BrightnessSystemAdjusted;
-	public int BrightnessSystemChanged => Brightness;
+	public int BrightnessUnison => Brightness;
 
 	public bool UpdateBrightness(int brightness = -1)
 	{
@@ -154,7 +154,7 @@ public class MonitorViewModel : ViewModelBase
 		{
 			case AccessStatus.Succeeded:
 				BrightnessUpdatedTime = DateTimeOffset.Now;
-				OnPropertyChanged(nameof(BrightnessSystemChanged)); // This must be prior to Brightness.
+				OnPropertyChanged(nameof(BrightnessUnison)); // This must be prior to Brightness.
 				OnPropertyChanged(nameof(Brightness));
 				OnPropertyChanged(nameof(BrightnessSystemAdjusted));
 				OnSucceeded();
@@ -241,6 +241,7 @@ public class MonitorViewModel : ViewModelBase
 		{
 			case AccessStatus.Succeeded:
 				BrightnessUpdatedTime = DateTimeOffset.Now;
+				OnPropertyChanged(nameof(BrightnessUnison)); // This must be prior to Brightness.
 				OnPropertyChanged(nameof(Brightness));
 				OnSucceeded();
 				return true;

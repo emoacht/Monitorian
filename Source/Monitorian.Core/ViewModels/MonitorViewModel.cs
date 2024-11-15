@@ -133,9 +133,6 @@ public class MonitorViewModel : ViewModelBase
 				return;
 
 			SetBrightness(value, false);
-
-			if (IsSelected)
-				_controller.SelectedMonitor = this;
 		}
 	}
 
@@ -182,13 +179,7 @@ public class MonitorViewModel : ViewModelBase
 		return UpdateBrightness();
 	}
 
-	public void IncrementBrightness()
-	{
-		IncrementBrightness(10);
-
-		if (IsSelected)
-			_controller.SelectedMonitor = this;
-	}
+	public void IncrementBrightness() => IncrementBrightness(10);
 
 	public void IncrementBrightness(int tickSize, bool isCycle = true)
 	{
@@ -202,13 +193,7 @@ public class MonitorViewModel : ViewModelBase
 		SetBrightness(brightness, isCycle);
 	}
 
-	public void DecrementBrightness()
-	{
-		DecrementBrightness(10);
-
-		if (IsSelected)
-			_controller.SelectedMonitor = this;
-	}
+	public void DecrementBrightness() => DecrementBrightness(10);
 
 	public void DecrementBrightness(int tickSize, bool isCycle = true)
 	{
@@ -290,9 +275,6 @@ public class MonitorViewModel : ViewModelBase
 				return;
 
 			SetContrast(value);
-
-			if (IsSelected)
-				_controller.SelectedMonitor = this;
 		}
 	}
 
@@ -560,7 +542,12 @@ public class MonitorViewModel : ViewModelBase
 		set
 		{
 			if (SetProperty(ref _isSelected, value))
+			{
 				OnPropertyChanged(nameof(IsSelectedByKey));
+
+				if (value && IsByKey)
+					_controller.SelectedMonitor = this;
+			}
 		}
 	}
 	private bool _isSelected;

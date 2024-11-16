@@ -458,7 +458,7 @@ public class AppControllerCore
 		var monitor = Monitors.FirstOrDefault(x => string.Equals(x.DeviceInstanceId, deviceInstanceId, StringComparison.OrdinalIgnoreCase));
 		if (monitor is not null)
 		{
-			await monitor.ShowNormalMessageAsync(message, TimeSpan.FromSeconds(30));
+			await monitor.AddNormalMessageAsync(message, TimeSpan.FromSeconds(30));
 		}
 	}
 

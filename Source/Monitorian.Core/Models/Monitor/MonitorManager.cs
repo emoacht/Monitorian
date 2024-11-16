@@ -45,7 +45,7 @@ internal class MonitorManager
 
 	#region Options
 
-	public static IReadOnlyCollection<string> Options => (new[] { PrecludeOption, PreclearOption, IconWheelOption })
+	public static IReadOnlyCollection<string> Options => (new[] { PrecludeOption, PreclearOption })
 		.Concat(PowerManagement.Options)
 		.Concat(BrightnessConnector.Options)
 		.Concat(DisplayInformationWatcher.Options)
@@ -67,13 +67,6 @@ internal class MonitorManager
 			.Select(x => x.id);
 
 		return new HashSet<string>(ids, StringComparer.OrdinalIgnoreCase);
-	}
-
-	private const string IconWheelOption = "/iconwheel";
-
-	public static bool IsIconWheelEnabled()
-	{
-		return AppKeeper.StandardArguments.Select(x => x.ToLower()).Contains(IconWheelOption);
 	}
 
 	#endregion

@@ -350,7 +350,7 @@ public class EnhancedSlider : Slider
 		// https://docs.microsoft.com/en-us/dotnet/api/system.windows.forms.mouseeventargs.delta
 		//
 		// Mouse.MouseWheelDeltaForOneLine should be casted to double in case the delta is smaller than 120.
-		var newValue = this.Value + (delta / (double)Mouse.MouseWheelDeltaForOneLine * ViewSettings.WheelFactor);
+		var newValue = this.Value + (delta / (double)Mouse.MouseWheelDeltaForOneLine * ViewManager.WheelFactor);
 		UpdateValue(newValue);
 		EnsureUpdateSource();
 	}

@@ -90,7 +90,7 @@ public class AppControllerCore
 		NotifyIconContainer.MouseLeftButtonClick += OnMainWindowShowRequestedBySelf;
 		NotifyIconContainer.MouseRightButtonClick += OnMenuWindowShowRequested;
 
-		if (MonitorManager.IsIconWheelEnabled())
+		if (ViewManager.IsIconWheelEnabled())
 			NotifyIconContainer.MouseWheel += (_, delta) => ReflectMouseWheel(delta);
 
 		_sessionWatcher.Subscribe((e) => OnMonitorsChangeInferred(nameof(SessionWatcher), e));
@@ -472,11 +472,11 @@ public class AppControllerCore
 
 		if (delta > 0)
 		{
-			monitor.IncrementBrightness(ViewSettings.WheelFactor, false);
+			monitor.IncrementBrightness(ViewManager.WheelFactor, false);
 		}
 		else
 		{
-			monitor.DecrementBrightness(ViewSettings.WheelFactor, false);
+			monitor.DecrementBrightness(ViewManager.WheelFactor, false);
 		}
 	}
 

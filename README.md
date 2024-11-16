@@ -34,6 +34,7 @@ Additional languages:
  - Romanian (ro) by @calini
  - Russian (ru-RU) by @SigmaTel71 and @San4es
  - Albanian (sq) by @RDN000
+ - Swedish (sv-SE) by @Sopor
  - Turkish (tr-TR) by @webbudesign
  - Ukrainian (uk-UA) by @kaplun07
  - Simplified Chinese (zh-Hans) by @ComMouse, @zhujunsan, @XMuli, @FISHandCHEAP and @FrzMtrsprt
@@ -58,7 +59,7 @@ Additional languages:
    ```
 
  * Other:<br>
-:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/4.8.0-Installer/MonitorianInstaller480.zip)
+:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/4.9.0-Installer/MonitorianInstaller490.zip)
 
 ## Install/Uninstall
 
@@ -221,6 +222,11 @@ An alternative language can be shown by adding a Resources (.resx) file into `/S
 
 ## History
 
+Ver 4.9 2024-11-16
+
+ - Improve internal code
+ - Add Swedish (sv-SE) language. Thanks to @Sopor!
+
 Ver 4.8 2024-10-15
 
  - Fix bug
@@ -228,7 +234,7 @@ Ver 4.8 2024-10-15
 Ver 4.7 2024-7-21
 
  - Improve internal code
- - Albanian (sq) language. Thanks to @RDN000Add!
+ - Add Albanian (sq) language. Thanks to @RDN000Add!
 
 Ver 4.6 2023-12-8
 

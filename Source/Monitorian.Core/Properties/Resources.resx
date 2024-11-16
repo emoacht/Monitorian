@@ -139,7 +139,7 @@
     <value>Save operation log to Desktop?</value>
   </data>
   <data name="CopyWaitOperationMessage" xml:space="preserve">
-    <value>Wait for more information to be recorded to operaton log.</value>
+    <value>Wait for more information to be recorded to operation log.</value>
   </data>
   <data name="DeferChange" xml:space="preserve">
     <value>Defer change until stopped</value>

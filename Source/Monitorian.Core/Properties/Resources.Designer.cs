@@ -124,7 +124,7 @@ namespace Monitorian.Core.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Wait for more information to be recorded to operaton log..
+        ///   Looks up a localized string similar to Wait for more information to be recorded to operation log..
         /// </summary>
         public static string CopyWaitOperationMessage {
             get {

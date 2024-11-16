@@ -73,9 +73,9 @@ public class AppKeeper
 		new[]
 		{
 			StartupAgent.Options,
-			MonitorManager.Options,
 			LanguageService.Options,
-			WindowPainter.Options
+			MonitorManager.Options,
+			ViewManager.Options
 		}
 		.SelectMany(x => x);
 

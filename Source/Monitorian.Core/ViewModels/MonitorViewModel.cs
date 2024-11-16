@@ -492,19 +492,19 @@ public class MonitorViewModel : ViewModelBase
 
 	#endregion
 
-	#region Message
+	#region Messages
 
-	private Throttle _show;
+	private Throttle _clear;
 
-	public async Task ShowNormalMessageAsync(string message, TimeSpan duration)
+	public async Task AddNormalMessageAsync(string message, TimeSpan duration)
 	{
-		_show ??= new Throttle(
+		NormalMessage = message;
+
+		_clear ??= new Throttle(
 			duration,
 			() => NormalMessage = null);
 
-		NormalMessage = message;
-
-		await _show.PushAsync();
+		await _clear.PushAsync();
 	}
 
 	public string NormalMessage

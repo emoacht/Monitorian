@@ -29,7 +29,7 @@ public class ObservableKeyedList<TKey, TValue> : IEnumerable<KeyValuePair<TKey, 
 	public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() => List.GetEnumerator();
 	IEnumerator IEnumerable.GetEnumerator() => List.GetEnumerator();
 
-	protected object Lock => _lock ??= new object();
+	protected object Lock => _lock ??= new();
 	private object _lock;
 
 	/// <summary>

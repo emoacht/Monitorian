@@ -35,7 +35,7 @@ public class ObservableDictionary<TKey, TValue> : IDictionary<TKey, TValue>, INo
 	public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() => Dictionary.GetEnumerator();
 	IEnumerator IEnumerable.GetEnumerator() => Dictionary.GetEnumerator();
 
-	protected object Lock => _lock ??= new object();
+	protected object Lock => _lock ??= new();
 	private object _lock;
 
 	public virtual TValue this[TKey key]

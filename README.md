@@ -58,6 +58,11 @@ Additional languages:
    winget install Monitorian -s msstore
    ```
 
+ * Chocolatey (a.k.a. [Chocolatey Package Manager](https://community.chocolatey.org/packages/monitorian), App Installer):
+   ```
+   choco install monitorian
+   ```
+
  * Other:<br>
 :floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/4.9.1-Installer/MonitorianInstaller491.zip)
 

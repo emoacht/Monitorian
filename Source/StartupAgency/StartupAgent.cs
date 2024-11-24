@@ -22,13 +22,15 @@ public class StartupAgent : IDisposable
 	/// </summary>
 	/// <param name="name">Name</param>
 	/// <param name="startupTaskId">Startup task ID</param>
-	/// <param name="args">Arguments being forwarded to another instance</param>
+	/// <param name="standardArguments">Arguments being consumed in current instance</param>
+	/// <param name="forwardingArguments">Arguments being forwarded to another instance</param>
 	/// <returns>
 	/// <para>success: True if no other instance exists and this instance successfully starts</para>
 	/// <para>response: Response from another instance if that instance exists and returns an response</para> 
 	/// </returns>
 	/// <remarks>Startup task ID must match that in AppxManifest.xml.</remarks>
-	public (bool success, string response) Start(string name, string startupTaskId, IReadOnlyList<string> args)
+	public (bool success, string response) Start(string name, string startupTaskId,
+		IReadOnlyList<string> standardArguments, IReadOnlyList<string> forwardingArguments)
 	{
 		if (string.IsNullOrWhiteSpace(name))
 			throw new ArgumentNullException(nameof(name));
@@ -36,13 +38,15 @@ public class StartupAgent : IDisposable
 			throw new ArgumentNullException(nameof(startupTaskId));
 
 		_holder = new PipeHolder(name, null);
-		var (success, response) = _holder.Create(args?.ToArray());
+		var (success, response) = _holder.Create(forwardingArguments?.ToArray());
 		if (!success)
 			return (success: false, response);
 
 		_worker = (OsVersion.Is10Build14393OrGreater && IsPackaged)
 			? (IStartupWorker)new BridgeWorker(taskId: startupTaskId)
 			: (IStartupWorker)new RegistryWorker(name: name, path: Assembly.GetEntryAssembly().Location);
+
+		_isHideExpected = standardArguments?.Contains(HideOption) is true;
 		return (success: true, null);
 	}
 
@@ -104,14 +108,15 @@ public class StartupAgent : IDisposable
 
 	private const string HideOption = "/hide";
 
+	private bool _isHideExpected;
+
 	/// <summary>
 	/// Determines whether caller instance is expected to show its window.
 	/// </summary>
 	/// <returns>True if expected to be show its window</returns>
 	public bool IsWindowShowExpected()
 	{
-		return (IsStartedOnSignIn() == false)
-			&& !Environment.GetCommandLineArgs().Skip(1).Contains(HideOption);
+		return (IsStartedOnSignIn() is false) && !_isHideExpected;
 	}
 
 	#region Register/Unregister

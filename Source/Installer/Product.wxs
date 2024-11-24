@@ -1,10 +1,8 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
-<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-	<Product Id="*" Name="Monitorian" Manufacturer="emoacht" Version="4.9.1"
+﻿<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+	 xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
+	<Package Name="Monitorian" Manufacturer="emoacht" Version="4.9.1"
 			 Language="1033" Codepage="1252" UpgradeCode="{81A4D148-75D3-462E-938D-8C208FB48E3C}">
-		<Package Id="*" InstallerVersion="500" Compressed="yes"
-				 InstallScope="perMachine" InstallPrivileges="elevated"
-				 Description="Installer for Monitorian"/>
+		<SummaryInformation Description="Installer for Monitorian"/>
 
 		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed."/>
 
@@ -16,11 +14,12 @@
 		<Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR"/>
 
 		<UI>
-			<UIRef Id="WixUI_InstallDir"/>
+			<ui:WixUI Id="WixUI_InstallDir"/>
 			<UIRef Id="WixUI_ErrorProgressText"/>
 
 			<Publish Dialog="ExitDialog" Control="Finish" Event="DoAction"
-					 Value="LaunchApplication">WIXUI_EXITDIALOGOPTIONALCHECKBOX = 1 and NOT Installed</Publish>
+					 Value="LaunchApplication"
+					 Condition="WIXUI_EXITDIALOGOPTIONALCHECKBOX = 1 and NOT Installed"/>
 		</UI>
 
 		<WixVariable Id="WixUIBannerBmp" Value="Resources\banner.png"/>
@@ -30,56 +29,54 @@
 		<Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Launch $(var.Monitorian.ProjectName) now"/>
 		<Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOX" Value="1"/>
 
-		<Directory Id="TARGETDIR" Name="SourceDir">
-			<!-- Program Files -->
-			<Directory Id="ProgramFilesFolder">
-				<Directory Id="INSTALLDIR" Name="$(var.Monitorian.ProjectName)"/>
-			</Directory>
+		<!-- Program Files -->
+		<StandardDirectory Id="ProgramFilesFolder">
+			<Directory Id="INSTALLDIR" Name="$(var.Monitorian.ProjectName)"/>
+		</StandardDirectory>
 
-			<!-- Program Menu -->
-			<Directory Id="ProgramMenuFolder"/>
+		<!-- Program Menu -->
+		<StandardDirectory Id="ProgramMenuFolder"/>
 
-			<!-- Local AppData -->
-			<Directory Id="LocalAppDataFolder">
-				<Directory Id="ApplicationLocalAppDataFolder" Name="$(var.Monitorian.ProjectName)"/>
-			</Directory>
-		</Directory>
+		<!-- Local AppData -->
+		<StandardDirectory Id="LocalAppDataFolder">
+			<Directory Id="ApplicationLocalAppDataFolder" Name="$(var.Monitorian.ProjectName)"/>
+		</StandardDirectory>
 
 		<DirectoryRef Id="INSTALLDIR">
 			<Component Id="MainExecutable" Guid="{54E27434-B1A7-4EB7-9F97-847E0B336BAF}">
-				<File Id="MainExecutable"
-					  Source="$(var.Monitorian.TargetPath)" Name="$(var.Monitorian.TargetFileName)" KeyPath="yes"/>
+				<File Id="MainExecutable" Name="$(var.Monitorian.TargetFileName)"
+					  Source="$(var.Monitorian.TargetPath)" KeyPath="yes"/>
 			</Component>
 
 			<Component Id="MainExecutableConfig" Guid="{B5CD9CA1-8E4C-41AC-A7BA-1291CB40A916}">
-				<File Id="MainExecutableConfig"
-					  Source="$(var.Monitorian.TargetDir)" Name="$(var.Monitorian.TargetFileName).config" KeyPath="yes"/>
+				<File Id="MainExecutableConfig" Name="$(var.Monitorian.TargetFileName).config"
+					  Source="$(var.Monitorian.TargetDir)" KeyPath="yes"/>
 			</Component>
 
 			<Component Id="BehaviorsLibrary" Guid="{CDD5E0E6-FF0A-47DA-AE3E-66D6F6FAB3E8}">
-				<File Id="BehaviorsLibrary"
-					  Source="$(var.Monitorian.TargetDir)" Name="Microsoft.Xaml.Behaviors.dll" KeyPath="yes"/>
+				<File Id="BehaviorsLibrary" Name="Microsoft.Xaml.Behaviors.dll"
+					  Source="$(var.Monitorian.TargetDir)" KeyPath="yes"/>
 			</Component>
 
 			<Component Id="CoreLibrary" Guid="{1E9CB31F-C53B-4E83-B593-F30ADC7468CB}">
-				<File Id="CoreLibrary"
-					  Source="$(var.Monitorian.TargetDir)" Name="$(var.Monitorian.TargetName).Core.dll" KeyPath="yes"/>
+				<File Id="CoreLibrary" Name="$(var.Monitorian.TargetName).Core.dll"
+					  Source="$(var.Monitorian.TargetDir)" KeyPath="yes"/>
 			</Component>
 
 			<Component Id="FrameLibrary" Guid="{9BAED8CA-C9C3-4ECD-8D28-289758577A8E}">
-				<File Id="FrameLibrary"
-					  Source="$(var.Monitorian.TargetDir)" Name="ScreenFrame.dll" KeyPath="yes"/>
+				<File Id="FrameLibrary" Name="ScreenFrame.dll"
+					  Source="$(var.Monitorian.TargetDir)" KeyPath="yes"/>
 			</Component>
 
 			<Component Id="StartupLibrary" Guid="{BF5542A0-B74B-4CBA-9945-C001342759A6}">
-				<File Id="StartupLibrary"
-					  Source="$(var.Monitorian.TargetDir)" Name="StartupAgency.dll" KeyPath="yes"/>
+				<File Id="StartupLibrary" Name="StartupAgency.dll"
+					  Source="$(var.Monitorian.TargetDir)" KeyPath="yes"/>
 			</Component>
 
-			<Component Id="VisualManifest" Guid="{69BD7D13-0EA9-46F3-9575-EBEEF24A839D}">
-				<Condition><![CDATA[VEM = "yes"]]></Condition>
-				<File Id="VisualManifest"
-					  Source="$(var.Monitorian.TargetDir)" Name="$(var.Monitorian.TargetName).VisualElementsManifest.xml" KeyPath="yes"/>
+			<Component Id="VisualManifest" Guid="{69BD7D13-0EA9-46F3-9575-EBEEF24A839D}"
+					   Condition="VEM = &quot;yes&quot;">
+				<File Id="VisualManifest" Name="$(var.Monitorian.TargetName).VisualElementsManifest.xml"
+					  Source="$(var.Monitorian.TargetDir)" KeyPath="yes"/>
 			</Component>
 
 			<!-- Language resources -->
@@ -174,7 +171,7 @@
 				</Component>
 			</Directory>
 			<Directory Id="ResourcesFolder_svSE" Name="sv-SE"
-                       FileSource="$(var.Monitorian.TargetDir)sv-SE">
+					   FileSource="$(var.Monitorian.TargetDir)sv-SE">
 				<Component Id="CoreResourcesLibrary_svSE" Guid="{5C74A446-22F2-46EF-9D07-241142FE66B7}">
 					<File Id="CoreResourcesLibrary_svSE" Name="$(var.Monitorian.TargetName).Core.resources.dll" KeyPath="yes"/>
 				</Component>
@@ -206,7 +203,7 @@
 		</DirectoryRef>
 
 		<!-- Shortcut in Program Menu -->
-		<DirectoryRef Id="ProgramMenuFolder">
+		<StandardDirectory Id="ProgramMenuFolder">
 			<Component Id="ApplicationShortcut" Guid="{FEE3D455-9968-475E-9B57-44826C4BF63F}">
 				<Shortcut Id="ApplicationProgramMenuShortcut" Name="$(var.Monitorian.ProjectName)"
 						  Target="[#MainExecutable]" WorkingDirectory="INSTALLDIR"
@@ -216,7 +213,7 @@
 				<RegistryValue Root="HKCU" Key="Software\[ProductName]"
 							   Name="ApplicationShortcut" Type="integer" Value="1" KeyPath="yes"/>
 			</Component>
-		</DirectoryRef>
+		</StandardDirectory>
 
 		<!-- Working Folder in Local AppData -->
 		<DirectoryRef Id="ApplicationLocalAppDataFolder">
@@ -265,13 +262,14 @@
 
 		<!-- Launch after installation -->
 		<Property Id="WixShellExecTarget" Value="$(var.Monitorian.TargetFileName)"/>
-		<CustomAction Id="LaunchApplication" BinaryKey="WixCA" DllEntry="WixShellExec" Impersonate="yes"/>
+		<CustomAction Id="LaunchApplication" DllEntry="WixShellExec" Impersonate="yes" BinaryRef="Wix4UtilCA_X86"/>
 
 		<!-- Clean Current User Run -->
 		<CustomAction Id="CleanCurrentUserRun" Directory="TARGETDIR" Execute="immediate" Return="ignore"
 					  ExeCommand="[SystemFolder]reg.exe delete HKCU\Software\Microsoft\Windows\CurrentVersion\Run /v [ProductName] /f"/>
 		<InstallExecuteSequence>
-			<Custom Action="CleanCurrentUserRun" After="InstallFinalize">(NOT UPGRADINGPRODUCTCODE) AND (REMOVE="ALL")</Custom>
+			<Custom Action="CleanCurrentUserRun" After="InstallFinalize"
+					Condition="(NOT UPGRADINGPRODUCTCODE) AND (REMOVE=&quot;ALL&quot;)"/>
 		</InstallExecuteSequence>
-	</Product>
+	</Package>
 </Wix>

@@ -1,5 +1,6 @@
 ﻿<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
-	 xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
+	 xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui"
+	 xmlns:netfx="http://wixtoolset.org/schemas/v4/wxs/netfx">
 	<Package Name="Monitorian" Manufacturer="emoacht" Version="4.9.1"
 			 Language="1033" Codepage="1252" UpgradeCode="{81A4D148-75D3-462E-938D-8C208FB48E3C}">
 		<SummaryInformation Description="Installer for Monitorian"/>
@@ -45,7 +46,9 @@
 		<DirectoryRef Id="INSTALLDIR">
 			<Component Id="MainExecutable" Guid="{54E27434-B1A7-4EB7-9F97-847E0B336BAF}">
 				<File Id="MainExecutable" Name="$(var.Monitorian.TargetFileName)"
-					  Source="$(var.Monitorian.TargetPath)" KeyPath="yes"/>
+					  Source="$(var.Monitorian.TargetPath)" KeyPath="yes">
+					<netfx:NativeImage Id="MainExecutableNgen" Platform="32bit" Priority="0" AppBaseDirectory="INSTALLDIR"/>
+				</File>
 			</Component>
 
 			<Component Id="MainExecutableConfig" Guid="{B5CD9CA1-8E4C-41AC-A7BA-1291CB40A916}">

@@ -336,7 +336,7 @@ public class NotifyIconContainer : IDisposable
 			{
 				WindowStyle = WindowStyle.None,
 				AllowsTransparency = true,
-				Background = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromArgb(1, 0, 0, 0)),
+				Background = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromArgb(a: 1, 0, 0, 0)),
 				Topmost = true,
 				ShowActivated = false,
 				ShowInTaskbar = false,

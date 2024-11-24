@@ -32,7 +32,7 @@ internal static class Error
 
 	public static string GetMessage(int errorCode)
 	{
-		var message = new StringBuilder($"Code: {errorCode}");
+		var message = new StringBuilder($"Code: 0x{errorCode:X8}");
 
 		var buffer = new StringBuilder(512); // This 512 capacity is arbitrary.
 		if (FormatMessage(
@@ -44,7 +44,7 @@ internal static class Error
 			buffer.Capacity,
 			IntPtr.Zero) > 0)
 		{
-			message.Append($", Message: ").Append(buffer);
+			message.Append(", Message: ").Append(buffer);
 		}
 
 		return message.ToString();

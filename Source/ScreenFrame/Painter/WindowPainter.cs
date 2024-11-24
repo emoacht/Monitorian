@@ -387,7 +387,7 @@ public abstract class WindowPainter : IDisposable
 			}
 			catch (Exception ex)
 			{
-				Debug.WriteLine($"Failed to add resources." + Environment.NewLine
+				Debug.WriteLine("Failed to add resources." + Environment.NewLine
 					+ ex);
 			}
 		}

@@ -47,7 +47,7 @@ public class WindowPainter : ScreenFrame.Painter.WindowPainter
 		{
 			try
 			{
-				brush = (Brush)converter.ConvertFromString(source);
+				brush = (Brush)converter.ConvertFromInvariantString(source);
 				return true;
 			}
 			catch

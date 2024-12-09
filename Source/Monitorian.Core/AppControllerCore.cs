@@ -93,7 +93,13 @@ public class AppControllerCore
 
 		_sessionWatcher.Subscribe((e) => OnMonitorsChangeInferred(nameof(SessionWatcher), e));
 		_powerWatcher.Subscribe((e) => OnMonitorsChangeInferred(nameof(PowerWatcher), e));
-		_displaySettingsWatcher.Subscribe((e) => OnMonitorsChangeInferred(nameof(DisplaySettingsWatcher), e));
+		_displaySettingsWatcher.Subscribe((e) =>
+		{
+			if (!_powerWatcher.IsDisplayOff)
+			{
+				OnMonitorsChangeInferred(nameof(DisplaySettingsWatcher), e);
+			}
+		});
 
 		_displayInformationWatcher.Subscribe(async (deviceInstanceId, message) =>
 		{

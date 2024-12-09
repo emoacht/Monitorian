@@ -8,11 +8,11 @@ using Monitorian.Core.Helper;
 
 namespace Monitorian.Core.Models;
 
-public class OperationRecorder
+public static class OperationRecorder
 {
-	public bool IsEnabled { get; private set; }
+	public static bool IsEnabled { get; private set; }
 
-	public async Task EnableAsync(string message)
+	public static async Task EnableAsync(string message)
 	{
 		await Logger.PrepareOperationAsync();
 		await Logger.RecordOperationAsync(message);
@@ -20,7 +20,7 @@ public class OperationRecorder
 		IsEnabled = true;
 	}
 
-	public void Disable()
+	public static void Disable()
 	{
 		IsEnabled = false;
 
@@ -28,7 +28,7 @@ public class OperationRecorder
 		FinishGroupRecord();
 	}
 
-	public Task RecordAsync(string content)
+	public static Task RecordAsync(string content)
 	{
 		return IsEnabled
 			? Logger.RecordOperationAsync(content)
@@ -37,30 +37,30 @@ public class OperationRecorder
 
 	#region Line
 
-	private readonly Lazy<Throttle<string>> _record = new(() => new(
+	private static readonly Lazy<Throttle<string>> _record = new(() => new(
 		TimeSpan.FromSeconds(1),
 		async queue => await Logger.RecordOperationAsync(string.Join(Environment.NewLine, queue))));
 
-	private readonly Lazy<ConcurrentDictionary<string, List<string>>> _actionLines = new(() => new());
+	private static readonly Lazy<ConcurrentDictionary<string, List<string>>> _actionLines = new(() => new());
 
 	/// <summary>
 	/// Starts a record consisting of lines (concurrent).
 	/// </summary>
 	/// <param name="key">Unique key</param>
 	/// <param name="actionName">Action name</param>
-	public void StartLineRecord(string key, string actionName)
+	public static void StartLineRecord(string key, string actionName)
 	{
 		if (IsEnabled)
 			_actionLines.Value[key] = new List<string>([actionName]);
 	}
 
-	public void AddLineRecord(string key, string lineString)
+	public static void AddLineRecord(string key, string lineString)
 	{
 		if (IsEnabled && _actionLines.Value.TryGetValue(key, out var lines))
 			lines.Add(lineString);
 	}
 
-	public async Task EndLineRecordAsync(string key)
+	public static async Task EndLineRecordAsync(string key)
 	{
 		if (IsEnabled && _actionLines.Value.TryGetValue(key, out var lines))
 		{
@@ -69,7 +69,7 @@ public class OperationRecorder
 		}
 	}
 
-	private void FinishLineRecord()
+	private static void FinishLineRecord()
 	{
 		_actionLines.Value.Clear();
 	}
@@ -78,32 +78,32 @@ public class OperationRecorder
 
 	#region Group
 
-	private string _actionName;
-	private readonly Lazy<List<(string groupName, StringWrapper item)>> _actionGroups = new(() => new());
+	private static string _actionName;
+	private static readonly Lazy<List<(string groupName, StringWrapper item)>> _actionGroups = new(() => new());
 
 	/// <summary>
 	/// Starts a record consisting of groups of lines (non-concurrent).
 	/// </summary>
 	/// <param name="actionName">Action name</param>
-	public void StartGroupRecord(string actionName)
+	public static void StartGroupRecord(string actionName)
 	{
 		if (IsEnabled)
-			this._actionName = actionName;
+			_actionName = actionName;
 	}
 
-	public void AddGroupRecordItem(string groupName, string itemString)
+	public static void AddGroupRecordItem(string groupName, string itemString)
 	{
 		if (IsEnabled)
 			_actionGroups.Value.Add((groupName, new StringWrapper(itemString)));
 	}
 
-	public void AddGroupRecordItems(string groupName, IEnumerable<string> itemStrings)
+	public static void AddGroupRecordItems(string groupName, IEnumerable<string> itemStrings)
 	{
 		if (IsEnabled)
 			_actionGroups.Value.AddRange(itemStrings.Select(x => (groupName, new StringWrapper(x))));
 	}
 
-	public async Task EndGroupRecordAsync()
+	public static async Task EndGroupRecordAsync()
 	{
 		if (IsEnabled)
 		{
@@ -114,7 +114,7 @@ public class OperationRecorder
 		}
 	}
 
-	private void FinishGroupRecord()
+	private static void FinishGroupRecord()
 	{
 		_actionName = null;
 		_actionGroups.Value.Clear();

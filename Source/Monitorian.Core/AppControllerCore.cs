@@ -41,8 +41,6 @@ public class AppControllerCore
 	private readonly BrightnessWatcher _brightnessWatcher;
 	private readonly BrightnessConnector _brightnessConnector;
 
-	protected OperationRecorder Recorder { get; } = new();
-
 	public AppControllerCore(AppKeeper keeper, SettingsCore settings)
 	{
 		this._keeper = keeper ?? throw new ArgumentNullException(nameof(keeper));
@@ -102,7 +100,7 @@ public class AppControllerCore
 			if (!_sessionWatcher.IsLocked)
 			{
 				await UpdateMessageAsync(deviceInstanceId, message);
-				await Recorder.RecordAsync(message);
+				await OperationRecorder.RecordAsync(message);
 			}
 		});
 
@@ -113,7 +111,7 @@ public class AppControllerCore
 				if (!_sessionWatcher.IsLocked)
 					Update(instanceName, brightness);
 			},
-			async (message) => await Recorder.RecordAsync(message));
+			async (message) => await OperationRecorder.RecordAsync(message));
 
 			if (_brightnessConnector.IsEnabled)
 			{
@@ -122,7 +120,7 @@ public class AppControllerCore
 					if (!_sessionWatcher.IsLocked)
 						Update(null, brightness);
 				},
-				async (message) => await Recorder.RecordAsync(message),
+				async (message) => await OperationRecorder.RecordAsync(message),
 				() => _current.Dispatcher.Invoke(() => _current.MainWindow.Visibility is Visibility.Visible));
 			}
 		}
@@ -207,7 +205,7 @@ public class AppControllerCore
 			WindowPainter.AttachAccentColors();
 
 		if (Settings.MakesOperationLog)
-			await Recorder.EnableAsync("Initiated");
+			await OperationRecorder.EnableAsync("Initiated");
 	}
 
 	protected virtual async void OnSettingsChanged(object sender, PropertyChangedEventArgs e)
@@ -242,9 +240,9 @@ public class AppControllerCore
 
 			case nameof(Settings.MakesOperationLog):
 				if (Settings.MakesOperationLog)
-					await Recorder.EnableAsync("Enabled");
+					await OperationRecorder.EnableAsync("Enabled");
 				else
-					Recorder.Disable();
+					OperationRecorder.Disable();
 
 				break;
 		}
@@ -254,7 +252,7 @@ public class AppControllerCore
 
 	protected virtual async void OnMonitorsChangeInferred(object sender, ICountEventArgs e = null)
 	{
-		await Recorder.RecordAsync($"{nameof(OnMonitorsChangeInferred)} ({sender}{e?.Description})");
+		await OperationRecorder.RecordAsync($"{nameof(OnMonitorsChangeInferred)} ({sender}{e?.Description})");
 
 		await ProceedScanAsync(e);
 	}
@@ -269,7 +267,7 @@ public class AppControllerCore
 
 	protected internal virtual async void OnMonitorAccessFailed(AccessResult result)
 	{
-		await Recorder.RecordAsync($"{nameof(OnMonitorAccessFailed)}" + Environment.NewLine
+		await OperationRecorder.RecordAsync($"{nameof(OnMonitorAccessFailed)}" + Environment.NewLine
 			+ $"Status: {result.Status}" + Environment.NewLine
 			+ $"Message: {result.Message}");
 	}
@@ -278,7 +276,7 @@ public class AppControllerCore
 	{
 		if (Monitors.Any())
 		{
-			await Recorder.RecordAsync($"{nameof(OnMonitorsChangeFound)}");
+			await OperationRecorder.RecordAsync($"{nameof(OnMonitorsChangeFound)}");
 
 			_displaySettingsWatcher.RaiseDisplaySettingsChanged();
 		}
@@ -309,7 +307,7 @@ public class AppControllerCore
 
 				var intervalTask = (interval > TimeSpan.Zero) ? Task.Delay(interval) : Task.CompletedTask;
 
-				Recorder.StartGroupRecord($"{nameof(ScanAsync)} [{DateTime.Now}]");
+				OperationRecorder.StartGroupRecord($"{nameof(ScanAsync)} [{DateTime.Now}]");
 
 				await Task.Run(async () =>
 				{
@@ -318,7 +316,7 @@ public class AppControllerCore
 
 					foreach (var item in await MonitorManager.EnumerateMonitorsAsync(TimeSpan.FromSeconds(12)))
 					{
-						Recorder.AddGroupRecordItem("Items", item.ToString());
+						OperationRecorder.AddGroupRecordItem("Items", item.ToString());
 
 						var oldMonitorExists = false;
 
@@ -390,8 +388,8 @@ public class AppControllerCore
 				foreach (var m in Monitors.Where(x => !x.IsControllable))
 					m.IsTarget = !controllableMonitorExists;
 
-				Recorder.AddGroupRecordItems(nameof(Monitors), Monitors.Select(x => x.ToString()));
-				await Recorder.EndGroupRecordAsync();
+				OperationRecorder.AddGroupRecordItems(nameof(Monitors), Monitors.Select(x => x.ToString()));
+				await OperationRecorder.EndGroupRecordAsync();
 
 				await intervalTask;
 			}

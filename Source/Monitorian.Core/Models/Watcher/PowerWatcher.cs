@@ -77,16 +77,22 @@ internal class PowerWatcher : IDisposable
 		}
 	}
 
-	private void OnDisplayStateChanged(DisplayStates state)
+	public bool IsDisplayOff { get; private set; }
+
+	private async void OnDisplayStateChanged(DisplayStates state)
 	{
+		await OperationRecorder.RecordAsync($"Display {state}");
+
 		switch (state)
 		{
 			case DisplayStates.On:
 			case DisplayStates.Dimmed:
+				IsDisplayOff = false;
 				RaiseDisplayStateChanged(state, 0);
 				_stateWatcher.TimerStart(state);
 				break;
 			case DisplayStates.Off:
+				IsDisplayOff = true;
 				_stateWatcher.TimerStop();
 				RaiseDisplayStateChanged(state, 0);
 				break;

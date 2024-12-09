@@ -673,7 +673,7 @@
 
 							<!-- Brightness -->
 							<controls:CompoundSlider Grid.Column="1"
-													 Margin="12,0,4,0" VerticalAlignment="Center"
+													 Margin="12,0,4,0" VerticalAlignment="Stretch"
 													 Style="{StaticResource MainSliderHorizontal}"
 													 Minimum="0" Maximum="100"
 													 SmallChange="1"
@@ -721,7 +721,7 @@
 							<!-- Contrast -->
 							<controls:EnhancedSlider Grid.Column="4"
 													 x:Name="ContrastSlider"
-													 Width="100" Margin="8,0,4,0" VerticalAlignment="Center"
+													 Width="100" Margin="8,0,4,0" VerticalAlignment="Stretch"
 													 Style="{StaticResource SubSliderHorizontal}"
 													 Minimum="0" Maximum="100"
 													 SmallChange="1"

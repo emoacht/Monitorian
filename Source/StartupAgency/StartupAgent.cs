@@ -38,9 +38,11 @@ public class StartupAgent : IDisposable
 			throw new ArgumentNullException(nameof(startupTaskId));
 
 		_holder = new PipeHolder(name, null);
-		var (success, response) = _holder.Create(forwardingArguments?.ToArray());
-		if (!success)
+		var (created, started, response) = _holder.CreateAndStart(forwardingArguments?.ToArray());
+		if (!created)
 			return (success: false, response);
+
+		IsConnectable = started;
 
 		_worker = (OsVersion.Is10Build14393OrGreater && IsPackaged)
 			? (IStartupWorker)new BridgeWorker(taskId: startupTaskId)
@@ -82,6 +84,11 @@ public class StartupAgent : IDisposable
 	}
 
 	#endregion
+
+	/// <summary>
+	/// Whether this instance is connectable by named pipes
+	/// </summary>
+	public bool IsConnectable { get; private set; }
 
 	/// <summary>
 	/// Whether this assembly is packaged in AppX package

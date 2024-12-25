@@ -69,6 +69,7 @@ public class AppControllerCore
 		Settings.PropertyChanged += OnSettingsChanged;
 
 		OnSettingsInitiated();
+		await OperationRecorder.RecordAsync($"Connectable by named pipes: {_keeper.StartupAgent.IsConnectable}");
 
 		NotifyIconContainer.ShowIcon(WindowPainter.GetIconPath(), ProductInfo.Title);
 		WindowPainter.ThemeChanged += (_, _) =>

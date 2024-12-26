@@ -37,6 +37,7 @@ Additional languages:
  - Swedish (sv-SE) by [@Sopor](https://github.com/Sopor)
  - Turkish (tr-TR) by [@webbudesign](https://github.com/webbudesign)
  - Ukrainian (uk-UA) by [@kaplun07](https://github.com/kaplun07)
+ - Vietnamese (vi-VN) by [@dongsinhho](https://github.com/dongsinhho)
  - Simplified Chinese (zh-Hans) by [@ComMouse](https://github.com/ComMouse), [@zhujunsan](https://github.com/zhujunsan), [@XMuli](https://github.com/XMuli), [@FISHandCHEAP](https://github.com/Fishandcheap) and [@FrzMtrsprt](https://github.com/FrzMtrsprt)
  - Traditional Chinese (zh-Hant) by [@toto6038](https://github.com/toto6038) and [@XMuli](https://github.com/XMuli)
 
@@ -60,7 +61,7 @@ Additional languages:
    ```
 
  * Other:<br>
-:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/4.9.1-Installer/MonitorianInstaller491.zip)
+:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/4.10.0-Installer/MonitorianInstaller4100.zip)
 
 ## Install/Uninstall
 
@@ -208,7 +209,6 @@ In any case, reporting on the controllability of a monitor MUST include probe.lo
 | Windows 10 SDK (10.0.19041.0)                               | TargetPlatformVersion  |
 
 3. Load the solution by specifying `/Source/Monitorian.sln`. Then go to the solution explorer and right click the solution name and execute `Restore NuGet Packages`.
-4. To open installer project, install [WiX Toolset Build Tools](https://wixtoolset.org/releases/) and [WiX Toolset Visual Studio Extension](https://marketplace.visualstudio.com/items?itemName=WixToolset.WiXToolset).
 
 ### Globalization
 
@@ -222,6 +222,11 @@ An alternative language can be shown by adding a Resources (.resx) file into `/S
  - VESA [Monitor Control Command Set (MCCS)](https://www.google.co.jp/search?q=VESA+Monitor+Control+Command+Set+Standard+MCCS) standard
 
 ## History
+
+Ver 4.10 2024-12-26
+
+ - Improve internal code
+ - Add Vietnamese (vi-VN) language. Thanks to @dongsinhho!
 
 Ver 4.9 2024-11-16
 

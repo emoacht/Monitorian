@@ -41,7 +41,6 @@ Additional languages:
  - Simplified Chinese (zh-Hans) by [@ComMouse](https://github.com/ComMouse), [@zhujunsan](https://github.com/zhujunsan), [@XMuli](https://github.com/XMuli), [@FISHandCHEAP](https://github.com/Fishandcheap) and [@FrzMtrsprt](https://github.com/FrzMtrsprt)
  - Traditional Chinese (zh-Hant) by [@toto6038](https://github.com/toto6038) and [@XMuli](https://github.com/XMuli)
 
-
 ## Requirements
 
  * Windows 7 or newer

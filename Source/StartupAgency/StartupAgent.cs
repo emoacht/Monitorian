@@ -38,7 +38,7 @@ public class StartupAgent : IDisposable
 			throw new ArgumentNullException(nameof(startupTaskId));
 
 		_holder = new PipeHolder(name, null);
-		var (created, started, response) = _holder.CreateAndStart(forwardingArguments?.ToArray());
+		var (created, started, response) = _holder.Create(forwardingArguments?.ToArray());
 		if (!created)
 			return (success: false, response);
 

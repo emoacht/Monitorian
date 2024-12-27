@@ -39,10 +39,10 @@ internal class PipeHolder
 	/// <param name="args">Arguments being forwarded to another instance</param>
 	/// <returns>
 	///	<para>created: True if no other instance exists and this instance successfully creates the semaphore</para>
-	///	<para>started: True if this instance successfully starts the named pipe server</para>
-	/// <para>response: Response from another instance if that instance exists and returns an response</para>
+	///	<para>started: True if this instance successfully starts a named pipe server</para>
+	/// <para>response: Response from another instance if that instance exists and returns a response</para>
 	/// </returns>
-	public (bool created, bool started, string response) CreateAndStart(string[] args)
+	public (bool created, bool started, string response) Create(string[] args)
 	{
 		_semaphore = new Semaphore(1, 1, SemaphoreName, out bool createdNew);
 		if (createdNew)
@@ -80,7 +80,7 @@ internal class PipeHolder
 	}
 
 	/// <summary>
-	/// Releases <see cref="System.Threading.Semaphore"/> to stop named pipes.
+	/// Releases <see cref="System.Threading.Semaphore"/> and stops named pipes.
 	/// </summary>
 	public void Release()
 	{

@@ -1,7 +1,7 @@
 ﻿<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
 	 xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui"
 	 xmlns:netfx="http://wixtoolset.org/schemas/v4/wxs/netfx">
-	<Package Name="Monitorian" Manufacturer="emoacht" Version="4.9.4"
+	<Package Name="Monitorian" Manufacturer="emoacht" Version="4.10.0"
 			 Language="1033" Codepage="1252" UpgradeCode="{81A4D148-75D3-462E-938D-8C208FB48E3C}">
 		<SummaryInformation Description="Installer for Monitorian"/>
 
@@ -191,6 +191,12 @@
 					<File Id="CoreResourcesLibrary_ukUA" Name="$(var.Monitorian.TargetName).Core.resources.dll" KeyPath="yes"/>
 				</Component>
 			</Directory>
+			<Directory Id="ResourcesFolder_viVN" Name="vi-VN"
+					   FileSource="$(var.Monitorian.TargetDir)vi-VN">
+				<Component Id="CoreResourcesLibrary_viVN" Guid="{48D1E1AF-BCEF-431D-977A-68B289B78BD0}">
+					<File Id="CoreResourcesLibrary_viVN" Name="$(var.Monitorian.TargetName).Core.resources.dll" KeyPath="yes"/>
+				</Component>
+			</Directory>
 			<Directory Id="ResourcesFolder_zhHans" Name="zh-Hans"
 					   FileSource="$(var.Monitorian.TargetDir)zh-Hans">
 				<Component Id="CoreResourcesLibrary_zhHans" Guid="{D4727E68-157A-495D-B9B8-0CD100291E5E}">
@@ -257,6 +263,7 @@
 			<ComponentRef Id="CoreResourcesLibrary_svSE"/>
 			<ComponentRef Id="CoreResourcesLibrary_trTR"/>
 			<ComponentRef Id="CoreResourcesLibrary_ukUA"/>
+			<ComponentRef Id="CoreResourcesLibrary_viVN"/>
 			<ComponentRef Id="CoreResourcesLibrary_zhHans"/>
 			<ComponentRef Id="CoreResourcesLibrary_zhHant"/>
 			<ComponentRef Id="ApplicationShortcut"/>

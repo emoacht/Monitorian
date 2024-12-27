@@ -34,14 +34,15 @@ internal class PipeHolder
 	private readonly Lazy<CancellationTokenSource> _cts = new(() => new());
 
 	/// <summary>
-	/// Creates <see cref="System.Threading.Semaphore"/> to start named pipes.
+	/// Creates <see cref="System.Threading.Semaphore"/> and starts named pipes.
 	/// </summary>
 	/// <param name="args">Arguments being forwarded to another instance</param>
 	/// <returns>
-	///	<para>success: True if no other instance exists and this instance successfully creates</para>
+	///	<para>created: True if no other instance exists and this instance successfully creates the semaphore</para>
+	///	<para>started: True if this instance successfully starts the named pipe server</para>
 	/// <para>response: Response from another instance if that instance exists and returns an response</para>
 	/// </returns>
-	public (bool success, string response) Create(string[] args)
+	public (bool created, bool started, string response) CreateAndStart(string[] args)
 	{
 		_semaphore = new Semaphore(1, 1, SemaphoreName, out bool createdNew);
 		if (createdNew)
@@ -50,13 +51,16 @@ internal class PipeHolder
 			try
 			{
 				StartServer(_cts.Value.Token);
+
+				return (created: true, started: true, null);
 			}
 			catch (Exception ex)
 			{
 				Trace.WriteLine("Named pipe server failed." + Environment.NewLine
 					+ ex);
+
+				return (created: true, started: false, null);
 			}
-			return (success: true, null);
 		}
 		else
 		{
@@ -71,7 +75,7 @@ internal class PipeHolder
 				Trace.WriteLine("Named pipe client failed." + Environment.NewLine
 					+ ex);
 			}
-			return (success: false, response);
+			return (created: false, started: false, response);
 		}
 	}
 
@@ -91,28 +95,61 @@ internal class PipeHolder
 		if (cancellationToken.IsCancellationRequested)
 			return;
 
+		// Try starting a named pipe server.
+		NamedPipeServerStream server = null;
+		try
+		{
+			server = new NamedPipeServerStream(PipeName, PipeDirection.InOut, 1, PipeTransmissionMode.Message);
+		}
+		catch (UnauthorizedAccessException)
+		{
+			// This exception is thrown if a named pipe server of the same path has already started.
+			throw;
+		}
+		finally
+		{
+			server?.Dispose();
+		}
+
 		Task.Run(async () =>
 		{
 			while (true)
 			{
-				await WaitAndConnectClientAsync(cancellationToken);
-
 				if (cancellationToken.IsCancellationRequested)
+					break;
+
+				if (!await WaitAndConnectClientAsync(cancellationToken))
 					break;
 			}
 		}, cancellationToken);
 	}
 
-	private async Task WaitAndConnectClientAsync(CancellationToken cancellationToken)
+	private async Task<bool> WaitAndConnectClientAsync(CancellationToken cancellationToken)
 	{
-		// Because this method is not awaited on main thread, exceptions must be caught within
+		// As this method is not awaited on main thread, exceptions must be caught within
 		// this method.
 
 		NamedPipeServerStream server = null;
 		try
 		{
-			server = new NamedPipeServerStream(PipeName, PipeDirection.InOut, 1, PipeTransmissionMode.Message);
-			await server.WaitForConnectionAsync(cancellationToken);
+			try
+			{
+				server = new NamedPipeServerStream(PipeName, PipeDirection.InOut, 1, PipeTransmissionMode.Message, PipeOptions.Asynchronous);
+			}
+			catch (UnauthorizedAccessException)
+			{
+				// This exception is thrown if a named pipe server of the same path has already started.
+				return false;
+			}
+
+			try
+			{
+				await server.WaitForConnectionAsync(cancellationToken).ConfigureAwait(false);
+			}
+			catch (OperationCanceledException)
+			{
+				return false;
+			}
 
 			var buffer = new List<string>();
 			using (var reader = new StreamReader(server, Encoding.UTF8, true, 1024, leaveOpen: true))
@@ -130,20 +167,16 @@ internal class PipeHolder
 
 			var response = await (HandleRequestAsync?.Invoke(buffer.ToArray()) ?? Task.FromResult<string>(null));
 
-			if (!server.IsConnected)
-				return;
-
-			using (var writer = new StreamWriter(server, Encoding.UTF8) { AutoFlush = true })
+			if (server.IsConnected)
 			{
-				await writer.WriteAsync(response).ConfigureAwait(false);
+				using (var writer = new StreamWriter(server, Encoding.UTF8) { AutoFlush = true })
+				{
+					await writer.WriteAsync(response).ConfigureAwait(false);
 
-				server.WaitForPipeDrain();
+					server.WaitForPipeDrain();
+				}
 			}
-		}
-		catch (Exception ex)
-		{
-			Trace.WriteLine("Named pipe server failed." + Environment.NewLine
-				+ ex);
+			return true;
 		}
 		finally
 		{

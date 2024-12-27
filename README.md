@@ -19,26 +19,27 @@ https://user-images.githubusercontent.com/7205690/210137118-66cfdd6e-9847-41b3-a
 
 Additional languages:
 
- - Arabic (ar) by @MohammadShughri
- - Catalan (ca) by @ericmp33
- - German (de) by @uDEV2019
- - Greek (el-GR) by @NickMihal
- - Spanish (es) by @josemirm and @ericmp33
- - French (fr) by @AlexZeGamer and @Rikiiiiiii
- - Italian (it) by @GhostyJade
- - Japanese (ja-JP) by @emoacht
- - Korean (ko-KR) by @VenusGirl
- - Dutch (nl-NL) by @JordyEGNL
- - Polish (pl-PL) by @Daxxxis and @FakeMichau
- - Portuguese (pt-BR) by @guilhermgonzaga
- - Romanian (ro) by @calini
- - Russian (ru-RU) by @SigmaTel71 and @San4es
+ - Arabic (ar) by [@MohammadShughri](https://github.com/mohammadshughri)
+ - Catalan (ca) by [@ericmp33](https://github.com/ericmp33)
+ - German (de) by [@uDEV2019](https://github.com/uDEV2019)
+ - Greek (el-GR) by [@NickMihal](https://github.com/NickMihal)
+ - Spanish (es) by [@josemirm](https://github.com/josemirm) and [@ericmp33](https://github.com/ericmp33)
+ - French (fr) by [@AlexZeGamer](https://github.com/AlexZeGamer) and [@Rikiiiiiii](https://github.com/rikiiiiiii)
+ - Italian (it) by [@GhostyJade](https://github.com/GhostyJade)
+ - Japanese (ja-JP) by [@emoacht](https://github.com/emoacht)
+ - Korean (ko-KR) by [@VenusGirl](https://github.com/VenusGirl)
+ - Dutch (nl-NL) by [@JordyEGNL](https://github.com/JordyEGNL)
+ - Polish (pl-PL) by [@Daxxxis](https://github.com/Daxxxis) and [@FakeMichau](https://github.com/FakeMichau)
+ - Portuguese (pt-BR) by [@guilhermgonzaga](https://github.com/guilhermgonzaga)
+ - Romanian (ro) by [@calini](https://github.com/calini)
+ - Russian (ru-RU) by [@SigmaTel71](https://github.com/SigmaTel71) and [@San4es](https://github.com/San4es)
  - Albanian (sq) by @RDN000
- - Swedish (sv-SE) by @Sopor
- - Turkish (tr-TR) by @webbudesign
- - Ukrainian (uk-UA) by @kaplun07
- - Simplified Chinese (zh-Hans) by @ComMouse, @zhujunsan, @XMuli, @FISHandCHEAP and @FrzMtrsprt
- - Traditional Chinese (zh-Hant) by @toto6038 and @XMuli
+ - Swedish (sv-SE) by [@Sopor](https://github.com/Sopor)
+ - Turkish (tr-TR) by [@webbudesign](https://github.com/webbudesign)
+ - Ukrainian (uk-UA) by [@kaplun07](https://github.com/kaplun07)
+ - Vietnamese (vi-VN) by [@dongsinhho](https://github.com/dongsinhho)
+ - Simplified Chinese (zh-Hans) by [@ComMouse](https://github.com/ComMouse), [@zhujunsan](https://github.com/zhujunsan), [@XMuli](https://github.com/XMuli), [@FISHandCHEAP](https://github.com/Fishandcheap) and [@FrzMtrsprt](https://github.com/FrzMtrsprt)
+ - Traditional Chinese (zh-Hant) by [@toto6038](https://github.com/toto6038) and [@XMuli](https://github.com/XMuli)
 
 ## Requirements
 
@@ -59,7 +60,7 @@ Additional languages:
    ```
 
  * Other:<br>
-:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/4.9.1-Installer/MonitorianInstaller491.zip)
+:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/4.10.0-Installer/MonitorianInstaller4100.zip)
 
 ## Install/Uninstall
 
@@ -207,7 +208,6 @@ In any case, reporting on the controllability of a monitor MUST include probe.lo
 | Windows 10 SDK (10.0.19041.0)                               | TargetPlatformVersion  |
 
 3. Load the solution by specifying `/Source/Monitorian.sln`. Then go to the solution explorer and right click the solution name and execute `Restore NuGet Packages`.
-4. To open installer project, install [WiX Toolset Build Tools](https://wixtoolset.org/releases/) and [WiX Toolset Visual Studio Extension](https://marketplace.visualstudio.com/items?itemName=WixToolset.WiXToolset).
 
 ### Globalization
 
@@ -221,6 +221,11 @@ An alternative language can be shown by adding a Resources (.resx) file into `/S
  - VESA [Monitor Control Command Set (MCCS)](https://www.google.co.jp/search?q=VESA+Monitor+Control+Command+Set+Standard+MCCS) standard
 
 ## History
+
+Ver 4.10 2024-12-26
+
+ - Improve internal code
+ - Add Vietnamese (vi-VN) language. Thanks to @dongsinhho!
 
 Ver 4.9 2024-11-16
 

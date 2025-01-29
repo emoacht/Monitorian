@@ -130,11 +130,17 @@ The brightness or contrast ranges from 0 to 100%. When you use `/set` option, it
 
 The options can be executed consecutively (e.g. `monitorian /set 20 /set contrast 40`, up to 10 options).
 
-You can call this app by its name `Monitorian` in command prompt or bat file. From Task Scheduler, it can be performed by the path to its alias `%LOCALAPPDATA%\Microsoft\WindowsApps\Monitorian.exe`. For example, to increase brightness of all monitors by 30%, the Action will be the following:
+You can call this app by its name `Monitorian` in command prompt, bat file or desktop shortcut.
+
+A desktop shortcut can be created specifying options.
+
+![Shortcut](Images/Shortcut_set.png)
+
+From Task Scheduler, it can be performed by the path to its alias `%LOCALAPPDATA%\Microsoft\WindowsApps\Monitorian.exe`. For example, to increase brightness of all monitors by 30%, the Action will be the following:
 
 ![Task Scheduler](Images/TaskScheduler_action.png)
 
-You can also define commands and make them execute when a specified condition is met, when a specified daily due time comes, or when a specified hot key is pressed:
+In addition, you can define commands and make them execute when a specified condition is met, when a specified daily due time comes, or when a specified hot key is pressed:
 
  - [Conditional Commands](https://github.com/emoacht/Monitorian/blob/master/docs/COMMANDS.md#conditional-commands)
  - [Time Commands](https://github.com/emoacht/Monitorian/blob/master/docs/COMMANDS.md#time-commands)

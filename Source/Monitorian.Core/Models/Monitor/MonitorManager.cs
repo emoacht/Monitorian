@@ -245,9 +245,15 @@ internal class MonitorManager
 
 	public static bool CheckMonitorsChanged()
 	{
+		if ((_foundIds is not null) &&
+			(_foundIds.Count != SystemMetric.GetMonitorCount()))
+		{
+			return true;
+		}
+
 		var oldIds = _foundIds;
 		_foundIds = new HashSet<string>(DeviceContext.EnumerateMonitorDevices().Select(x => x.DeviceInstanceId));
-		return (oldIds?.SetEquals(_foundIds) is not true);
+		return (oldIds?.SetEquals(_foundIds) is false);
 	}
 
 	#region Probe

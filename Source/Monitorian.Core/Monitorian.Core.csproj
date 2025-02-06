@@ -76,6 +76,7 @@
     <Compile Include="Models\Monitor\MonitorManager.cs" />
     <Compile Include="Models\Monitor\MSMonitor.cs" />
     <Compile Include="Models\Monitor\PowerManagement.cs" />
+    <Compile Include="Models\Monitor\SystemMetric.cs" />
     <Compile Include="Models\Monitor\UnreachableMonitorItem.cs" />
     <Compile Include="Models\Monitor\WmiMonitorItem.cs" />
     <Compile Include="Models\Sensor\LightSensor.cs" />

@@ -132,7 +132,7 @@ The options can be executed consecutively (e.g. `monitorian /set 20 /set contras
 
 You can call this app by its name `Monitorian` in command prompt, bat file or desktop shortcut.
 
-A desktop shortcut can be created specifying options.
+For example, creating a desktop shortcut to set brightness of a monitor to 50 will be the following.
 
 ![Shortcut](Images/Shortcut_set.png)
 
@@ -211,7 +211,6 @@ In any case, reporting on the controllability of a monitor MUST include probe.lo
 | Components                                                  | Fields                 |
 |-------------------------------------------------------------|------------------------|
 | .NET Framework 4.8 SDK<br>.NET Framework 4.8 targeting pack | TargetFrameworkVersion |
-| Windows 10 SDK (10.0.19041.0)                               | TargetPlatformVersion  |
 
 3. Load the solution by specifying `/Source/Monitorian.sln`. Then go to the solution explorer and right click the solution name and execute `Restore NuGet Packages`.
 

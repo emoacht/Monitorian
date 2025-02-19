@@ -79,7 +79,7 @@ public class AppKeeper
 		}
 		.SelectMany(x => x);
 
-	private async Task ParseArgumentsAsync(StartupEventArgs e, string[] standardOptions)
+	private static async Task ParseArgumentsAsync(StartupEventArgs e, string[] standardOptions)
 	{
 		// Divide current arguments.
 		// The first element of StartupEventArgs.Args is not executing assembly's path unlike
@@ -111,9 +111,9 @@ public class AppKeeper
 
 	private const string ArgumentsFileName = "arguments.txt";
 
-	public Task<string> LoadArgumentsAsync() => AppDataService.ReadAsync(ArgumentsFileName);
+	public static Task<string> LoadArgumentsAsync() => AppDataService.ReadAsync(ArgumentsFileName);
 
-	public Task SaveArgumentsAsync(string content) => AppDataService.WriteAsync(ArgumentsFileName, append: false, delete: true, content);
+	public static Task SaveArgumentsAsync(string content) => AppDataService.WriteAsync(ArgumentsFileName, append: false, delete: true, content);
 
 	#endregion
 

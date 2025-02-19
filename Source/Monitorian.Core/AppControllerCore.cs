@@ -555,14 +555,6 @@ public class AppControllerCore
 
 	#endregion
 
-	#region Arguments
-
-	public Task<string> LoadArgumentsAsync() => _keeper.LoadArgumentsAsync();
-
-	public Task SaveArgumentsAsync(string content) => _keeper.SaveArgumentsAsync(content);
-
-	#endregion
-
 	#region Clean
 
 	protected virtual Task CleanAsync()

@@ -16,14 +16,14 @@ public class DevSectionViewModel : ViewModelBase
 	{
 		this._controller = controller ?? throw new ArgumentNullException(nameof(controller));
 
-		Task.Run(async () => Arguments = await _controller.LoadArgumentsAsync());
+		Task.Run(async () => Arguments = await AppKeeper.LoadArgumentsAsync());
 
 		PropertyChanged += async (_, e) =>
 		{
 			switch (e.PropertyName)
 			{
 				case nameof(Arguments):
-					await _controller.SaveArgumentsAsync(Arguments?.Trim());
+					await AppKeeper.SaveArgumentsAsync(Arguments?.Trim());
 					break;
 			}
 		};

@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Management;
 using System.Runtime.Serialization;
+using System.Text;
 
 namespace Monitorian.Core.Models.Monitor;
 
@@ -227,6 +228,48 @@ internal class MSMonitor
 			Debug.WriteLine($"Failed to set brightness by WmiSetBrightness. HResult: 0x{me.HResult:X8} ErrorCode: {me.ErrorCode}" + Environment.NewLine
 				+ me);
 			return false;
+		}
+	}
+
+	public static (string productCode, string serialNumber) GetIds(string deviceInstanceId)
+	{
+		if (string.IsNullOrWhiteSpace(deviceInstanceId))
+			throw new ArgumentNullException(nameof(deviceInstanceId));
+
+		try
+		{
+			using var searcher = GetSearcher("WmiMonitorID");
+			using var instances = searcher.Get();
+
+			foreach (ManagementObject instance in instances)
+			{
+				using (instance)
+				{
+					var instanceName = (string)instance.GetPropertyValue("InstanceName");
+					if (instanceName.StartsWith(deviceInstanceId, StringComparison.OrdinalIgnoreCase))
+					{
+						return (productCode: GetValue("ProductCodeID"),
+								serialNumber: GetValue("SerialNumberID"));
+					}
+				}
+
+				string GetValue(string propertyName)
+				{
+					var propertyValue = (ushort[])instance.GetPropertyValue(propertyName);
+					if (propertyValue is not { Length: > 0 })
+						return null;
+
+					var buffer = propertyValue.Select(x => Convert.ToByte(x)).ToArray();
+					return Encoding.ASCII.GetString(buffer).TrimEnd('\0');
+				}
+			}
+			return default;
+		}
+		catch (ManagementException me)
+		{
+			Debug.WriteLine($"Failed to get IDs by WmiMonitorID. HResult: 0x{me.HResult:X8} ErrorCode: {me.ErrorCode}" + Environment.NewLine
+				+ me);
+			return default;
 		}
 	}
 

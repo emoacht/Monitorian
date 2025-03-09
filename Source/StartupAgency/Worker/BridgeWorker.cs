@@ -41,13 +41,22 @@ internal class BridgeWorker : IStartupWorker
 
 	private static bool? IsActivatedByStartupTask()
 	{
-		// This method only returns arguments on its first call.
-		// https://learn.microsoft.com/en-us/uwp/api/windows.applicationmodel.appinstance.getactivatedeventargs
-		var args = AppInstance.GetActivatedEventArgs();
-		if (args is null)
-			return null;
+		try
+		{
+			// This method only returns arguments on its first call.
+			// https://learn.microsoft.com/en-us/uwp/api/windows.applicationmodel.appinstance.getactivatedeventargs
+			var args = AppInstance.GetActivatedEventArgs();
+			if (args is null)
+				return null;
 
-		return (args.Kind == ActivationKind.StartupTask);
+			return (args.Kind == ActivationKind.StartupTask);
+		}
+		catch (Exception ex) when ((uint)ex.HResult is 0x800706BA)
+		{
+			// Error message: The RPC server is unavailable.
+			// Error code: 0x800706BA = RPC_S_SERVER_UNAVAILABLE
+			return null;
+		}
 	}
 
 	public bool CanRegister() => StartupTaskBroker.CanEnable(_taskId);

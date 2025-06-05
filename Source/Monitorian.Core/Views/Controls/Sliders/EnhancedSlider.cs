@@ -327,7 +327,7 @@ public class EnhancedSlider : Slider
 		if (!this.IsFocused)
 			this.Focus();
 
-		if (e.Delta is 0)
+		if (e.Delta == 0)
 			return;
 
 		var isTouchpad = (e.Timestamp - _tracker.LastInputTimeStamp <= 200);
@@ -365,7 +365,7 @@ public class EnhancedSlider : Slider
 	{
 		base.OnKeyUp(e);
 
-		if (e.Key is (Key.Left or Key.Right))
+		if (e.Key is Key.Left or Key.Right)
 		{
 			EnsureUpdateSource();
 		}

@@ -23,7 +23,7 @@ public static class StartupTaskBroker
 			return false;
 
 		var task = GetStartupTask(taskId);
-		return (task.State != StartupTaskState.DisabledByUser);
+		return (task.State is not StartupTaskState.DisabledByUser);
 	}
 
 	/// <summary>
@@ -37,7 +37,7 @@ public static class StartupTaskBroker
 			return false;
 
 		var task = GetStartupTask(taskId);
-		return (task.State == StartupTaskState.Enabled);
+		return (task.State is StartupTaskState.Enabled);
 	}
 
 	/// <summary>
@@ -58,7 +58,7 @@ public static class StartupTaskBroker
 
 			case StartupTaskState.Disabled:
 				var result = task.RequestEnableAsync().AsTask().Result;
-				return (result == StartupTaskState.Enabled);
+				return (result is StartupTaskState.Enabled);
 
 			default:
 				return false;

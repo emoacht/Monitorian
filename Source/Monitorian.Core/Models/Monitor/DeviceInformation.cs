@@ -198,7 +198,7 @@ internal class DeviceInformation
 				IntPtr.Zero, // DISPLAY
 				IntPtr.Zero,
 				DIGCF.DIGCF_DEVICEINTERFACE | DIGCF.DIGCF_PRESENT);
-			if (deviceInfoSet.ToInt32() == INVALID_HANDLE_VALUE) // Assuming 32bit process
+			if (deviceInfoSet.ToInt32() is INVALID_HANDLE_VALUE) // Assuming 32bit process
 			{
 				Debug.WriteLine($"Failed to get device information list. {Error.GetMessage()}");
 				yield break;
@@ -234,7 +234,7 @@ internal class DeviceInformation
 				else
 				{
 					int errorCode = Marshal.GetLastWin32Error();
-					if (errorCode == ERROR_NO_MORE_ITEMS)
+					if (errorCode is ERROR_NO_MORE_ITEMS)
 						yield break;
 
 					Debug.WriteLine($"Failed to enumerate device information structures. {Error.GetMessage(errorCode)}");

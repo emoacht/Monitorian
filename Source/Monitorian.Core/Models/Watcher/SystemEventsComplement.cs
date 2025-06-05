@@ -54,7 +54,7 @@ internal class SystemEventsComplement
 			switch (m.Msg)
 			{
 				case WM_POWERBROADCAST:
-					if (m.WParam.ToInt32() == PBT_POWERSETTINGCHANGE)
+					if (m.WParam.ToInt32() is PBT_POWERSETTINGCHANGE)
 					{
 						var data = Marshal.PtrToStructure<POWERBROADCAST_SETTING>(m.LParam);
 						var buffer = (data.DataLength == 4 /* DWORD */) ? data.Data.ToInt32() : 0;

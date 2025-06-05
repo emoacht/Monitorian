@@ -200,7 +200,7 @@ public partial class MainWindow : Window
 
 	private void ProceedHide()
 	{
-		if (this.Visibility != Visibility.Visible)
+		if (this.Visibility is not Visibility.Visible)
 			return;
 
 		// Compare time to prevent hiding procedure from repeating.

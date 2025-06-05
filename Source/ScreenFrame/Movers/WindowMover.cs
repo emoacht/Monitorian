@@ -147,7 +147,7 @@ public abstract class WindowMover
 		if (OsVersion.Is10Build14393OrGreater)
 			return;
 
-		if (_window.SizeToContent != SizeToContent.WidthAndHeight)
+		if (_window.SizeToContent is not SizeToContent.WidthAndHeight)
 		{
 			var windowRect = VisualTreeHelperAddition.ConvertToRect(lParam);
 			WindowHelper.SetWindowPosition(_window, windowRect);

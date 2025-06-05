@@ -49,7 +49,7 @@ internal class BridgeWorker : IStartupWorker
 			if (args is null)
 				return null;
 
-			return (args.Kind == ActivationKind.StartupTask);
+			return (args.Kind is ActivationKind.StartupTask);
 		}
 		catch (Exception ex) when ((uint)ex.HResult is 0x800706BA)
 		{

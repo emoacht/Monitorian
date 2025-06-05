@@ -21,7 +21,7 @@ public class BooleanToVisibilityTurnConverter : IValueConverter
 		if (value is not Visibility sourceValue)
 			return DependencyProperty.UnsetValue;
 
-		return (sourceValue == Visibility.Visible) ^ IsTurn(parameter);
+		return (sourceValue is Visibility.Visible) ^ IsTurn(parameter);
 	}
 
 	private static bool IsTurn(object parameter)

@@ -211,7 +211,7 @@ internal class MSMonitor
 						if (!isSuccess)
 						{
 							var errorCode = (uint)result;
-							isSuccess = (errorCode == 0);
+							isSuccess = (errorCode is 0);
 							if (!isSuccess)
 							{
 								Debug.WriteLine($"Failed to set brightness. 0x{errorCode:X8}");

@@ -21,7 +21,7 @@ internal static class ColorExtension
 	{
 		if (DwmGetColorizationColor(
 			out uint pcrColorization,
-			out _) == S_OK)
+			out _) is S_OK)
 		{
 			// The color format is 0xAARRGGBB.
 			return FromUInt32(pcrColorization);

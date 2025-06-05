@@ -46,7 +46,7 @@ internal class DdcMonitorItem : MonitorItem
 	{
 		var (result, minimum, current, maximum) = MonitorConfiguration.GetBrightness(_handle, _capability.IsHighLevelBrightnessSupported);
 
-		if ((result.Status == AccessStatus.Succeeded) && (minimum < maximum) && (minimum <= current) && (current <= maximum))
+		if ((result.Status is AccessStatus.Succeeded) && (minimum < maximum) && (minimum <= current) && (current <= maximum))
 		{
 			this.Brightness = (int)Math.Round((double)(current - minimum) / (maximum - minimum) * 100D, MidpointRounding.AwayFromZero);
 			this._minimumBrightness = minimum;
@@ -68,7 +68,7 @@ internal class DdcMonitorItem : MonitorItem
 
 		var result = MonitorConfiguration.SetBrightness(_handle, buffer, _capability.IsHighLevelBrightnessSupported);
 
-		if (result.Status == AccessStatus.Succeeded)
+		if (result.Status is AccessStatus.Succeeded)
 		{
 			this.Brightness = brightness;
 		}
@@ -82,7 +82,7 @@ internal class DdcMonitorItem : MonitorItem
 	{
 		var (result, minimum, current, maximum) = MonitorConfiguration.GetContrast(_handle);
 
-		if ((result.Status == AccessStatus.Succeeded) && (minimum < maximum) && (minimum <= current) && (current <= maximum))
+		if ((result.Status is AccessStatus.Succeeded) && (minimum < maximum) && (minimum <= current) && (current <= maximum))
 		{
 			this.Contrast = (int)Math.Round((double)(current - minimum) / (maximum - minimum) * 100D, MidpointRounding.AwayFromZero);
 			this._minimumContrast = minimum;
@@ -104,7 +104,7 @@ internal class DdcMonitorItem : MonitorItem
 
 		var result = MonitorConfiguration.SetContrast(_handle, buffer);
 
-		if (result.Status == AccessStatus.Succeeded)
+		if (result.Status is AccessStatus.Succeeded)
 		{
 			this.Contrast = contrast;
 		}
@@ -118,7 +118,7 @@ internal class DdcMonitorItem : MonitorItem
 			return (AccessResult.NotSupported, null);
 
 		var (result, _, current, _) = MonitorConfiguration.GetValue(_handle, code);
-		if (result.Status == AccessStatus.Succeeded)
+		if (result.Status is AccessStatus.Succeeded)
 		{
 			return (result, new ValueData((byte)current, values));
 		}
@@ -134,7 +134,7 @@ internal class DdcMonitorItem : MonitorItem
 			return (AccessResult.NotSupported, null);
 
 		var result = MonitorConfiguration.SetValue(_handle, code, (uint)value);
-		if (result.Status == AccessStatus.Succeeded)
+		if (result.Status is AccessStatus.Succeeded)
 		{
 			return (result, new ValueData((byte)value, values));
 		}

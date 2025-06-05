@@ -199,14 +199,14 @@ public static class VisualTreeHelperAddition
 			MONITOR_DPI_TYPE.MDT_Default,
 			out uint dpiX,
 			out uint dpiY);
-		if (result != S_OK)
+		if (result is not S_OK)
 			return SystemDpi;
 
 #if DEBUG
 		result = GetScaleFactorForMonitor(
 			monitorHandle,
 			out uint factor);
-		if (result == S_OK)
+		if (result is S_OK)
 		{
 			Debug.Assert(factor == (dpiX / DefaultPixelsPerInch * 100));
 		}

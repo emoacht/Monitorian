@@ -130,7 +130,7 @@ public class TouchpadTracker
 			<= -1 => -1,
 			_ => 0
 		};
-		if (delta is 0)
+		if (delta == 0)
 			return;
 
 		_contact = contact;

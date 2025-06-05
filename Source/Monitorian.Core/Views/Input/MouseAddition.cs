@@ -143,7 +143,7 @@ public static class MouseAddition
 	private static void HandleMouseHorizontalWheel(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
 	{
 		int delta = unchecked((short)((long)wParam >> 16));
-		if (delta is 0)
+		if (delta == 0)
 			return;
 
 		var args = new MouseWheelEventArgs(Mouse.PrimaryDevice, Environment.TickCount, delta) { RoutedEvent = MouseHorizontalWheelEvent };

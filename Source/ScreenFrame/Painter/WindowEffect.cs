@@ -169,7 +169,7 @@ internal static class WindowEffect
 			windowHandle,
 			(uint)DWMWA.DWMWA_TRANSITIONS_FORCEDISABLED,
 			ref value,
-			(uint)Marshal.SizeOf<bool>()) == S_OK);
+			(uint)Marshal.SizeOf<bool>()) is S_OK);
 	}
 
 	public static bool SetCornersForWin11(Window window, CornerPreference corner)
@@ -193,7 +193,7 @@ internal static class WindowEffect
 			windowHandle,
 			(uint)DWMWA.DWMWA_WINDOW_CORNER_PREFERENCE,
 			ref value,
-			(uint)Marshal.SizeOf(value)) == S_OK);
+			(uint)Marshal.SizeOf(value)) is S_OK);
 	}
 
 	public static bool EnableBackgroundBlurForWin10(Window window, Color? color = null)
@@ -242,7 +242,7 @@ internal static class WindowEffect
 
 	public static bool EnableBackgroundBlurForWin7(Window window)
 	{
-		if ((DwmIsCompositionEnabled(out bool isEnabled) != S_OK) || !isEnabled)
+		if ((DwmIsCompositionEnabled(out bool isEnabled) is not S_OK) || !isEnabled)
 			return false;
 
 		var windowHandle = new WindowInteropHelper(window).Handle;
@@ -256,7 +256,7 @@ internal static class WindowEffect
 
 		return (DwmEnableBlurBehindWindow(
 			windowHandle,
-			ref bb) == S_OK);
+			ref bb) is S_OK);
 	}
 
 	public static bool IsTransparencyEnabledForWin10 => _isTransparencyEnabledForWin10.Value;

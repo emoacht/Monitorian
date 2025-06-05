@@ -198,9 +198,9 @@ public static class LightSensor
 				var result = sensorManager.GetSensorsByType(
 					sensorTypeGuid,
 					out sensorCollection);
-				if (result != S_OK)
+				if (result is not S_OK)
 				{
-					if (result == E_ELEMENTNOTFOUND)
+					if (result is E_ELEMENTNOTFOUND)
 					{
 						Debug.WriteLine("The sensor of a specified type is not found.");
 					}

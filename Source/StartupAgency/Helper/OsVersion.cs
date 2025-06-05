@@ -81,7 +81,7 @@ internal static class OsVersion
 
 	private static Version GetOsVersion()
 	{
-		return (RtlGetVersion(out OSVERSIONINFO info) == 0) // STATUS_SUCCESS
+		return (RtlGetVersion(out OSVERSIONINFO info) is 0) // STATUS_SUCCESS
 			? new Version((int)info.dwMajorVersion, (int)info.dwMinorVersion, (int)info.dwBuildNumber)
 			: throw new InvalidOperationException("Failed to get OS version.");
 	}

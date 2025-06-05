@@ -273,13 +273,13 @@ public abstract class WindowPainter : IDisposable
 	/// <param name="window">Window to be painted</param>
 	protected virtual void PaintBackground(Window window)
 	{
-		if (_texture == BackgroundTexture.None)
+		if (_texture is BackgroundTexture.None)
 			return;
 
 		if (OsVersion.Is11OrGreater)
 		{
 			// For Windows 11
-			if (_corner != CornerPreference.NotRound)
+			if (_corner is not CornerPreference.NotRound)
 				SetCornersForWin11(window, CornerPreference.Round);
 		}
 
@@ -333,7 +333,7 @@ public abstract class WindowPainter : IDisposable
 			{
 				_translucentBrush = buffer;
 
-				if (texture == BackgroundTexture.Thick)
+				if (texture is BackgroundTexture.Thick)
 				{
 					var value = _translucentBrush.Color;
 					_translucentBrush = new SolidColorBrush(Color.FromArgb(a: 1, r: value.R, g: value.G, b: value.B));

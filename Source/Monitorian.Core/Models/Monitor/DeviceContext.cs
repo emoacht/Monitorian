@@ -401,6 +401,6 @@ internal class DeviceContext
 			ref dm,
 			IntPtr.Zero,
 			0, // Change the display dynamically.
-			IntPtr.Zero) == DISP_CHANGE_SUCCESSFUL);
+			IntPtr.Zero) is DISP_CHANGE_SUCCESSFUL);
 	}
 }

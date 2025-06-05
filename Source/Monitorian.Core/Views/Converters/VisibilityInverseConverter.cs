@@ -13,7 +13,7 @@ public class VisibilityInverseConverter : IValueConverter
 		if (value is not Visibility sourceValue)
 			return DependencyProperty.UnsetValue;
 
-		return (sourceValue != Visibility.Visible) ? Visibility.Visible : Visibility.Collapsed;
+		return (sourceValue is not Visibility.Visible) ? Visibility.Visible : Visibility.Collapsed;
 	}
 
 	public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

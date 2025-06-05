@@ -115,6 +115,7 @@
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\MenuWindowViewModel.cs" />
     <Compile Include="ViewModels\MonitorViewModel.cs" />
+    <Compile Include="ViewModels\ScrollWindowViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
     <Compile Include="Views\Behaviors\FocusElementAction.cs" />
     <Compile Include="Views\Behaviors\FocusMenuBehavior.cs" />
@@ -153,6 +154,10 @@
     </Compile>
     <Compile Include="Views\MenuWindow.xaml.cs">
       <DependentUpon>MenuWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ScrollInput.cs" />
+    <Compile Include="Views\ScrollWindow.xaml.cs">
+      <DependentUpon>ScrollWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\UISettings.cs" />
     <Compile Include="Views\ViewManager.cs" />
@@ -281,6 +286,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\MenuWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\ScrollWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

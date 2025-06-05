@@ -153,8 +153,17 @@
   <data name="EnableUnison" xml:space="preserve">
     <value>明るさを一斉に変更可能にする</value>
   </data>
+  <data name="InvertScrollDirection" xml:space="preserve">
+    <value>スクロール方向を逆にする</value>
+  </data>
   <data name="MakeOperation" xml:space="preserve">
     <value>動作ログを作成する</value>
+  </data>
+  <data name="MouseHorizontalWheel" xml:space="preserve">
+    <value>マウス水平ホイール</value>
+  </data>
+  <data name="MouseVerticalWheel" xml:space="preserve">
+    <value>マウス垂直ホイール</value>
   </data>
   <data name="OrderArrangement" xml:space="preserve">
     <value>モニター配置に従って並べる</value>
@@ -194,6 +203,12 @@
   </data>
   <data name="StatusReasonDdcNotEnabled" xml:space="preserve">
     <value>DDC/CIがサポートされていないか有効になっていません。</value>
+  </data>
+  <data name="TouchpadHorizontalSwipe" xml:space="preserve">
+    <value>タッチパッド水平スワイプ</value>
+  </data>
+  <data name="TouchpadVerticalSwipe" xml:space="preserve">
+    <value>タッチパッド垂直スワイプ</value>
   </data>
   <data name="UseAccentColor" xml:space="preserve">
     <value>明るさにアクセントカラーを使う</value>

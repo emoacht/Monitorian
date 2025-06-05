@@ -169,11 +169,38 @@ namespace Monitorian.Core.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Invert scroll direction.
+        /// </summary>
+        public static string InvertScrollDirection {
+            get {
+                return ResourceManager.GetString("InvertScrollDirection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Make operation log.
         /// </summary>
         public static string MakeOperation {
             get {
                 return ResourceManager.GetString("MakeOperation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mouse horizontal wheel.
+        /// </summary>
+        public static string MouseHorizontalWheel {
+            get {
+                return ResourceManager.GetString("MouseHorizontalWheel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mouse vertical wheel.
+        /// </summary>
+        public static string MouseVerticalWheel {
+            get {
+                return ResourceManager.GetString("MouseVerticalWheel", resourceCulture);
             }
         }
         
@@ -291,6 +318,24 @@ namespace Monitorian.Core.Properties {
         public static string StatusReasonDdcNotEnabled {
             get {
                 return ResourceManager.GetString("StatusReasonDdcNotEnabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Touchpad horizontal swipe.
+        /// </summary>
+        public static string TouchpadHorizontalSwipe {
+            get {
+                return ResourceManager.GetString("TouchpadHorizontalSwipe", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Touchpad vertical swipe.
+        /// </summary>
+        public static string TouchpadVerticalSwipe {
+            get {
+                return ResourceManager.GetString("TouchpadVerticalSwipe", resourceCulture);
             }
         }
         

@@ -211,6 +211,8 @@ public class AppControllerCore
 		if (Settings.UsesAccentColor)
 			WindowPainter.AttachAccentColors();
 
+		ViewManager.InvertsScrollDirection = Settings.InvertsScrollDirection;
+
 		if (Settings.MakesOperationLog)
 			await OperationRecorder.EnableAsync("Initiated");
 	}
@@ -225,6 +227,10 @@ public class AppControllerCore
 				else
 					WindowPainter.DetachAccentColors();
 
+				break;
+
+			case nameof(Settings.InvertsScrollDirection):
+				ViewManager.InvertsScrollDirection = Settings.InvertsScrollDirection;
 				break;
 
 			case nameof(Settings.EnablesUnison) when !Settings.EnablesUnison:

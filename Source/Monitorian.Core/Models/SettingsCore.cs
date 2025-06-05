@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Monitorian.Core.Collections;
 using Monitorian.Core.Common;
 using Monitorian.Core.Helper;
+using Monitorian.Core.Views;
 
 namespace Monitorian.Core.Models;
 
@@ -71,6 +72,20 @@ public class SettingsCore : BindableBase
 		set => SetProperty(ref _defersChange, value);
 	}
 	private bool _defersChange;
+
+	/// <summary>
+	/// Whether to invert scroll direction
+	/// </summary>
+	/// <remarks>
+	/// This value is a set of flags.
+	/// </remarks>
+	public ScrollInput InvertsScrollDirection
+	{
+		get => _invertsScrollDirection ??= (ScrollInput)0b_1110; // default
+		set => SetProperty(ref _invertsScrollDirection, value);
+	}
+	[DataMember(Name = nameof(InvertsScrollDirection))]
+	private ScrollInput? _invertsScrollDirection;
 
 	/// <summary>
 	/// Whether to enable moving in unison

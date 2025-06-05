@@ -146,7 +146,7 @@ internal class DisplayMonitorProvider
 						displayName: displayMonitor.DisplayName,
 						nativeResolution: displayMonitor.NativeResolutionInRawPixels,
 						physicalSize: displayMonitor.PhysicalSizeInInches ?? default,
-						isInternal: (displayMonitor.ConnectionKind == Windows.Devices.Display.DisplayMonitorConnectionKind.Internal),
+						isInternal: (displayMonitor.ConnectionKind is Windows.Devices.Display.DisplayMonitorConnectionKind.Internal),
 						connectionDescription: GetConnectionDescription(displayMonitor.ConnectionKind, displayMonitor.PhysicalConnector)));
 				}
 			}

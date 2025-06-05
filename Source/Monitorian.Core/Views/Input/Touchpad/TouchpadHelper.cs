@@ -261,7 +261,7 @@ internal static class TouchpadHelper
 			return false;
 		}
 
-		foreach (var device in devices.Where(x => x.dwType == RIM_TYPEHID))
+		foreach (var device in devices.Where(x => x.dwType is RIM_TYPEHID))
 		{
 			uint deviceInfoSize = 0;
 
@@ -285,8 +285,8 @@ internal static class TouchpadHelper
 				continue;
 			}
 
-			if ((deviceInfo.hid.usUsagePage == TouchpadUsagePage) &&
-				(deviceInfo.hid.usUsage == TouchpadUsage))
+			if ((deviceInfo.hid.usUsagePage is TouchpadUsagePage) &&
+				(deviceInfo.hid.usUsage is TouchpadUsage))
 			{
 				return true;
 			}
@@ -405,7 +405,7 @@ internal static class TouchpadHelper
 
 			if (HidP_GetCaps(
 				preparsedDataPointer,
-				out HIDP_CAPS caps) != HIDP_STATUS_SUCCESS)
+				out HIDP_CAPS caps) is not HIDP_STATUS_SUCCESS)
 			{
 				return null;
 			}
@@ -417,7 +417,7 @@ internal static class TouchpadHelper
 				HIDP_REPORT_TYPE.HidP_Input,
 				valueCaps,
 				ref valueCapsLength,
-				preparsedDataPointer) != HIDP_STATUS_SUCCESS)
+				preparsedDataPointer) is not HIDP_STATUS_SUCCESS)
 			{
 				return null;
 			}
@@ -440,7 +440,7 @@ internal static class TouchpadHelper
 					out uint value,
 					preparsedDataPointer,
 					rawHidRawDataPointer,
-					(uint)rawHidRawData.Length) != HIDP_STATUS_SUCCESS)
+					(uint)rawHidRawData.Length) is not HIDP_STATUS_SUCCESS)
 				{
 					continue;
 				}

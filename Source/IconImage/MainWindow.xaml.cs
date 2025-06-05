@@ -43,7 +43,7 @@ public partial class MainWindow : Window
 			InitialDirectory = _folderPath ?? Environment.GetFolderPath(Environment.SpecialFolder.Desktop)
 		};
 
-		if (sfd.ShowDialog() != true)
+		if (sfd.ShowDialog() is not true)
 			return;
 
 		_fileName = Path.GetFileName(sfd.FileName);

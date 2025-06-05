@@ -1,0 +1,39 @@
+﻿<Window x:Class="Monitorian.Core.Views.ScrollWindow"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:properties="clr-namespace:Monitorian.Core.Properties"
+		Width="200"
+		ResizeMode="NoResize" SizeToContent="WidthAndHeight"
+		ShowInTaskbar="False" Topmost="True"
+		AllowsTransparency="True" WindowStyle="None"
+		Background="{StaticResource App.Background.Plain}">
+	<StackPanel Margin="0,4">
+		<ContentControl Style="{StaticResource MenuItemStyle}">
+			<ToggleButton Padding="8,4"
+						  Style="{StaticResource CheckButtonItemStyle}"
+						  Content="{x:Static properties:Resources.MouseVerticalWheel}"
+						  IsChecked="{Binding InvertsMouseVerticalWheel}"/>
+		</ContentControl>
+
+		<ContentControl Style="{StaticResource MenuItemStyle}">
+			<ToggleButton Padding="8,4"
+						  Style="{StaticResource CheckButtonItemStyle}"
+						  Content="{x:Static properties:Resources.MouseHorizontalWheel}"
+						  IsChecked="{Binding InvertsMouseHorizontalWheel}"/>
+		</ContentControl>
+
+		<ContentControl Style="{StaticResource MenuItemStyle}">
+			<ToggleButton Padding="8,4"
+						  Style="{StaticResource CheckButtonItemStyle}"
+						  Content="{x:Static properties:Resources.TouchpadVerticalSwipe}"
+						  IsChecked="{Binding InvertsTouchpadVerticalSwipe}"/>
+		</ContentControl>
+
+		<ContentControl Style="{StaticResource MenuItemStyle}">
+			<ToggleButton Padding="8,4"
+						  Style="{StaticResource CheckButtonItemStyle}"
+						  Content="{x:Static properties:Resources.TouchpadHorizontalSwipe}"
+						  IsChecked="{Binding InvertsTouchpadHorizontalSwipe}"/>
+		</ContentControl>
+	</StackPanel>
+</Window>

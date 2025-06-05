@@ -13,7 +13,7 @@ public class VisibilityToBooleanFilterConverter : IValueConverter
 		if (value is not Visibility sourceValue)
 			return DependencyProperty.UnsetValue;
 
-		var targetValue = (sourceValue == Visibility.Visible);
+		var targetValue = (sourceValue is Visibility.Visible);
 
 		if (IsFilteredOut(targetValue, parameter))
 			return DependencyProperty.UnsetValue;

@@ -153,8 +153,17 @@
   <data name="EnableUnison" xml:space="preserve">
     <value>Enable changing brightness in unison</value>
   </data>
+  <data name="InvertScrollDirection" xml:space="preserve">
+    <value>Invert scroll direction</value>
+  </data>
   <data name="MakeOperation" xml:space="preserve">
     <value>Make operation log</value>
+  </data>
+  <data name="MouseHorizontalWheel" xml:space="preserve">
+    <value>Mouse horizontal wheel</value>
+  </data>
+  <data name="MouseVerticalWheel" xml:space="preserve">
+    <value>Mouse vertical wheel</value>
   </data>
   <data name="OrderArrangement" xml:space="preserve">
     <value>Order by monitors arrangement</value>
@@ -194,6 +203,12 @@
   </data>
   <data name="StatusReasonDdcNotEnabled" xml:space="preserve">
     <value>DDC/CI is not supported or enabled.</value>
+  </data>
+  <data name="TouchpadHorizontalSwipe" xml:space="preserve">
+    <value>Touchpad horizontal swipe</value>
+  </data>
+  <data name="TouchpadVerticalSwipe" xml:space="preserve">
+    <value>Touchpad vertical swipe</value>
   </data>
   <data name="UseAccentColor" xml:space="preserve">
     <value>Use accent color for brightness</value>

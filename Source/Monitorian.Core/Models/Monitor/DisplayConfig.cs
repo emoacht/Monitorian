@@ -317,7 +317,7 @@ internal class DisplayConfig
 		if (GetDisplayConfigBufferSizes(
 			QDC_ONLY_ACTIVE_PATHS,
 			out uint pathCount,
-			out uint modeCount) != ERROR_SUCCESS)
+			out uint modeCount) is not ERROR_SUCCESS)
 			yield break;
 
 		var displayPaths = new DISPLAYCONFIG_PATH_INFO[pathCount];
@@ -329,13 +329,13 @@ internal class DisplayConfig
 			displayPaths,
 			ref modeCount,
 			displayModes,
-			IntPtr.Zero) != ERROR_SUCCESS)
+			IntPtr.Zero) is not ERROR_SUCCESS)
 			yield break;
 
 		foreach (var displayPath in displayPaths)
 		{
 			var displayMode = displayModes
-				.Where(x => x.infoType == DISPLAYCONFIG_MODE_INFO_TYPE.DISPLAYCONFIG_MODE_INFO_TYPE_TARGET)
+				.Where(x => x.infoType is DISPLAYCONFIG_MODE_INFO_TYPE.DISPLAYCONFIG_MODE_INFO_TYPE_TARGET)
 				.FirstOrDefault(x => x.id == displayPath.targetInfo.id);
 			if (displayMode.Equals(default(DISPLAYCONFIG_MODE_INFO)))
 				continue;
@@ -346,7 +346,7 @@ internal class DisplayConfig
 			deviceName.header.id = displayMode.id;
 			deviceName.header.type = DISPLAYCONFIG_DEVICE_INFO_TYPE.DISPLAYCONFIG_DEVICE_INFO_GET_TARGET_NAME;
 
-			if (DisplayConfigGetDeviceInfo(ref deviceName) != ERROR_SUCCESS)
+			if (DisplayConfigGetDeviceInfo(ref deviceName) is not ERROR_SUCCESS)
 				continue;
 
 			var deviceInstanceId = DeviceConversion.ConvertToDeviceInstanceId(deviceName.monitorDevicePath);
@@ -354,7 +354,7 @@ internal class DisplayConfig
 			yield return new DisplayItem(
 				deviceInstanceId: deviceInstanceId,
 				displayName: deviceName.monitorFriendlyDeviceName,
-				isInternal: (deviceName.outputTechnology == DISPLAYCONFIG_VIDEO_OUTPUT_TECHNOLOGY.DISPLAYCONFIG_OUTPUT_TECHNOLOGY_INTERNAL),
+				isInternal: (deviceName.outputTechnology is DISPLAYCONFIG_VIDEO_OUTPUT_TECHNOLOGY.DISPLAYCONFIG_OUTPUT_TECHNOLOGY_INTERNAL),
 				refreshRate: displayPath.targetInfo.refreshRate.Numerator / (float)displayPath.targetInfo.refreshRate.Denominator,
 				connectionDescription: GetConnectionDescription(deviceName.outputTechnology),
 				isAvailable: displayPath.targetInfo.targetAvailable);

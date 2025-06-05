@@ -436,7 +436,7 @@ public static class WindowHelper
 			windowHandle,
 			(uint)DWMWA.DWMWA_EXTENDED_FRAME_BOUNDS,
 			out RECT rect,
-			(uint)Marshal.SizeOf<RECT>()) == S_OK)
+			(uint)Marshal.SizeOf<RECT>()) is S_OK)
 		{
 			windowRect = rect;
 			return true;
@@ -457,7 +457,7 @@ public static class WindowHelper
 				windowHandle,
 				(uint)DWMWA.DWMWA_EXTENDED_FRAME_BOUNDS,
 				out RECT dwmRect,
-				(uint)Marshal.SizeOf<RECT>()) == S_OK)
+				(uint)Marshal.SizeOf<RECT>()) is S_OK)
 			{
 				windowMargin = new Thickness(
 					dwmRect.left - baseRect.left,
@@ -906,7 +906,7 @@ public static class WindowHelper
 			(0, 0, 0, > 0) => (Create(0, wa.Height, wa.Width, gapHeight), TaskbarAlignment.Bottom),
 			_ => default // Auto hide
 		};
-		return (taskbarAlignment != TaskbarAlignment.None);
+		return (taskbarAlignment is not TaskbarAlignment.None);
 
 		static Rect Create(double x, double y, double width, double height)
 		{

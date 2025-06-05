@@ -412,7 +412,7 @@ public class MonitorConfigurationTest
 		if (!source.TryGetValue((byte)key, out byte[] values))
 			return false;
 
-		return (elements.Length is 0)
+		return (elements.Length == 0)
 			|| (values.Intersect(elements).Count() == elements.Length);
 	}
 }

@@ -40,7 +40,7 @@ public class Logger
 			ProductInfo.Title,
 			MessageBoxButton.OKCancel,
 			MessageBoxImage.Information,
-			MessageBoxResult.OK) != MessageBoxResult.OK)
+			MessageBoxResult.OK) is not MessageBoxResult.OK)
 			return;
 
 		RecordToDesktop(ProbeFileName, content);
@@ -182,7 +182,7 @@ public class Logger
 			ProductInfo.Title,
 			MessageBoxButton.OKCancel,
 			MessageBoxImage.Information,
-			MessageBoxResult.OK) != MessageBoxResult.OK)
+			MessageBoxResult.OK) is not MessageBoxResult.OK)
 			return;
 
 		RecordToDesktop(OperationFileName, buffer.ToString());
@@ -220,7 +220,7 @@ public class Logger
 			ProductInfo.Title,
 			MessageBoxButton.YesNo,
 			MessageBoxImage.Error,
-			MessageBoxResult.Yes) != MessageBoxResult.Yes)
+			MessageBoxResult.Yes) is not MessageBoxResult.Yes)
 			return;
 
 		RecordToDesktop(ExceptionFileName, content, capacity);

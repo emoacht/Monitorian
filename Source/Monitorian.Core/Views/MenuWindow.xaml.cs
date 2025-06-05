@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Input;
+using System.Windows.Media;
 
 using Monitorian.Core.Models;
 using Monitorian.Core.ViewModels;
@@ -18,6 +20,7 @@ namespace Monitorian.Core.Views;
 public partial class MenuWindow : Window
 {
 	private readonly FloatWindowMover _mover;
+	private readonly AppControllerCore _controller;
 	public MenuWindowViewModel ViewModel => (MenuWindowViewModel)this.DataContext;
 
 	public MenuWindow(AppControllerCore controller, Point pivot)
@@ -26,6 +29,7 @@ public partial class MenuWindow : Window
 
 		InitializeComponent();
 
+		this._controller = controller;
 		this.DataContext = new MenuWindowViewModel(controller);
 
 		_mover = new FloatWindowMover(this, pivot);
@@ -61,6 +65,24 @@ public partial class MenuWindow : Window
 
 			if (resourceValues.Contains(itemControl.Content))
 				itemControl.FlowDirection = FlowDirection.RightToLeft;
+		}
+	}
+
+	private void InvertScrollDirection_Click(object sender, RoutedEventArgs e)
+	{
+		if ((sender is ButtonBase parent) &&
+			(VisualTreeHelper.GetChild(parent, 0) is UIElement child))
+		{
+			var point = Mouse.GetPosition(child);
+			point = new Point(Math.Max(point.X, 0D), Math.Max(point.Y, 0D));
+			point = child.PointToScreen(point);
+
+			DepartFromForeground();
+
+			var scrollWindow = new ScrollWindow(_controller, point) { Owner = this };
+			scrollWindow.ShowDialog();
+
+			ReturnToForeground();
 		}
 	}
 

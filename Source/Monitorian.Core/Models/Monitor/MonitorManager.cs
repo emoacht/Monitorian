@@ -139,7 +139,7 @@ internal class MonitorManager
 		await Task.WhenAny(Task.WhenAll(physicalItemsTasks), Task.Delay(timeout, cancellationToken));
 		cancellationToken.ThrowIfCancellationRequested();
 
-		var physicalItemsPairs = physicalItemsTasks.Where(x => x.Status == TaskStatus.RanToCompletion).Select(x => x.Result);
+		var physicalItemsPairs = physicalItemsTasks.Where(x => x.Status is TaskStatus.RanToCompletion).Select(x => x.Result);
 
 		IEnumerable<IMonitor> EnumerateMonitorItems()
 		{
@@ -303,12 +303,12 @@ internal class MonitorManager
 		private void TestBrightness()
 		{
 			var (getResult, minimum, current, maximum) = MonitorConfiguration.GetBrightness(Handle, Capability.IsHighLevelBrightnessSupported);
-			var isGetSuccess = (getResult.Status == AccessStatus.Succeeded);
+			var isGetSuccess = (getResult.Status is AccessStatus.Succeeded);
 			var (isValid, expected) = GetExpected(isGetSuccess, minimum, current, maximum);
 			GetBrightness = $"Success: {isGetSuccess}" + (isGetSuccess ? $", Valid: {isValid} (Minimum: {minimum}, Current: {current}, Maximum: {maximum})" : string.Empty);
 
 			var setResult = MonitorConfiguration.SetBrightness(Handle, expected, Capability.IsHighLevelBrightnessSupported);
-			var isSetSuccess = (setResult.Status == AccessStatus.Succeeded);
+			var isSetSuccess = (setResult.Status is AccessStatus.Succeeded);
 			var (_, _, actual, _) = MonitorConfiguration.GetBrightness(Handle, Capability.IsHighLevelBrightnessSupported);
 			SetBrightness = $"Success: {isSetSuccess}" + (isSetSuccess ? $", Match: {expected == actual} (Expected: {expected}, Actual: {actual})" : string.Empty);
 
@@ -319,12 +319,12 @@ internal class MonitorManager
 		private void TestContrast()
 		{
 			var (getResult, minimum, current, maximum) = MonitorConfiguration.GetContrast(Handle);
-			var isGetSuccess = (getResult.Status == AccessStatus.Succeeded);
+			var isGetSuccess = (getResult.Status is AccessStatus.Succeeded);
 			var (isValid, expected) = GetExpected(isGetSuccess, minimum, current, maximum);
 			GetContrast = $"Success: {isGetSuccess}" + (isGetSuccess ? $", Valid: {isValid} (Minimum: {minimum}, Current: {current}, Maximum: {maximum})" : string.Empty);
 
 			var setResult = MonitorConfiguration.SetContrast(Handle, expected);
-			var isSetSuccess = (setResult.Status == AccessStatus.Succeeded);
+			var isSetSuccess = (setResult.Status is AccessStatus.Succeeded);
 			var (_, _, actual, _) = MonitorConfiguration.GetContrast(Handle);
 			SetContrast = $"Success: {isSetSuccess}" + (isSetSuccess ? $", Match: {expected == actual} (Expected: {expected}, Actual: {actual})" : string.Empty);
 

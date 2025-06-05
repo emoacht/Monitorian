@@ -223,7 +223,7 @@ internal static class DisplayInformationProvider
 		var factory = (IDisplayInformationStaticsInterop)WindowsRuntimeMarshal.GetActivationFactory(typeof(Windows.Graphics.Display.DisplayInformation));
 		var iid = typeof(Windows.Graphics.Display.DisplayInformation).GetInterface("IDisplayInformation").GUID;
 		var result = factory.GetForWindow(windowHandle, ref iid, out Windows.Graphics.Display.DisplayInformation displayInfo);
-		return (result == S_OK)
+		return (result is S_OK)
 			? displayInfo
 			: null;
 	}
@@ -238,7 +238,7 @@ internal static class DisplayInformationProvider
 		var factory = (IDisplayInformationStaticsInterop)WindowsRuntimeMarshal.GetActivationFactory(typeof(Windows.Graphics.Display.DisplayInformation));
 		var iid = typeof(Windows.Graphics.Display.DisplayInformation).GetInterface("IDisplayInformation").GUID;
 		var result = factory.GetForMonitor(monitorHandle, ref iid, out Windows.Graphics.Display.DisplayInformation displayInfo);
-		return (result == S_OK)
+		return (result is S_OK)
 			? displayInfo
 			: null;
 	}

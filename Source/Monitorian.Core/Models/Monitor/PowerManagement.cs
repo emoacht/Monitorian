@@ -106,7 +106,7 @@ internal class PowerManagement
 	{
 		if (PowerGetActiveScheme(
 			IntPtr.Zero,
-			out Guid activePolicyGuid) != ERROR_SUCCESS)
+			out Guid activePolicyGuid) is not ERROR_SUCCESS)
 		{
 			Debug.WriteLine("Failed to get active scheme.");
 			return default;
@@ -154,7 +154,7 @@ internal class PowerManagement
 		{
 			// 0: Off
 			// 1: On
-			IsAdaptiveBrightnessEnabled = (e.Data == 1);
+			IsAdaptiveBrightnessEnabled = (e.Data is 1);
 		}
 		return default;
 	}
@@ -192,7 +192,7 @@ internal class PowerManagement
 
 			// 1: Remove
 			// 2: Add
-			return ((int)key.GetValue("Attributes") == 2);
+			return ((int)key.GetValue("Attributes") is 2);
 		}
 		catch (Exception ex)
 		{
@@ -218,7 +218,7 @@ internal class PowerManagement
 				schemeGuid,
 				VIDEO_SUBGROUP,
 				VIDEO_ADAPTIVE_DISPLAY_BRIGHTNESS,
-				out valueIndex) != ERROR_SUCCESS)
+				out valueIndex) is not ERROR_SUCCESS)
 			{
 				Debug.WriteLine("Failed to read AC Adaptive Brightness.");
 				return null;
@@ -231,7 +231,7 @@ internal class PowerManagement
 				schemeGuid,
 				VIDEO_SUBGROUP,
 				VIDEO_ADAPTIVE_DISPLAY_BRIGHTNESS,
-				out valueIndex) != ERROR_SUCCESS)
+				out valueIndex) is not ERROR_SUCCESS)
 			{
 				Debug.WriteLine("Failed to read DC Adaptive Brightness.");
 				return null;
@@ -259,7 +259,7 @@ internal class PowerManagement
 				schemeGuid,
 				VIDEO_SUBGROUP,
 				VIDEO_ADAPTIVE_DISPLAY_BRIGHTNESS,
-				valueIndex) != ERROR_SUCCESS)
+				valueIndex) is not ERROR_SUCCESS)
 			{
 				Debug.WriteLine("Failed to write AC Adaptive Brightness.");
 				return false;
@@ -272,7 +272,7 @@ internal class PowerManagement
 				schemeGuid,
 				VIDEO_SUBGROUP,
 				VIDEO_ADAPTIVE_DISPLAY_BRIGHTNESS,
-				valueIndex) != ERROR_SUCCESS)
+				valueIndex) is not ERROR_SUCCESS)
 			{
 				Debug.WriteLine("Failed to write DC Adaptive Brightness.");
 				return false;
@@ -281,7 +281,7 @@ internal class PowerManagement
 
 		if (PowerSetActiveScheme(
 			IntPtr.Zero,
-			schemeGuid) != ERROR_SUCCESS)
+			schemeGuid) is not ERROR_SUCCESS)
 		{
 			Debug.WriteLine("Failed to set active scheme.");
 			return false;
@@ -309,7 +309,7 @@ internal class PowerManagement
 				schemeGuid,
 				VIDEO_SUBGROUP,
 				DEVICE_POWER_POLICY_VIDEO_BRIGHTNESS,
-				out valueIndex) != ERROR_SUCCESS)
+				out valueIndex) is not ERROR_SUCCESS)
 			{
 				Debug.WriteLine("Failed to read AC Brightness.");
 				return -1;
@@ -322,7 +322,7 @@ internal class PowerManagement
 				schemeGuid,
 				VIDEO_SUBGROUP,
 				DEVICE_POWER_POLICY_VIDEO_BRIGHTNESS,
-				out valueIndex) != ERROR_SUCCESS)
+				out valueIndex) is not ERROR_SUCCESS)
 			{
 				Debug.WriteLine("Failed to read DC Brightness.");
 				return -1;
@@ -349,7 +349,7 @@ internal class PowerManagement
 				schemeGuid,
 				VIDEO_SUBGROUP,
 				DEVICE_POWER_POLICY_VIDEO_BRIGHTNESS,
-				(uint)brightness) != ERROR_SUCCESS)
+				(uint)brightness) is not ERROR_SUCCESS)
 			{
 				Debug.WriteLine("Failed to write AC Brightness.");
 				return false;
@@ -362,7 +362,7 @@ internal class PowerManagement
 				schemeGuid,
 				VIDEO_SUBGROUP,
 				DEVICE_POWER_POLICY_VIDEO_BRIGHTNESS,
-				(uint)brightness) != ERROR_SUCCESS)
+				(uint)brightness) is not ERROR_SUCCESS)
 			{
 				Debug.WriteLine("Failed to write DC Brightness.");
 				return false;
@@ -371,7 +371,7 @@ internal class PowerManagement
 
 		if (PowerSetActiveScheme(
 			IntPtr.Zero,
-			schemeGuid) != ERROR_SUCCESS)
+			schemeGuid) is not ERROR_SUCCESS)
 		{
 			Debug.WriteLine("Failed to set active scheme.");
 			return false;

@@ -358,12 +358,12 @@ internal class MonitorConfiguration
 					}
 					break;
 				default:
-					if (depth is 1)
+					if (depth == 1)
 					{
 						if (IsHexNumber(c))
 						{
 							buffer.Append(c);
-							if (buffer.Length is 1)
+							if (buffer.Length == 1)
 								continue;
 						}
 						if (0 < buffer.Length)
@@ -429,7 +429,7 @@ internal class MonitorConfiguration
 							if (IsHexNumber(c))
 							{
 								buffer1.Append(c);
-								if (buffer1.Length is 1)
+								if (buffer1.Length == 1)
 									continue;
 							}
 							if (0 < buffer1.Length)
@@ -443,7 +443,7 @@ internal class MonitorConfiguration
 							if (IsHexNumber(c))
 							{
 								buffer2.Append(c);
-								if (buffer2.Length is 1)
+								if (buffer2.Length == 1)
 									continue;
 							}
 							if (0 < buffer2.Length)
@@ -665,8 +665,8 @@ internal class MonitorConfiguration
 
 	private static bool CheckPossibleTransientStatus(AccessStatus oldStatus, AccessStatus newStatus)
 	{
-		return (oldStatus == AccessStatus.None)
-			&& (newStatus == AccessStatus.TransmissionFailed);
+		return (oldStatus is AccessStatus.None)
+			&& (newStatus is AccessStatus.TransmissionFailed);
 	}
 
 	#region Error

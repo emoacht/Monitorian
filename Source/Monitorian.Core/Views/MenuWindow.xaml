@@ -100,6 +100,13 @@
 						  IsChecked="{Binding Settings.DefersChange}"/>
 		</ContentControl>
 
+		<ContentControl Style="{StaticResource MenuItemStyle}">
+			<Button Padding="8,4"
+					Style="{StaticResource PlainButtonItemStyle}"
+					Content="{x:Static properties:Resources.InvertScrollDirection}"
+					Click="InvertScrollDirection_Click"/>
+		</ContentControl>
+
 		<StackPanel x:Name="MenuItemsMiddle"/>
 
 		<Separator Style="{StaticResource MenuSeparatorStyle}"/>

@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -12,7 +10,6 @@ using System.Windows.Media;
 using Monitorian.Core.Models;
 using Monitorian.Core.ViewModels;
 using Monitorian.Core.Views.Controls;
-using ScreenFrame;
 using ScreenFrame.Movers;
 
 namespace Monitorian.Core.Views;
@@ -47,25 +44,7 @@ public partial class MenuWindow : Window
 	{
 		base.OnApplyTemplate();
 
-		EnsureFlowDirection(this);
-	}
-
-	public static void EnsureFlowDirection(ContentControl rootControl)
-	{
-		if (!LanguageService.IsResourceRightToLeft)
-			return;
-
-		var resourceValues = new HashSet<string>(LanguageService.ResourceDictionary.Values);
-
-		foreach (var itemControl in LogicalTreeHelperAddition.EnumerateDescendants<ContentControl>(rootControl)
-			.Select(x => x.Content as ButtonBase)
-			.Where(x => x is not null))
-		{
-			TemplateElement.SetVisibility(itemControl, Visibility.Visible);
-
-			if (resourceValues.Contains(itemControl.Content))
-				itemControl.FlowDirection = FlowDirection.RightToLeft;
-		}
+		FlowElement.EnsureFlowDirection(this);
 	}
 
 	private void InvertScrollDirection_Click(object sender, RoutedEventArgs e)

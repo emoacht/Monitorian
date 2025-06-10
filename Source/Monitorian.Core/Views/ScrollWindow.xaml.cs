@@ -5,6 +5,7 @@ using System.Windows.Input;
 
 using Monitorian.Core.Models;
 using Monitorian.Core.ViewModels;
+using Monitorian.Core.Views.Controls;
 using ScreenFrame.Movers;
 
 namespace Monitorian.Core.Views;
@@ -24,6 +25,13 @@ public partial class ScrollWindow : Window
 		_mover = new FloatWindowMover(this, pivot);
 
 		controller.WindowPainter.Add(this);
+	}
+
+	public override void OnApplyTemplate()
+	{
+		base.OnApplyTemplate();
+
+		FlowElement.EnsureFlowDirection(this);
 	}
 
 	protected override void OnKeyDown(KeyEventArgs e)

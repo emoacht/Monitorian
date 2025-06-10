@@ -1,7 +1,7 @@
 ﻿<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
      xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui"
      xmlns:netfx="http://wixtoolset.org/schemas/v4/wxs/netfx">
-  <Package Name="Monitorian" Manufacturer="emoacht" Version="4.11.0"
+  <Package Name="Monitorian" Manufacturer="emoacht" Version="4.11.1"
            Language="1033" Codepage="1252" UpgradeCode="{81A4D148-75D3-462E-938D-8C208FB48E3C}">
     <SummaryInformation Description="Installer for Monitorian"/>
 

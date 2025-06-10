@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 
 using Monitorian.Core.ViewModels;
+using Monitorian.Core.Views.Controls;
 
 namespace Monitorian.Core.Views;
 
@@ -55,6 +56,6 @@ public partial class DevSection : UserControl
 			}
 		}
 
-		MenuWindow.EnsureFlowDirection(this);
+		FlowElement.EnsureFlowDirection(this);
 	}
 }

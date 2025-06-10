@@ -130,13 +130,13 @@
     <Compile Include="Views\Controls\Sliders\RangeConverter.cs" />
     <Compile Include="Views\Controls\Sliders\RangeSlider.cs" />
     <Compile Include="Views\Controls\Sliders\ShadowSlider.cs" />
+    <Compile Include="Views\Controls\FlowElement.cs" />
     <Compile Include="Views\Controls\FrameworkElementMargin.cs" />
     <Compile Include="Views\Controls\FrameworkElementSize.cs" />
     <Compile Include="Views\Controls\IconButton.cs" />
     <Compile Include="Views\Controls\MultiToggleButton.cs" />
     <Compile Include="Views\Controls\PulseLabel.cs" />
     <Compile Include="Views\Controls\SwitchTextBox.cs" />
-    <Compile Include="Views\Controls\TemplateElement.cs" />
     <Compile Include="Views\Converters\BooleanInverseConverter.cs" />
     <Compile Include="Views\Converters\BooleanToVisibilityTurnConverter.cs" />
     <Compile Include="Views\Converters\ObjectToVisibilityConverter.cs" />

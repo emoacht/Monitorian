@@ -60,7 +60,7 @@ Additional languages:
    ```
 
  * Other:<br>
-:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/4.10.0-Installer/MonitorianInstaller4100.zip)
+:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/4.11.1-Installer/MonitorianInstaller4111.zip)
 
 ## Install/Uninstall
 
@@ -226,6 +226,10 @@ An alternative language can be shown by adding a Resources (.resx) file into `/S
  - VESA [Monitor Control Command Set (MCCS)](https://www.google.co.jp/search?q=VESA+Monitor+Control+Command+Set+Standard+MCCS) standard
 
 ## History
+
+Ver 4.11 2025-6-11
+
+ - Enable to invert scroll direction
 
 Ver 4.10 2024-12-26
 

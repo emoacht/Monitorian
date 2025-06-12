@@ -37,7 +37,7 @@ internal class WmiMonitorItem : MonitorItem
 
 	public override AccessResult UpdateBrightness(int brightness = -1)
 	{
-		if (IsInternal)
+		if (IsInternal && !PowerManagement.IsIgnored)
 		{
 			this.Brightness = PowerManagement.GetActiveSchemeBrightness();
 
@@ -61,7 +61,7 @@ internal class WmiMonitorItem : MonitorItem
 		if (brightness is < 0 or > 100)
 			throw new ArgumentOutOfRangeException(nameof(brightness), brightness, "The brightness must be from 0 to 100.");
 
-		if (IsInternal)
+		if (IsInternal && !PowerManagement.IsIgnored)
 		{
 			if (PowerManagement.SetActiveSchemeBrightness(brightness))
 			{

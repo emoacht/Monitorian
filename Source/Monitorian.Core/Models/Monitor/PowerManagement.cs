@@ -92,7 +92,7 @@ internal class PowerManagement
 	/// <summary>
 	/// Options
 	/// </summary>
-	public static IReadOnlyCollection<string> Options => [PowerBindOption];
+	public static IReadOnlyCollection<string> Options => [PowerBindOption, PowerIgnoreOption];
 
 	private const string PowerBindOption = "/powerbind";
 
@@ -100,6 +100,14 @@ internal class PowerManagement
 	private static readonly Lazy<bool> _isBound = new(() =>
 	{
 		return AppKeeper.StandardArguments.Select(x => x.ToLower()).Contains(PowerBindOption);
+	});
+
+	private const string PowerIgnoreOption = "/powerignore";
+
+	public static bool IsIgnored => _isIgnored.Value;
+	private static readonly Lazy<bool> _isIgnored = new(() =>
+	{
+		return AppKeeper.StandardArguments.Select(x => x.ToLower()).Contains(PowerIgnoreOption);
 	});
 
 	public static Guid GetActiveScheme()

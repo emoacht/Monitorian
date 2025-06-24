@@ -64,11 +64,10 @@ internal class MSMonitor
 
 		using (var @class = new ManagementClass("Win32_DesktopMonitor"))
 		{
-			try
+			using var instances = @class.GetInstances();
+			foreach (ManagementObject instance in instances)
 			{
-				using var instances = @class.GetInstances();
-
-				foreach (ManagementObject instance in instances)
+				try
 				{
 					using (instance)
 					{
@@ -85,12 +84,13 @@ internal class MSMonitor
 							description: description));
 					}
 				}
-			}
-			catch (ManagementException me)
-			{
-				Debug.WriteLine($"Failed to get and enumerate instances by Win32_DesktopMonitor. HResult: 0x{me.HResult:X8} ErrorCode: {me.ErrorCode}" + Environment.NewLine
-					+ me);
-				yield break;
+				catch (ManagementException me)
+				{
+					Debug.WriteLine(
+						$"Failed to get and enumerate instances by Win32_DesktopMonitor. HResult: 0x{me.HResult:X8} ErrorCode: {me.ErrorCode}" +
+						Environment.NewLine
+						+ me);
+				}
 			}
 		}
 
@@ -122,7 +122,7 @@ internal class MSMonitor
 					}
 					catch (ManagementException me)
 					{
-						// ManagementObjectCollection.ManagementObjectEnumerator.MoveNext method for 
+						// ManagementObjectCollection.ManagementObjectEnumerator.MoveNext method for
 						// WmiMonitorBrightness instance may throw a ManagementException when called
 						// immediately after resume.
 						// The ManagementException is caused by various reasons including:

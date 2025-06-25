@@ -12,12 +12,12 @@ namespace Monitorian.Core.Models;
 /// </summary>
 public static class SystemInfo
 {
-	private class SystemInfoInternal
+	private class SystemInfoBase
 	{
 		public string Manufacturer { get; }
 		public string Model { get; }
 
-		public SystemInfoInternal()
+		public SystemInfoBase()
 		{
 			const string keyName = @"SYSTEM\CurrentControlSet\Control\SystemInformation"; // HKLM
 
@@ -52,7 +52,7 @@ public static class SystemInfo
 		}
 	}
 
-	private static readonly Lazy<SystemInfoInternal> _instance = new(() => new());
+	private static readonly Lazy<SystemInfoBase> _instance = new(() => new());
 
 	public static string Manufacturer => _instance.Value.Manufacturer;
 	public static string Model => _instance.Value.Model;

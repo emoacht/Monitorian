@@ -10,24 +10,31 @@ namespace Monitorian.Core.Models;
 /// </summary>
 public static class ProductInfo
 {
-	private static readonly Assembly _assembly = Assembly.GetEntryAssembly();
+	private readonly struct ProductInfoBase(Assembly assembly)
+	{
+		public readonly Version Version = assembly.GetName().Version;
+		public readonly string Product = assembly.GetAttribute<AssemblyProductAttribute>().Product;
+		public readonly string Title = assembly.GetAttribute<AssemblyTitleAttribute>().Title;
+	}
+
+	private static readonly Lazy<ProductInfoBase> _instance = new(() => new(Assembly.GetEntryAssembly()));
 
 	/// <summary>
 	/// Version (from entry assembly)
 	/// </summary>
-	public static Version Version { get; } = _assembly.GetName().Version;
+	public static Version Version => _instance.Value.Version;
 
 	/// <summary>
 	/// Product (from entry assembly)
 	/// </summary>
-	public static string Product { get; } = _assembly.GetAttribute<AssemblyProductAttribute>().Product;
+	public static string Product => _instance.Value.Product;
 
 	/// <summary>
 	/// Title (from entry assembly)
 	/// </summary>
 	public static string Title
 	{
-		get => _title ??= _assembly.GetAttribute<AssemblyTitleAttribute>().Title;
+		get => _title ??= _instance.Value.Title;
 		set => _title = value;
 	}
 	private static string _title;

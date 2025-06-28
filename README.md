@@ -206,13 +206,17 @@ In any case, reporting on the controllability of a monitor MUST include probe.lo
 ### Setup
 
 1. [Install Visual Studio](https://docs.microsoft.com/en-us/visualstudio/install/install-visual-studio).
-2. In Visual Studio Installer, go to the **Individual components** tab and make sure the following components are checked and installed. The version must match the corresponding field of project (.csproj) file of each project.
+2. In Visual Studio Installer, go to **Individual components** tab and make sure the following components are checked and installed.
 
-| Components                                                  | Fields                 |
-|-------------------------------------------------------------|------------------------|
-| .NET Framework 4.8 SDK<br>.NET Framework 4.8 targeting pack | TargetFrameworkVersion |
+| Components                                                  | Note                                                                                        |
+|-------------------------------------------------------------|---------------------------------------------------------------------------------------------|
+| .NET Framework 4.8 SDK<br>.NET Framework 4.8 targeting pack | The version must match TargetFrameworkVersion of<br>project (.csproj) file of each project. |
+| Windows 10 or 11 SDK                                        | The version must be equal to or newer than 10.0.19041.0.                                    |
 
-3. Load the solution by specifying `/Source/Monitorian.sln`. Then go to the solution explorer and right click the solution name and execute `Restore NuGet Packages`.
+3. In Visual Studio, open Extension Manager and make sure **HeatWave for VS2022** is installed.
+
+4. Load the solution by specifying `/Source/Monitorian.sln`. Then go to the solution explorer and right click the solution name and execute `Restore NuGet Packages`.
+
 
 ### Globalization
 

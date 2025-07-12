@@ -16,8 +16,7 @@ internal class UnreachableMonitorItem : MonitorItem
 			monitorIndex: monitorIndex,
 			monitorRect: Rect.Empty,
 			isInternal: isInternal,
-			isReachable: false,
-			onDisposed: null)
+			isReachable: false)
 	{ }
 
 	public override AccessResult UpdateBrightness(int brightness = -1) => AccessResult.Failed;

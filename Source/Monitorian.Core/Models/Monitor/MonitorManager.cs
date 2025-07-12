@@ -188,8 +188,7 @@ internal class MonitorManager
 						monitorIndex: basicItem.MonitorIndex,
 						monitorRect: handleItem.MonitorRect,
 						handle: physicalItem.Handle,
-						capability: capability,
-						onDisposed: DisplayInformationWatcher.RegisterMonitor(basicItem.DeviceInstanceId, handleItem.MonitorHandle));
+						capability: capability);
 
 					basicItems.RemoveAt(index);
 					if (basicItems.Count == 0)
@@ -219,8 +218,7 @@ internal class MonitorManager
 						monitorIndex: basicItem.MonitorIndex,
 						monitorRect: handleItem.MonitorRect,
 						isInternal: basicItem.IsInternal,
-						brightnessLevels: desktopItem.BrightnessLevels,
-						onDisposed: DisplayInformationWatcher.RegisterMonitor(basicItem.DeviceInstanceId, handleItem.MonitorHandle));
+						brightnessLevels: desktopItem.BrightnessLevels);
 
 					basicItems.RemoveAt(index);
 					if (basicItems.Count == 0)

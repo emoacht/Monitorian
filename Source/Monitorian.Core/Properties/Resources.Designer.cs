@@ -187,6 +187,15 @@ namespace Monitorian.Core.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Manage SDR white level.
+        /// </summary>
+        public static string ManageSdrWhiteLevel {
+            get {
+                return ResourceManager.GetString("ManageSdrWhiteLevel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Mouse horizontal wheel.
         /// </summary>
         public static string MouseHorizontalWheel {

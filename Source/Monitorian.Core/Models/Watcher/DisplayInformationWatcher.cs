@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 
 using Monitorian.Core.Helper;
 using Monitorian.Core.Models.Monitor;
@@ -9,43 +7,41 @@ namespace Monitorian.Core.Models.Watcher;
 
 internal class DisplayInformationWatcher : IDisposable
 {
-	/// <summary>
-	/// Options
-	/// </summary>
-	public static IReadOnlyCollection<string> Options => [AdvancedColorOption];
-
-	private const string AdvancedColorOption = "/advancedcolor";
-
-	public static bool IsEnabled => _isEnabled.Value;
-	private static readonly Lazy<bool> _isEnabled = new(() =>
-	{
-		return OsVersion.Is11Build22621OrGreater &&
-			AppKeeper.StandardArguments.Select(x => x.ToLower()).Contains(AdvancedColorOption);
-	});
-
 	private Action<string, string> _onDisplayInformationChanged;
 
 	public DisplayInformationWatcher()
-	{
-		if (!IsEnabled)
-			return;
-
-		DisplayInformationProvider.EnsureDispatcherQueue();
-	}
+	{ }
 
 	public void Subscribe(Action<string, string> onDisplayInformationChanged)
 	{
-		if (!IsEnabled)
-			return;
-
 		this._onDisplayInformationChanged = onDisplayInformationChanged ?? throw new ArgumentNullException(nameof(onDisplayInformationChanged));
-		DisplayInformationProvider.AdvancedColorInfoChanged += OnAdvancedColorInfoChanged;
 	}
 
 	private void OnAdvancedColorInfoChanged(object sender, string e)
 	{
 		var colorInfo = ((Windows.Graphics.Display.DisplayInformation)sender).GetAdvancedColorInfo();
 		_onDisplayInformationChanged?.Invoke(e, $"SDR WL: {colorInfo.SdrWhiteLevelInNits} Min: {colorInfo.MinLuminanceInNits:f1} Max: {colorInfo.MaxLuminanceInNits:f1} [{colorInfo.CurrentAdvancedColorKind}]");
+	}
+
+	public static bool IsEnabled { get; private set; } = false;
+
+	public void TryEnable()
+	{
+		if (!OsVersion.Is11Build22621OrGreater || IsEnabled)
+			return;
+
+		DisplayInformationProvider.EnsureDispatcherQueue();
+		DisplayInformationProvider.AdvancedColorInfoChanged += OnAdvancedColorInfoChanged;
+		IsEnabled = true;
+	}
+
+	public void Disable()
+	{
+		if (!OsVersion.Is11Build22621OrGreater || !IsEnabled)
+			return;
+
+		DisplayInformationProvider.AdvancedColorInfoChanged -= OnAdvancedColorInfoChanged;
+		IsEnabled = false;
 	}
 
 	#region IDisposable

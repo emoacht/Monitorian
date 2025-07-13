@@ -5,7 +5,6 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Runtime.Serialization;
 
 using Monitorian.Core.Helper;
-using Monitorian.Core.Models.Watcher;
 
 namespace Monitorian.Core.Models.Monitor;
 
@@ -262,7 +261,7 @@ internal static class DisplayInformationProvider
 	/// <returns>True if HDR is set</returns>
 	public static bool IsHdr(IntPtr monitorHandle)
 	{
-		if (!DisplayInformationWatcher.IsEnabled)
+		if (!OsVersion.Is11Build22621OrGreater)
 			return false;
 
 		var displayInfo = GetForMonitor(monitorHandle);
@@ -279,7 +278,7 @@ internal static class DisplayInformationProvider
 	/// <param name="windowHandle">Window handle</param>
 	/// <returns>DisplayInformation if successfully gets. Null otherwise.</returns>
 	/// <remarks>This method must be called when Windows.System.DispatcherQueue is running.</remarks>
-	public static Windows.Graphics.Display.DisplayInformation GetForWindow(IntPtr windowHandle)
+	private static Windows.Graphics.Display.DisplayInformation GetForWindow(IntPtr windowHandle)
 	{
 		if (_dispatcherQueueController is null)
 			return null;
@@ -297,7 +296,7 @@ internal static class DisplayInformationProvider
 	/// </summary>
 	/// <param name="monitorHandle">Monitor handle</param>
 	/// <returns>DisplayInformation if successfully gets. Null otherwise.</returns>
-	public static Windows.Graphics.Display.DisplayInformation GetForMonitor(IntPtr monitorHandle)
+	private static Windows.Graphics.Display.DisplayInformation GetForMonitor(IntPtr monitorHandle)
 	{
 		var factory = (IDisplayInformationStaticsInterop)WindowsRuntimeMarshal.GetActivationFactory(typeof(Windows.Graphics.Display.DisplayInformation));
 		var iid = typeof(Windows.Graphics.Display.DisplayInformation).GetInterface("IDisplayInformation").GUID;
@@ -317,8 +316,9 @@ internal static class DisplayInformationProvider
 	/// </remarks>
 	public static void EnsureDispatcherQueue()
 	{
-		if ((Windows.System.DispatcherQueue.GetForCurrentThread() is not null) ||
-			(_dispatcherQueueController is not null))
+		if (!OsVersion.Is11Build22621OrGreater ||
+			(_dispatcherQueueController is not null) ||
+			(Windows.System.DispatcherQueue.GetForCurrentThread() is not null))
 			return;
 
 		var options = new DispatcherQueueOptions

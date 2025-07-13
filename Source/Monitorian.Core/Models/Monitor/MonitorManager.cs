@@ -77,7 +77,6 @@ internal class MonitorManager
 	public static IReadOnlyCollection<string> Options => (new[] { PrecludeOption, PreclearOption })
 		.Concat(PowerManagement.Options)
 		.Concat(BrightnessConnector.Options)
-		.Concat(DisplayInformationWatcher.Options)
 		.ToArray();
 
 	private const string PrecludeOption = "/preclude";
@@ -185,7 +184,8 @@ internal class MonitorManager
 			// Controlled under HDR
 			foreach (var handleItem in handleItems)
 			{
-				if (!DisplayInformationProvider.IsHdr(handleItem.MonitorHandle))
+				if (!DisplayInformationWatcher.IsEnabled ||
+					!DisplayInformationProvider.IsHdr(handleItem.MonitorHandle))
 					continue;
 
 				int index = basicItems.FindIndex(x =>

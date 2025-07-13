@@ -60,6 +60,13 @@
 				</ContentControl>
 
 				<ContentControl Style="{StaticResource MenuItemStyle}">
+					<ToggleButton Padding="8,4"
+								  Style="{StaticResource CheckButtonItemStyle}"
+								  Content="{x:Static properties:Resources.ManageSdrWhiteLevel}"
+								  IsChecked="{Binding Settings.ManagesSdrWhiteLevel}"/>
+				</ContentControl>
+
+				<ContentControl Style="{StaticResource MenuItemStyle}">
 					<controls:MultiToggleButton Padding="8,4"
 												Style="{StaticResource MultiButtonItemStyle}"
 												Content="{x:Static properties:Resources.Arguments}"

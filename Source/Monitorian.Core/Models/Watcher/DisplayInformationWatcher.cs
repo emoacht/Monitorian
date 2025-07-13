@@ -48,14 +48,6 @@ internal class DisplayInformationWatcher : IDisposable
 		_onDisplayInformationChanged?.Invoke(e, $"SDR WL: {colorInfo.SdrWhiteLevelInNits} Min: {colorInfo.MinLuminanceInNits:f1} Max: {colorInfo.MaxLuminanceInNits:f1} [{colorInfo.CurrentAdvancedColorKind}]");
 	}
 
-	public static Action RegisterMonitor(string deviceInstanceId, IntPtr monitorHandle)
-	{
-		if (!IsEnabled)
-			return null;
-
-		return DisplayInformationProvider.RegisterMonitor(deviceInstanceId, monitorHandle);
-	}
-
 	#region IDisposable
 
 	private bool _isDisposed = false;

@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Runtime.Serialization;
+
+using Monitorian.Core.Helper;
+using Monitorian.Core.Models.Watcher;
 
 namespace Monitorian.Core.Models.Monitor;
 
@@ -17,7 +20,8 @@ internal static class DisplayInformationProvider
 {
 	#region COM
 
-	// From windows.graphics.display.interop.h
+	// Derived from windows.graphics.display.interop.h
+	// https://learn.microsoft.com/en-us/windows/win32/api/windows.graphics.display.interop/nn-windows-graphics-display-interop-idisplayinformationstaticsinterop
 	[ComImport]
 	[InterfaceType(ComInterfaceType.InterfaceIsIInspectable)]
 	[Guid("7449121C-382B-4705-8DA7-A795BA482013")]
@@ -62,6 +66,46 @@ internal static class DisplayInformationProvider
 		DQTAT_COM_ASTA = 1,
 		DQTAT_COM_STA = 2
 	};
+
+	#endregion
+
+	#region Type
+
+	[DataContract]
+	public class DisplayItem
+	{
+		[DataMember(Order = 0)]
+		public bool IsHighDynamicRangeSupported { get; private set; }
+
+		[DataMember(Order = 1)]
+		public string AdvancedColorKind { get; private set; }
+
+		[DataMember(Order = 2)]
+		public string SdrWhiteLevel { get; private set; }
+
+		[DataMember(Order = 3)]
+		public string MinLuminance { get; private set; }
+
+		[DataMember(Order = 4)]
+		public string MaxLuminance { get; private set; }
+
+		public DisplayItem(IntPtr monitorHandle)
+		{
+			if (!OsVersion.Is11Build22621OrGreater)
+				return;
+
+			var displayInfo = GetForMonitor(monitorHandle);
+			if (displayInfo is null)
+				return;
+
+			var aci = displayInfo.GetAdvancedColorInfo();
+			IsHighDynamicRangeSupported = aci.IsAdvancedColorKindAvailable(Windows.Graphics.Display.AdvancedColorKind.HighDynamicRange);
+			AdvancedColorKind = aci.CurrentAdvancedColorKind.ToString();
+			SdrWhiteLevel = $"{aci.SdrWhiteLevelInNits} nits";
+			MinLuminance = $"{aci.MinLuminanceInNits} nits";
+			MaxLuminance = $"{aci.MaxLuminanceInNits} nits";
+		}
+	}
 
 	#endregion
 
@@ -140,17 +184,14 @@ internal static class DisplayInformationProvider
 
 	public static event EventHandler<string> AdvancedColorInfoChanged;
 
-	private static readonly List<Holder> _holders = [];
+	private static readonly Dictionary<string, Holder> _holders = [];
 	private static readonly object _registerLock = new();
 
-	public static Action RegisterMonitor(string deviceInstanceId, IntPtr monitorHandle)
+	public static void RegisterMonitor(string deviceInstanceId, IntPtr monitorHandle)
 	{
-		if (string.IsNullOrWhiteSpace(deviceInstanceId))
-			throw new ArgumentNullException(nameof(deviceInstanceId));
-
 		lock (_registerLock)
 		{
-			var holder = _holders.FirstOrDefault(x => x.DeviceInstanceId == deviceInstanceId);
+			_holders.TryGetValue(deviceInstanceId, out Holder holder);
 			if (holder is not { IsActive: true })
 			{
 				_dispatcherQueueController.DispatcherQueue.TryEnqueue(() =>
@@ -160,7 +201,7 @@ internal static class DisplayInformationProvider
 					{
 						if (holder is null)
 						{
-							_holders.Add(new Holder(deviceInstanceId, displayInfo));
+							_holders[deviceInstanceId] = new Holder(deviceInstanceId, displayInfo);
 						}
 						else
 						{
@@ -175,39 +216,62 @@ internal static class DisplayInformationProvider
 				holder.Count++;
 			}
 		}
-		return new Action(() => UnregisterMonitor(deviceInstanceId));
 	}
 
-	private static void UnregisterMonitor(string deviceInstanceId)
+	public static void UnregisterMonitor(string deviceInstanceId)
 	{
 		lock (_registerLock)
 		{
-			int index = _holders.FindIndex(x => x.DeviceInstanceId == deviceInstanceId);
-			if (index < 0)
+			if (!_holders.TryGetValue(deviceInstanceId, out Holder holder))
 				return;
 
-			if (--_holders[index].Count > 0)
+			if (--holder.Count > 0)
 				return;
 
-			_holders[index].Close();
-			_holders.RemoveAt(index);
+			holder.Close();
+			_holders.Remove(deviceInstanceId);
 		}
 	}
 
 	public static void ClearMonitors()
 	{
-		foreach (var h in _holders)
+		foreach (var h in _holders.Values)
 			h.Close();
 
 		_holders.Clear();
 	}
 
-	public static Windows.Graphics.Display.AdvancedColorInfo GetAdvancedColorInfo(string deviceInstanceId)
+	public static (AccessResult result, float current, float minimum, float maximum) GetSdrWhiteLevel(string deviceInstanceId)
 	{
-		return _holders.FirstOrDefault(x => x.DeviceInstanceId == deviceInstanceId)?.DisplayInfo?.GetAdvancedColorInfo();
+		if (!_holders.TryGetValue(deviceInstanceId, out Holder holder))
+			return (new AccessResult(AccessStatus.Failed, "The monitor has not been registered yet."), 0, 0, 0);
+
+		var aci = holder.DisplayInfo.GetAdvancedColorInfo();
+		if (aci.CurrentAdvancedColorKind is not Windows.Graphics.Display.AdvancedColorKind.HighDynamicRange)
+			return (AccessResult.NotSupported, 0, 0, 0);
+
+		return (AccessResult.Succeeded, aci.SdrWhiteLevelInNits, aci.MinLuminanceInNits, aci.MaxLuminanceInNits);
 	}
 
 	#endregion
+
+	/// <summary>
+	/// Determines if HDR is set for a specified monitor.
+	/// </summary>
+	/// <param name="monitorHandle">Monitor handle</param>
+	/// <returns>True if HDR is set</returns>
+	public static bool IsHdr(IntPtr monitorHandle)
+	{
+		if (!DisplayInformationWatcher.IsEnabled)
+			return false;
+
+		var displayInfo = GetForMonitor(monitorHandle);
+		if (displayInfo is null)
+			return false;
+
+		var aci = displayInfo?.GetAdvancedColorInfo();
+		return (aci.CurrentAdvancedColorKind is Windows.Graphics.Display.AdvancedColorKind.HighDynamicRange);
+	}
 
 	/// <summary>
 	/// Gets DisplayInformation for a specified window.

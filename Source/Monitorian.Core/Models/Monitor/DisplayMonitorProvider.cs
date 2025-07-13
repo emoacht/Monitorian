@@ -8,14 +8,6 @@ using System.Windows;
 
 namespace Monitorian.Core.Models.Monitor;
 
-internal interface IDisplayItem
-{
-	public string DeviceInstanceId { get; }
-	public string DisplayName { get; }
-	public bool IsInternal { get; }
-	public string ConnectionDescription { get; }
-}
-
 /// <summary>
 /// A factory class for <see cref="Windows.Devices.Display.DisplayMonitor"/>
 /// </summary>
@@ -28,7 +20,7 @@ internal class DisplayMonitorProvider
 	#region Type
 
 	[DataContract]
-	public record DisplayItem : IDisplayItem
+	public class DisplayItem
 	{
 		/// <summary>
 		/// Device ID (Not device interface ID)

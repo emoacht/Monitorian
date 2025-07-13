@@ -36,6 +36,14 @@ internal class DisplayConfig
 	private static extern int DisplayConfigGetDeviceInfo(
 		ref DISPLAYCONFIG_SOURCE_DEVICE_NAME requestPacket);
 
+	[DllImport("User32.dll")]
+	private static extern int DisplayConfigGetDeviceInfo(
+		ref DISPLAYCONFIG_SDR_WHITE_LEVEL requestPacket);
+
+	[DllImport("User32.dll")]
+	private static extern int DisplayConfigSetDeviceInfo(
+		ref DISPLAYCONFIG_DEVICE_INFO_HEADER requestPacket);
+
 	// All derived from wingdi.h
 	[StructLayout(LayoutKind.Sequential)]
 	private struct DISPLAYCONFIG_PATH_INFO
@@ -121,7 +129,7 @@ internal class DisplayConfig
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
-	private struct LUID
+	internal struct LUID
 	{
 		public uint LowPart;
 		public int HighPart;
@@ -207,6 +215,29 @@ internal class DisplayConfig
 		public uint value;
 	}
 
+	[StructLayout(LayoutKind.Sequential)]
+	private struct DISPLAYCONFIG_SDR_WHITE_LEVEL
+	{
+		public DISPLAYCONFIG_DEVICE_INFO_HEADER header;
+
+		/// <summary>
+		/// The monitor's current SDR white level, specified as a multiplier of 80 nits, multiplied
+		/// by 1000. E.g. a value of 1000 would indicate that the SDR white level is 80 nits, while
+		/// a value of 2000 would indicate an SDR white level of 160 nits.
+		/// </summary>
+		public uint SDRWhiteLevel;
+	}
+
+	// Undocumented
+	[StructLayout(LayoutKind.Sequential)]
+	private struct DISPLAYCONFIG_SET_SDR_WHITE_LEVEL
+	{
+		public DISPLAYCONFIG_DEVICE_INFO_HEADER header;
+
+		public uint SDRWhiteLevel;
+		public byte flag;
+	}
+
 	private enum DISPLAYCONFIG_VIDEO_OUTPUT_TECHNOLOGY : uint
 	{
 		DISPLAYCONFIG_OUTPUT_TECHNOLOGY_OTHER = 0xFFFFFFFF,
@@ -261,19 +292,21 @@ internal class DisplayConfig
 		DISPLAYCONFIG_DEVICE_INFO_GET_ADVANCED_COLOR_INFO = 9,
 		DISPLAYCONFIG_DEVICE_INFO_SET_ADVANCED_COLOR_STATE = 10,
 		DISPLAYCONFIG_DEVICE_INFO_GET_SDR_WHITE_LEVEL = 11,
+		DISPLAYCONFIG_DEVICE_INFO_SET_SDR_WHITE_LEVEL = 0xFFFFFFEE, // Undocumented
 		DISPLAYCONFIG_DEVICE_INFO_FORCE_UINT32 = 0xFFFFFFFF
 	}
 
 	private const uint QDC_ONLY_ACTIVE_PATHS = 2;
 
 	private const int ERROR_SUCCESS = 0;
+	private const int ERROR_NOT_SUPPORTED = 50;
 
 	#endregion
 
 	#region Type
 
 	[DataContract]
-	public class DisplayItem : IDisplayItem
+	public class DisplayItem
 	{
 		[DataMember(Order = 0)]
 		public string DeviceInstanceId { get; }
@@ -293,13 +326,16 @@ internal class DisplayConfig
 		[DataMember(Order = 5)]
 		public bool IsAvailable { get; }
 
+		public Luid DisplayConfigId { get; }
+
 		public DisplayItem(
 			string deviceInstanceId,
 			string displayName,
 			bool isInternal,
 			float refreshRate,
 			string connectionDescription,
-			bool isAvailable)
+			bool isAvailable,
+			Luid displayConfigId)
 		{
 			this.DeviceInstanceId = deviceInstanceId;
 			this.DisplayName = displayName;
@@ -307,6 +343,7 @@ internal class DisplayConfig
 			this.RefreshRate = refreshRate;
 			this.ConnectionDescription = connectionDescription;
 			this.IsAvailable = isAvailable;
+			this.DisplayConfigId = displayConfigId;
 		}
 	}
 
@@ -340,13 +377,8 @@ internal class DisplayConfig
 			if (displayMode.Equals(default(DISPLAYCONFIG_MODE_INFO)))
 				continue;
 
-			var deviceName = new DISPLAYCONFIG_TARGET_DEVICE_NAME();
-			deviceName.header.size = (uint)Marshal.SizeOf<DISPLAYCONFIG_TARGET_DEVICE_NAME>();
-			deviceName.header.adapterId = displayMode.adapterId;
-			deviceName.header.id = displayMode.id;
-			deviceName.header.type = DISPLAYCONFIG_DEVICE_INFO_TYPE.DISPLAYCONFIG_DEVICE_INFO_GET_TARGET_NAME;
-
-			if (DisplayConfigGetDeviceInfo(ref deviceName) is not ERROR_SUCCESS)
+			var displayConfigId = new Luid(displayMode.adapterId, displayMode.id);
+			if (!TryGetDeviceName(displayConfigId, out var deviceName))
 				continue;
 
 			var deviceInstanceId = DeviceConversion.ConvertToDeviceInstanceId(deviceName.monitorDevicePath);
@@ -357,8 +389,72 @@ internal class DisplayConfig
 				isInternal: (deviceName.outputTechnology is DISPLAYCONFIG_VIDEO_OUTPUT_TECHNOLOGY.DISPLAYCONFIG_OUTPUT_TECHNOLOGY_INTERNAL),
 				refreshRate: displayPath.targetInfo.refreshRate.Numerator / (float)displayPath.targetInfo.refreshRate.Denominator,
 				connectionDescription: GetConnectionDescription(deviceName.outputTechnology),
-				isAvailable: displayPath.targetInfo.targetAvailable);
+				isAvailable: displayPath.targetInfo.targetAvailable,
+				displayConfigId: displayConfigId);
 		}
+	}
+
+	private static bool TryGetDeviceName(Luid displayConfigId, out DISPLAYCONFIG_TARGET_DEVICE_NAME deviceName)
+	{
+		deviceName = new DISPLAYCONFIG_TARGET_DEVICE_NAME
+		{
+			header = new DISPLAYCONFIG_DEVICE_INFO_HEADER
+			{
+				type = DISPLAYCONFIG_DEVICE_INFO_TYPE.DISPLAYCONFIG_DEVICE_INFO_GET_TARGET_NAME,
+				size = (uint)Marshal.SizeOf<DISPLAYCONFIG_TARGET_DEVICE_NAME>(),
+				adapterId = displayConfigId.AdapterId,
+				id = displayConfigId.Id
+			}
+		};
+
+		int error = DisplayConfigGetDeviceInfo(ref deviceName);
+		return (error is ERROR_SUCCESS);
+	}
+
+	public static (AccessResult result, float value) GetSdrWhiteLevel(Luid displayConfigId)
+	{
+		var whiteLevel = new DISPLAYCONFIG_SDR_WHITE_LEVEL
+		{
+			header = new DISPLAYCONFIG_DEVICE_INFO_HEADER
+			{
+				type = DISPLAYCONFIG_DEVICE_INFO_TYPE.DISPLAYCONFIG_DEVICE_INFO_GET_SDR_WHITE_LEVEL,
+				size = (uint)Marshal.SizeOf<DISPLAYCONFIG_SDR_WHITE_LEVEL>(),
+				adapterId = displayConfigId.AdapterId,
+				id = displayConfigId.Id
+			}
+		};
+
+		int error = DisplayConfigGetDeviceInfo(ref whiteLevel);
+		return error switch
+		{
+			ERROR_SUCCESS => (result: AccessResult.Succeeded, (whiteLevel.SDRWhiteLevel / 1000F * 80F)),
+			ERROR_NOT_SUPPORTED => (result: AccessResult.NotSupported, 0F),
+			_ => (result: new AccessResult(AccessStatus.Failed, $"{nameof(GetSdrWhiteLevel)} Error: {error}"), 0F)
+		};
+	}
+
+	public static AccessResult SetSdrWhiteLevel(Luid displayConfigId, float value)
+	{
+		var whiteLevel = new DISPLAYCONFIG_SET_SDR_WHITE_LEVEL
+		{
+			header = new DISPLAYCONFIG_DEVICE_INFO_HEADER
+			{
+				type = DISPLAYCONFIG_DEVICE_INFO_TYPE.DISPLAYCONFIG_DEVICE_INFO_SET_SDR_WHITE_LEVEL,
+				size = (uint)Marshal.SizeOf<DISPLAYCONFIG_SET_SDR_WHITE_LEVEL>(),
+				adapterId = displayConfigId.AdapterId,
+				id = displayConfigId.Id
+			},
+			SDRWhiteLevel = (uint)Math.Round((value / 80F * 1000F), MidpointRounding.AwayFromZero),
+			flag = 1
+		};
+
+		int error = DisplayConfigSetDeviceInfo(ref whiteLevel.header);
+		return error switch
+		{
+			ERROR_SUCCESS => AccessResult.Succeeded,
+			ERROR_NOT_SUPPORTED => AccessResult.NotSupported,
+			_ => new AccessResult(AccessStatus.Failed, $"{nameof(SetSdrWhiteLevel)} Error: {error}")
+		};
 	}
 
 	private static string GetConnectionDescription(DISPLAYCONFIG_VIDEO_OUTPUT_TECHNOLOGY outputTechnology)
@@ -387,4 +483,18 @@ internal class DisplayConfig
 			_ => null
 		};
 	}
+}
+
+/// <summary>
+/// Local unique identifier
+/// </summary>
+internal class Luid
+{
+	public DisplayConfig.LUID AdapterId => new() { LowPart = lowPart, HighPart = highPart };
+	private readonly uint lowPart;
+	private readonly int highPart;
+
+	public readonly uint Id;
+
+	public Luid(DisplayConfig.LUID adapterId, uint id) => (lowPart, highPart, Id) = (adapterId.LowPart, adapterId.HighPart, id);
 }

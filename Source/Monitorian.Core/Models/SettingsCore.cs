@@ -74,6 +74,17 @@ public class SettingsCore : BindableBase
 	private bool _defersChange;
 
 	/// <summary>
+	/// Whether to manage SDR white level
+	/// </summary>
+	[DataMember]
+	public bool ManagesSdrWhiteLevel
+	{
+		get => _managesSdrWhiteLevel;
+		set => SetProperty(ref _managesSdrWhiteLevel, value);
+	}
+	private bool _managesSdrWhiteLevel;
+
+	/// <summary>
 	/// Whether to invert scroll direction
 	/// </summary>
 	/// <remarks>

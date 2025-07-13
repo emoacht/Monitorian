@@ -106,7 +106,7 @@ public class AppControllerCore
 		{
 			if (!_sessionWatcher.IsLocked)
 			{
-				await UpdateMessageAsync(deviceInstanceId, message);
+				Update(deviceInstanceId);
 				await OperationRecorder.RecordAsync(message);
 			}
 		});
@@ -211,6 +211,9 @@ public class AppControllerCore
 		if (Settings.UsesAccentColor)
 			WindowPainter.AttachAccentColors();
 
+		if (Settings.ManagesSdrWhiteLevel)
+			_displayInformationWatcher.TryEnable();
+
 		ViewManager.InvertsScrollDirection = Settings.InvertsScrollDirection;
 
 		if (Settings.MakesOperationLog)
@@ -226,6 +229,14 @@ public class AppControllerCore
 					WindowPainter.AttachAccentColors();
 				else
 					WindowPainter.DetachAccentColors();
+
+				break;
+
+			case nameof(Settings.ManagesSdrWhiteLevel):
+				if (Settings.ManagesSdrWhiteLevel)
+					_displayInformationWatcher.TryEnable();
+				else
+					_displayInformationWatcher.Disable();
 
 				break;
 
@@ -462,6 +473,14 @@ public class AppControllerCore
 
 		EnsureUnisonWorkable(monitor);
 		monitor?.UpdateBrightness(brightness);
+	}
+
+	protected virtual void Update(string deviceInstanceId)
+	{
+		var monitor = Monitors.FirstOrDefault(x => deviceInstanceId == x.DeviceInstanceId);
+
+		EnsureUnisonWorkable(monitor);
+		monitor?.UpdateBrightness();
 	}
 
 	protected virtual async Task UpdateMessageAsync(string deviceInstanceId, string message)

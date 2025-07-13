@@ -70,6 +70,7 @@
     <Compile Include="Models\Monitor\DisplayInformationProvider.cs" />
     <Compile Include="Models\Monitor\DisplayMonitorProvider.cs" />
     <Compile Include="Models\Monitor\Error.cs" />
+    <Compile Include="Models\Monitor\HdrMonitorItem.cs" />
     <Compile Include="Models\Monitor\IMonitor.cs" />
     <Compile Include="Models\Monitor\MonitorConfiguration.cs" />
     <Compile Include="Models\Monitor\MonitorItem.cs" />

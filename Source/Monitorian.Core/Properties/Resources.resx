@@ -159,6 +159,9 @@
   <data name="MakeOperation" xml:space="preserve">
     <value>Make operation log</value>
   </data>
+  <data name="ManageSdrWhiteLevel" xml:space="preserve">
+    <value>Manage SDR white level</value>
+  </data>
   <data name="MouseHorizontalWheel" xml:space="preserve">
     <value>Mouse horizontal wheel</value>
   </data>

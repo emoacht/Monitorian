@@ -19,25 +19,54 @@ internal class MonitorManager
 {
 	#region Type
 
+	private class DisplayItem
+	{
+		public string DeviceInstanceId { get; }
+		public string DisplayName { get; }
+		public string ConnectionDescription { get; }
+		public bool IsInternal { get; }
+		public Luid DisplayConfigId { get; }
+
+		public DisplayItem(
+			DisplayConfig.DisplayItem deviceConfigItem,
+			DisplayMonitorProvider.DisplayItem displayMonitorItem)
+		{
+			if (deviceConfigItem is null)
+				throw new ArgumentNullException(nameof(deviceConfigItem));
+
+			DeviceInstanceId = deviceConfigItem.DeviceInstanceId;
+
+			DisplayName = !string.IsNullOrWhiteSpace(displayMonitorItem?.DisplayName)
+				? displayMonitorItem.DisplayName : deviceConfigItem.DisplayName;
+			ConnectionDescription = !string.IsNullOrWhiteSpace(displayMonitorItem?.ConnectionDescription)
+				? displayMonitorItem.ConnectionDescription : deviceConfigItem.ConnectionDescription;
+
+			IsInternal = deviceConfigItem.IsInternal;
+			DisplayConfigId = deviceConfigItem.DisplayConfigId;
+		}
+	}
+
 	private class BasicItem
 	{
 		private readonly DeviceContext.DeviceItem _deviceItem;
+		private readonly DisplayItem _displayItem;
 
 		public string DeviceInstanceId => _deviceItem.DeviceInstanceId;
 		public string Description => _deviceItem.Description;
 		public string AlternateDescription { get; }
 		public byte DisplayIndex => _deviceItem.DisplayIndex;
 		public byte MonitorIndex => _deviceItem.MonitorIndex;
-		public bool IsInternal { get; }
+		public bool IsInternal => _displayItem.IsInternal;
+		public Luid DisplayConfigId => _displayItem.DisplayConfigId;
 
 		public BasicItem(
 			DeviceContext.DeviceItem deviceItem,
-			string alternateDescription = null,
-			bool isInternal = true)
+			DisplayItem displayItem,
+			string alternateDescription = null)
 		{
 			this._deviceItem = deviceItem ?? throw new ArgumentNullException(nameof(deviceItem));
+			this._displayItem = displayItem ?? throw new ArgumentNullException(nameof(displayItem));
 			this.AlternateDescription = alternateDescription ?? deviceItem.Description;
-			this.IsInternal = isInternal;
 		}
 	}
 
@@ -48,7 +77,6 @@ internal class MonitorManager
 	public static IReadOnlyCollection<string> Options => (new[] { PrecludeOption, PreclearOption })
 		.Concat(PowerManagement.Options)
 		.Concat(BrightnessConnector.Options)
-		.Concat(DisplayInformationWatcher.Options)
 		.ToArray();
 
 	private const string PrecludeOption = "/preclude";
@@ -74,20 +102,57 @@ internal class MonitorManager
 	private static HashSet<string> _foundIds;
 	private static bool _isDisplayMonitorAvailable = true; // Default
 
-	private static async Task<DisplayMonitorProvider.DisplayItem[]> GetDisplayMonitorsAsync()
+	private static async Task<DisplayItem[]> GetDisplayItemsAsync()
 	{
+		var displayConfigItems = DisplayConfig.EnumerateDisplayConfigs().ToArray();
+		DisplayMonitorProvider.DisplayItem[] displayMonitorItems = null;
+
 		if (OsVersion.Is10Build17134OrGreater && _isDisplayMonitorAvailable)
 		{
 			try
 			{
-				return await DisplayMonitorProvider.GetDisplayMonitorsAsync();
+				displayMonitorItems = await DisplayMonitorProvider.GetDisplayMonitorsAsync();
 			}
 			catch (FileNotFoundException)
 			{
 				_isDisplayMonitorAvailable = false;
 			}
 		}
-		return null;
+
+		var displayItems = new DisplayItem[displayConfigItems.Length];
+		for (int i = 0; i < displayConfigItems.Length; i++)
+		{
+			var displayMonitorItem = displayMonitorItems?.FirstOrDefault(x => string.Equals(x.DeviceInstanceId, displayConfigItems[i].DeviceInstanceId, StringComparison.OrdinalIgnoreCase));
+			displayItems[i] = new DisplayItem(displayConfigItems[i], displayMonitorItem);
+		}
+		return displayItems;
+	}
+
+	private static IEnumerable<BasicItem> EnumerateBasicItems(DeviceContext.DeviceItem[] deviceItems, DisplayItem[] displayItems)
+	{
+		foreach (var deviceItem in deviceItems)
+		{
+			if (_precludedIds.Value.Any(x => string.Equals(deviceItem.DeviceInstanceId, x, StringComparison.OrdinalIgnoreCase)))
+				continue;
+
+			var displayItem = displayItems.FirstOrDefault(x => string.Equals(deviceItem.DeviceInstanceId, x.DeviceInstanceId, StringComparison.OrdinalIgnoreCase));
+			if (displayItem is null)
+				continue;
+
+			if (!string.IsNullOrWhiteSpace(displayItem.DisplayName))
+			{
+				yield return new BasicItem(deviceItem, displayItem, displayItem.DisplayName);
+			}
+			else if (Regex.IsMatch(deviceItem.Description, "^Generic (?:PnP|Non-PnP) Monitor$", RegexOptions.IgnoreCase)
+				&& !string.IsNullOrWhiteSpace(displayItem.ConnectionDescription))
+			{
+				yield return new BasicItem(deviceItem, displayItem, $"{deviceItem.Description} ({displayItem.ConnectionDescription})");
+			}
+			else
+			{
+				yield return new BasicItem(deviceItem, displayItem);
+			}
+		}
 	}
 
 	public static async Task<IEnumerable<IMonitor>> EnumerateMonitorsAsync(TimeSpan timeout, CancellationToken cancellationToken = default)
@@ -95,38 +160,11 @@ internal class MonitorManager
 		var deviceItems = DeviceContext.EnumerateMonitorDevices().ToArray();
 		_foundIds = new HashSet<string>(deviceItems.Select(x => x.DeviceInstanceId));
 
-		IDisplayItem[] displayItems = await GetDisplayMonitorsAsync();
-		displayItems ??= DisplayConfig.EnumerateDisplayConfigs().ToArray();
+		var displayItems = await GetDisplayItemsAsync();
 
-		IEnumerable<BasicItem> EnumerateBasicItems()
-		{
-			foreach (var deviceItem in deviceItems)
-			{
-				if (_precludedIds.Value.Any(x => string.Equals(deviceItem.DeviceInstanceId, x, StringComparison.OrdinalIgnoreCase)))
-					continue;
-
-				var displayItem = displayItems.FirstOrDefault(x => string.Equals(deviceItem.DeviceInstanceId, x.DeviceInstanceId, StringComparison.OrdinalIgnoreCase));
-				if (displayItem is null)
-				{
-					yield return new BasicItem(deviceItem);
-				}
-				else if (!string.IsNullOrWhiteSpace(displayItem.DisplayName))
-				{
-					yield return new BasicItem(deviceItem, displayItem.DisplayName, displayItem.IsInternal);
-				}
-				else if (Regex.IsMatch(deviceItem.Description, "^Generic (?:PnP|Non-PnP) Monitor$", RegexOptions.IgnoreCase)
-					&& !string.IsNullOrWhiteSpace(displayItem.ConnectionDescription))
-				{
-					yield return new BasicItem(deviceItem, $"{deviceItem.Description} ({displayItem.ConnectionDescription})", displayItem.IsInternal);
-				}
-				else
-				{
-					yield return new BasicItem(deviceItem, null, displayItem.IsInternal);
-				}
-			}
-		}
-
-		var basicItems = EnumerateBasicItems().Where(x => !string.IsNullOrWhiteSpace(x.AlternateDescription)).ToList();
+		var basicItems = EnumerateBasicItems(deviceItems, displayItems)
+			.Where(x => !string.IsNullOrWhiteSpace(x.AlternateDescription))
+			.ToList();
 		if (basicItems.Count == 0)
 			return Enumerable.Empty<IMonitor>();
 
@@ -143,6 +181,34 @@ internal class MonitorManager
 
 		IEnumerable<IMonitor> EnumerateMonitorItems()
 		{
+			// Controlled under HDR
+			foreach (var handleItem in handleItems)
+			{
+				if (!DisplayInformationWatcher.IsEnabled ||
+					!DisplayInformationProvider.IsHdr(handleItem.MonitorHandle))
+					continue;
+
+				int index = basicItems.FindIndex(x =>
+					(x.DisplayIndex == handleItem.DisplayIndex));
+				if (index < 0)
+					continue;
+
+				var basicItem = basicItems[index];
+				yield return new HdrMonitorItem(
+					deviceInstanceId: basicItem.DeviceInstanceId,
+					description: basicItem.AlternateDescription,
+					displayIndex: basicItem.DisplayIndex,
+					monitorIndex: basicItem.MonitorIndex,
+					monitorRect: handleItem.MonitorRect,
+					isInternal: basicItem.IsInternal,
+					monitorHandle: handleItem.MonitorHandle,
+					displayConfigId: basicItem.DisplayConfigId);
+
+				basicItems.RemoveAt(index);
+				if (basicItems.Count == 0)
+					yield break;
+			}
+
 			// Obtained by DDC/CI
 			foreach ((var handleItem, var physicalItems) in physicalItemsPairs)
 			{
@@ -188,8 +254,7 @@ internal class MonitorManager
 						monitorIndex: basicItem.MonitorIndex,
 						monitorRect: handleItem.MonitorRect,
 						handle: physicalItem.Handle,
-						capability: capability,
-						onDisposed: DisplayInformationWatcher.RegisterMonitor(basicItem.DeviceInstanceId, handleItem.MonitorHandle));
+						capability: capability);
 
 					basicItems.RemoveAt(index);
 					if (basicItems.Count == 0)
@@ -219,8 +284,7 @@ internal class MonitorManager
 						monitorIndex: basicItem.MonitorIndex,
 						monitorRect: handleItem.MonitorRect,
 						isInternal: basicItem.IsInternal,
-						brightnessLevels: desktopItem.BrightnessLevels,
-						onDisposed: DisplayInformationWatcher.RegisterMonitor(basicItem.DeviceInstanceId, handleItem.MonitorHandle));
+						brightnessLevels: desktopItem.BrightnessLevels);
 
 					basicItems.RemoveAt(index);
 					if (basicItems.Count == 0)
@@ -271,6 +335,22 @@ internal class MonitorManager
 			serializer.WriteObject(jw, data);
 			jw.Flush();
 			return Encoding.UTF8.GetString(ms.ToArray());
+		}
+	}
+
+	[DataContract]
+	private class DisplayItemPlus
+	{
+		[DataMember]
+		public int DisplayIndex { get; private set; }
+
+		[DataMember]
+		public DisplayInformationProvider.DisplayItem DisplayItem { get; }
+
+		public DisplayItemPlus(DeviceContext.HandleItem handleItem)
+		{
+			DisplayIndex = handleItem.DisplayIndex;
+			DisplayItem = new DisplayInformationProvider.DisplayItem(handleItem.MonitorHandle);
 		}
 	}
 
@@ -369,22 +449,25 @@ internal class MonitorManager
 		[DataMember(Order = 1, Name = "Device Context - DeviceItems")]
 		public DeviceContext.DeviceItem[] DeviceItems { get; private set; }
 
-		[DataMember(Order = 2, Name = "DisplayMonitor - DisplayItems")]
+		[DataMember(Order = 2, Name = "Display Monitor - DisplayItems")]
 		public DisplayMonitorProvider.DisplayItem[] DisplayMonitorItems { get; private set; }
 
 		[DataMember(Order = 3, Name = "Display Config - DisplayItems")]
 		public DisplayConfig.DisplayItem[] DisplayConfigItems { get; private set; }
 
-		[DataMember(Order = 4, Name = "Device Installation - InstalledItems")]
+		[DataMember(Order = 4, Name = "Display Information - DisplayItems")]
+		public DisplayItemPlus[] DisplayInformationItems { get; private set; }
+
+		[DataMember(Order = 5, Name = "Device Installation - InstalledItems")]
 		public DeviceInformation.InstalledItem[] InstalledItems { get; private set; }
 
-		[DataMember(Order = 5, Name = "Monitor Configuration - PhysicalItems")]
+		[DataMember(Order = 6, Name = "Monitor Configuration - PhysicalItems")]
 		public Dictionary<DeviceContext.HandleItem, PhysicalItemPlus[]> PhysicalItems { get; private set; }
 
-		[DataMember(Order = 6, Name = "MSMonitorClass - DesktopItems")]
+		[DataMember(Order = 7, Name = "MSMonitorClass - DesktopItems")]
 		public MSMonitor.DesktopItem[] DesktopItems { get; private set; }
 
-		[DataMember(Order = 7)]
+		[DataMember(Order = 8)]
 		public string[] ElapsedTime { get; private set; }
 
 		public MonitorData()
@@ -402,10 +485,22 @@ internal class MonitorManager
 					DeviceItems = DeviceContext.EnumerateMonitorDevices().ToArray()),
 
 				GetTask(nameof(DisplayMonitorItems), async () =>
-					DisplayMonitorItems = await GetDisplayMonitorsAsync()),
+				{
+					try
+					{
+						DisplayMonitorItems = await DisplayMonitorProvider.GetDisplayMonitorsAsync();
+					}
+					catch (Exception)
+					{
+					}
+				}),
 
 				GetTask(nameof(DisplayConfigItems), () =>
 					DisplayConfigItems = DisplayConfig.EnumerateDisplayConfigs().ToArray()),
+
+				GetTask(nameof(DisplayInformationItems), () =>
+					DisplayInformationItems = DeviceContext.GetMonitorHandles()
+						.Select(x => new DisplayItemPlus(x)).ToArray()),
 
 				GetTask(nameof(InstalledItems), () =>
 					InstalledItems = DeviceInformation.EnumerateInstalledMonitors().ToArray()),

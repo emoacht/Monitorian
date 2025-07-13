@@ -36,6 +36,7 @@ public class MonitorViewModel : ViewModelBase
 				this._monitor.Dispose();
 				this._monitor = monitor;
 				SetTopLeft();
+				OnPropertyChanged(string.Empty);
 			}
 		}
 		else

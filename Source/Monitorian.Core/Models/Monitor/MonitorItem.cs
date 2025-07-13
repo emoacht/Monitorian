@@ -5,7 +5,7 @@ using Monitorian.Core.Helper;
 
 namespace Monitorian.Core.Models.Monitor;
 
-internal abstract class MonitorItem : IMonitor, IDisposable
+internal abstract class MonitorItem : IMonitor
 {
 	public string DeviceInstanceId { get; }
 	public string Description { get; }
@@ -19,8 +19,6 @@ internal abstract class MonitorItem : IMonitor, IDisposable
 	public virtual bool IsContrastSupported => false;
 	public virtual bool IsPrecleared => false;
 
-	private Action _onDisposed;
-
 	public MonitorItem(
 		string deviceInstanceId,
 		string description,
@@ -28,8 +26,7 @@ internal abstract class MonitorItem : IMonitor, IDisposable
 		byte monitorIndex,
 		Rect monitorRect,
 		bool isInternal,
-		bool isReachable,
-		Action onDisposed)
+		bool isReachable)
 	{
 		if (string.IsNullOrWhiteSpace(deviceInstanceId))
 			throw new ArgumentNullException(nameof(deviceInstanceId));
@@ -43,7 +40,6 @@ internal abstract class MonitorItem : IMonitor, IDisposable
 		this.MonitorRect = monitorRect;
 		this.IsInternal = isInternal;
 		this.IsReachable = isReachable;
-		this._onDisposed = onDisposed;
 	}
 
 	public int Brightness { get; protected set; } = -1;
@@ -97,8 +93,6 @@ internal abstract class MonitorItem : IMonitor, IDisposable
 		if (disposing)
 		{
 			// Free any other managed objects here.
-			_onDisposed?.Invoke();
-			_onDisposed = null;
 		}
 
 		// Free any unmanaged objects here.

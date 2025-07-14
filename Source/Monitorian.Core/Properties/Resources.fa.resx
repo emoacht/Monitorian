@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+            </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+            <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+                  <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute 
+ name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                  <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ChangeContrast" xml:space="preserve">
+    <value>تغییر کنتراست</value>
+  </data>
+  <data name="ChangeRange" xml:space="preserve">
+    <value>تغییر محدوده</value>
+  </data>
+  <data name="ChangeUnison" xml:space="preserve">
+    <value>حرکت یکپارچه</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>بستن</value>
+  </data>
+  <data name="CopyOperation" xml:space="preserve">
+    <value>کپی گزارش عملیات</value>
+  </data>
+  <data name="CopySaveOperationMessage" xml:space="preserve">
+    <value>کپی گزارش عملیات به دسکتاپ</value>
+  </data>
+  <data name="DeferChange" xml:space="preserve">
+    <value>به تعویق انداختن تغییر</value>
+  </data>
+  <data name="EnableContrast" xml:space="preserve">
+    <value>فعال کردن گزینه کنتراست</value>
+  </data>
+  <data name="EnableRange" xml:space="preserve">
+    <value>فعال کردن محدوده</value>
+  </data>
+  <data name="EnableUnison" xml:space="preserve">
+    <value>فعال کردن حرکت یکپارچه</value>
+  </data>
+  <data name="MakeOperation" xml:space="preserve">
+    <value>فعال کردن گزارش عملیات</value>
+  </data>
+  <data name="OrderArrangement" xml:space="preserve">
+    <value>مرتب سازی بر اساس چیدمان صفحه</value>
+  </data>
+  <data name="Probe" xml:space="preserve">
+    <value>نمایش صفحات</value>
+  </data>
+  <data name="RecordExceptionMessage" xml:space="preserve">
+    [cite_start]<value>یک مشکل غیرمنتظره رخ داد. [cite: 21] گزارش مشکل در دسکتاپ ذخیره شود؟</value>
+  </data>
+  <data name="RecordProbeMessage" xml:space="preserve">
+    <value>گزارش بررسی در دسکتاپ ذخیره شود؟</value>
+  </data>
+  <data name="Rescan" xml:space="preserve">
+    <value>اسکن مجدد صفحات</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>تنظیمات</value>
+  </data>
+  <data name="ShowAdjusted" xml:space="preserve">
+    <value>نمایش روشنایی تنظیم شده</value>
+  </data>
+  <data name="ShowNumber" xml:space="preserve">
+    <value>نمایش عدد فعلی</value>
+  </data>
+  <data name="StartSignIn" xml:space="preserve">
+    <value>شروع برنامه هنگام بالا آمدن سیستم</value>
+  </data>
+  <data name="StatusNotControllable" xml:space="preserve">
+    <value>صفحه نمایش سازگار نیست</value>
+  </data>
+  <data name="StatusReasonDdcFailing" xml:space="preserve">
+    <value>DDC/CI به طور مداوم خطا برمی‌گرداند</value>
+  </data>
+  <data name="StatusReasonDdcNotEnabled" xml:space="preserve">
+    <value>DDC/CI پشتیبانی نمی‌شود یا غیرفعال است</value>
+  </data>
+  <data name="UseLargeElements" xml:space="preserve">
+    <value>استفاده از عناصر بزرگ</value>
+  </data>
+</root>

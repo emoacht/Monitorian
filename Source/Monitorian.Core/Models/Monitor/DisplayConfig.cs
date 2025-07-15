@@ -326,7 +326,7 @@ internal class DisplayConfig
 		[DataMember(Order = 5)]
 		public bool IsAvailable { get; }
 
-		public Luid DisplayConfigId { get; }
+		public DisplayIdSet DisplayIdSet { get; }
 
 		public DisplayItem(
 			string deviceInstanceId,
@@ -335,7 +335,7 @@ internal class DisplayConfig
 			float refreshRate,
 			string connectionDescription,
 			bool isAvailable,
-			Luid displayConfigId)
+			DisplayIdSet displayIdSet)
 		{
 			this.DeviceInstanceId = deviceInstanceId;
 			this.DisplayName = displayName;
@@ -343,7 +343,7 @@ internal class DisplayConfig
 			this.RefreshRate = refreshRate;
 			this.ConnectionDescription = connectionDescription;
 			this.IsAvailable = isAvailable;
-			this.DisplayConfigId = displayConfigId;
+			this.DisplayIdSet = displayIdSet;
 		}
 	}
 
@@ -377,8 +377,8 @@ internal class DisplayConfig
 			if (displayMode.Equals(default(DISPLAYCONFIG_MODE_INFO)))
 				continue;
 
-			var displayConfigId = new Luid(displayMode.adapterId, displayMode.id);
-			if (!TryGetDeviceName(displayConfigId, out var deviceName))
+			var displayIdSet = new DisplayIdSet(displayMode.adapterId, displayMode.id);
+			if (!TryGetDeviceName(displayIdSet, out var deviceName))
 				continue;
 
 			var deviceInstanceId = DeviceConversion.ConvertToDeviceInstanceId(deviceName.monitorDevicePath);
@@ -390,11 +390,11 @@ internal class DisplayConfig
 				refreshRate: displayPath.targetInfo.refreshRate.Numerator / (float)displayPath.targetInfo.refreshRate.Denominator,
 				connectionDescription: GetConnectionDescription(deviceName.outputTechnology),
 				isAvailable: displayPath.targetInfo.targetAvailable,
-				displayConfigId: displayConfigId);
+				displayIdSet: displayIdSet);
 		}
 	}
 
-	private static bool TryGetDeviceName(Luid displayConfigId, out DISPLAYCONFIG_TARGET_DEVICE_NAME deviceName)
+	private static bool TryGetDeviceName(DisplayIdSet displayIdSet, out DISPLAYCONFIG_TARGET_DEVICE_NAME deviceName)
 	{
 		deviceName = new DISPLAYCONFIG_TARGET_DEVICE_NAME
 		{
@@ -402,8 +402,8 @@ internal class DisplayConfig
 			{
 				type = DISPLAYCONFIG_DEVICE_INFO_TYPE.DISPLAYCONFIG_DEVICE_INFO_GET_TARGET_NAME,
 				size = (uint)Marshal.SizeOf<DISPLAYCONFIG_TARGET_DEVICE_NAME>(),
-				adapterId = displayConfigId.AdapterId,
-				id = displayConfigId.Id
+				adapterId = displayIdSet.AdapterId,
+				id = displayIdSet.Id
 			}
 		};
 
@@ -411,7 +411,7 @@ internal class DisplayConfig
 		return (error is ERROR_SUCCESS);
 	}
 
-	public static (AccessResult result, float value) GetSdrWhiteLevel(Luid displayConfigId)
+	public static (AccessResult result, float value) GetSdrWhiteLevel(DisplayIdSet displayIdSet)
 	{
 		var whiteLevel = new DISPLAYCONFIG_SDR_WHITE_LEVEL
 		{
@@ -419,8 +419,8 @@ internal class DisplayConfig
 			{
 				type = DISPLAYCONFIG_DEVICE_INFO_TYPE.DISPLAYCONFIG_DEVICE_INFO_GET_SDR_WHITE_LEVEL,
 				size = (uint)Marshal.SizeOf<DISPLAYCONFIG_SDR_WHITE_LEVEL>(),
-				adapterId = displayConfigId.AdapterId,
-				id = displayConfigId.Id
+				adapterId = displayIdSet.AdapterId,
+				id = displayIdSet.Id
 			}
 		};
 
@@ -433,7 +433,7 @@ internal class DisplayConfig
 		};
 	}
 
-	public static AccessResult SetSdrWhiteLevel(Luid displayConfigId, float value)
+	public static AccessResult SetSdrWhiteLevel(DisplayIdSet displayIdSet, float value)
 	{
 		var whiteLevel = new DISPLAYCONFIG_SET_SDR_WHITE_LEVEL
 		{
@@ -441,8 +441,8 @@ internal class DisplayConfig
 			{
 				type = DISPLAYCONFIG_DEVICE_INFO_TYPE.DISPLAYCONFIG_DEVICE_INFO_SET_SDR_WHITE_LEVEL,
 				size = (uint)Marshal.SizeOf<DISPLAYCONFIG_SET_SDR_WHITE_LEVEL>(),
-				adapterId = displayConfigId.AdapterId,
-				id = displayConfigId.Id
+				adapterId = displayIdSet.AdapterId,
+				id = displayIdSet.Id
 			},
 			SDRWhiteLevel = (uint)Math.Round((value / 80F * 1000F), MidpointRounding.AwayFromZero),
 			flag = 1
@@ -486,15 +486,27 @@ internal class DisplayConfig
 }
 
 /// <summary>
-/// Local unique identifier
+/// A set of identifiers for DisplayConfig functions
 /// </summary>
-internal class Luid
+internal class DisplayIdSet(DisplayConfig.LUID adapterId, uint id)
 {
+	/// <summary>
+	/// DISPLAYCONFIG_MODE_INFO.adapterId & DISPLAYCONFIG_DEVICE_INFO_HEADER.adapterId
+	/// </summary>
+	/// <remarks>
+	/// This corresponds to <see cref="Windows.Devices.Display.DisplayMonitor.DisplayAdapterId"/>.
+	/// https://learn.microsoft.com/en-us/uwp/api/windows.devices.display.displaymonitor.displayadapterid
+	/// </remarks>
 	public DisplayConfig.LUID AdapterId => new() { LowPart = lowPart, HighPart = highPart };
-	private readonly uint lowPart;
-	private readonly int highPart;
+	private readonly uint lowPart = adapterId.LowPart;
+	private readonly int highPart = adapterId.HighPart;
 
-	public readonly uint Id;
-
-	public Luid(DisplayConfig.LUID adapterId, uint id) => (lowPart, highPart, Id) = (adapterId.LowPart, adapterId.HighPart, id);
+	/// <summary>
+	/// DISPLAYCONFIG_MODE_INFO.id & DISPLAYCONFIG_DEVICE_INFO_HEADER.id
+	/// </summary>
+	/// <remarks>
+	/// This corresponds to <see cref="Windows.Devices.Display.DisplayMonitor.DisplayAdapterTargetId"/>.
+	/// https://learn.microsoft.com/en-us/uwp/api/windows.devices.display.displaymonitor.displayadaptertargetid
+	/// </remarks>
+	public readonly uint Id = id;
 }

@@ -8,7 +8,7 @@ namespace Monitorian.Core.Models.Monitor;
 /// </summary>
 internal class HdrMonitorItem : MonitorItem
 {
-	private readonly Luid _displayConfigId;
+	private readonly DisplayIdSet _displayIdSet;
 
 	public HdrMonitorItem(
 		string deviceInstanceId,
@@ -18,16 +18,16 @@ internal class HdrMonitorItem : MonitorItem
 		Rect monitorRect,
 		bool isInternal,
 		IntPtr monitorHandle,
-		Luid displayConfigId) : base(
-			deviceInstanceId,
-			description,
-			displayIndex,
-			monitorIndex,
-			monitorRect,
-			isInternal,
+		DisplayIdSet displayIdSet) : base(
+			deviceInstanceId: deviceInstanceId,
+			description: description,
+			displayIndex: displayIndex,
+			monitorIndex: monitorIndex,
+			monitorRect: monitorRect,
+			isInternal: isInternal,
 			isReachable: true)
 	{
-		this._displayConfigId = displayConfigId ?? throw new ArgumentNullException(nameof(displayConfigId));
+		this._displayIdSet = displayIdSet ?? throw new ArgumentNullException(nameof(displayIdSet));
 
 		DisplayInformationProvider.RegisterMonitor(DeviceInstanceId, monitorHandle);
 	}
@@ -59,7 +59,7 @@ internal class HdrMonitorItem : MonitorItem
 			throw new ArgumentOutOfRangeException(nameof(brightness), brightness, "The brightness must be from 0 to 100.");
 
 		float value = (brightness / 100F * (_maximumBrightness - _minimumBrightness) + _minimumBrightness);
-		var result = DisplayConfig.SetSdrWhiteLevel(_displayConfigId, value);
+		var result = DisplayConfig.SetSdrWhiteLevel(_displayIdSet, value);
 
 		if (result.Status is AccessStatus.Succeeded)
 		{

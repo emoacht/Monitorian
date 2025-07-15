@@ -23,7 +23,7 @@ internal class DisplayMonitorProvider
 	public class DisplayItem
 	{
 		/// <summary>
-		/// Device ID (Not device interface ID)
+		/// Device instance ID
 		/// </summary>
 		[DataMember(Order = 0)]
 		public string DeviceInstanceId { get; }
@@ -132,6 +132,7 @@ internal class DisplayMonitorProvider
 					//Debug.WriteLine($"NativeResolution: {displayMonitor.NativeResolutionInRawPixels.Width},{displayMonitor.NativeResolutionInRawPixels.Height}");
 					//Debug.WriteLine($"PhysicalSize: {displayMonitor.PhysicalSizeInInches.Value.Width:F2},{displayMonitor.PhysicalSizeInInches.Value.Height:F2}");
 					//Debug.WriteLine($"ConnectionKind: {displayMonitor.ConnectionKind}");
+					//Debug.WriteLine($"MinLuminanceInNits: {displayMonitor.MinLuminanceInNits}, MaxLuminanceInNits: {displayMonitor.MaxLuminanceInNits}");
 
 					items.Add(new DisplayItem(
 						deviceInstanceId: deviceInstanceId,

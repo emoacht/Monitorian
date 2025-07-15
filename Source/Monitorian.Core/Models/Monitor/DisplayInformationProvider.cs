@@ -39,7 +39,7 @@ internal static class DisplayInformationProvider
 
 	#region Win32
 
-	// From DispatcherQueue.h
+	// Derived from DispatcherQueue.h
 	[DllImport("CoreMessaging.dll")]
 	private static extern int CreateDispatcherQueueController(
 		DispatcherQueueOptions options,
@@ -114,17 +114,17 @@ internal static class DisplayInformationProvider
 	{
 		public readonly string DeviceInstanceId;
 		public Windows.Graphics.Display.DisplayInformation DisplayInfo { get; private set; }
-		public int Count = 1;
+		public int Count { get; set; } = 1;
 		public bool IsActive { get; private set; } = true; // default
 
-		private Windows.Graphics.Display.AdvancedColorInfo _currentColorInfo;
+		private Windows.Graphics.Display.AdvancedColorKind _currentAdvancedColorKind;
 		private readonly object _closeLock = new();
 
 		public Holder(string deviceInstanceId, Windows.Graphics.Display.DisplayInformation displayInfo)
 		{
 			this.DeviceInstanceId = deviceInstanceId;
 			this.DisplayInfo = displayInfo;
-			_currentColorInfo = displayInfo.GetAdvancedColorInfo();
+			_currentAdvancedColorKind = displayInfo.GetAdvancedColorInfo().CurrentAdvancedColorKind;
 
 			// An event handler to DisplayInformation's events must be registered within
 			// a callback of DispatcherQueueController.DispatcherQueue.TryEnqueue method.
@@ -135,10 +135,10 @@ internal static class DisplayInformationProvider
 		{
 			lock (_closeLock)
 			{
-				var oldColorInfo = _currentColorInfo;
-				_currentColorInfo = sender.GetAdvancedColorInfo();
+				var oldAdvancedColorKind = _currentAdvancedColorKind;
+				_currentAdvancedColorKind = sender.GetAdvancedColorInfo().CurrentAdvancedColorKind;
 
-				if (_currentColorInfo.CurrentAdvancedColorKind != oldColorInfo.CurrentAdvancedColorKind)
+				if (_currentAdvancedColorKind != oldAdvancedColorKind)
 				{
 					// It is observed that in the case of non-primary monitor, after AdvancedColorKind changes,
 					// this event will no longer be fired by existing DisplayInformation. Thus it is necessary
@@ -158,9 +158,8 @@ internal static class DisplayInformationProvider
 		{
 			lock (_closeLock)
 			{
-				_currentColorInfo = displayInfo.GetAdvancedColorInfo();
-
 				this.DisplayInfo = displayInfo;
+				_currentAdvancedColorKind = displayInfo.GetAdvancedColorInfo().CurrentAdvancedColorKind;
 				this.DisplayInfo.AdvancedColorInfoChanged += OnAdvancedColorInfoChanged;
 				IsActive = true;
 			}
@@ -175,7 +174,7 @@ internal static class DisplayInformationProvider
 				if (DisplayInfo is null)
 					return;
 
-				this.DisplayInfo.AdvancedColorInfoChanged -= OnAdvancedColorInfoChanged;
+				DisplayInfo.AdvancedColorInfoChanged -= OnAdvancedColorInfoChanged;
 				DisplayInfo = null;
 			}
 		}
@@ -249,7 +248,10 @@ internal static class DisplayInformationProvider
 		if (aci.CurrentAdvancedColorKind is not Windows.Graphics.Display.AdvancedColorKind.HighDynamicRange)
 			return (AccessResult.NotSupported, 0, 0, 0);
 
-		return (AccessResult.Succeeded, aci.SdrWhiteLevelInNits, aci.MinLuminanceInNits, aci.MaxLuminanceInNits);
+		return (AccessResult.Succeeded,
+			current: aci.SdrWhiteLevelInNits,
+			minimum: aci.MinLuminanceInNits,
+			maximum: aci.MaxLuminanceInNits);
 	}
 
 	#endregion

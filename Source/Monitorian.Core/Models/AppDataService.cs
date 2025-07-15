@@ -65,6 +65,20 @@ public static class AppDataService
 		await sw.WriteAsync(content);
 	}
 
+	public static void Write(string fileName, bool append, bool delete, string content)
+	{
+		var filePath = Path.Combine(EnsureFolderPath(), fileName);
+
+		if (delete && string.IsNullOrEmpty(content))
+		{
+			File.Delete(filePath);
+			return;
+		}
+
+		using var sw = new StreamWriter(filePath, append, Encoding.UTF8); // BOM will be emitted.
+		sw.Write(content);
+	}
+
 	public static bool Exists(string fileName, out string filePath)
 	{
 		filePath = Path.Combine(FolderPath, fileName);

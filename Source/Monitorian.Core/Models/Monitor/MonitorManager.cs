@@ -25,7 +25,7 @@ internal class MonitorManager
 		public string DisplayName { get; }
 		public string ConnectionDescription { get; }
 		public bool IsInternal { get; }
-		public Luid DisplayConfigId { get; }
+		public DisplayIdSet DisplayIdSet { get; }
 
 		public DisplayItem(
 			DisplayConfig.DisplayItem deviceConfigItem,
@@ -42,7 +42,7 @@ internal class MonitorManager
 				? displayMonitorItem.ConnectionDescription : deviceConfigItem.ConnectionDescription;
 
 			IsInternal = deviceConfigItem.IsInternal;
-			DisplayConfigId = deviceConfigItem.DisplayConfigId;
+			DisplayIdSet = deviceConfigItem.DisplayIdSet;
 		}
 	}
 
@@ -57,7 +57,7 @@ internal class MonitorManager
 		public byte DisplayIndex => _deviceItem.DisplayIndex;
 		public byte MonitorIndex => _deviceItem.MonitorIndex;
 		public bool IsInternal => _displayItem.IsInternal;
-		public Luid DisplayConfigId => _displayItem.DisplayConfigId;
+		public DisplayIdSet DisplayIdSet => _displayItem.DisplayIdSet;
 
 		public BasicItem(
 			DeviceContext.DeviceItem deviceItem,
@@ -202,7 +202,7 @@ internal class MonitorManager
 					monitorRect: handleItem.MonitorRect,
 					isInternal: basicItem.IsInternal,
 					monitorHandle: handleItem.MonitorHandle,
-					displayConfigId: basicItem.DisplayConfigId);
+					displayIdSet: basicItem.DisplayIdSet);
 
 				basicItems.RemoveAt(index);
 				if (basicItems.Count == 0)

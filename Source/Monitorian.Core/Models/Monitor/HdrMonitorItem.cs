@@ -8,7 +8,7 @@ namespace Monitorian.Core.Models.Monitor;
 /// </summary>
 internal class HdrMonitorItem : MonitorItem
 {
-	private readonly Luid _displayConfigId;
+	private readonly DisplayIdSet _displayIdSet;
 
 	public HdrMonitorItem(
 		string deviceInstanceId,
@@ -18,31 +18,43 @@ internal class HdrMonitorItem : MonitorItem
 		Rect monitorRect,
 		bool isInternal,
 		IntPtr monitorHandle,
-		Luid displayConfigId) : base(
-			deviceInstanceId,
-			description,
-			displayIndex,
-			monitorIndex,
-			monitorRect,
-			isInternal,
+		DisplayIdSet displayIdSet) : base(
+			deviceInstanceId: deviceInstanceId,
+			description: description,
+			displayIndex: displayIndex,
+			monitorIndex: monitorIndex,
+			monitorRect: monitorRect,
+			isInternal: isInternal,
 			isReachable: true)
 	{
-		this._displayConfigId = displayConfigId ?? throw new ArgumentNullException(nameof(displayConfigId));
+		this._displayIdSet = displayIdSet ?? throw new ArgumentNullException(nameof(displayIdSet));
 
 		DisplayInformationProvider.RegisterMonitor(DeviceInstanceId, monitorHandle);
+
+		if (MonitorRecord.TryRead(DeviceInstanceId, out float minimum, out float maximum))
+		{
+			_minimumBrightness = minimum;
+			_maximumBrightness = maximum;
+		}
 	}
 
-	private float _minimumBrightness = 80; // Raw minimum brightness (typically 80)
-	private float _maximumBrightness = 480; // Raw maximum brightness (typically 480)
+	private float _minimumBrightness = 80F; // Raw minimum brightness (normally 80)
+	private float _maximumBrightness = 0; // Raw maximum brightness
 
 	public override AccessResult UpdateBrightness(int brightness = -1)
 	{
-		var (result, current, minimum, maximum) = DisplayInformationProvider.GetSdrWhiteLevel(DeviceInstanceId);
+		var (result, current, _, maximum) = DisplayInformationProvider.GetSdrWhiteLevel(DeviceInstanceId);
 
 		if (result.Status is AccessStatus.Succeeded)
 		{
-			_minimumBrightness = Math.Min(_minimumBrightness, current);
-			_maximumBrightness = Math.Max(_maximumBrightness, current);
+			maximum = Math.Max(current, maximum);
+			if ((current < _minimumBrightness) || (_maximumBrightness < maximum))
+			{
+				_minimumBrightness = Math.Min(_minimumBrightness, current);
+				_maximumBrightness = Math.Max(_maximumBrightness, maximum);
+
+				MonitorRecord.Write(DeviceInstanceId, _minimumBrightness, _maximumBrightness);
+			}
 
 			if (_minimumBrightness >= _maximumBrightness)
 				return new AccessResult(AccessStatus.Failed, $"Current: {current}, Minimum: {_minimumBrightness}, Maximum: {_maximumBrightness}");
@@ -59,7 +71,7 @@ internal class HdrMonitorItem : MonitorItem
 			throw new ArgumentOutOfRangeException(nameof(brightness), brightness, "The brightness must be from 0 to 100.");
 
 		float value = (brightness / 100F * (_maximumBrightness - _minimumBrightness) + _minimumBrightness);
-		var result = DisplayConfig.SetSdrWhiteLevel(_displayConfigId, value);
+		var result = DisplayConfig.SetSdrWhiteLevel(_displayIdSet, value);
 
 		if (result.Status is AccessStatus.Succeeded)
 		{

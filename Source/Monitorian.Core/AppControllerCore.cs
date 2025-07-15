@@ -82,6 +82,8 @@ public class AppControllerCore
 		if (StartupAgent.IsWindowShowExpected())
 			_current.MainWindow.Show();
 
+		await MonitorRecord.InitiateAsync();
+
 		await ScanAsync();
 
 		StartupAgent.HandleRequestAsync = HandleRequestAsync;
@@ -138,6 +140,8 @@ public class AppControllerCore
 	public virtual void End()
 	{
 		MonitorsDispose();
+
+		MonitorRecord.End();
 
 		NotifyIconContainer.Dispose();
 		WindowPainter.Dispose();
@@ -211,7 +215,7 @@ public class AppControllerCore
 		if (Settings.UsesAccentColor)
 			WindowPainter.AttachAccentColors();
 
-		if (Settings.ManagesSdrWhiteLevel)
+		if (Settings.AdjustsSdrContent)
 			_displayInformationWatcher.TryEnable();
 
 		ViewManager.InvertsScrollDirection = Settings.InvertsScrollDirection;
@@ -232,9 +236,12 @@ public class AppControllerCore
 
 				break;
 
-			case nameof(Settings.ManagesSdrWhiteLevel):
-				if (Settings.ManagesSdrWhiteLevel)
-					_displayInformationWatcher.TryEnable();
+			case nameof(Settings.AdjustsSdrContent):
+				if (Settings.AdjustsSdrContent)
+				{
+					if (_displayInformationWatcher.TryEnable())
+						OnMonitorsChangeInferred($"SettingsChanged {nameof(Settings.AdjustsSdrContent)}");
+				}
 				else
 					_displayInformationWatcher.Disable();
 

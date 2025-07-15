@@ -82,6 +82,8 @@ public class AppControllerCore
 		if (StartupAgent.IsWindowShowExpected())
 			_current.MainWindow.Show();
 
+		await MonitorRecord.InitiateAsync();
+
 		await ScanAsync();
 
 		StartupAgent.HandleRequestAsync = HandleRequestAsync;
@@ -138,6 +140,8 @@ public class AppControllerCore
 	public virtual void End()
 	{
 		MonitorsDispose();
+
+		MonitorRecord.End();
 
 		NotifyIconContainer.Dispose();
 		WindowPainter.Dispose();

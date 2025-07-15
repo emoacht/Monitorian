@@ -25,14 +25,15 @@ internal class DisplayInformationWatcher : IDisposable
 
 	public static bool IsEnabled { get; private set; } = false;
 
-	public void TryEnable()
+	public bool TryEnable()
 	{
 		if (!OsVersion.Is11Build22621OrGreater || IsEnabled)
-			return;
+			return false;
 
 		DisplayInformationProvider.EnsureDispatcherQueue();
 		DisplayInformationProvider.AdvancedColorInfoChanged += OnAdvancedColorInfoChanged;
 		IsEnabled = true;
+		return true;
 	}
 
 	public void Disable()

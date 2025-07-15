@@ -62,8 +62,8 @@
 				<ContentControl Style="{StaticResource MenuItemStyle}">
 					<ToggleButton Padding="8,4"
 								  Style="{StaticResource CheckButtonItemStyle}"
-								  Content="{x:Static properties:Resources.ManageSdrWhiteLevel}"
-								  IsChecked="{Binding Settings.ManagesSdrWhiteLevel}"/>
+								  Content="{x:Static properties:Resources.AdjustSdrContent}"
+								  IsChecked="{Binding Settings.AdjustsSdrContent}"/>
 				</ContentControl>
 
 				<ContentControl Style="{StaticResource MenuItemStyle}">

@@ -61,6 +61,15 @@ namespace Monitorian.Core.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Adjust SDR content brightness.
+        /// </summary>
+        public static string AdjustSdrContent {
+            get {
+                return ResourceManager.GetString("AdjustSdrContent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Command-line arguments.
         /// </summary>
         public static string Arguments {
@@ -183,15 +192,6 @@ namespace Monitorian.Core.Properties {
         public static string MakeOperation {
             get {
                 return ResourceManager.GetString("MakeOperation", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Manage SDR white level.
-        /// </summary>
-        public static string ManageSdrWhiteLevel {
-            get {
-                return ResourceManager.GetString("ManageSdrWhiteLevel", resourceCulture);
             }
         }
         

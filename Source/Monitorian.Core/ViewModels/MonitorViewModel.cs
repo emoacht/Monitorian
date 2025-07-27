@@ -143,12 +143,12 @@ public class MonitorViewModel : ViewModelBase
 	public int BrightnessSystemAdjusted => _monitor.BrightnessSystemAdjusted;
 	public int BrightnessUnison => Brightness;
 
-	public bool UpdateBrightness(int brightness = -1)
+	public bool UpdateBrightness(int value = -1)
 	{
 		AccessResult result;
 		lock (_lock)
 		{
-			result = _monitor.UpdateBrightness(brightness);
+			result = _monitor.UpdateBrightness(value);
 		}
 
 		switch (result.Status)

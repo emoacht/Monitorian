@@ -7,23 +7,22 @@ namespace Monitorian.Core.Models.Watcher;
 
 internal class DisplayInformationWatcher : IDisposable
 {
-	private Action<string, string> _onDisplayInformationChanged;
+	private Action<string, float> _onDisplayInformationChanged;
 
 	public DisplayInformationWatcher()
 	{ }
 
-	public void Subscribe(Action<string, string> onDisplayInformationChanged)
+	public void Subscribe(Action<string, float> onDisplayInformationChanged)
 	{
 		this._onDisplayInformationChanged = onDisplayInformationChanged ?? throw new ArgumentNullException(nameof(onDisplayInformationChanged));
 	}
 
-	private void OnAdvancedColorInfoChanged(object sender, string e)
+	private void OnAdvancedColorInfoChanged(object sender, (string deviceInstanceId, float sdrWhiteLevel) e)
 	{
-		var colorInfo = ((Windows.Graphics.Display.DisplayInformation)sender).GetAdvancedColorInfo();
-		_onDisplayInformationChanged?.Invoke(e, $"SDR WL: {colorInfo.SdrWhiteLevelInNits} Min: {colorInfo.MinLuminanceInNits:f1} Max: {colorInfo.MaxLuminanceInNits:f1} [{colorInfo.CurrentAdvancedColorKind}]");
+		_onDisplayInformationChanged?.Invoke(e.deviceInstanceId, e.sdrWhiteLevel);
 	}
 
-	public static bool IsEnabled { get; private set; } = false;
+	public static bool IsEnabled { get; private set; }
 
 	public bool TryEnable()
 	{
@@ -38,7 +37,7 @@ internal class DisplayInformationWatcher : IDisposable
 
 	public void Disable()
 	{
-		if (!OsVersion.Is11Build22621OrGreater || !IsEnabled)
+		if (!IsEnabled)
 			return;
 
 		DisplayInformationProvider.AdvancedColorInfoChanged -= OnAdvancedColorInfoChanged;

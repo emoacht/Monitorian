@@ -40,7 +40,7 @@ internal class DdcMonitorItem : MonitorItem
 	private uint _minimumBrightness = 0; // Raw minimum brightness (not always 0)
 	private uint _maximumBrightness = 100; // Raw maximum brightness (not always 100)
 
-	public override AccessResult UpdateBrightness(int brightness = -1)
+	public override AccessResult UpdateBrightness(int value = -1)
 	{
 		var (result, minimum, current, maximum) = MonitorConfiguration.GetBrightness(_handle, _capability.IsHighLevelBrightnessSupported);
 

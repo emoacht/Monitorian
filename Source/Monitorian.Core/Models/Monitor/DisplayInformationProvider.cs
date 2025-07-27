@@ -133,10 +133,16 @@ internal static class DisplayInformationProvider
 
 		private void OnAdvancedColorInfoChanged(Windows.Graphics.Display.DisplayInformation sender, object args)
 		{
+			float sdrWhiteLevel = -1;
+
 			lock (_closeLock)
 			{
+				var aci = sender.GetAdvancedColorInfo();
+				if (aci.CurrentAdvancedColorKind is Windows.Graphics.Display.AdvancedColorKind.HighDynamicRange)
+					sdrWhiteLevel = aci.SdrWhiteLevelInNits;
+
 				var oldAdvancedColorKind = _currentAdvancedColorKind;
-				_currentAdvancedColorKind = sender.GetAdvancedColorInfo().CurrentAdvancedColorKind;
+				_currentAdvancedColorKind = aci.CurrentAdvancedColorKind;
 
 				if (_currentAdvancedColorKind != oldAdvancedColorKind)
 				{
@@ -151,20 +157,26 @@ internal static class DisplayInformationProvider
 				}
 			}
 
-			DisplayInformationProvider.AdvancedColorInfoChanged?.Invoke(sender, DeviceInstanceId);
+			DisplayInformationProvider.AdvancedColorInfoChanged?.Invoke(sender, (DeviceInstanceId, sdrWhiteLevel));
 		}
 
 		public void Replace(Windows.Graphics.Display.DisplayInformation displayInfo)
 		{
+			float sdrWhiteLevel = -1;
+
 			lock (_closeLock)
 			{
 				this.DisplayInfo = displayInfo;
-				_currentAdvancedColorKind = displayInfo.GetAdvancedColorInfo().CurrentAdvancedColorKind;
+				var aci = displayInfo.GetAdvancedColorInfo();
+				if (aci.CurrentAdvancedColorKind is Windows.Graphics.Display.AdvancedColorKind.HighDynamicRange)
+					sdrWhiteLevel = aci.SdrWhiteLevelInNits;
+
+				_currentAdvancedColorKind = aci.CurrentAdvancedColorKind;
 				this.DisplayInfo.AdvancedColorInfoChanged += OnAdvancedColorInfoChanged;
 				IsActive = true;
 			}
 
-			DisplayInformationProvider.AdvancedColorInfoChanged?.Invoke(displayInfo, DeviceInstanceId);
+			DisplayInformationProvider.AdvancedColorInfoChanged?.Invoke(displayInfo, (DeviceInstanceId, sdrWhiteLevel));
 		}
 
 		public void Close()
@@ -180,7 +192,7 @@ internal static class DisplayInformationProvider
 		}
 	}
 
-	public static event EventHandler<string> AdvancedColorInfoChanged;
+	public static event EventHandler<(string deviceInstanceId, float sdrWhiteLevel)> AdvancedColorInfoChanged;
 
 	private static readonly Dictionary<string, Holder> _holders = [];
 	private static readonly object _registerLock = new();
@@ -239,19 +251,16 @@ internal static class DisplayInformationProvider
 		_holders.Clear();
 	}
 
-	public static (AccessResult result, float current, float minimum, float maximum) GetSdrWhiteLevel(string deviceInstanceId)
+	public static (AccessResult result, float sdrWhiteLevel) GetSdrWhiteLevel(string deviceInstanceId)
 	{
 		if (!_holders.TryGetValue(deviceInstanceId, out Holder holder))
-			return (new AccessResult(AccessStatus.Failed, "The monitor has not been registered yet."), 0, 0, 0);
+			return (new AccessResult(AccessStatus.Failed, "The monitor has not been registered yet."), -1);
 
 		var aci = holder.DisplayInfo.GetAdvancedColorInfo();
 		if (aci.CurrentAdvancedColorKind is not Windows.Graphics.Display.AdvancedColorKind.HighDynamicRange)
-			return (AccessResult.NotSupported, 0, 0, 0);
+			return (AccessResult.NotSupported, -1);
 
-		return (AccessResult.Succeeded,
-			current: aci.SdrWhiteLevelInNits,
-			minimum: aci.MinLuminanceInNits,
-			maximum: aci.MaxLuminanceInNits);
+		return (AccessResult.Succeeded, aci.SdrWhiteLevelInNits);
 	}
 
 	#endregion

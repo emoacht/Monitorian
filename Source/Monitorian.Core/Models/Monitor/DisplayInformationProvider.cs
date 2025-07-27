@@ -257,10 +257,10 @@ internal static class DisplayInformationProvider
 	#endregion
 
 	/// <summary>
-	/// Determines if HDR is set for a specified monitor.
+	/// Determines if HDR is set for a specified monitor (10.0.22621.0 or greater only).
 	/// </summary>
 	/// <param name="monitorHandle">Monitor handle</param>
-	/// <returns>True if HDR is set</returns>
+	/// <returns>True if successfully determines that HDR is set</returns>
 	public static bool IsHdr(IntPtr monitorHandle)
 	{
 		if (!OsVersion.Is11Build22621OrGreater)

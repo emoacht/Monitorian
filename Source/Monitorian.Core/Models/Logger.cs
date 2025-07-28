@@ -36,7 +36,7 @@ public class Logger
 			+ content;
 
 		if (MessageBox.Show(
-			Resources.RecordProbeMessage,
+			Invariant.RecordProbeMessage,
 			ProductInfo.Title,
 			MessageBoxButton.OKCancel,
 			MessageBoxImage.Information,
@@ -168,7 +168,7 @@ public class Logger
 		if (buffer.Length < threshold)
 		{
 			MessageBox.Show(
-				Resources.CopyWaitOperationMessage,
+				Invariant.CopyWaitOperationMessage,
 				ProductInfo.Title,
 				MessageBoxButton.OK,
 				MessageBoxImage.Exclamation,
@@ -178,7 +178,7 @@ public class Logger
 		}
 
 		if (MessageBox.Show(
-			Resources.CopySaveOperationMessage,
+			Invariant.CopySaveOperationMessage,
 			ProductInfo.Title,
 			MessageBoxButton.OKCancel,
 			MessageBoxImage.Information,
@@ -216,7 +216,7 @@ public class Logger
 		RecordToAppData(ExceptionFileName, content, capacity);
 
 		if (MessageBox.Show(
-			Resources.RecordExceptionMessage,
+			Invariant.RecordExceptionMessage,
 			ProductInfo.Title,
 			MessageBoxButton.YesNo,
 			MessageBoxImage.Error,

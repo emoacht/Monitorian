@@ -132,12 +132,6 @@
   <data name="Close" xml:space="preserve">
     <value>Cerrar</value>
   </data>
-  <data name="CopyOperation" xml:space="preserve">
-    <value>Copiar registro de operación</value>
-  </data>
-  <data name="CopySaveOperationMessage" xml:space="preserve">
-    <value>¿Guardar registro de operación en el escritorio?</value>
-  </data>
   <data name="DeferChange" xml:space="preserve">
     <value>No realizar cambios hasta terminar de ajustar</value>
   </data>
@@ -150,23 +144,8 @@
   <data name="EnableUnison" xml:space="preserve">
     <value>Habilitar mover a la vez los controles</value>
   </data>
-  <data name="MakeOperation" xml:space="preserve">
-    <value>Registrar operaciones</value>
-  </data>
   <data name="OrderArrangement" xml:space="preserve">
     <value>Ordenar por posición de los monitores</value>
-  </data>
-  <data name="Probe" xml:space="preserve">
-    <value>Sondear monitores</value>
-  </data>
-  <data name="RecordExceptionMessage" xml:space="preserve">
-    <value>Un problema inesperado ha aparecido. ¿Guardar registro de fallos en el escritorio?</value>
-  </data>
-  <data name="RecordProbeMessage" xml:space="preserve">
-    <value>¿Guardar registro de sondeo en el escritorio?</value>
-  </data>
-  <data name="Rescan" xml:space="preserve">
-    <value>Volver a comprobar monitores</value>
   </data>
   <data name="Settings" xml:space="preserve">
     <value>Ajustes</value>
@@ -179,15 +158,6 @@
   </data>
   <data name="StartSignIn" xml:space="preserve">
     <value>Ejecutar al iniciar sesión</value>
-  </data>
-  <data name="StatusNotControllable" xml:space="preserve">
-    <value>Monitor no controlable.</value>
-  </data>
-  <data name="StatusReasonDdcFailing" xml:space="preserve">
-    <value>DDC/CI ha fallado varias veces.</value>
-  </data>
-  <data name="StatusReasonDdcNotEnabled" xml:space="preserve">
-    <value>DDC/CI no está soportado o no está habilitado.</value>
   </data>
   <data name="UseLargeElements" xml:space="preserve">
     <value>Usar controles grandes</value>

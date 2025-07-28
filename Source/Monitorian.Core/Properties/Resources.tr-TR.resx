@@ -129,12 +129,6 @@
   <data name="Close" xml:space="preserve">
     <value>Kapat</value>
   </data>
-  <data name="CopyOperation" xml:space="preserve">
-    <value>Operasyon loglarını kopyala</value>
-  </data>
-  <data name="CopySaveOperationMessage" xml:space="preserve">
-    <value>Operasyon loglarını Masaüstğne kopyala?</value>
-  </data>
   <data name="DeferChange" xml:space="preserve">
     <value>Durdurulana kadar değişikliği ertele</value>
   </data>
@@ -147,23 +141,8 @@
   <data name="EnableUnison" xml:space="preserve">
     <value>Uyumlu hareket etmeyi etkinleştir</value>
   </data>
-  <data name="MakeOperation" xml:space="preserve">
-    <value>Operasyon loglarını aktif et</value>
-  </data>
   <data name="OrderArrangement" xml:space="preserve">
     <value>Monitör düzenine göre sırala</value>
-  </data>
-  <data name="Probe" xml:space="preserve">
-    <value>Monitörleri incele</value>
-  </data>
-  <data name="RecordExceptionMessage" xml:space="preserve">
-    <value>Beklenmeyen bir sorun oluştu. Sorun günlüğü Masaüstüne kaydedilsin mi?</value>
-  </data>
-  <data name="RecordProbeMessage" xml:space="preserve">
-    <value>İnceleme günlüğü Masaüstüne kaydedilsin mi?</value>
-  </data>
-  <data name="Rescan" xml:space="preserve">
-    <value>Monitörleri tekrar tara</value>
   </data>
   <data name="Settings" xml:space="preserve">
     <value>Ayarlar</value>
@@ -176,15 +155,6 @@
   </data>
   <data name="StartSignIn" xml:space="preserve">
     <value>Başlangıçta başlat</value>
-  </data>
-  <data name="StatusNotControllable" xml:space="preserve">
-    <value>Monitör uyumlu değil.</value>
-  </data>
-  <data name="StatusReasonDdcFailing" xml:space="preserve">
-    <value>DDC/CI sürekli hata veriyor.</value>
-  </data>
-  <data name="StatusReasonDdcNotEnabled" xml:space="preserve">
-    <value>DDC/CI desteklenmiyor yada aktif değil.</value>
   </data>
   <data name="UseLargeElements" xml:space="preserve">
     <value>Büyük kaydırıcılar kullanın</value>

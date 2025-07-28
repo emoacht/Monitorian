@@ -132,15 +132,6 @@
   <data name="Close" xml:space="preserve">
     <value>关闭</value>
   </data>
-  <data name="CopyOperation" xml:space="preserve">
-    <value>复制运行日志</value>
-  </data>
-  <data name="CopySaveOperationMessage" xml:space="preserve">
-    <value>是否将运行日志保存到桌面？</value>
-  </data>
-  <data name="CopyWaitOperationMessage" xml:space="preserve">
-    <value>请等待运行日志记录更多信息</value>
-  </data>
   <data name="DeferChange" xml:space="preserve">
     <value>松开滑块后调节亮度</value>
   </data>
@@ -153,23 +144,8 @@
   <data name="EnableUnison" xml:space="preserve">
     <value>启用同步亮度调节</value>
   </data>
-  <data name="MakeOperation" xml:space="preserve">
-    <value>生成运行日志</value>
-  </data>
   <data name="OrderArrangement" xml:space="preserve">
     <value>按显示器顺序排列</value>
-  </data>
-  <data name="Probe" xml:space="preserve">
-    <value>检测显示器</value>
-  </data>
-  <data name="RecordExceptionMessage" xml:space="preserve">
-    <value>程序出现了意外问题。将错误信息保存到</value>
-  </data>
-  <data name="RecordProbeMessage" xml:space="preserve">
-    <value>是否将检测日志保存到桌面？</value>
-  </data>
-  <data name="Rescan" xml:space="preserve">
-    <value>重新扫描显示器</value>
   </data>
   <data name="RestoreReconnection" xml:space="preserve">
     <value>再次连接时恢复亮度</value>
@@ -185,15 +161,6 @@
   </data>
   <data name="StartSignIn" xml:space="preserve">
     <value>开机时启动</value>
-  </data>
-  <data name="StatusNotControllable" xml:space="preserve">
-    <value>无法控制显示器。</value>
-  </data>
-  <data name="StatusReasonDdcFailing" xml:space="preserve">
-    <value>DDC/CI 调用失败多次。</value>
-  </data>
-  <data name="StatusReasonDdcNotEnabled" xml:space="preserve">
-    <value>DDC/CI 不受支持或未启用。</value>
   </data>
   <data name="UseAccentColor" xml:space="preserve">
     <value>亮度滑块使用系统主题色</value>

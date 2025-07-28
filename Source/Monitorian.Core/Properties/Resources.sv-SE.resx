@@ -132,15 +132,6 @@
   <data name="Close" xml:space="preserve">
     <value>Avsluta</value>
   </data>
-  <data name="CopyOperation" xml:space="preserve">
-    <value>Kopiera driftloggen</value>
-  </data>
-  <data name="CopySaveOperationMessage" xml:space="preserve">
-    <value>Spara driftloggen till skrivbordet?</value>
-  </data>
-  <data name="CopyWaitOperationMessage" xml:space="preserve">
-    <value>Vänta tills mer information registreras i driftloggen.</value>
-  </data>
   <data name="DeferChange" xml:space="preserve">
     <value>Ändra inget förrän justeringen är klar</value>
   </data>
@@ -153,23 +144,8 @@
   <data name="EnableUnison" xml:space="preserve">
     <value>Aktivera ändring av ljusstyrkan gemensamt</value>
   </data>
-  <data name="MakeOperation" xml:space="preserve">
-    <value>Skapa driftlogg</value>
-  </data>
   <data name="OrderArrangement" xml:space="preserve">
     <value>Sortera efter bildskärmarnas placering</value>
-  </data>
-  <data name="Probe" xml:space="preserve">
-    <value>Hämta information om bildskärmarna</value>
-  </data>
-  <data name="RecordExceptionMessage" xml:space="preserve">
-    <value>Ett oväntat fel uppstod. Spara undantagsloggen på skrivbordet?</value>
-  </data>
-  <data name="RecordProbeMessage" xml:space="preserve">
-    <value>Spara informationen på skrivbordet?</value>
-  </data>
-  <data name="Rescan" xml:space="preserve">
-    <value>Sök om bildskärmarna</value>
   </data>
   <data name="RestoreReconnection" xml:space="preserve">
     <value>Återställ ljusstyrkan vid återanslutning</value>
@@ -185,15 +161,6 @@
   </data>
   <data name="StartSignIn" xml:space="preserve">
     <value>Starta vid inloggning</value>
-  </data>
-  <data name="StatusNotControllable" xml:space="preserve">
-    <value>Bildskärmen är inte justerbar.</value>
-  </data>
-  <data name="StatusReasonDdcFailing" xml:space="preserve">
-    <value>DDC/CI har misslyckats upprepade gånger.</value>
-  </data>
-  <data name="StatusReasonDdcNotEnabled" xml:space="preserve">
-    <value>DDC/CI stöds inte eller är inte aktiverat.</value>
   </data>
   <data name="UseAccentColor" xml:space="preserve">
     <value>Använd accentfärg för ljusstyrka</value>

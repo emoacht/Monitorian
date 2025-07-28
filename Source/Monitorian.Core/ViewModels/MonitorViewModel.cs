@@ -494,9 +494,9 @@ public class MonitorViewModel : ViewModelBase
 		return _monitor switch
 		{
 			DdcMonitorItem { IsPrecleared: true } => null,
-			DdcMonitorItem => Resources.StatusNotControllable + Environment.NewLine + Resources.StatusReasonDdcFailing,
-			UnreachableMonitorItem { IsInternal: false } => Resources.StatusNotControllable + Environment.NewLine + Resources.StatusReasonDdcNotEnabled,
-			_ => Resources.StatusNotControllable
+			DdcMonitorItem => Invariant.StatusNotControllable + Environment.NewLine + Invariant.StatusReasonDdcFailing,
+			UnreachableMonitorItem { IsInternal: false } => Invariant.StatusNotControllable + Environment.NewLine + Invariant.StatusReasonDdcNotEnabled,
+			_ => Invariant.StatusNotControllable
 		};
 	}
 

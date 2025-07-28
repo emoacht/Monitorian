@@ -132,15 +132,6 @@
   <data name="Close" xml:space="preserve">
     <value>Đóng</value>
   </data>
-  <data name="CopyOperation" xml:space="preserve">
-    <value>Sao chép nhật ký hoạt động</value>
-  </data>
-  <data name="CopySaveOperationMessage" xml:space="preserve">
-    <value>Lưu nhật ký hoạt động vào Màn hình chính?</value>
-  </data>
-  <data name="CopyWaitOperationMessage" xml:space="preserve">
-    <value>Chờ thêm thông tin được ghi vào nhật ký hoạt động.</value>
-  </data>
   <data name="DeferChange" xml:space="preserve">
     <value>Hoãn thay đổi cho đến khi dừng</value>
   </data>
@@ -153,23 +144,8 @@
   <data name="EnableUnison" xml:space="preserve">
     <value>Bật thay đổi độ sáng đồng loạt</value>
   </data>
-  <data name="MakeOperation" xml:space="preserve">
-    <value>Tạo nhật ký hoạt động</value>
-  </data>
   <data name="OrderArrangement" xml:space="preserve">
     <value>Tạo nhật ký hoạt động</value>
-  </data>
-  <data name="Probe" xml:space="preserve">
-    <value>Kiểm tra màn hình</value>
-  </data>
-  <data name="RecordExceptionMessage" xml:space="preserve">
-    <value>Xảy ra sự cố bất ngờ. Lưu nhật ký lỗi vào Màn hình chính?</value>
-  </data>
-  <data name="RecordProbeMessage" xml:space="preserve">
-    <value>Lưu nhật ký kiểm tra vào Màn hình chính?</value>
-  </data>
-  <data name="Rescan" xml:space="preserve">
-    <value>Quét lại màn hình</value>
   </data>
   <data name="RestoreReconnection" xml:space="preserve">
     <value>Khôi phục độ sáng khi kết nối lại</value>
@@ -185,15 +161,6 @@
   </data>
   <data name="StartSignIn" xml:space="preserve">
     <value>Khởi động khi đăng nhập</value>
-  </data>
-  <data name="StatusNotControllable" xml:space="preserve">
-    <value>Màn hình không thể điều khiển được.</value>
-  </data>
-  <data name="StatusReasonDdcFailing" xml:space="preserve">
-    <value>DDC/CI đã liên tục gặp lỗi.</value>
-  </data>
-  <data name="StatusReasonDdcNotEnabled" xml:space="preserve">
-    <value>DDC/CI không được hỗ trợ hoặc chưa được bật.</value>
   </data>
   <data name="UseAccentColor" xml:space="preserve">
     <value>Sử dụng màu nhấn cho độ sáng</value>

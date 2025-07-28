@@ -132,15 +132,6 @@
   <data name="Close" xml:space="preserve">
     <value>닫기</value>
   </data>
-  <data name="CopyOperation" xml:space="preserve">
-    <value>작업 로그 복사</value>
-  </data>
-  <data name="CopySaveOperationMessage" xml:space="preserve">
-    <value>작업 로그를 바탕화면에 저장하시겠습니까?</value>
-  </data>
-  <data name="CopyWaitOperationMessage" xml:space="preserve">
-    <value>작업 로그에 추가 정보가 기록될 때까지 기다립니다.</value>
-  </data>
   <data name="DeferChange" xml:space="preserve">
     <value>중지될 때까지 변경 연기</value>
   </data>
@@ -153,23 +144,8 @@
   <data name="EnableUnison" xml:space="preserve">
     <value>동시에 밝기 변경 사용</value>
   </data>
-  <data name="MakeOperation" xml:space="preserve">
-    <value>작업 로그 만들기</value>
-  </data>
   <data name="OrderArrangement" xml:space="preserve">
     <value>모니터별 순서 배열</value>
-  </data>
-  <data name="Probe" xml:space="preserve">
-    <value>모니터 조사</value>
-  </data>
-  <data name="RecordExceptionMessage" xml:space="preserve">
-    <value>예상치 못한 문제가 발생했습니다. 예외 로그를 데스크톱에 저장하시겠습니까?</value>
-  </data>
-  <data name="RecordProbeMessage" xml:space="preserve">
-    <value>프로브 로그를 바탕화면에 저장하시겠습니까?</value>
-  </data>
-  <data name="Rescan" xml:space="preserve">
-    <value>모니터 다시 검색</value>
   </data>
   <data name="RestoreReconnection" xml:space="preserve">
     <value>다시 연결시 밝기 복원</value>
@@ -185,15 +161,6 @@
   </data>
   <data name="StartSignIn" xml:space="preserve">
     <value>로그인시 시작</value>
-  </data>
-  <data name="StatusNotControllable" xml:space="preserve">
-    <value>모니터를 제어할 수 없습니다.</value>
-  </data>
-  <data name="StatusReasonDdcFailing" xml:space="preserve">
-    <value>DDC/CI가 반복적으로 실패했습니다.</value>
-  </data>
-  <data name="StatusReasonDdcNotEnabled" xml:space="preserve">
-    <value>DDC/CI가 지원되지 않거나 사용할 수 없습니다.</value>
   </data>
   <data name="UseAccentColor" xml:space="preserve">
     <value>밝기에 강조 색상 사용</value>

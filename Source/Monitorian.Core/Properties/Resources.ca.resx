@@ -132,12 +132,6 @@
   <data name="Close" xml:space="preserve">
     <value>Tancar</value>
   </data>
-  <data name="CopyOperation" xml:space="preserve">
-    <value>Copiar registre d'operació</value>
-  </data>
-  <data name="CopySaveOperationMessage" xml:space="preserve">
-    <value>Desar registre d'operació a l'escriptori?</value>
-  </data>
   <data name="DeferChange" xml:space="preserve">
     <value>No fer canvis fins a acabar d'ajustar</value>
   </data>
@@ -150,23 +144,8 @@
   <data name="EnableUnison" xml:space="preserve">
     <value>Habilitar canviar la brillantor alhora</value>
   </data>
-  <data name="MakeOperation" xml:space="preserve">
-    <value>Registrar operacions</value>
-  </data>
   <data name="OrderArrangement" xml:space="preserve">
     <value>Ordenar per posició dels monitors</value>
-  </data>
-  <data name="Probe" xml:space="preserve">
-    <value>Sondejar monitors</value>
-  </data>
-  <data name="RecordExceptionMessage" xml:space="preserve">
-    <value>Ha aparegut un problema inesperat. Desar registre d'errors a l'escriptori?</value>
-  </data>
-  <data name="RecordProbeMessage" xml:space="preserve">
-    <value>Desar registre de sondeig a l'escriptori?</value>
-  </data>
-  <data name="Rescan" xml:space="preserve">
-    <value>Tornar a comprovar monitors</value>
   </data>
   <data name="Settings" xml:space="preserve">
     <value>Ajustaments</value>
@@ -179,15 +158,6 @@
   </data>
   <data name="StartSignIn" xml:space="preserve">
     <value>Executar en iniciar sessió</value>
-  </data>
-  <data name="StatusNotControllable" xml:space="preserve">
-    <value>Monitor no controlable.</value>
-  </data>
-  <data name="StatusReasonDdcFailing" xml:space="preserve">
-    <value>DDC/CI ha fallat repetidament.</value>
-  </data>
-  <data name="StatusReasonDdcNotEnabled" xml:space="preserve">
-    <value>DDC/CI no està suportat o no està habilitat.</value>
   </data>
   <data name="UseLargeElements" xml:space="preserve">
     <value>Utilitzar controls grans</value>

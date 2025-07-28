@@ -15,7 +15,7 @@
 				<ContentControl Style="{StaticResource MenuItemStyle}">
 					<Button Padding="8,4"
 							Style="{StaticResource PlainButtonItemStyle}"
-							Content="{x:Static properties:Resources.Probe}"
+							Content="{x:Static properties:Invariant.Probe}"
 							IsEnabled="{Binding CanProbe, Mode=OneWay}">
 						<i:Interaction.Triggers>
 							<i:EventTrigger EventName="Click">
@@ -29,7 +29,7 @@
 				<ContentControl Style="{StaticResource MenuItemStyle}">
 					<Button Padding="8,4"
 							Style="{StaticResource PlainButtonItemStyle}"
-							Content="{x:Static properties:Resources.Rescan}">
+							Content="{x:Static properties:Invariant.Rescan}">
 						<i:Interaction.Triggers>
 							<i:EventTrigger EventName="Click">
 								<i:CallMethodAction TargetObject="{Binding}"
@@ -42,14 +42,14 @@
 				<ContentControl Style="{StaticResource MenuItemStyle}">
 					<ToggleButton Padding="8,4"
 								  Style="{StaticResource CheckButtonItemStyle}"
-								  Content="{x:Static properties:Resources.MakeOperation}"
+								  Content="{x:Static properties:Invariant.MakeOperation}"
 								  IsChecked="{Binding Settings.MakesOperationLog}"/>
 				</ContentControl>
 
 				<ContentControl Style="{StaticResource MenuItemStyle}">
 					<Button Padding="8,4"
 							Style="{StaticResource PlainButtonItemStyle}"
-							Content="{x:Static properties:Resources.CopyOperation}">
+							Content="{x:Static properties:Invariant.CopyOperation}">
 						<i:Interaction.Triggers>
 							<i:EventTrigger EventName="Click">
 								<i:CallMethodAction TargetObject="{Binding}"

@@ -154,15 +154,15 @@ public class SettingsCore : BindableBase
 	private string _selectedDeviceInstanceId;
 
 	/// <summary>
-	/// Whether to make operation log
+	/// Whether to record operations to log
 	/// </summary>
 	[DataMember]
-	public bool MakesOperationLog
+	public bool RecordsOperationLog
 	{
-		get => _makesOperationLog;
-		set => SetProperty(ref _makesOperationLog, value);
+		get => _recordsOperationLog;
+		set => SetProperty(ref _recordsOperationLog, value);
 	}
-	private bool _makesOperationLog;
+	private bool _recordsOperationLog;
 
 	#endregion
 

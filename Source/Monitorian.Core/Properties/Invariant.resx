@@ -118,31 +118,31 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CopyOperation" xml:space="preserve">
-    <value>Copy operation log</value>
+    <value>Copy accumulated log</value>
   </data>
-  <data name="CopySaveOperationMessage" xml:space="preserve">
+  <data name="CopyOperationSaveMessage" xml:space="preserve">
     <value>Save operation log to Desktop?</value>
   </data>
-  <data name="CopyWaitOperationMessage" xml:space="preserve">
-    <value>Wait for more information to be recorded to operation log.</value>
+  <data name="CopyOperationWaitMessage" xml:space="preserve">
+    <value>Wait until more information is recorded to operation log.</value>
   </data>
   <data name="License" xml:space="preserve">
     <value>License</value>
   </data>
-  <data name="MakeOperation" xml:space="preserve">
-    <value>Make operation log</value>
-  </data>
   <data name="Probe" xml:space="preserve">
     <value>Probe into monitors</value>
   </data>
-  <data name="RecordExceptionMessage" xml:space="preserve">
-    <value>An unexpected problem occurred. Save exception log to Desktop?</value>
-  </data>
-  <data name="RecordProbeMessage" xml:space="preserve">
-    <value>Save probe log to Desktop?</value>
+  <data name="RecordOperation" xml:space="preserve">
+    <value>Record operations to log</value>
   </data>
   <data name="Rescan" xml:space="preserve">
     <value>Rescan monitors</value>
+  </data>
+  <data name="SaveExceptionMessage" xml:space="preserve">
+    <value>An unexpected problem has occurred. Save exception log to Desktop?</value>
+  </data>
+  <data name="SaveProbeMessage" xml:space="preserve">
+    <value>Save probe log to Desktop?</value>
   </data>
   <data name="Site" xml:space="preserve">
     <value>Site</value>

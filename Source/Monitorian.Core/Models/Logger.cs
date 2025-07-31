@@ -24,26 +24,26 @@ public class Logger
 	private const string ProbeFileName = "probe.log";
 
 	/// <summary>
-	/// Records probe log to Desktop.
+	/// Saves probe log to Desktop.
 	/// </summary>
 	/// <param name="content">Content</param>
 	/// <remarks>
 	/// The log file will be always overwritten.
 	/// </remarks>
-	public static void RecordProbe(string content)
+	public static void SaveProbe(string content)
 	{
 		content = ComposeHeader() + Environment.NewLine
 			+ content;
 
 		if (MessageBox.Show(
-			Invariant.RecordProbeMessage,
+			Invariant.SaveProbeMessage,
 			ProductInfo.Title,
 			MessageBoxButton.OKCancel,
 			MessageBoxImage.Information,
 			MessageBoxResult.OK) is not MessageBoxResult.OK)
 			return;
 
-		RecordToDesktop(ProbeFileName, content);
+		SaveToDesktop(ProbeFileName, content);
 	}
 
 	#endregion
@@ -122,10 +122,10 @@ public class Logger
 	}
 
 	/// <summary>
-	/// Records operation log to AppData.
+	/// Saves operation log to AppData.
 	/// </summary>
 	/// <param name="content">Content</param>
-	public static async Task RecordOperationAsync(string content)
+	public static async Task SaveOperationAsync(string content)
 	{
 		content = ComposeHeader() + Environment.NewLine
 			+ content + Environment.NewLine + Environment.NewLine;
@@ -138,7 +138,7 @@ public class Logger
 		}
 		catch (Exception ex)
 		{
-			Trace.WriteLine("Failed to record log to AppData." + Environment.NewLine
+			Trace.WriteLine("Failed to save log to AppData." + Environment.NewLine
 				+ ex);
 		}
 	}
@@ -168,7 +168,7 @@ public class Logger
 		if (buffer.Length < threshold)
 		{
 			MessageBox.Show(
-				Invariant.CopyWaitOperationMessage,
+				$"{Invariant.CopyOperationWaitMessage} {buffer.Length}/{threshold}",
 				ProductInfo.Title,
 				MessageBoxButton.OK,
 				MessageBoxImage.Exclamation,
@@ -178,14 +178,14 @@ public class Logger
 		}
 
 		if (MessageBox.Show(
-			Invariant.CopySaveOperationMessage,
+			Invariant.CopyOperationSaveMessage,
 			ProductInfo.Title,
 			MessageBoxButton.OKCancel,
 			MessageBoxImage.Information,
 			MessageBoxResult.OK) is not MessageBoxResult.OK)
 			return;
 
-		RecordToDesktop(OperationFileName, buffer.ToString());
+		SaveToDesktop(OperationFileName, buffer.ToString());
 	}
 
 	#endregion
@@ -195,7 +195,7 @@ public class Logger
 	private const string ExceptionFileName = "exception.log";
 
 	/// <summary>
-	/// Records exception log to AppData and Desktop.
+	/// Saves exception log to AppData and Desktop.
 	/// </summary>
 	/// <param name="exception">Exception</param>
 	/// <param name="capacity">The number of exceptions that the log file can contain</param>
@@ -203,7 +203,7 @@ public class Logger
 	/// The log file will be appended with new exception as long as one day has not yet passed
 	/// since last write. Otherwise, the log file will be overwritten.
 	/// </remarks>
-	public static void RecordException(Exception exception, int capacity = 8)
+	public static void SaveException(Exception exception, int capacity = 8)
 	{
 		if (exception is null)
 			throw new ArgumentNullException(nameof(exception));
@@ -213,24 +213,24 @@ public class Logger
 		var content = ComposeHeader() + Environment.NewLine
 			+ exception.ToDetailedString() + Environment.NewLine + Environment.NewLine;
 
-		RecordToAppData(ExceptionFileName, content, capacity);
+		SaveToAppData(ExceptionFileName, content, capacity);
 
 		if (MessageBox.Show(
-			Invariant.RecordExceptionMessage,
+			Invariant.SaveExceptionMessage,
 			ProductInfo.Title,
 			MessageBoxButton.YesNo,
 			MessageBoxImage.Error,
 			MessageBoxResult.Yes) is not MessageBoxResult.Yes)
 			return;
 
-		RecordToDesktop(ExceptionFileName, content, capacity);
+		SaveToDesktop(ExceptionFileName, content, capacity);
 	}
 
 	#endregion
 
 	#region Helper
 
-	private static void RecordToTemp(string fileName, string content, int capacity = 1)
+	private static void SaveToTemp(string fileName, string content, int capacity = 1)
 	{
 		try
 		{
@@ -241,12 +241,12 @@ public class Logger
 		}
 		catch (Exception ex)
 		{
-			Trace.WriteLine("Failed to record log to Temp." + Environment.NewLine
+			Trace.WriteLine("Failed to save log to Temp." + Environment.NewLine
 				+ ex);
 		}
 	}
 
-	private static void RecordToAppData(string fileName, string content, int capacity = 1)
+	private static void SaveToAppData(string fileName, string content, int capacity = 1)
 	{
 		try
 		{
@@ -256,12 +256,12 @@ public class Logger
 		}
 		catch (Exception ex)
 		{
-			Trace.WriteLine("Failed to record log to AppData." + Environment.NewLine
+			Trace.WriteLine("Failed to save log to AppData." + Environment.NewLine
 				+ ex);
 		}
 	}
 
-	private static void RecordToDesktop(string fileName, string content, int capacity = 1)
+	private static void SaveToDesktop(string fileName, string content, int capacity = 1)
 	{
 		try
 		{
@@ -273,7 +273,7 @@ public class Logger
 		}
 		catch (Exception ex)
 		{
-			Trace.WriteLine("Failed to record log to Desktop." + Environment.NewLine
+			Trace.WriteLine("Failed to save log to Desktop." + Environment.NewLine
 				+ ex);
 		}
 	}

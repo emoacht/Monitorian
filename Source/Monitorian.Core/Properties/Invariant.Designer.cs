@@ -61,7 +61,7 @@ namespace Monitorian.Core.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Copy operation log.
+        ///   Looks up a localized string similar to Copy accumulated log.
         /// </summary>
         public static string CopyOperation {
             get {
@@ -72,18 +72,18 @@ namespace Monitorian.Core.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Save operation log to Desktop?.
         /// </summary>
-        public static string CopySaveOperationMessage {
+        public static string CopyOperationSaveMessage {
             get {
-                return ResourceManager.GetString("CopySaveOperationMessage", resourceCulture);
+                return ResourceManager.GetString("CopyOperationSaveMessage", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Wait for more information to be recorded to operation log..
+        ///   Looks up a localized string similar to Wait until more information is recorded to operation log..
         /// </summary>
-        public static string CopyWaitOperationMessage {
+        public static string CopyOperationWaitMessage {
             get {
-                return ResourceManager.GetString("CopyWaitOperationMessage", resourceCulture);
+                return ResourceManager.GetString("CopyOperationWaitMessage", resourceCulture);
             }
         }
         
@@ -97,15 +97,6 @@ namespace Monitorian.Core.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Make operation log.
-        /// </summary>
-        public static string MakeOperation {
-            get {
-                return ResourceManager.GetString("MakeOperation", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Probe into monitors.
         /// </summary>
         public static string Probe {
@@ -115,20 +106,11 @@ namespace Monitorian.Core.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to An unexpected problem occurred. Save exception log to Desktop?.
+        ///   Looks up a localized string similar to Record operations to log.
         /// </summary>
-        public static string RecordExceptionMessage {
+        public static string RecordOperation {
             get {
-                return ResourceManager.GetString("RecordExceptionMessage", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Save probe log to Desktop?.
-        /// </summary>
-        public static string RecordProbeMessage {
-            get {
-                return ResourceManager.GetString("RecordProbeMessage", resourceCulture);
+                return ResourceManager.GetString("RecordOperation", resourceCulture);
             }
         }
         
@@ -138,6 +120,24 @@ namespace Monitorian.Core.Properties {
         public static string Rescan {
             get {
                 return ResourceManager.GetString("Rescan", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An unexpected problem has occurred. Save exception log to Desktop?.
+        /// </summary>
+        public static string SaveExceptionMessage {
+            get {
+                return ResourceManager.GetString("SaveExceptionMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save probe log to Desktop?.
+        /// </summary>
+        public static string SaveProbeMessage {
+            get {
+                return ResourceManager.GetString("SaveProbeMessage", resourceCulture);
             }
         }
         

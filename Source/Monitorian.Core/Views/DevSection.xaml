@@ -42,8 +42,8 @@
 				<ContentControl Style="{StaticResource MenuItemStyle}">
 					<ToggleButton Padding="8,4"
 								  Style="{StaticResource CheckButtonItemStyle}"
-								  Content="{x:Static properties:Invariant.MakeOperation}"
-								  IsChecked="{Binding Settings.MakesOperationLog}"/>
+								  Content="{x:Static properties:Invariant.RecordOperation}"
+								  IsChecked="{Binding Settings.RecordsOperationLog}"/>
 				</ContentControl>
 
 				<ContentControl Style="{StaticResource MenuItemStyle}">

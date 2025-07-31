@@ -216,7 +216,7 @@ public class AppControllerCore
 
 		ViewManager.InvertsScrollDirection = Settings.InvertsScrollDirection;
 
-		if (Settings.MakesOperationLog)
+		if (Settings.RecordsOperationLog)
 			await OperationRecorder.EnableAsync("Initiated");
 	}
 
@@ -265,8 +265,8 @@ public class AppControllerCore
 
 				break;
 
-			case nameof(Settings.MakesOperationLog):
-				if (Settings.MakesOperationLog)
+			case nameof(Settings.RecordsOperationLog):
+				if (Settings.RecordsOperationLog)
 					await OperationRecorder.EnableAsync("Enabled");
 				else
 					OperationRecorder.Disable();

@@ -21,7 +21,7 @@ public interface IMonitor : IDisposable
 	int Brightness { get; }
 	int BrightnessSystemAdjusted { get; }
 
-	AccessResult UpdateBrightness(int brightness = -1);
+	AccessResult UpdateBrightness(int value = -1);
 	AccessResult SetBrightness(int brightness);
 
 	int Contrast { get; }

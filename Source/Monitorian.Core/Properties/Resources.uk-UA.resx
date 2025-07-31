@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AdjustSdrContent" xml:space="preserve">
+    <value>Налаштувати яскравість контенту SDR</value>
+  </data>
   <data name="Arguments" xml:space="preserve">
     <value>Параметри командного рядка</value>
   </data>
@@ -132,15 +135,6 @@
   <data name="Close" xml:space="preserve">
     <value>Закрити</value>
   </data>
-  <data name="CopyOperation" xml:space="preserve">
-    <value>Копіювати журнал дій</value>
-  </data>
-  <data name="CopySaveOperationMessage" xml:space="preserve">
-    <value>Зберегти журнал дій на робочий стіл?</value>
-  </data>
-  <data name="CopyWaitOperationMessage" xml:space="preserve">
-    <value>Зачекайте, поки додаткова інформація буде записана в журнал операцій.</value>
-  </data>
   <data name="DeferChange" xml:space="preserve">
     <value>Не змінювати яскравість до зупинки</value>
   </data>
@@ -153,23 +147,17 @@
   <data name="EnableUnison" xml:space="preserve">
     <value>Увімкнути одночасне регулювання</value>
   </data>
-  <data name="MakeOperation" xml:space="preserve">
-    <value>Створити журнал дій</value>
+  <data name="InvertScrollDirection" xml:space="preserve">
+    <value>Інвертувати напрямок прокрутки</value>
+  </data>
+  <data name="MouseHorizontalWheel" xml:space="preserve">
+    <value>Горизонтальна прокрутка мишею</value>
+  </data>
+  <data name="MouseVerticalWheel" xml:space="preserve">
+    <value>Вертикальна прокрутка мишею</value>
   </data>
   <data name="OrderArrangement" xml:space="preserve">
     <value>Упорядкувати за розташуванням моніторів</value>
-  </data>
-  <data name="Probe" xml:space="preserve">
-    <value>Протестувати монітори</value>
-  </data>
-  <data name="RecordExceptionMessage" xml:space="preserve">
-    <value>Виникла непередбачувана проблема. Зберегти звіт про помилку на робочому столі?</value>
-  </data>
-  <data name="RecordProbeMessage" xml:space="preserve">
-    <value>Зберегти результати тестування на робочий стіл?</value>
-  </data>
-  <data name="Rescan" xml:space="preserve">
-    <value>Знайти монітори</value>
   </data>
   <data name="RestoreReconnection" xml:space="preserve">
     <value>Відновити яскравість після повторного підключення</value>
@@ -186,14 +174,11 @@
   <data name="StartSignIn" xml:space="preserve">
     <value>Запускати під час входу в систему</value>
   </data>
-  <data name="StatusNotControllable" xml:space="preserve">
-    <value>Цим монітором не можна керувати.</value>
+  <data name="TouchpadHorizontalSwipe" xml:space="preserve">
+    <value>Горизонтальний свайп на тачпаді</value>
   </data>
-  <data name="StatusReasonDdcFailing" xml:space="preserve">
-    <value>DDC/CI постійно дає збій.</value>
-  </data>
-  <data name="StatusReasonDdcNotEnabled" xml:space="preserve">
-    <value>DDC/CI не увімкнено або не підтримується.</value>
+  <data name="TouchpadVerticalSwipe" xml:space="preserve">
+    <value>Вертикальний свайп на тачпаді</value>
   </data>
   <data name="UseAccentColor" xml:space="preserve">
     <value>Використовувати кольорову тему системи</value>

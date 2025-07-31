@@ -135,15 +135,6 @@
   <data name="Close" xml:space="preserve">
     <value>Close</value>
   </data>
-  <data name="CopyOperation" xml:space="preserve">
-    <value>Copy operation log</value>
-  </data>
-  <data name="CopySaveOperationMessage" xml:space="preserve">
-    <value>Save operation log to Desktop?</value>
-  </data>
-  <data name="CopyWaitOperationMessage" xml:space="preserve">
-    <value>Wait for more information to be recorded to operation log.</value>
-  </data>
   <data name="DeferChange" xml:space="preserve">
     <value>Defer change until stopped</value>
   </data>
@@ -159,9 +150,6 @@
   <data name="InvertScrollDirection" xml:space="preserve">
     <value>Invert scroll direction</value>
   </data>
-  <data name="MakeOperation" xml:space="preserve">
-    <value>Make operation log</value>
-  </data>
   <data name="MouseHorizontalWheel" xml:space="preserve">
     <value>Mouse horizontal wheel</value>
   </data>
@@ -170,18 +158,6 @@
   </data>
   <data name="OrderArrangement" xml:space="preserve">
     <value>Order by monitors arrangement</value>
-  </data>
-  <data name="Probe" xml:space="preserve">
-    <value>Probe into monitors</value>
-  </data>
-  <data name="RecordExceptionMessage" xml:space="preserve">
-    <value>An unexpected problem occurred. Save exception log to Desktop?</value>
-  </data>
-  <data name="RecordProbeMessage" xml:space="preserve">
-    <value>Save probe log to Desktop?</value>
-  </data>
-  <data name="Rescan" xml:space="preserve">
-    <value>Rescan monitors</value>
   </data>
   <data name="RestoreReconnection" xml:space="preserve">
     <value>Restore brightness on reconnection</value>
@@ -197,15 +173,6 @@
   </data>
   <data name="StartSignIn" xml:space="preserve">
     <value>Start on sign in</value>
-  </data>
-  <data name="StatusNotControllable" xml:space="preserve">
-    <value>Monitor is not controllable.</value>
-  </data>
-  <data name="StatusReasonDdcFailing" xml:space="preserve">
-    <value>DDC/CI has been failing repeatedly.</value>
-  </data>
-  <data name="StatusReasonDdcNotEnabled" xml:space="preserve">
-    <value>DDC/CI is not supported or enabled.</value>
   </data>
   <data name="TouchpadHorizontalSwipe" xml:space="preserve">
     <value>Touchpad horizontal swipe</value>

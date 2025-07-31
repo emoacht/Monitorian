@@ -135,15 +135,6 @@
   <data name="Close" xml:space="preserve">
     <value>閉じる</value>
   </data>
-  <data name="CopyOperation" xml:space="preserve">
-    <value>動作ログをコピーする</value>
-  </data>
-  <data name="CopySaveOperationMessage" xml:space="preserve">
-    <value>動作ログをデスクトップに保存しますか?</value>
-  </data>
-  <data name="CopyWaitOperationMessage" xml:space="preserve">
-    <value>動作ログにもっと情報が記録されるのを待ってください。</value>
-  </data>
   <data name="DeferChange" xml:space="preserve">
     <value>止まるまで変更を遅らせる</value>
   </data>
@@ -159,9 +150,6 @@
   <data name="InvertScrollDirection" xml:space="preserve">
     <value>スクロール方向を逆にする</value>
   </data>
-  <data name="MakeOperation" xml:space="preserve">
-    <value>動作ログを作成する</value>
-  </data>
   <data name="MouseHorizontalWheel" xml:space="preserve">
     <value>マウス水平ホイール</value>
   </data>
@@ -170,18 +158,6 @@
   </data>
   <data name="OrderArrangement" xml:space="preserve">
     <value>モニター配置に従って並べる</value>
-  </data>
-  <data name="Probe" xml:space="preserve">
-    <value>モニターを調査する</value>
-  </data>
-  <data name="RecordExceptionMessage" xml:space="preserve">
-    <value>予期しない問題が発生しました。例外ログをデスクトップに保存しますか?</value>
-  </data>
-  <data name="RecordProbeMessage" xml:space="preserve">
-    <value>調査ログをデスクトップに保存しますか?</value>
-  </data>
-  <data name="Rescan" xml:space="preserve">
-    <value>モニターを再探索する</value>
   </data>
   <data name="RestoreReconnection" xml:space="preserve">
     <value>再接続時に明るさを復元する</value>
@@ -197,15 +173,6 @@
   </data>
   <data name="StartSignIn" xml:space="preserve">
     <value>サインイン時に起動する</value>
-  </data>
-  <data name="StatusNotControllable" xml:space="preserve">
-    <value>モニターはコントロールできません。</value>
-  </data>
-  <data name="StatusReasonDdcFailing" xml:space="preserve">
-    <value>DDC/CIが繰り返し失敗しています。</value>
-  </data>
-  <data name="StatusReasonDdcNotEnabled" xml:space="preserve">
-    <value>DDC/CIがサポートされていないか有効になっていません。</value>
   </data>
   <data name="TouchpadHorizontalSwipe" xml:space="preserve">
     <value>タッチパッド水平スワイプ</value>

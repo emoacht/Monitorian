@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AdjustSdrContent" xml:space="preserve">
+    <value>Ajustați luminozitatea conținutului SDR</value>
+  </data>
   <data name="Arguments" xml:space="preserve">
     <value>Argumentele liniei de comandă</value>
   </data>
@@ -132,12 +135,6 @@
   <data name="Close" xml:space="preserve">
     <value>Închide</value>
   </data>
-  <data name="CopyOperation" xml:space="preserve">
-    <value>Copiază jurnalul operațiunii</value>
-  </data>
-  <data name="CopySaveOperationMessage" xml:space="preserve">
-    <value>Salvează jurnalul operațiunii pe Desktop?</value>
-  </data>
   <data name="DeferChange" xml:space="preserve">
     <value>Schimbă momentul când slider-ul devine liber</value>
   </data>
@@ -150,23 +147,20 @@
   <data name="EnableUnison" xml:space="preserve">
     <value>Activează sincronizarea setării</value>
   </data>
-  <data name="MakeOperation" xml:space="preserve">
-    <value>Creează jurnalul operațiunii</value>
+  <data name="InvertScrollDirection" xml:space="preserve">
+    <value>Inversați direcția de derulare</value>
+  </data>
+  <data name="MouseHorizontalWheel" xml:space="preserve">
+    <value>Derulare orizontală cu mouse-ul</value>
+  </data>
+  <data name="MouseVerticalWheel" xml:space="preserve">
+    <value>Derulare verticală cu mouse-ul</value>
   </data>
   <data name="OrderArrangement" xml:space="preserve">
     <value>Sortează după poziția monitoarelor</value>
   </data>
-  <data name="Probe" xml:space="preserve">
-    <value>Probează în monitoare</value>
-  </data>
-  <data name="RecordExceptionMessage" xml:space="preserve">
-    <value>A apărut o problemă neașteptată. Salvez jurnalul problemei pe Desktop?</value>
-  </data>
-  <data name="RecordProbeMessage" xml:space="preserve">
-    <value>Salvează jurnalul probei pe Desktop?</value>
-  </data>
-  <data name="Rescan" xml:space="preserve">
-    <value>Nuova scansione monitor</value>
+  <data name="RestoreReconnection" xml:space="preserve">
+    <value>Reface luminozitatea la conectare</value>
   </data>
   <data name="Settings" xml:space="preserve">
     <value>Setări</value>
@@ -180,14 +174,14 @@
   <data name="StartSignIn" xml:space="preserve">
     <value>Pornește la sign-in</value>
   </data>
-  <data name="StatusNotControllable" xml:space="preserve">
-    <value>Monitorul nu e controlabil.</value>
+  <data name="TouchpadHorizontalSwipe" xml:space="preserve">
+    <value>Glisare orizontală pe touchpad</value>
   </data>
-  <data name="StatusReasonDdcFailing" xml:space="preserve">
-    <value>DDC/CI a eșuat în mod repetat.</value>
+  <data name="TouchpadVerticalSwipe" xml:space="preserve">
+    <value>Glisare verticală pe touchpad</value>
   </data>
-  <data name="StatusReasonDdcNotEnabled" xml:space="preserve">
-    <value>DDC/CI nu este suportat sau activat.</value>
+  <data name="UseAccentColor" xml:space="preserve">
+    <value>Folosește culoarea de accent pentru luminozitate</value>
   </data>
   <data name="UseLargeElements" xml:space="preserve">
     <value>Folosește slidere mari</value>

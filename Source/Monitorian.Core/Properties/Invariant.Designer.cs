@@ -19,7 +19,7 @@ namespace Monitorian.Core.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Invariant {
@@ -61,6 +61,33 @@ namespace Monitorian.Core.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Copy accumulated log.
+        /// </summary>
+        public static string CopyOperation {
+            get {
+                return ResourceManager.GetString("CopyOperation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save operation log to Desktop?.
+        /// </summary>
+        public static string CopyOperationSaveMessage {
+            get {
+                return ResourceManager.GetString("CopyOperationSaveMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Wait until more information is recorded to operation log..
+        /// </summary>
+        public static string CopyOperationWaitMessage {
+            get {
+                return ResourceManager.GetString("CopyOperationWaitMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to License.
         /// </summary>
         public static string License {
@@ -70,11 +97,83 @@ namespace Monitorian.Core.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Probe into monitors.
+        /// </summary>
+        public static string Probe {
+            get {
+                return ResourceManager.GetString("Probe", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Record operations to log.
+        /// </summary>
+        public static string RecordOperation {
+            get {
+                return ResourceManager.GetString("RecordOperation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rescan monitors.
+        /// </summary>
+        public static string Rescan {
+            get {
+                return ResourceManager.GetString("Rescan", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An unexpected problem has occurred. Save exception log to Desktop?.
+        /// </summary>
+        public static string SaveExceptionMessage {
+            get {
+                return ResourceManager.GetString("SaveExceptionMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save probe log to Desktop?.
+        /// </summary>
+        public static string SaveProbeMessage {
+            get {
+                return ResourceManager.GetString("SaveProbeMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Site.
         /// </summary>
         public static string Site {
             get {
                 return ResourceManager.GetString("Site", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Monitor is not controllable..
+        /// </summary>
+        public static string StatusNotControllable {
+            get {
+                return ResourceManager.GetString("StatusNotControllable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to DDC/CI has been failing repeatedly..
+        /// </summary>
+        public static string StatusReasonDdcFailing {
+            get {
+                return ResourceManager.GetString("StatusReasonDdcFailing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to DDC/CI is not supported or enabled..
+        /// </summary>
+        public static string StatusReasonDdcNotEnabled {
+            get {
+                return ResourceManager.GetString("StatusReasonDdcNotEnabled", resourceCulture);
             }
         }
     }

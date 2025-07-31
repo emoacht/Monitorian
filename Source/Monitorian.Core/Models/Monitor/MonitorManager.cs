@@ -21,28 +21,27 @@ internal class MonitorManager
 
 	private class DisplayItem
 	{
-		public string DeviceInstanceId { get; }
+		private readonly DisplayConfig.DisplayItem _deviceConfigItem;
+
+		public string DeviceInstanceId => _deviceConfigItem.DeviceInstanceId;
 		public string DisplayName { get; }
 		public string ConnectionDescription { get; }
-		public bool IsInternal { get; }
-		public DisplayIdSet DisplayIdSet { get; }
+		public bool IsInternal => _deviceConfigItem.IsInternal;
+		public DisplayIdSet DisplayIdSet => _deviceConfigItem.DisplayIdSet;
 
 		public DisplayItem(
 			DisplayConfig.DisplayItem deviceConfigItem,
 			DisplayMonitorProvider.DisplayItem displayMonitorItem)
 		{
-			if (deviceConfigItem is null)
-				throw new ArgumentNullException(nameof(deviceConfigItem));
-
-			DeviceInstanceId = deviceConfigItem.DeviceInstanceId;
+			this._deviceConfigItem = deviceConfigItem ?? throw new ArgumentNullException(nameof(deviceConfigItem));
 
 			DisplayName = !string.IsNullOrWhiteSpace(displayMonitorItem?.DisplayName)
-				? displayMonitorItem.DisplayName : deviceConfigItem.DisplayName;
-			ConnectionDescription = !string.IsNullOrWhiteSpace(displayMonitorItem?.ConnectionDescription)
-				? displayMonitorItem.ConnectionDescription : deviceConfigItem.ConnectionDescription;
+				? displayMonitorItem.DisplayName
+				: deviceConfigItem.DisplayName;
 
-			IsInternal = deviceConfigItem.IsInternal;
-			DisplayIdSet = deviceConfigItem.DisplayIdSet;
+			ConnectionDescription = !string.IsNullOrWhiteSpace(displayMonitorItem?.ConnectionDescription)
+				? displayMonitorItem.ConnectionDescription
+				: deviceConfigItem.ConnectionDescription;
 		}
 	}
 
@@ -53,7 +52,7 @@ internal class MonitorManager
 
 		public string DeviceInstanceId => _deviceItem.DeviceInstanceId;
 		public string Description => _deviceItem.Description;
-		public string AlternateDescription { get; }
+		public string AlternativeDescription { get; }
 		public byte DisplayIndex => _deviceItem.DisplayIndex;
 		public byte MonitorIndex => _deviceItem.MonitorIndex;
 		public bool IsInternal => _displayItem.IsInternal;
@@ -62,11 +61,13 @@ internal class MonitorManager
 		public BasicItem(
 			DeviceContext.DeviceItem deviceItem,
 			DisplayItem displayItem,
-			string alternateDescription = null)
+			string alternativeDescription)
 		{
 			this._deviceItem = deviceItem ?? throw new ArgumentNullException(nameof(deviceItem));
 			this._displayItem = displayItem ?? throw new ArgumentNullException(nameof(displayItem));
-			this.AlternateDescription = alternateDescription ?? deviceItem.Description;
+
+			Debug.Assert(!string.IsNullOrEmpty(alternativeDescription));
+			this.AlternativeDescription = alternativeDescription;
 		}
 	}
 
@@ -132,7 +133,7 @@ internal class MonitorManager
 	{
 		foreach (var deviceItem in deviceItems)
 		{
-			if (_precludedIds.Value.Any(x => string.Equals(deviceItem.DeviceInstanceId, x, StringComparison.OrdinalIgnoreCase)))
+			if (_precludedIds.Value.Contains(deviceItem.DeviceInstanceId))
 				continue;
 
 			var displayItem = displayItems.FirstOrDefault(x => string.Equals(deviceItem.DeviceInstanceId, x.DeviceInstanceId, StringComparison.OrdinalIgnoreCase));
@@ -148,9 +149,9 @@ internal class MonitorManager
 			{
 				yield return new BasicItem(deviceItem, displayItem, $"{deviceItem.Description} ({displayItem.ConnectionDescription})");
 			}
-			else
+			else if (!string.IsNullOrWhiteSpace(deviceItem.Description))
 			{
-				yield return new BasicItem(deviceItem, displayItem);
+				yield return new BasicItem(deviceItem, displayItem, deviceItem.Description);
 			}
 		}
 	}
@@ -162,9 +163,7 @@ internal class MonitorManager
 
 		var displayItems = await GetDisplayItemsAsync();
 
-		var basicItems = EnumerateBasicItems(deviceItems, displayItems)
-			.Where(x => !string.IsNullOrWhiteSpace(x.AlternateDescription))
-			.ToList();
+		var basicItems = EnumerateBasicItems(deviceItems, displayItems).ToList();
 		if (basicItems.Count == 0)
 			return Enumerable.Empty<IMonitor>();
 
@@ -182,31 +181,33 @@ internal class MonitorManager
 		IEnumerable<IMonitor> EnumerateMonitorItems()
 		{
 			// Controlled under HDR
-			foreach (var handleItem in handleItems)
+			if (DisplayInformationWatcher.IsEnabled)
 			{
-				if (!DisplayInformationWatcher.IsEnabled ||
-					!DisplayInformationProvider.IsHdr(handleItem.MonitorHandle))
-					continue;
+				foreach (var handleItem in handleItems)
+				{
+					if (!DisplayInformationProvider.IsHdr(handleItem.MonitorHandle))
+						continue;
 
-				int index = basicItems.FindIndex(x =>
-					(x.DisplayIndex == handleItem.DisplayIndex));
-				if (index < 0)
-					continue;
+					int index = basicItems.FindIndex(x =>
+						(x.DisplayIndex == handleItem.DisplayIndex));
+					if (index < 0)
+						continue;
 
-				var basicItem = basicItems[index];
-				yield return new HdrMonitorItem(
-					deviceInstanceId: basicItem.DeviceInstanceId,
-					description: basicItem.AlternateDescription,
-					displayIndex: basicItem.DisplayIndex,
-					monitorIndex: basicItem.MonitorIndex,
-					monitorRect: handleItem.MonitorRect,
-					isInternal: basicItem.IsInternal,
-					monitorHandle: handleItem.MonitorHandle,
-					displayIdSet: basicItem.DisplayIdSet);
+					var basicItem = basicItems[index];
+					yield return new HdrMonitorItem(
+						deviceInstanceId: basicItem.DeviceInstanceId,
+						description: basicItem.AlternativeDescription,
+						displayIndex: basicItem.DisplayIndex,
+						monitorIndex: basicItem.MonitorIndex,
+						monitorRect: handleItem.MonitorRect,
+						isInternal: basicItem.IsInternal,
+						monitorHandle: handleItem.MonitorHandle,
+						displayIdSet: basicItem.DisplayIdSet);
 
-				basicItems.RemoveAt(index);
-				if (basicItems.Count == 0)
-					yield break;
+					basicItems.RemoveAt(index);
+					if (basicItems.Count == 0)
+						yield break;
+				}
 			}
 
 			// Obtained by DDC/CI
@@ -249,7 +250,7 @@ internal class MonitorManager
 
 					yield return new DdcMonitorItem(
 						deviceInstanceId: basicItem.DeviceInstanceId,
-						description: basicItem.AlternateDescription,
+						description: basicItem.AlternativeDescription,
 						displayIndex: basicItem.DisplayIndex,
 						monitorIndex: basicItem.MonitorIndex,
 						monitorRect: handleItem.MonitorRect,
@@ -279,7 +280,7 @@ internal class MonitorManager
 					var basicItem = basicItems[index];
 					yield return new WmiMonitorItem(
 						deviceInstanceId: basicItem.DeviceInstanceId,
-						description: basicItem.AlternateDescription,
+						description: basicItem.AlternativeDescription,
 						displayIndex: basicItem.DisplayIndex,
 						monitorIndex: basicItem.MonitorIndex,
 						monitorRect: handleItem.MonitorRect,
@@ -297,7 +298,7 @@ internal class MonitorManager
 			{
 				yield return new UnreachableMonitorItem(
 					deviceInstanceId: basicItem.DeviceInstanceId,
-					description: basicItem.AlternateDescription,
+					description: basicItem.AlternativeDescription,
 					displayIndex: basicItem.DisplayIndex,
 					monitorIndex: basicItem.MonitorIndex,
 					isInternal: basicItem.IsInternal);

@@ -75,7 +75,6 @@
     <Compile Include="Models\Monitor\MonitorConfiguration.cs" />
     <Compile Include="Models\Monitor\MonitorItem.cs" />
     <Compile Include="Models\Monitor\MonitorManager.cs" />
-    <Compile Include="Models\Monitor\MonitorRecord.cs" />
     <Compile Include="Models\Monitor\MSMonitor.cs" />
     <Compile Include="Models\Monitor\PowerManagement.cs" />
     <Compile Include="Models\Monitor\SystemMetric.cs" />

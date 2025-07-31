@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AdjustSdrContent" xml:space="preserve">
+    <value>Helderheid van SDR-inhoud aanpassen</value>
+  </data>
   <data name="Arguments" xml:space="preserve">
     <value>Command-line argumenten</value>
   </data>
@@ -132,12 +135,6 @@
   <data name="Close" xml:space="preserve">
     <value>Sluiten</value>
   </data>
-  <data name="CopyOperation" xml:space="preserve">
-    <value>Bewerkingslogboek kopiëren</value>
-  </data>
-  <data name="CopySaveOperationMessage" xml:space="preserve">
-    <value>Bewerkingslogboek kopiëren naar de Desktop?</value>
-  </data>
   <data name="DeferChange" xml:space="preserve">
     <value>Wijziging uitstellen tot stoppen</value>
   </data>
@@ -150,23 +147,20 @@
   <data name="EnableUnison" xml:space="preserve">
     <value>Waardes samen aanpassen inschakelen</value>
   </data>
-  <data name="MakeOperation" xml:space="preserve">
-    <value>Bewerkingslogboek maken</value>
+  <data name="InvertScrollDirection" xml:space="preserve">
+    <value>Scrollrichting omkeren</value>
+  </data>
+  <data name="MouseHorizontalWheel" xml:space="preserve">
+    <value>Horizontaal scrollen met muis</value>
+  </data>
+  <data name="MouseVerticalWheel" xml:space="preserve">
+    <value>Verticaal scrollen met muis</value>
   </data>
   <data name="OrderArrangement" xml:space="preserve">
     <value>Ordenen op monitor volgorde</value>
   </data>
-  <data name="Probe" xml:space="preserve">
-    <value>Monitoren doorzoeken</value>
-  </data>
-  <data name="RecordExceptionMessage" xml:space="preserve">
-    <value>Er is een onbekende fout opgetreden. Foutmelding opslaan op bureaublad?</value>
-  </data>
-  <data name="RecordProbeMessage" xml:space="preserve">
-    <value>Logboek opslaan naar op het bureaublad?</value>
-  </data>
-  <data name="Rescan" xml:space="preserve">
-    <value>Zoeken naar monitoren</value>
+  <data name="RestoreReconnection" xml:space="preserve">
+    <value>Herstel helderheid bij verbinden</value>
   </data>
   <data name="Settings" xml:space="preserve">
     <value>Instellingen</value>
@@ -180,14 +174,14 @@
   <data name="StartSignIn" xml:space="preserve">
     <value>Opstarten bij aanmelding</value>
   </data>
-  <data name="StatusNotControllable" xml:space="preserve">
-    <value>Monitor is niet regelbaar</value>
+  <data name="TouchpadHorizontalSwipe" xml:space="preserve">
+    <value>Horizontale veegbeweging met touchpad</value>
   </data>
-  <data name="StatusReasonDdcFailing" xml:space="preserve">
-    <value>DDC/CI is meerdere keren gefaald</value>
+  <data name="TouchpadVerticalSwipe" xml:space="preserve">
+    <value>Verticale veegbeweging met touchpad</value>
   </data>
-  <data name="StatusReasonDdcNotEnabled" xml:space="preserve">
-    <value>DDC/CI wordt niet ondersteund of is niet aangezet bij uw monitor</value>
+  <data name="UseAccentColor" xml:space="preserve">
+    <value>Gebruik een accentkleur voor helderheid</value>
   </data>
   <data name="UseLargeElements" xml:space="preserve">
     <value>Gebruik grote schuifregelaars</value>

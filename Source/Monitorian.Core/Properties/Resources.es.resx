@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AdjustSdrContent" xml:space="preserve">
+    <value>Ajustar el brillo del contenido SDR</value>
+  </data>
   <data name="Arguments" xml:space="preserve">
     <value>Argumentos de línia de comandos</value>
   </data>
@@ -132,12 +135,6 @@
   <data name="Close" xml:space="preserve">
     <value>Cerrar</value>
   </data>
-  <data name="CopyOperation" xml:space="preserve">
-    <value>Copiar registro de operación</value>
-  </data>
-  <data name="CopySaveOperationMessage" xml:space="preserve">
-    <value>¿Guardar registro de operación en el escritorio?</value>
-  </data>
   <data name="DeferChange" xml:space="preserve">
     <value>No realizar cambios hasta terminar de ajustar</value>
   </data>
@@ -150,23 +147,20 @@
   <data name="EnableUnison" xml:space="preserve">
     <value>Habilitar mover a la vez los controles</value>
   </data>
-  <data name="MakeOperation" xml:space="preserve">
-    <value>Registrar operaciones</value>
+  <data name="InvertScrollDirection" xml:space="preserve">
+    <value>Invertir dirección de desplazamiento</value>
+  </data>
+  <data name="MouseHorizontalWheel" xml:space="preserve">
+    <value>Desplazamiento horizontal del ratón</value>
+  </data>
+  <data name="MouseVerticalWheel" xml:space="preserve">
+    <value>Desplazamiento vertical del ratón</value>
   </data>
   <data name="OrderArrangement" xml:space="preserve">
     <value>Ordenar por posición de los monitores</value>
   </data>
-  <data name="Probe" xml:space="preserve">
-    <value>Sondear monitores</value>
-  </data>
-  <data name="RecordExceptionMessage" xml:space="preserve">
-    <value>Un problema inesperado ha aparecido. ¿Guardar registro de fallos en el escritorio?</value>
-  </data>
-  <data name="RecordProbeMessage" xml:space="preserve">
-    <value>¿Guardar registro de sondeo en el escritorio?</value>
-  </data>
-  <data name="Rescan" xml:space="preserve">
-    <value>Volver a comprobar monitores</value>
+  <data name="RestoreReconnection" xml:space="preserve">
+    <value>Restaurar brillo al reconectar</value>
   </data>
   <data name="Settings" xml:space="preserve">
     <value>Ajustes</value>
@@ -180,14 +174,14 @@
   <data name="StartSignIn" xml:space="preserve">
     <value>Ejecutar al iniciar sesión</value>
   </data>
-  <data name="StatusNotControllable" xml:space="preserve">
-    <value>Monitor no controlable.</value>
+  <data name="TouchpadHorizontalSwipe" xml:space="preserve">
+    <value>Deslizamiento horizontal en el touchpad</value>
   </data>
-  <data name="StatusReasonDdcFailing" xml:space="preserve">
-    <value>DDC/CI ha fallado varias veces.</value>
+  <data name="TouchpadVerticalSwipe" xml:space="preserve">
+    <value>Deslizamiento vertical en el touchpad</value>
   </data>
-  <data name="StatusReasonDdcNotEnabled" xml:space="preserve">
-    <value>DDC/CI no está soportado o no está habilitado.</value>
+  <data name="UseAccentColor" xml:space="preserve">
+    <value>Color de acento para brillo</value>
   </data>
   <data name="UseLargeElements" xml:space="preserve">
     <value>Usar controles grandes</value>

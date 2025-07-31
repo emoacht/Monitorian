@@ -155,7 +155,7 @@ public class AppKeeper
 		if (ConsoleService.WriteLine(exception, exceptionName))
 			return;
 
-		Logger.RecordException(exception);
+		Logger.SaveException(exception);
 	}
 
 	#endregion

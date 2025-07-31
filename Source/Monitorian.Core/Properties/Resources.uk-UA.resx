@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AdjustSdrContent" xml:space="preserve">
+    <value>Налаштувати яскравість контенту SDR</value>
+  </data>
   <data name="Arguments" xml:space="preserve">
     <value>Параметри командного рядка</value>
   </data>
@@ -144,6 +147,15 @@
   <data name="EnableUnison" xml:space="preserve">
     <value>Увімкнути одночасне регулювання</value>
   </data>
+  <data name="InvertScrollDirection" xml:space="preserve">
+    <value>Інвертувати напрямок прокрутки</value>
+  </data>
+  <data name="MouseHorizontalWheel" xml:space="preserve">
+    <value>Горизонтальна прокрутка мишею</value>
+  </data>
+  <data name="MouseVerticalWheel" xml:space="preserve">
+    <value>Вертикальна прокрутка мишею</value>
+  </data>
   <data name="OrderArrangement" xml:space="preserve">
     <value>Упорядкувати за розташуванням моніторів</value>
   </data>
@@ -161,6 +173,12 @@
   </data>
   <data name="StartSignIn" xml:space="preserve">
     <value>Запускати під час входу в систему</value>
+  </data>
+  <data name="TouchpadHorizontalSwipe" xml:space="preserve">
+    <value>Горизонтальний свайп на тачпаді</value>
+  </data>
+  <data name="TouchpadVerticalSwipe" xml:space="preserve">
+    <value>Вертикальний свайп на тачпаді</value>
   </data>
   <data name="UseAccentColor" xml:space="preserve">
     <value>Використовувати кольорову тему системи</value>

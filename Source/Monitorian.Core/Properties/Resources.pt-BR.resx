@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AdjustSdrContent" xml:space="preserve">
+    <value>Ajustar o brilho do conteúdo SDR</value>
+  </data>
   <data name="Arguments" xml:space="preserve">
     <value>Argumentos de linha de comando</value>
   </data>
@@ -144,8 +147,20 @@
   <data name="EnableUnison" xml:space="preserve">
     <value>Permitir alterações em conjunto</value>
   </data>
+  <data name="InvertScrollDirection" xml:space="preserve">
+    <value>Inverter a direção de rolagem</value>
+  </data>
+  <data name="MouseHorizontalWheel" xml:space="preserve">
+    <value>Rolagem horizontal do mouse</value>
+  </data>
+  <data name="MouseVerticalWheel" xml:space="preserve">
+    <value>Rolagem vertical do mouse</value>
+  </data>
   <data name="OrderArrangement" xml:space="preserve">
     <value>Ordenar pela disposição dos monitores</value>
+  </data>
+  <data name="RestoreReconnection" xml:space="preserve">
+    <value>Restaurar brilho ao reconectar</value>
   </data>
   <data name="Settings" xml:space="preserve">
     <value>Ajustes</value>
@@ -158,6 +173,15 @@
   </data>
   <data name="StartSignIn" xml:space="preserve">
     <value>Executar ao inicializar</value>
+  </data>
+  <data name="TouchpadHorizontalSwipe" xml:space="preserve">
+    <value>Poziome przesunięcie na touchpadzie</value>
+  </data>
+  <data name="TouchpadVerticalSwipe" xml:space="preserve">
+    <value>Pionowe przesunięcie na touchpadzie</value>
+  </data>
+  <data name="UseAccentColor" xml:space="preserve">
+    <value>Usar a cor de destaque para o brilho</value>
   </data>
   <data name="UseLargeElements" xml:space="preserve">
     <value>Usar controles grandes</value>

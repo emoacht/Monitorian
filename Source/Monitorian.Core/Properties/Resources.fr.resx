@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AdjustSdrContent" xml:space="preserve">
+    <value>Ajuster la luminosité du contenu SDR</value>
+  </data>
   <data name="ChangeContrast" xml:space="preserve">
     <value>Changer le contraste</value>
   </data>
@@ -141,17 +144,35 @@
   <data name="EnableUnison" xml:space="preserve">
     <value>Activer le changement de luminosité à l'unisson</value>
   </data>
+  <data name="InvertScrollDirection" xml:space="preserve">
+    <value>Inverser le sens du défilement</value>
+  </data>
+  <data name="MouseHorizontalWheel" xml:space="preserve">
+    <value>Défilement horizontal de la souris</value>
+  </data>
+  <data name="MouseVerticalWheel" xml:space="preserve">
+    <value>Défilement vertical de la souris</value>
+  </data>
   <data name="OrderArrangement" xml:space="preserve">
     <value>Trier par disposition des écrans</value>
   </data>
   <data name="RestoreReconnection" xml:space="preserve">
     <value>Restaurer la luminosité à la reconnexion</value>
   </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Paramètres</value>
+  </data>
   <data name="ShowAdjusted" xml:space="preserve">
     <value>Afficher la luminosité ajustée</value>
   </data>
   <data name="StartSignIn" xml:space="preserve">
     <value>Exécuter au démarrage</value>
+  </data>
+  <data name="TouchpadHorizontalSwipe" xml:space="preserve">
+    <value>Glissement horizontal du pavé tactile</value>
+  </data>
+  <data name="TouchpadVerticalSwipe" xml:space="preserve">
+    <value>Glissement vertical du pavé tactile</value>
   </data>
   <data name="UseAccentColor" xml:space="preserve">
     <value>Utiliser la couleur d'accentuation pour la luminosité</value>

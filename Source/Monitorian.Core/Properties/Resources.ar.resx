@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AdjustSdrContent" xml:space="preserve">
+    <value>ضبط سطوع محتوى SDR</value>
+  </data>
   <data name="ChangeContrast" xml:space="preserve">
     <value>تغيير التباين</value>
   </data>
@@ -141,8 +144,20 @@
   <data name="EnableUnison" xml:space="preserve">
     <value>تمكين الحركة المتوافقة</value>
   </data>
+  <data name="InvertScrollDirection" xml:space="preserve">
+    <value>عكس اتجاه التمرير</value>
+  </data>
+  <data name="MouseHorizontalWheel" xml:space="preserve">
+    <value>عجلة الفأرة الأفقية</value>
+  </data>
+  <data name="MouseVerticalWheel" xml:space="preserve">
+    <value>عجلة الفأرة الرأسية</value>
+  </data>
   <data name="OrderArrangement" xml:space="preserve">
     <value>فرز حسب تخطيط الشاشة</value>
+  </data>
+  <data name="RestoreReconnection" xml:space="preserve">
+    <value>استعادة السطوع عند إعادة الاتصال</value>
   </data>
   <data name="Settings" xml:space="preserve">
     <value>الإعدادات</value>
@@ -155,6 +170,15 @@
   </data>
   <data name="StartSignIn" xml:space="preserve">
     <value>ابدا البرنامج عند بدء التشغيل</value>
+  </data>
+  <data name="TouchpadHorizontalSwipe" xml:space="preserve">
+    <value>تمرير لوحة اللمس الأفقية</value>
+  </data>
+  <data name="TouchpadVerticalSwipe" xml:space="preserve">
+    <value>تمرير لوحة اللمس العمودية</value>
+  </data>
+  <data name="UseAccentColor" xml:space="preserve">
+    <value>استخدم لونًا مميزًا للسطوع</value>
   </data>
   <data name="UseLargeElements" xml:space="preserve">
     <value>استخدام عناصر كبيرة</value>

@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AdjustSdrContent" xml:space="preserve">
+    <value>SDR 콘텐츠 밝기 조절</value>
+  </data>
   <data name="Arguments" xml:space="preserve">
     <value>명령줄 인수</value>
   </data>
@@ -144,6 +147,15 @@
   <data name="EnableUnison" xml:space="preserve">
     <value>동시에 밝기 변경 사용</value>
   </data>
+  <data name="InvertScrollDirection" xml:space="preserve">
+    <value>스크롤 방향 반전</value>
+  </data>
+  <data name="MouseHorizontalWheel" xml:space="preserve">
+    <value>마우스 수평 스크롤</value>
+  </data>
+  <data name="MouseVerticalWheel" xml:space="preserve">
+    <value>마우스 수직 스크롤</value>
+  </data>
   <data name="OrderArrangement" xml:space="preserve">
     <value>모니터별 순서 배열</value>
   </data>
@@ -161,6 +173,12 @@
   </data>
   <data name="StartSignIn" xml:space="preserve">
     <value>로그인시 시작</value>
+  </data>
+  <data name="TouchpadHorizontalSwipe" xml:space="preserve">
+    <value>터치패드 수평 스와이프</value>
+  </data>
+  <data name="TouchpadVerticalSwipe" xml:space="preserve">
+    <value>터치패드 수직 스와이프</value>
   </data>
   <data name="UseAccentColor" xml:space="preserve">
     <value>밝기에 강조 색상 사용</value>

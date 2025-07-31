@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AdjustSdrContent" xml:space="preserve">
+    <value>調整SDR內容亮度</value>
+  </data>
   <data name="Arguments" xml:space="preserve">
     <value>命令列引數</value>
   </data>
@@ -144,8 +147,20 @@
   <data name="EnableUnison" xml:space="preserve">
     <value>啟用連動調整</value>
   </data>
+  <data name="InvertScrollDirection" xml:space="preserve">
+    <value>反轉捲動方向</value>
+  </data>
+  <data name="MouseHorizontalWheel" xml:space="preserve">
+    <value>滑鼠水平捲動</value>
+  </data>
+  <data name="MouseVerticalWheel" xml:space="preserve">
+    <value>滑鼠垂直捲動</value>
+  </data>
   <data name="OrderArrangement" xml:space="preserve">
     <value>按顯示器排列呈現</value>
+  </data>
+  <data name="RestoreReconnection" xml:space="preserve">
+    <value>重新連線時恢復亮度</value>
   </data>
   <data name="Settings" xml:space="preserve">
     <value>設定</value>
@@ -158,6 +173,15 @@
   </data>
   <data name="StartSignIn" xml:space="preserve">
     <value>開機時啟動</value>
+  </data>
+  <data name="TouchpadHorizontalSwipe" xml:space="preserve">
+    <value>觸控板水平滑動</value>
+  </data>
+  <data name="TouchpadVerticalSwipe" xml:space="preserve">
+    <value>觸控板垂直滑動</value>
+  </data>
+  <data name="UseAccentColor" xml:space="preserve">
+    <value>亮度滑桿使用系統主題色</value>
   </data>
   <data name="UseLargeElements" xml:space="preserve">
     <value>使用大滑桿</value>

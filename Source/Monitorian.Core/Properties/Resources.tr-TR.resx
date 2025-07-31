@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AdjustSdrContent" xml:space="preserve">
+    <value>SDR içeriği parlaklığını ayarla</value>
+  </data>
   <data name="ChangeContrast" xml:space="preserve">
     <value>Kontrastı değiştir</value>
   </data>
@@ -141,8 +144,20 @@
   <data name="EnableUnison" xml:space="preserve">
     <value>Uyumlu hareket etmeyi etkinleştir</value>
   </data>
+  <data name="InvertScrollDirection" xml:space="preserve">
+    <value>Kaydırma yönünü tersine çevir</value>
+  </data>
+  <data name="MouseHorizontalWheel" xml:space="preserve">
+    <value>Fare ile yatay kaydırma</value>
+  </data>
+  <data name="MouseVerticalWheel" xml:space="preserve">
+    <value>Fare ile dikey kaydırma</value>
+  </data>
   <data name="OrderArrangement" xml:space="preserve">
     <value>Monitör düzenine göre sırala</value>
+  </data>
+  <data name="RestoreReconnection" xml:space="preserve">
+    <value>Yeniden bağlanınca parlaklığı geri getir</value>
   </data>
   <data name="Settings" xml:space="preserve">
     <value>Ayarlar</value>
@@ -155,6 +170,15 @@
   </data>
   <data name="StartSignIn" xml:space="preserve">
     <value>Başlangıçta başlat</value>
+  </data>
+  <data name="TouchpadHorizontalSwipe" xml:space="preserve">
+    <value>Dokunmatik yüzeyde yatay kaydırma</value>
+  </data>
+  <data name="TouchpadVerticalSwipe" xml:space="preserve">
+    <value>Dokunmatik yüzeyde dikey kaydırma</value>
+  </data>
+  <data name="UseAccentColor" xml:space="preserve">
+    <value>Parlaklık için vurgu rengini kullan</value>
   </data>
   <data name="UseLargeElements" xml:space="preserve">
     <value>Büyük kaydırıcılar kullanın</value>

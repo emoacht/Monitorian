@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AdjustSdrContent" xml:space="preserve">
+    <value>Regola la luminosità dei contenuti SDR</value>
+  </data>
   <data name="Arguments" xml:space="preserve">
     <value>Argomenti da linea di comando</value>
   </data>
@@ -144,8 +147,20 @@
   <data name="EnableUnison" xml:space="preserve">
     <value>Abilita sincronizzazione spostamento</value>
   </data>
+  <data name="InvertScrollDirection" xml:space="preserve">
+    <value>Inverti la direzione di scorrimento</value>
+  </data>
+  <data name="MouseHorizontalWheel" xml:space="preserve">
+    <value>Scorrimento orizzontale del mouse</value>
+  </data>
+  <data name="MouseVerticalWheel" xml:space="preserve">
+    <value>Scorrimento verticale del mouse</value>
+  </data>
   <data name="OrderArrangement" xml:space="preserve">
     <value>Ordina per collocazione monitor</value>
+  </data>
+  <data name="RestoreReconnection" xml:space="preserve">
+    <value>Ripristina luminosità al ritorno</value>
   </data>
   <data name="Settings" xml:space="preserve">
     <value>Impostazioni</value>
@@ -158,6 +173,15 @@
   </data>
   <data name="StartSignIn" xml:space="preserve">
     <value>Esegui all'avvio</value>
+  </data>
+  <data name="TouchpadHorizontalSwipe" xml:space="preserve">
+    <value>Scorrimento orizzontale del touchpad</value>
+  </data>
+  <data name="TouchpadVerticalSwipe" xml:space="preserve">
+    <value>Scorrimento verticale del touchpad</value>
+  </data>
+  <data name="UseAccentColor" xml:space="preserve">
+    <value>Usa il colore d'accento per la luminosità</value>
   </data>
   <data name="UseLargeElements" xml:space="preserve">
     <value>Usa slider grandi</value>

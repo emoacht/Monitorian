@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AdjustSdrContent" xml:space="preserve">
+    <value>Настроить яркость контента SDR</value>
+  </data>
   <data name="ChangeContrast" xml:space="preserve">
     <value>Изменить контрастность</value>
   </data>
@@ -141,8 +144,20 @@
   <data name="EnableUnison" xml:space="preserve">
     <value>Включить одновременную регулировку</value>
   </data>
+  <data name="InvertScrollDirection" xml:space="preserve">
+    <value>Инвертировать направление прокрутки</value>
+  </data>
+  <data name="MouseHorizontalWheel" xml:space="preserve">
+    <value>Горизонтальная прокрутка мыши</value>
+  </data>
+  <data name="MouseVerticalWheel" xml:space="preserve">
+    <value>Вертикальная прокрутка мыши</value>
+  </data>
   <data name="OrderArrangement" xml:space="preserve">
     <value>Упорядочить по расположению мониторов</value>
+  </data>
+  <data name="RestoreReconnection" xml:space="preserve">
+    <value>Восстановить яркость при повторном подключении</value>
   </data>
   <data name="Settings" xml:space="preserve">
     <value>Настройки</value>
@@ -155,6 +170,12 @@
   </data>
   <data name="StartSignIn" xml:space="preserve">
     <value>Запускать при входе в систему</value>
+  </data>
+  <data name="TouchpadHorizontalSwipe" xml:space="preserve">
+    <value>Горизонтальный свайп на тачпаде</value>
+  </data>
+  <data name="TouchpadVerticalSwipe" xml:space="preserve">
+    <value>Вертикальный свайп на тачпаде</value>
   </data>
   <data name="UseAccentColor" xml:space="preserve">
     <value>Использовать системный цвет для ползунка яркости</value>

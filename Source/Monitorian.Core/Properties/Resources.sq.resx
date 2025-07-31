@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AdjustSdrContent" xml:space="preserve">
+    <value>Rregulloni ndriçimin e përmbajtjes SDR</value>
+  </data>
   <data name="Arguments" xml:space="preserve">
     <value>Argumentet e rreshtit të komandës</value>
   </data>
@@ -144,6 +147,15 @@
   <data name="EnableUnison" xml:space="preserve">
     <value>Aktivizo ndryshimin e ndriçimit në njëzëshmëri</value>
   </data>
+  <data name="InvertScrollDirection" xml:space="preserve">
+    <value>Kthe drejtimin e lëvizjes</value>
+  </data>
+  <data name="MouseHorizontalWheel" xml:space="preserve">
+    <value>Rrëshqitje horizontale me miun</value>
+  </data>
+  <data name="MouseVerticalWheel" xml:space="preserve">
+    <value>Rrëshqitje vertikale me miun</value>
+  </data>
   <data name="OrderArrangement" xml:space="preserve">
     <value>Rendit sipas vendosjes së monitorave</value>
   </data>
@@ -161,6 +173,12 @@
   </data>
   <data name="StartSignIn" xml:space="preserve">
     <value>Nis në hyrje</value>
+  </data>
+  <data name="TouchpadHorizontalSwipe" xml:space="preserve">
+    <value>Rrëshqitje horizontale me touchpad</value>
+  </data>
+  <data name="TouchpadVerticalSwipe" xml:space="preserve">
+    <value>Rrëshqitje vertikale me touchpad</value>
   </data>
   <data name="UseAccentColor" xml:space="preserve">
     <value>Përdor ngjyrën e theksuar për ndriçimin</value>

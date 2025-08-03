@@ -4,8 +4,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Input;
-using System.Windows.Media;
 
 using Monitorian.Core.Models;
 using Monitorian.Core.ViewModels;
@@ -49,18 +47,22 @@ public partial class MenuWindow : Window
 
 	private void InvertScrollDirection_Click(object sender, RoutedEventArgs e)
 	{
-		if ((sender is ButtonBase parent) &&
-			(VisualTreeHelper.GetChild(parent, 0) is UIElement child))
+		if (sender is ButtonBase button)
 		{
-			var point = Mouse.GetPosition(child);
-			point = new Point(Math.Max(point.X, 0D), Math.Max(point.Y, 0D));
-			point = child.PointToScreen(point);
+			var topLeft = button.PointToScreen(new Point(0, 0));
+			var bottomRight = button.PointToScreen(new Point(button.ActualWidth, button.ActualHeight));
+			var pivot = new Rect(topLeft, bottomRight);
 
 			DepartFromForeground();
 
-			var scrollWindow = new ScrollWindow(_controller, point) { Owner = this };
-			scrollWindow.ShowDialog();
+			var scrollWindow = new ScrollWindow(_controller, pivot);
+			scrollWindow.Closed += OnClosed;
+			scrollWindow.Show();
+		}
 
+		void OnClosed(object sender, EventArgs e)
+		{
+			((Window)sender).Closed -= OnClosed;
 			ReturnToForeground();
 		}
 	}

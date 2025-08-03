@@ -266,21 +266,26 @@ internal static class DisplayInformationProvider
 	#endregion
 
 	/// <summary>
-	/// Determines if HDR is set for a specified monitor (10.0.22621.0 or greater only).
+	/// Determines if HDR is set for a specified monitor and if so, gets SDR white level
+	/// (10.0.22621.0 or greater only).
 	/// </summary>
 	/// <param name="monitorHandle">Monitor handle</param>
-	/// <returns>True if successfully determines that HDR is set</returns>
-	public static bool IsHdr(IntPtr monitorHandle)
+	/// <returns>
+	/// <para>isHdr: True if successfully determines that HDR is set</para>
+	/// <para>sdrWhiteLevel: SDR white level if HDR is set</para>
+	/// </returns>
+	public static (bool isHdr, float sdrWhiteLevel) IsHdrAndGetSdrWhiteLevel(IntPtr monitorHandle)
 	{
 		if (!OsVersion.Is11Build22621OrGreater)
-			return false;
+			return (false, -1);
 
 		var displayInfo = GetForMonitor(monitorHandle);
-		if (displayInfo is null)
-			return false;
 
 		var aci = displayInfo?.GetAdvancedColorInfo();
-		return (aci.CurrentAdvancedColorKind is Windows.Graphics.Display.AdvancedColorKind.HighDynamicRange);
+		if (aci is not { CurrentAdvancedColorKind: Windows.Graphics.Display.AdvancedColorKind.HighDynamicRange })
+			return (false, -1);
+
+		return (isHdr: true, aci.SdrWhiteLevelInNits);
 	}
 
 	/// <summary>

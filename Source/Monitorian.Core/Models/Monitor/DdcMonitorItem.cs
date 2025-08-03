@@ -63,7 +63,6 @@ internal class DdcMonitorItem : MonitorItem
 			throw new ArgumentOutOfRangeException(nameof(brightness), brightness, "The brightness must be from 0 to 100.");
 
 		var buffer = (uint)Math.Round(brightness / 100D * (_maximumBrightness - _minimumBrightness) + _minimumBrightness, MidpointRounding.AwayFromZero);
-
 		var result = MonitorConfiguration.SetBrightness(_handle, buffer, _capability.IsHighLevelBrightnessSupported);
 
 		if (result.Status is AccessStatus.Succeeded)
@@ -99,7 +98,6 @@ internal class DdcMonitorItem : MonitorItem
 			throw new ArgumentOutOfRangeException(nameof(contrast), contrast, "The contrast must be from 0 to 100.");
 
 		var buffer = (uint)Math.Round(contrast / 100D * (_maximumContrast - _minimumContrast) + _minimumContrast, MidpointRounding.AwayFromZero);
-
 		var result = MonitorConfiguration.SetContrast(_handle, buffer);
 
 		if (result.Status is AccessStatus.Succeeded)
@@ -116,6 +114,7 @@ internal class DdcMonitorItem : MonitorItem
 			return (AccessResult.NotSupported, null);
 
 		var (result, _, current, _) = MonitorConfiguration.GetValue(_handle, code);
+
 		if (result.Status is AccessStatus.Succeeded)
 		{
 			return (result, new ValueData((byte)current, values));
@@ -132,6 +131,7 @@ internal class DdcMonitorItem : MonitorItem
 			return (AccessResult.NotSupported, null);
 
 		var result = MonitorConfiguration.SetValue(_handle, code, (uint)value);
+
 		if (result.Status is AccessStatus.Succeeded)
 		{
 			return (result, new ValueData((byte)value, values));

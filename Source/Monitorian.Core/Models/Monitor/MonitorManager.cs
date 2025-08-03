@@ -185,7 +185,8 @@ internal class MonitorManager
 			{
 				foreach (var handleItem in handleItems)
 				{
-					if (!DisplayInformationProvider.IsHdr(handleItem.MonitorHandle))
+					var (isHdr, sdrWhiteLevel) = DisplayInformationProvider.IsHdrAndGetSdrWhiteLevel(handleItem.MonitorHandle);
+					if (!isHdr)
 						continue;
 
 					int index = basicItems.FindIndex(x =>
@@ -202,7 +203,8 @@ internal class MonitorManager
 						monitorRect: handleItem.MonitorRect,
 						isInternal: basicItem.IsInternal,
 						monitorHandle: handleItem.MonitorHandle,
-						displayIdSet: basicItem.DisplayIdSet);
+						displayIdSet: basicItem.DisplayIdSet,
+						sdrWhiteLevel: (int)sdrWhiteLevel);
 
 					basicItems.RemoveAt(index);
 					if (basicItems.Count == 0)

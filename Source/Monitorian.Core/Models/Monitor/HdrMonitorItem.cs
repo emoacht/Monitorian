@@ -18,7 +18,8 @@ internal class HdrMonitorItem : MonitorItem
 		Rect monitorRect,
 		bool isInternal,
 		IntPtr monitorHandle,
-		DisplayIdSet displayIdSet) : base(
+		DisplayIdSet displayIdSet,
+		int sdrWhiteLevel = -1) : base(
 			deviceInstanceId: deviceInstanceId,
 			description: description,
 			displayIndex: displayIndex,
@@ -28,6 +29,9 @@ internal class HdrMonitorItem : MonitorItem
 			isReachable: true)
 	{
 		this._displayIdSet = displayIdSet ?? throw new ArgumentNullException(nameof(displayIdSet));
+
+		if (0 <= sdrWhiteLevel)
+			UpdateBrightness(sdrWhiteLevel);
 
 		DisplayInformationProvider.RegisterMonitor(DeviceInstanceId, monitorHandle);
 	}

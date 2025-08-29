@@ -1,4 +1,4 @@
-﻿# Monitorian
+# Monitorian
 
 Monitorian is a Windows desktop tool to adjust the brightness of multiple monitors with ease.
 
@@ -505,3 +505,4 @@ Ver 1.0 2017-2-22
 ## Developer
 
  - emoacht (emotom[atmark]pobox.com)
+

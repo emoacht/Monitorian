@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 
 using ScreenFrame.Helper;
 
@@ -10,6 +11,8 @@ namespace ScreenFrame.Movers;
 public class FloatWindowMover : BasicWindowMover
 {
 	private readonly Point _pivot;
+	private readonly double _pivotWidth;
+	private readonly double _pivotHeight;
 
 	/// <summary>
 	/// Constructor
@@ -19,6 +22,20 @@ public class FloatWindowMover : BasicWindowMover
 	public FloatWindowMover(Window window, Point pivot) : base(window)
 	{
 		this._pivot = pivot;
+		_pivotWidth = 0;
+		_pivotHeight = 0;
+	}
+
+	/// <summary>
+	/// Constructor
+	/// </summary>
+	/// <param name="window">Window to be moved</param>
+	/// <param name="pivot">Pivot rectangle to be referred</param>
+	public FloatWindowMover(Window window, Rect pivot) : base(window)
+	{
+		this._pivot = pivot.Location;
+		_pivotWidth = Math.Max(0, pivot.Width);
+		_pivotHeight = Math.Max(0, pivot.Height);
 	}
 
 	/// <summary>
@@ -73,23 +90,26 @@ public class FloatWindowMover : BasicWindowMover
 		var x = _pivot.X;
 		var y = _pivot.Y;
 
+		var offsetX = (_pivotWidth == 0) ? 1 : 0;
+		var offsetY = (_pivotHeight == 0) ? 1 : 0;
+
 		switch (PivotAlignment)
 		{
 			case PivotAlignment.TopLeft:
-				x += 1;
-				y += 1;
+				x += _pivotWidth + offsetX;
+				y += offsetY;
 				break;
 			case PivotAlignment.TopRight:
-				x -= (windowWidth + 1);
-				y += 1;
+				x -= (windowWidth + offsetX);
+				y += offsetY;
 				break;
 			case PivotAlignment.BottomLeft:
-				x += 1;
-				y -= (windowHeight + 1);
+				x += _pivotWidth + offsetX;
+				y += _pivotHeight - (windowHeight + offsetY);
 				break;
 			case PivotAlignment.BottomRight:
-				x -= (windowWidth + 1);
-				y -= (windowHeight + 1);
+				x -= (windowWidth + offsetX);
+				y += _pivotHeight - (windowHeight + offsetY);
 				break;
 		}
 		location = new Rect(x, y, windowWidth, windowHeight);

@@ -15,7 +15,7 @@ public static class OperationRecorder
 	public static async Task EnableAsync(string message)
 	{
 		await Logger.PrepareOperationAsync();
-		await Logger.RecordOperationAsync(message);
+		await Logger.SaveOperationAsync(message);
 
 		IsEnabled = true;
 	}
@@ -31,7 +31,7 @@ public static class OperationRecorder
 	public static Task RecordAsync(string content)
 	{
 		return IsEnabled
-			? Logger.RecordOperationAsync(content)
+			? Logger.SaveOperationAsync(content)
 			: Task.CompletedTask;
 	}
 
@@ -39,7 +39,7 @@ public static class OperationRecorder
 
 	private static readonly Lazy<Throttle<string>> _record = new(() => new(
 		TimeSpan.FromSeconds(1),
-		async queue => await Logger.RecordOperationAsync(string.Join(Environment.NewLine, queue))));
+		async queue => await Logger.SaveOperationAsync(string.Join(Environment.NewLine, queue))));
 
 	private static readonly Lazy<ConcurrentDictionary<string, List<string>>> _actionLines = new(() => new());
 
@@ -109,7 +109,7 @@ public static class OperationRecorder
 		{
 			var groupsStrings = _actionGroups.Value.GroupBy(x => x.groupName).Select(x => (x.Key, (object)x.Select(y => y.item))).ToArray();
 
-			await Logger.RecordOperationAsync($"{_actionName}{Environment.NewLine}{SimpleSerialization.Serialize(groupsStrings)}");
+			await Logger.SaveOperationAsync($"{_actionName}{Environment.NewLine}{SimpleSerialization.Serialize(groupsStrings)}");
 			FinishGroupRecord();
 		}
 	}

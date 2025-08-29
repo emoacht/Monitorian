@@ -102,12 +102,12 @@ public class AppControllerCore
 			}
 		});
 
-		_displayInformationWatcher.Subscribe(async (deviceInstanceId, message) =>
+		_displayInformationWatcher.Subscribe(async (deviceInstanceId, sdrWhiteLevel) =>
 		{
 			if (!_sessionWatcher.IsLocked)
 			{
-				Update(deviceInstanceId);
-				await OperationRecorder.RecordAsync(message);
+				Update(deviceInstanceId, sdrWhiteLevel);
+				await OperationRecorder.RecordAsync($"SDR White Level: {sdrWhiteLevel} nits");
 			}
 		});
 
@@ -211,12 +211,12 @@ public class AppControllerCore
 		if (Settings.UsesAccentColor)
 			WindowPainter.AttachAccentColors();
 
-		if (Settings.ManagesSdrWhiteLevel)
+		if (Settings.AdjustsSdrContent)
 			_displayInformationWatcher.TryEnable();
 
 		ViewManager.InvertsScrollDirection = Settings.InvertsScrollDirection;
 
-		if (Settings.MakesOperationLog)
+		if (Settings.RecordsOperationLog)
 			await OperationRecorder.EnableAsync("Initiated");
 	}
 
@@ -232,9 +232,12 @@ public class AppControllerCore
 
 				break;
 
-			case nameof(Settings.ManagesSdrWhiteLevel):
-				if (Settings.ManagesSdrWhiteLevel)
-					_displayInformationWatcher.TryEnable();
+			case nameof(Settings.AdjustsSdrContent):
+				if (Settings.AdjustsSdrContent)
+				{
+					if (_displayInformationWatcher.TryEnable())
+						OnMonitorsChangeInferred($"SettingsChanged {nameof(Settings.AdjustsSdrContent)}");
+				}
 				else
 					_displayInformationWatcher.Disable();
 
@@ -262,8 +265,8 @@ public class AppControllerCore
 
 				break;
 
-			case nameof(Settings.MakesOperationLog):
-				if (Settings.MakesOperationLog)
+			case nameof(Settings.RecordsOperationLog):
+				if (Settings.RecordsOperationLog)
 					await OperationRecorder.EnableAsync("Enabled");
 				else
 					OperationRecorder.Disable();
@@ -475,12 +478,12 @@ public class AppControllerCore
 		monitor?.UpdateBrightness(brightness);
 	}
 
-	protected virtual void Update(string deviceInstanceId)
+	protected virtual void Update(string deviceInstanceId, float sdrWhiteLevel)
 	{
 		var monitor = Monitors.FirstOrDefault(x => deviceInstanceId == x.DeviceInstanceId);
 
 		EnsureUnisonWorkable(monitor);
-		monitor?.UpdateBrightness();
+		monitor?.UpdateBrightness((int)sdrWhiteLevel);
 	}
 
 	protected virtual async Task UpdateMessageAsync(string deviceInstanceId, string message)

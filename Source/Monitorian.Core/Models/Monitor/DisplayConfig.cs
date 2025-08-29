@@ -4,6 +4,8 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 
+using Monitorian.Core.Helper;
+
 namespace Monitorian.Core.Models.Monitor;
 
 /// <summary>
@@ -41,10 +43,13 @@ internal class DisplayConfig
 		ref DISPLAYCONFIG_SDR_WHITE_LEVEL requestPacket);
 
 	[DllImport("User32.dll")]
+	private static extern int DisplayConfigGetDeviceInfo(
+		ref DISPLAYCONFIG_GET_ADVANCED_COLOR_INFO_2 requestPacket);
+
+	[DllImport("User32.dll")]
 	private static extern int DisplayConfigSetDeviceInfo(
 		ref DISPLAYCONFIG_DEVICE_INFO_HEADER requestPacket);
 
-	// All derived from wingdi.h
 	[StructLayout(LayoutKind.Sequential)]
 	private struct DISPLAYCONFIG_PATH_INFO
 	{
@@ -228,6 +233,28 @@ internal class DisplayConfig
 		public uint SDRWhiteLevel;
 	}
 
+	// Derived from wingdi.h of Windows SDK (10.0.26100.0)
+	[StructLayout(LayoutKind.Sequential)]
+	private struct DISPLAYCONFIG_GET_ADVANCED_COLOR_INFO_2
+	{
+		public DISPLAYCONFIG_DEVICE_INFO_HEADER header;
+
+		private uint value; // union bit fields
+
+		public readonly bool advancedColorSupported => (value & 1) == 1;        // A type of advanced color is supported  
+		public readonly bool advancedColorActive => (value & 2) == 2;           // A type of advanced color is active (see currentColorMode for the specific advanced color mode)
+																				// reserved1
+		public readonly bool advancedColorLimitedByPolicy => (value & 8) == 8;  // System/OS policy is limiting advanced color options (see currentColorMode for the current mode)
+		public readonly bool highDynamicRangeSupported => (value & 16) == 16;   // HDR is supported
+		public readonly bool highDynamicRangeUserEnabled => (value & 32) == 32; // HDR is enabled by the user (but may not be active)
+		public readonly bool wideColorSupported => (value & 64) == 64;          // Wide color gamut is supported
+		public readonly bool wideColorUserEnabled => (value & 128) == 128;      // Wide color gamut is enabled by the user (but may not be active)
+
+		public DISPLAYCONFIG_COLOR_ENCODING colorEncoding;
+		public uint bitsPerColorChannel;
+		public DISPLAYCONFIG_ADVANCED_COLOR_MODE activeColorMode; // The active color mode for this monitor
+	}
+
 	// Undocumented
 	[StructLayout(LayoutKind.Sequential)]
 	private struct DISPLAYCONFIG_SET_SDR_WHITE_LEVEL
@@ -236,6 +263,51 @@ internal class DisplayConfig
 
 		public uint SDRWhiteLevel;
 		public byte flag;
+	}
+
+	private enum DISPLAYCONFIG_DEVICE_INFO_TYPE : uint
+	{
+		DISPLAYCONFIG_DEVICE_INFO_GET_SOURCE_NAME = 1,
+		DISPLAYCONFIG_DEVICE_INFO_GET_TARGET_NAME = 2,
+		DISPLAYCONFIG_DEVICE_INFO_GET_TARGET_PREFERRED_MODE = 3,
+		DISPLAYCONFIG_DEVICE_INFO_GET_ADAPTER_NAME = 4,
+		DISPLAYCONFIG_DEVICE_INFO_SET_TARGET_PERSISTENCE = 5,
+		DISPLAYCONFIG_DEVICE_INFO_GET_TARGET_BASE_TYPE = 6,
+		DISPLAYCONFIG_DEVICE_INFO_GET_SUPPORT_VIRTUAL_RESOLUTION = 7,
+		DISPLAYCONFIG_DEVICE_INFO_SET_SUPPORT_VIRTUAL_RESOLUTION = 8,
+		DISPLAYCONFIG_DEVICE_INFO_GET_ADVANCED_COLOR_INFO = 9,
+		DISPLAYCONFIG_DEVICE_INFO_SET_ADVANCED_COLOR_STATE = 10,
+		DISPLAYCONFIG_DEVICE_INFO_GET_SDR_WHITE_LEVEL = 11,
+
+		// Supplemented by wingdi.h of Windows SDK (10.0.22000.0)
+		DISPLAYCONFIG_DEVICE_INFO_GET_MONITOR_SPECIALIZATION = 12,
+		DISPLAYCONFIG_DEVICE_INFO_SET_MONITOR_SPECIALIZATION = 13,
+
+		// Supplemented by wingdi.h of Windows SDK (10.0.26100.0)
+		DISPLAYCONFIG_DEVICE_INFO_SET_RESERVED1 = 14,
+		DISPLAYCONFIG_DEVICE_INFO_GET_ADVANCED_COLOR_INFO_2 = 15,
+		DISPLAYCONFIG_DEVICE_INFO_SET_HDR_STATE = 16,
+		DISPLAYCONFIG_DEVICE_INFO_SET_WCG_STATE = 17,
+
+		DISPLAYCONFIG_DEVICE_INFO_SET_SDR_WHITE_LEVEL = 0xFFFFFFEE, // Undocumented
+		DISPLAYCONFIG_DEVICE_INFO_FORCE_UINT32 = 0xFFFFFFFF
+	}
+
+	private enum DISPLAYCONFIG_COLOR_ENCODING : uint
+	{
+		DISPLAYCONFIG_COLOR_ENCODING_RGB = 0,
+		DISPLAYCONFIG_COLOR_ENCODING_YCBCR444 = 1,
+		DISPLAYCONFIG_COLOR_ENCODING_YCBCR422 = 2,
+		DISPLAYCONFIG_COLOR_ENCODING_YCBCR420 = 3,
+		DISPLAYCONFIG_COLOR_ENCODING_INTENSITY = 4,
+		DISPLAYCONFIG_COLOR_ENCODING_FORCE_UINT32 = 0xFFFFFFFF
+	}
+
+	private enum DISPLAYCONFIG_ADVANCED_COLOR_MODE
+	{
+		DISPLAYCONFIG_ADVANCED_COLOR_MODE_SDR, // RGB888 composition, display-referred color, display-referred luminance
+		DISPLAYCONFIG_ADVANCED_COLOR_MODE_WCG, // Advanced color (FP16 scRGB composition), scene-referred color, display-referred luminance
+		DISPLAYCONFIG_ADVANCED_COLOR_MODE_HDR, // Advanced color (FP16 scRGB composition), scene-referred color, scene-referred luminance
 	}
 
 	private enum DISPLAYCONFIG_VIDEO_OUTPUT_TECHNOLOGY : uint
@@ -279,27 +351,11 @@ internal class DisplayConfig
 		DISPLAYCONFIG_ROTATION_FORCE_UINT32 = 0xFFFFFFFF
 	}
 
-	private enum DISPLAYCONFIG_DEVICE_INFO_TYPE : uint
-	{
-		DISPLAYCONFIG_DEVICE_INFO_GET_SOURCE_NAME = 1,
-		DISPLAYCONFIG_DEVICE_INFO_GET_TARGET_NAME = 2,
-		DISPLAYCONFIG_DEVICE_INFO_GET_TARGET_PREFERRED_MODE = 3,
-		DISPLAYCONFIG_DEVICE_INFO_GET_ADAPTER_NAME = 4,
-		DISPLAYCONFIG_DEVICE_INFO_SET_TARGET_PERSISTENCE = 5,
-		DISPLAYCONFIG_DEVICE_INFO_GET_TARGET_BASE_TYPE = 6,
-		DISPLAYCONFIG_DEVICE_INFO_GET_SUPPORT_VIRTUAL_RESOLUTION = 7,
-		DISPLAYCONFIG_DEVICE_INFO_SET_SUPPORT_VIRTUAL_RESOLUTION = 8,
-		DISPLAYCONFIG_DEVICE_INFO_GET_ADVANCED_COLOR_INFO = 9,
-		DISPLAYCONFIG_DEVICE_INFO_SET_ADVANCED_COLOR_STATE = 10,
-		DISPLAYCONFIG_DEVICE_INFO_GET_SDR_WHITE_LEVEL = 11,
-		DISPLAYCONFIG_DEVICE_INFO_SET_SDR_WHITE_LEVEL = 0xFFFFFFEE, // Undocumented
-		DISPLAYCONFIG_DEVICE_INFO_FORCE_UINT32 = 0xFFFFFFFF
-	}
-
 	private const uint QDC_ONLY_ACTIVE_PATHS = 2;
 
 	private const int ERROR_SUCCESS = 0;
-	private const int ERROR_NOT_SUPPORTED = 50;
+	private const int ERROR_NOT_SUPPORTED = 0x32; // 50
+	private const int ERROR_INVALID_PARAMETER = 0x57; // 87
 
 	#endregion
 
@@ -326,7 +382,7 @@ internal class DisplayConfig
 		[DataMember(Order = 5)]
 		public bool IsAvailable { get; }
 
-		public Luid DisplayConfigId { get; }
+		public DisplayIdSet DisplayIdSet { get; }
 
 		public DisplayItem(
 			string deviceInstanceId,
@@ -335,7 +391,7 @@ internal class DisplayConfig
 			float refreshRate,
 			string connectionDescription,
 			bool isAvailable,
-			Luid displayConfigId)
+			DisplayIdSet displayIdSet)
 		{
 			this.DeviceInstanceId = deviceInstanceId;
 			this.DisplayName = displayName;
@@ -343,7 +399,7 @@ internal class DisplayConfig
 			this.RefreshRate = refreshRate;
 			this.ConnectionDescription = connectionDescription;
 			this.IsAvailable = isAvailable;
-			this.DisplayConfigId = displayConfigId;
+			this.DisplayIdSet = displayIdSet;
 		}
 	}
 
@@ -377,8 +433,8 @@ internal class DisplayConfig
 			if (displayMode.Equals(default(DISPLAYCONFIG_MODE_INFO)))
 				continue;
 
-			var displayConfigId = new Luid(displayMode.adapterId, displayMode.id);
-			if (!TryGetDeviceName(displayConfigId, out var deviceName))
+			var displayIdSet = new DisplayIdSet(displayMode.adapterId, displayMode.id);
+			if (!TryGetDeviceName(displayIdSet, out var deviceName))
 				continue;
 
 			var deviceInstanceId = DeviceConversion.ConvertToDeviceInstanceId(deviceName.monitorDevicePath);
@@ -390,11 +446,11 @@ internal class DisplayConfig
 				refreshRate: displayPath.targetInfo.refreshRate.Numerator / (float)displayPath.targetInfo.refreshRate.Denominator,
 				connectionDescription: GetConnectionDescription(deviceName.outputTechnology),
 				isAvailable: displayPath.targetInfo.targetAvailable,
-				displayConfigId: displayConfigId);
+				displayIdSet: displayIdSet);
 		}
 	}
 
-	private static bool TryGetDeviceName(Luid displayConfigId, out DISPLAYCONFIG_TARGET_DEVICE_NAME deviceName)
+	private static bool TryGetDeviceName(DisplayIdSet displayIdSet, out DISPLAYCONFIG_TARGET_DEVICE_NAME deviceName)
 	{
 		deviceName = new DISPLAYCONFIG_TARGET_DEVICE_NAME
 		{
@@ -402,8 +458,8 @@ internal class DisplayConfig
 			{
 				type = DISPLAYCONFIG_DEVICE_INFO_TYPE.DISPLAYCONFIG_DEVICE_INFO_GET_TARGET_NAME,
 				size = (uint)Marshal.SizeOf<DISPLAYCONFIG_TARGET_DEVICE_NAME>(),
-				adapterId = displayConfigId.AdapterId,
-				id = displayConfigId.Id
+				adapterId = displayIdSet.AdapterId,
+				id = displayIdSet.Id
 			}
 		};
 
@@ -411,7 +467,40 @@ internal class DisplayConfig
 		return (error is ERROR_SUCCESS);
 	}
 
-	public static (AccessResult result, float value) GetSdrWhiteLevel(Luid displayConfigId)
+	/// <summary>
+	/// Determines if HDR is set for a specified monitor (10.0.26100.0 or greater only).
+	/// </summary>
+	/// <param name="displayIdSet">Set of identifiers</param>
+	/// <returns>True if successfully determines that HDR is set</returns>
+	public static bool IsHdr(DisplayIdSet displayIdSet)
+	{
+		if (!OsVersion.Is11Build26100OrGreater)
+			return false;
+
+		var aci = new DISPLAYCONFIG_GET_ADVANCED_COLOR_INFO_2
+		{
+			header = new DISPLAYCONFIG_DEVICE_INFO_HEADER
+			{
+				type = DISPLAYCONFIG_DEVICE_INFO_TYPE.DISPLAYCONFIG_DEVICE_INFO_GET_ADVANCED_COLOR_INFO_2,
+				size = (uint)Marshal.SizeOf<DISPLAYCONFIG_GET_ADVANCED_COLOR_INFO_2>(),
+				adapterId = displayIdSet.AdapterId,
+				id = displayIdSet.Id
+			}
+		};
+
+		int error = DisplayConfigGetDeviceInfo(ref aci);
+		if (error is not ERROR_SUCCESS)
+			return false;
+
+		//Debug.WriteLine($"advancedColorSupported: {aci.advancedColorSupported}");
+		//Debug.WriteLine($"highDynamicRangeSupported: {aci.highDynamicRangeSupported}");
+		//Debug.WriteLine($"highDynamicRangeUserEnabled: {aci.highDynamicRangeUserEnabled}");
+		//Debug.WriteLine($"activeColorMode: {aci.activeColorMode}");
+
+		return (aci.activeColorMode is DISPLAYCONFIG_ADVANCED_COLOR_MODE.DISPLAYCONFIG_ADVANCED_COLOR_MODE_HDR);
+	}
+
+	public static (AccessResult result, float sdrWhiteLevel) GetSdrWhiteLevel(DisplayIdSet displayIdSet)
 	{
 		var whiteLevel = new DISPLAYCONFIG_SDR_WHITE_LEVEL
 		{
@@ -419,8 +508,8 @@ internal class DisplayConfig
 			{
 				type = DISPLAYCONFIG_DEVICE_INFO_TYPE.DISPLAYCONFIG_DEVICE_INFO_GET_SDR_WHITE_LEVEL,
 				size = (uint)Marshal.SizeOf<DISPLAYCONFIG_SDR_WHITE_LEVEL>(),
-				adapterId = displayConfigId.AdapterId,
-				id = displayConfigId.Id
+				adapterId = displayIdSet.AdapterId,
+				id = displayIdSet.Id
 			}
 		};
 
@@ -433,7 +522,7 @@ internal class DisplayConfig
 		};
 	}
 
-	public static AccessResult SetSdrWhiteLevel(Luid displayConfigId, float value)
+	public static AccessResult SetSdrWhiteLevel(DisplayIdSet displayIdSet, float sdrWhiteLevel)
 	{
 		var whiteLevel = new DISPLAYCONFIG_SET_SDR_WHITE_LEVEL
 		{
@@ -441,10 +530,10 @@ internal class DisplayConfig
 			{
 				type = DISPLAYCONFIG_DEVICE_INFO_TYPE.DISPLAYCONFIG_DEVICE_INFO_SET_SDR_WHITE_LEVEL,
 				size = (uint)Marshal.SizeOf<DISPLAYCONFIG_SET_SDR_WHITE_LEVEL>(),
-				adapterId = displayConfigId.AdapterId,
-				id = displayConfigId.Id
+				adapterId = displayIdSet.AdapterId,
+				id = displayIdSet.Id
 			},
-			SDRWhiteLevel = (uint)Math.Round((value / 80F * 1000F), MidpointRounding.AwayFromZero),
+			SDRWhiteLevel = (uint)Math.Round((sdrWhiteLevel / 80F * 1000F), MidpointRounding.AwayFromZero),
 			flag = 1
 		};
 
@@ -486,15 +575,27 @@ internal class DisplayConfig
 }
 
 /// <summary>
-/// Local unique identifier
+/// A set of identifiers for DisplayConfig functions
 /// </summary>
-internal class Luid
+internal class DisplayIdSet(DisplayConfig.LUID adapterId, uint id)
 {
+	/// <summary>
+	/// DISPLAYCONFIG_MODE_INFO.adapterId & DISPLAYCONFIG_DEVICE_INFO_HEADER.adapterId
+	/// </summary>
+	/// <remarks>
+	/// This corresponds to <see cref="Windows.Devices.Display.DisplayMonitor.DisplayAdapterId"/>.
+	/// https://learn.microsoft.com/en-us/uwp/api/windows.devices.display.displaymonitor.displayadapterid
+	/// </remarks>
 	public DisplayConfig.LUID AdapterId => new() { LowPart = lowPart, HighPart = highPart };
-	private readonly uint lowPart;
-	private readonly int highPart;
+	private readonly uint lowPart = adapterId.LowPart;
+	private readonly int highPart = adapterId.HighPart;
 
-	public readonly uint Id;
-
-	public Luid(DisplayConfig.LUID adapterId, uint id) => (lowPart, highPart, Id) = (adapterId.LowPart, adapterId.HighPart, id);
+	/// <summary>
+	/// DISPLAYCONFIG_MODE_INFO.id & DISPLAYCONFIG_DEVICE_INFO_HEADER.id
+	/// </summary>
+	/// <remarks>
+	/// This corresponds to <see cref="Windows.Devices.Display.DisplayMonitor.DisplayAdapterTargetId"/>.
+	/// https://learn.microsoft.com/en-us/uwp/api/windows.devices.display.displaymonitor.displayadaptertargetid
+	/// </remarks>
+	public readonly uint Id = id;
 }

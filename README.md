@@ -60,7 +60,7 @@ Additional languages:
    ```
 
  * Other:<br>
-:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/4.11.1-Installer/MonitorianInstaller4111.zip)
+:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/4.13.0-Installer/MonitorianInstaller4130.zip)
 
 ## Install/Uninstall
 
@@ -191,7 +191,7 @@ In any case, reporting on the controllability of a monitor MUST include probe.lo
 
 ### Operations
 
- - As part of testing, you can set this app to record operations to scan monitors and reflect their states. To enable the recording, check `Make operation log` in the hidden menu. After some information is recorded, you will be able to copy __operation.log__ by `Copy operation log`.
+ - As part of testing, you can set this app to record operations to scan monitors and reflect their states. To enable the recording, check `Record operations to log` in the hidden menu. After some information is recorded, you will be able to copy __operation.log__ by `Copy accumulated log`.
  - If you notice an issue, <ins>enable the recording and then wait until the issue happens. When you notice the issue again, copy this log and check the information including the change before and after the issue.</ins>
 
 ### Command-line arguments
@@ -217,7 +217,6 @@ In any case, reporting on the controllability of a monitor MUST include probe.lo
 
 4. Load the solution by specifying `/Source/Monitorian.sln`. Then go to the solution explorer and right click the solution name and execute `Restore NuGet Packages`.
 
-
 ### Globalization
 
 An alternative language can be shown by adding a Resources (.resx) file into `/Source/Monitorian.Core/Properties` folder. Each Resources file stores name/value pairs for a specific language and will be selected automatically depending on the user's environment.
@@ -230,6 +229,10 @@ An alternative language can be shown by adding a Resources (.resx) file into `/S
  - VESA [Monitor Control Command Set (MCCS)](https://www.google.co.jp/search?q=VESA+Monitor+Control+Command+Set+Standard+MCCS) standard
 
 ## History
+
+Ver 4.13 2025-8-4
+
+ - Enable to adjust SDR content brightness
 
 Ver 4.11 2025-6-11
 

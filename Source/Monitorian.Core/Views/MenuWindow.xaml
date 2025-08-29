@@ -101,13 +101,20 @@
 		</ContentControl>
 
 		<ContentControl Style="{StaticResource MenuItemStyle}">
+			<ToggleButton Padding="8,4"
+								  Style="{StaticResource CheckButtonItemStyle}"
+								  Content="{x:Static properties:Resources.AdjustSdrContent}"
+								  IsChecked="{Binding Settings.AdjustsSdrContent}"/>
+		</ContentControl>
+
+		<StackPanel x:Name="MenuItemsMiddle"/>
+
+		<ContentControl Style="{StaticResource MenuItemStyle}">
 			<Button Padding="8,4"
 					Style="{StaticResource PlainButtonItemStyle}"
 					Content="{x:Static properties:Resources.InvertScrollDirection}"
 					Click="InvertScrollDirection_Click"/>
 		</ContentControl>
-
-		<StackPanel x:Name="MenuItemsMiddle"/>
 
 		<Separator Style="{StaticResource MenuSeparatorStyle}"/>
 

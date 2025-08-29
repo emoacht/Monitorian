@@ -74,15 +74,15 @@ public class SettingsCore : BindableBase
 	private bool _defersChange;
 
 	/// <summary>
-	/// Whether to manage SDR white level
+	/// Whether to adjust SDR content brightness
 	/// </summary>
 	[DataMember]
-	public bool ManagesSdrWhiteLevel
+	public bool AdjustsSdrContent
 	{
-		get => _managesSdrWhiteLevel;
-		set => SetProperty(ref _managesSdrWhiteLevel, value);
+		get => _adjustsSdrContent;
+		set => SetProperty(ref _adjustsSdrContent, value);
 	}
-	private bool _managesSdrWhiteLevel;
+	private bool _adjustsSdrContent;
 
 	/// <summary>
 	/// Whether to invert scroll direction
@@ -154,15 +154,15 @@ public class SettingsCore : BindableBase
 	private string _selectedDeviceInstanceId;
 
 	/// <summary>
-	/// Whether to make operation log
+	/// Whether to record operations to log
 	/// </summary>
 	[DataMember]
-	public bool MakesOperationLog
+	public bool RecordsOperationLog
 	{
-		get => _makesOperationLog;
-		set => SetProperty(ref _makesOperationLog, value);
+		get => _recordsOperationLog;
+		set => SetProperty(ref _recordsOperationLog, value);
 	}
-	private bool _makesOperationLog;
+	private bool _recordsOperationLog;
 
 	#endregion
 

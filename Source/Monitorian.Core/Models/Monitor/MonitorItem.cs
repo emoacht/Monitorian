@@ -45,7 +45,7 @@ internal abstract class MonitorItem : IMonitor
 	public int Brightness { get; protected set; } = -1;
 	public int BrightnessSystemAdjusted { get; protected set; } = -1;
 
-	public abstract AccessResult UpdateBrightness(int brightness = -1);
+	public abstract AccessResult UpdateBrightness(int value = -1);
 	public abstract AccessResult SetBrightness(int brightness);
 
 	public int Contrast { get; protected set; } = -1;

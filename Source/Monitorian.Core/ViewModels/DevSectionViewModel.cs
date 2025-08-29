@@ -43,7 +43,7 @@ public class DevSectionViewModel : ViewModelBase
 		Task.Run(async () =>
 		{
 			var log = await MonitorManager.ProbeMonitorsAsync();
-			Logger.RecordProbe(log);
+			Logger.SaveProbe(log);
 		});
 	}
 

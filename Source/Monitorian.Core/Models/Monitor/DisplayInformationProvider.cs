@@ -39,7 +39,7 @@ internal static class DisplayInformationProvider
 
 	#region Win32
 
-	// From DispatcherQueue.h
+	// Derived from DispatcherQueue.h
 	[DllImport("CoreMessaging.dll")]
 	private static extern int CreateDispatcherQueueController(
 		DispatcherQueueOptions options,
@@ -114,17 +114,17 @@ internal static class DisplayInformationProvider
 	{
 		public readonly string DeviceInstanceId;
 		public Windows.Graphics.Display.DisplayInformation DisplayInfo { get; private set; }
-		public int Count = 1;
+		public int Count { get; set; } = 1;
 		public bool IsActive { get; private set; } = true; // default
 
-		private Windows.Graphics.Display.AdvancedColorInfo _currentColorInfo;
+		private Windows.Graphics.Display.AdvancedColorKind _currentAdvancedColorKind;
 		private readonly object _closeLock = new();
 
 		public Holder(string deviceInstanceId, Windows.Graphics.Display.DisplayInformation displayInfo)
 		{
 			this.DeviceInstanceId = deviceInstanceId;
 			this.DisplayInfo = displayInfo;
-			_currentColorInfo = displayInfo.GetAdvancedColorInfo();
+			_currentAdvancedColorKind = displayInfo.GetAdvancedColorInfo().CurrentAdvancedColorKind;
 
 			// An event handler to DisplayInformation's events must be registered within
 			// a callback of DispatcherQueueController.DispatcherQueue.TryEnqueue method.
@@ -133,12 +133,18 @@ internal static class DisplayInformationProvider
 
 		private void OnAdvancedColorInfoChanged(Windows.Graphics.Display.DisplayInformation sender, object args)
 		{
+			float sdrWhiteLevel = -1;
+
 			lock (_closeLock)
 			{
-				var oldColorInfo = _currentColorInfo;
-				_currentColorInfo = sender.GetAdvancedColorInfo();
+				var aci = sender.GetAdvancedColorInfo();
+				if (aci.CurrentAdvancedColorKind is Windows.Graphics.Display.AdvancedColorKind.HighDynamicRange)
+					sdrWhiteLevel = aci.SdrWhiteLevelInNits;
 
-				if (_currentColorInfo.CurrentAdvancedColorKind != oldColorInfo.CurrentAdvancedColorKind)
+				var oldAdvancedColorKind = _currentAdvancedColorKind;
+				_currentAdvancedColorKind = aci.CurrentAdvancedColorKind;
+
+				if (_currentAdvancedColorKind != oldAdvancedColorKind)
 				{
 					// It is observed that in the case of non-primary monitor, after AdvancedColorKind changes,
 					// this event will no longer be fired by existing DisplayInformation. Thus it is necessary
@@ -151,21 +157,26 @@ internal static class DisplayInformationProvider
 				}
 			}
 
-			DisplayInformationProvider.AdvancedColorInfoChanged?.Invoke(sender, DeviceInstanceId);
+			DisplayInformationProvider.AdvancedColorInfoChanged?.Invoke(sender, (DeviceInstanceId, sdrWhiteLevel));
 		}
 
 		public void Replace(Windows.Graphics.Display.DisplayInformation displayInfo)
 		{
+			float sdrWhiteLevel = -1;
+
 			lock (_closeLock)
 			{
-				_currentColorInfo = displayInfo.GetAdvancedColorInfo();
-
 				this.DisplayInfo = displayInfo;
+				var aci = displayInfo.GetAdvancedColorInfo();
+				if (aci.CurrentAdvancedColorKind is Windows.Graphics.Display.AdvancedColorKind.HighDynamicRange)
+					sdrWhiteLevel = aci.SdrWhiteLevelInNits;
+
+				_currentAdvancedColorKind = aci.CurrentAdvancedColorKind;
 				this.DisplayInfo.AdvancedColorInfoChanged += OnAdvancedColorInfoChanged;
 				IsActive = true;
 			}
 
-			DisplayInformationProvider.AdvancedColorInfoChanged?.Invoke(displayInfo, DeviceInstanceId);
+			DisplayInformationProvider.AdvancedColorInfoChanged?.Invoke(displayInfo, (DeviceInstanceId, sdrWhiteLevel));
 		}
 
 		public void Close()
@@ -175,13 +186,13 @@ internal static class DisplayInformationProvider
 				if (DisplayInfo is null)
 					return;
 
-				this.DisplayInfo.AdvancedColorInfoChanged -= OnAdvancedColorInfoChanged;
+				DisplayInfo.AdvancedColorInfoChanged -= OnAdvancedColorInfoChanged;
 				DisplayInfo = null;
 			}
 		}
 	}
 
-	public static event EventHandler<string> AdvancedColorInfoChanged;
+	public static event EventHandler<(string deviceInstanceId, float sdrWhiteLevel)> AdvancedColorInfoChanged;
 
 	private static readonly Dictionary<string, Holder> _holders = [];
 	private static readonly object _registerLock = new();
@@ -240,36 +251,41 @@ internal static class DisplayInformationProvider
 		_holders.Clear();
 	}
 
-	public static (AccessResult result, float current, float minimum, float maximum) GetSdrWhiteLevel(string deviceInstanceId)
+	public static (AccessResult result, float sdrWhiteLevel) GetSdrWhiteLevel(string deviceInstanceId)
 	{
 		if (!_holders.TryGetValue(deviceInstanceId, out Holder holder))
-			return (new AccessResult(AccessStatus.Failed, "The monitor has not been registered yet."), 0, 0, 0);
+			return (new AccessResult(AccessStatus.Failed, "The monitor has not been registered yet."), -1);
 
 		var aci = holder.DisplayInfo.GetAdvancedColorInfo();
 		if (aci.CurrentAdvancedColorKind is not Windows.Graphics.Display.AdvancedColorKind.HighDynamicRange)
-			return (AccessResult.NotSupported, 0, 0, 0);
+			return (AccessResult.NotSupported, -1);
 
-		return (AccessResult.Succeeded, aci.SdrWhiteLevelInNits, aci.MinLuminanceInNits, aci.MaxLuminanceInNits);
+		return (AccessResult.Succeeded, aci.SdrWhiteLevelInNits);
 	}
 
 	#endregion
 
 	/// <summary>
-	/// Determines if HDR is set for a specified monitor.
+	/// Determines if HDR is set for a specified monitor and if so, gets SDR white level
+	/// (10.0.22621.0 or greater only).
 	/// </summary>
 	/// <param name="monitorHandle">Monitor handle</param>
-	/// <returns>True if HDR is set</returns>
-	public static bool IsHdr(IntPtr monitorHandle)
+	/// <returns>
+	/// <para>isHdr: True if successfully determines that HDR is set</para>
+	/// <para>sdrWhiteLevel: SDR white level if HDR is set</para>
+	/// </returns>
+	public static (bool isHdr, float sdrWhiteLevel) IsHdrAndGetSdrWhiteLevel(IntPtr monitorHandle)
 	{
 		if (!OsVersion.Is11Build22621OrGreater)
-			return false;
+			return (false, -1);
 
 		var displayInfo = GetForMonitor(monitorHandle);
-		if (displayInfo is null)
-			return false;
 
 		var aci = displayInfo?.GetAdvancedColorInfo();
-		return (aci.CurrentAdvancedColorKind is Windows.Graphics.Display.AdvancedColorKind.HighDynamicRange);
+		if (aci is not { CurrentAdvancedColorKind: Windows.Graphics.Display.AdvancedColorKind.HighDynamicRange })
+			return (false, -1);
+
+		return (isHdr: true, aci.SdrWhiteLevelInNits);
 	}
 
 	/// <summary>

@@ -1,4 +1,4 @@
-﻿# Monitorian
+# Monitorian
 
 Monitorian is a Windows desktop tool to adjust the brightness of multiple monitors with ease.
 
@@ -40,7 +40,7 @@ Additional languages:
  - Vietnamese (vi-VN) by [@dongsinhho](https://github.com/dongsinhho)
  - Simplified Chinese (zh-Hans) by [@ComMouse](https://github.com/ComMouse), [@zhujunsan](https://github.com/zhujunsan), [@XMuli](https://github.com/XMuli), [@FISHandCHEAP](https://github.com/Fishandcheap) and [@FrzMtrsprt](https://github.com/FrzMtrsprt)
  - Traditional Chinese (zh-Hant) by [@toto6038](https://github.com/toto6038) and [@XMuli](https://github.com/XMuli)
- - Persian/Farsi (fa) by [@sinadalvand](https://github.com/sinadalvand)
+
 ## Requirements
 
  * Windows 7 or newer
@@ -505,3 +505,4 @@ Ver 1.0 2017-2-22
 ## Developer
 
  - emoacht (emotom[atmark]pobox.com)
+

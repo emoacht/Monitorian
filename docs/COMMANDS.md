@@ -274,14 +274,14 @@ A set of key commands is a sequence of commands to be executed when a specified 
  - __Description:__ Description of hot key
  - __Commands:__ Commands to be executed when the hot key is pressed
 
-A command can set brightness or contrast of a monitor or all monitors, or input source of a monitor.
+A command can set brightness or contrast of a monitor or all monitors, or input source of a monitor, or increment or decrement brightness of a monitor or all monitors.
 
 As for the available modifier keys (Alt, Ctrl, Shift, Windows) and keys, please refer the following pages.
 
 - [ModifierKeys Enum](https://learn.microsoft.com/en-us/dotnet/api/system.windows.input.modifierkeys)
 - [Key Enum](https://learn.microsoft.com/en-us/dotnet/api/system.windows.input.key)
 
-If the specified hot key has been already used by the OS or other apps, such hot key cannot be set. In addition, some combinations are not supported as hot keys.
+If the specified hot key has been already used by the OS or other apps, the same hot key cannot be set. In addition, some combinations are not supported as hot keys.
 
 The sets of key commands must be specified in an array of JSON format. Then, the prepared JSON file must be loaded using `/load` option. Please refer to [Load/Unload Commands](#loadunload-commands).
 
@@ -303,6 +303,7 @@ The valid values will be shown in parentheses. The following are typical values 
 Here are a few remarks:
 
  - A set of key commands will be overwritten by another set of the same hot key. To execute multiple commands by the same hot key, they must be included in one set of key commands.
+ - A key command to increment or decrement brightness will be repeatable only if all commands are those to increment or decrement brightness.
  - While conditional/time/key commands are being executed, other conditional/time/key commands will not be executed. Therefore, the brightness set by key commands will not trigger conditional commands.
  - Hot keys must be enabled in Key Settings.
 
@@ -334,7 +335,7 @@ Here are a few remarks:
       }
     ]
   },
-    {
+  {
     "KeyGesture": "Ctrl+Alt+Y",
     "Description": "Monitor 1 to HDMI 1",
     "Commands": [
@@ -343,6 +344,30 @@ Here are a few remarks:
         "DeviceInstanceId": "[Device Instance ID of monitor 1]",
         "IsAll": false,
         "Value": 17
+      }
+    ]
+  },
+  {
+    "KeyGesture": "Ctrl+Alt+I",
+    "Description": "All increment",
+    "Commands": [
+      {
+        "Option": "IncrementBrightness",
+        "DeviceInstanceId": null,
+        "IsAll": true,
+        "Value": 25
+      }
+    ]
+  },
+  {
+    "KeyGesture": "Ctrl+Alt+D",
+    "Description": "All decrement",
+    "Commands": [
+      {
+        "Option": "DecrementBrightness",
+        "DeviceInstanceId": null,
+        "IsAll": true,
+        "Value": 25
       }
     ]
   }
@@ -363,7 +388,9 @@ Here are a few remarks:
           "enum": [
             "SetBrightness",
             "SetContrast",
-            "SetInput"
+            "SetInput",
+            "IncrementBrightness",
+            "DecrementBrightness"
           ]
         },
         "DeviceInstanceId": {

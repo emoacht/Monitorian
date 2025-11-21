@@ -164,6 +164,65 @@ public class SettingsCore : BindableBase
 	}
 	private bool _recordsOperationLog;
 
+	#region Webex Settings
+
+	/// <summary>
+	/// Whether to enable Cisco Webex device brightness synchronization
+	/// </summary>
+	[DataMember]
+	public bool EnablesWebex
+	{
+		get => _enablesWebex;
+		set => SetProperty(ref _enablesWebex, value);
+	}
+	private bool _enablesWebex;
+
+	/// <summary>
+	/// Cisco Webex device hostname or IP address
+	/// </summary>
+	[DataMember]
+	public string WebexHost
+	{
+		get => _webexHost;
+		set => SetProperty(ref _webexHost, value);
+	}
+	private string _webexHost;
+
+	/// <summary>
+	/// Cisco Webex device port (default 443)
+	/// </summary>
+	[DataMember]
+	public int WebexPort
+	{
+		get => _webexPort > 0 ? _webexPort : 443;
+		set => SetProperty(ref _webexPort, value);
+	}
+	private int _webexPort = 443;
+
+	/// <summary>
+	/// Cisco Webex device username
+	/// </summary>
+	[DataMember]
+	public string WebexUsername
+	{
+		get => _webexUsername;
+		set => SetProperty(ref _webexUsername, value);
+	}
+	private string _webexUsername;
+
+	/// <summary>
+	/// Cisco Webex device password (stored encrypted)
+	/// </summary>
+	[DataMember]
+	public string WebexPassword
+	{
+		get => _webexPassword;
+		set => SetProperty(ref _webexPassword, value);
+	}
+	private string _webexPassword;
+
+	#endregion
+
 	#endregion
 
 	protected Type[] KnownTypes { get; set; }

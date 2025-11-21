@@ -141,6 +141,9 @@
   <data name="EnableContrast" xml:space="preserve">
     <value>Enable changing contrast</value>
   </data>
+  <data name="EnableWebex" xml:space="preserve">
+    <value>Enable Webex brightness sync</value>
+  </data>
   <data name="EnableRange" xml:space="preserve">
     <value>Enable changing adjustable range</value>
   </data>

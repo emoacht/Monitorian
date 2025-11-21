@@ -139,6 +139,13 @@
 						  IsChecked="{Binding Settings.EnablesContrast}"/>
 		</ContentControl>
 
+		<ContentControl Style="{StaticResource MenuItemStyle}">
+			<ToggleButton Padding="8,4"
+						  Style="{StaticResource CheckButtonItemStyle}"
+						  Content="{x:Static properties:Resources.EnableWebex}"
+						  IsChecked="{Binding Settings.EnablesWebex}"/>
+		</ContentControl>
+
 		<Separator Style="{StaticResource MenuSeparatorStyle}"/>
 
 		<!-- Close -->

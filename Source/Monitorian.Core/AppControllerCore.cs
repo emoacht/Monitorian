@@ -316,6 +316,7 @@ public class AppControllerCore
 
 	protected virtual MonitorViewModel GetMonitor(IMonitor monitorItem) => new MonitorViewModel(this, monitorItem);
 	protected virtual void DisposeMonitor(MonitorViewModel monitor) => monitor?.Dispose();
+	protected virtual Task<IEnumerable<IMonitor>> EnumerateCustomMonitorsAsync() => Task.FromResult(Enumerable.Empty<IMonitor>());
 
 	private int _scanCount = 0;
 	private int _updateCount = 0;
@@ -385,6 +386,16 @@ public class AppControllerCore
 							{
 								Monitors.Add(newMonitor);
 							}
+						}
+					}
+
+					// Enumerate custom monitors (e.g., Webex devices)
+					foreach (var item in await EnumerateCustomMonitorsAsync())
+					{
+						var customMonitor = GetMonitor(item);
+						lock (_monitorsLock)
+						{
+							Monitors.Add(customMonitor);
 						}
 					}
 				});

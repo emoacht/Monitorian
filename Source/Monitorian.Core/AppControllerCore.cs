@@ -265,6 +265,12 @@ public class AppControllerCore
 
 				break;
 
+			case nameof(Settings.EnablesInputSource) when !Settings.EnablesInputSource:
+				foreach (var m in Monitors)
+					m.IsInputSourceChanging = false;
+
+				break;
+
 			case nameof(Settings.RecordsOperationLog):
 				if (Settings.RecordsOperationLog)
 					await OperationRecorder.EnableAsync("Enabled");
@@ -538,7 +544,7 @@ public class AppControllerCore
 
 	#region Customization
 
-	protected internal virtual bool TryLoadCustomization(string deviceInstanceId, ref string name, ref bool isUnison, ref byte lowest, ref byte highest)
+	protected internal virtual bool TryLoadCustomization(string deviceInstanceId, ref string name, ref bool isUnison, ref byte lowest, ref byte highest, ref InputSourceItem[] inputSources)
 	{
 		if (Settings.MonitorCustomizations.TryGetValue(deviceInstanceId, out MonitorCustomizationItem m)
 			&& m.IsValid)
@@ -547,14 +553,15 @@ public class AppControllerCore
 			isUnison = m.IsUnison && Settings.EnablesUnison;
 			lowest = m.Lowest;
 			highest = m.Highest;
+			inputSources = m.InputSources;
 			return true;
 		}
 		return false;
 	}
 
-	protected internal virtual void SaveCustomization(string deviceInstanceId, string name, bool isUnison, byte lowest, byte highest)
+	protected internal virtual void SaveCustomization(string deviceInstanceId, string name, bool isUnison, byte lowest, byte highest, InputSourceItem[] inputSources)
 	{
-		MonitorCustomizationItem m = new(name, isUnison, lowest, highest);
+		MonitorCustomizationItem m = new(name, isUnison, lowest, highest, inputSources);
 		if (m.IsValid && !m.IsDefault)
 		{
 			Settings.MonitorCustomizations.Add(deviceInstanceId, m);

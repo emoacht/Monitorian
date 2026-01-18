@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -54,8 +55,8 @@ public class MonitorViewModel : ViewModelBase
 
 	#region Customization
 
-	private void LoadCustomization() => _controller.TryLoadCustomization(DeviceInstanceId, ref _name, ref _isUnison, ref _rangeLowest, ref _rangeHighest);
-	private void SaveCustomization() => _controller.SaveCustomization(DeviceInstanceId, _name, _isUnison, _rangeLowest, _rangeHighest);
+	private void LoadCustomization() => _controller.TryLoadCustomization(DeviceInstanceId, ref _name, ref _isUnison, ref _rangeLowest, ref _rangeHighest, ref _inputSources);
+	private void SaveCustomization() => _controller.SaveCustomization(DeviceInstanceId, _name, _isUnison, _rangeLowest, _rangeHighest, _inputSources);
 
 	public string Name
 	{
@@ -379,6 +380,143 @@ public class MonitorViewModel : ViewModelBase
 	}
 
 	public DateTimeOffset ContrastUpdatedTime { get; private set; }
+
+	#endregion
+
+	#region Input Source
+
+	private const byte InputSourceVcpCode = 0x60;
+
+	/// <summary>
+	/// Whether input source switching is supported
+	/// </summary>
+	public bool IsInputSourceSupported
+	{
+		get
+		{
+			var (success, data) = GetValue(InputSourceVcpCode);
+			return success == true && data?.Values?.Count > 0;
+		}
+	}
+
+	/// <summary>
+	/// Whether the input source popup is showing
+	/// </summary>
+	public bool IsInputSourceChanging
+	{
+		get => _isInputSourceChanging;
+		set
+		{
+			if (SetProperty(ref _isInputSourceChanging, value) && value)
+				UpdateInputSource();
+		}
+	}
+	private bool _isInputSourceChanging = false;
+
+	/// <summary>
+	/// Configured input sources
+	/// </summary>
+	public InputSourceItem[] InputSources
+	{
+		get => _inputSources;
+		set
+		{
+			if (SetProperty(ref _inputSources, value))
+				SaveCustomization();
+		}
+	}
+	private InputSourceItem[] _inputSources;
+
+	/// <summary>
+	/// Current input source value
+	/// </summary>
+	public byte CurrentInputSource
+	{
+		get => _currentInputSource;
+		private set => SetProperty(ref _currentInputSource, value);
+	}
+	private byte _currentInputSource;
+
+	/// <summary>
+	/// Available input source values from monitor capabilities
+	/// </summary>
+	public byte[] AvailableInputSources
+	{
+		get => _availableInputSources;
+		private set => SetProperty(ref _availableInputSources, value);
+	}
+	private byte[] _availableInputSources;
+
+	/// <summary>
+	/// Updates the current input source from the monitor
+	/// </summary>
+	public bool UpdateInputSource()
+	{
+		var (success, data) = GetValue(InputSourceVcpCode);
+
+		if (success == true && data != null)
+		{
+			CurrentInputSource = data.Value;
+			if (data.Values != null)
+			{
+				AvailableInputSources = data.Values.ToArray();
+			}
+			OnPropertyChanged(nameof(CurrentInputSourceLabel));
+			return true;
+		}
+		return false;
+	}
+
+	/// <summary>
+	/// Sets the input source on the monitor
+	/// </summary>
+	public bool SetInputSource(byte value)
+	{
+		var (success, data) = SetValue(InputSourceVcpCode, value);
+
+		if (success == true)
+		{
+			CurrentInputSource = value;
+			OnPropertyChanged(nameof(CurrentInputSourceLabel));
+			return true;
+		}
+		return false;
+	}
+
+	/// <summary>
+	/// Gets the label for the current input source
+	/// </summary>
+	public string CurrentInputSourceLabel
+	{
+		get
+		{
+			var configured = _inputSources?.FirstOrDefault(x => x.Value == CurrentInputSource);
+			return configured?.Label ?? InputSourceItem.GetDefaultLabel(CurrentInputSource);
+		}
+	}
+
+	/// <summary>
+	/// Gets the label for a given input source value
+	/// </summary>
+	public string GetInputSourceLabel(byte value)
+	{
+		var configured = _inputSources?.FirstOrDefault(x => x.Value == value);
+		return configured?.Label ?? InputSourceItem.GetDefaultLabel(value);
+	}
+
+	/// <summary>
+	/// Gets the enabled input sources for quick switching
+	/// </summary>
+	public InputSourceItem[] GetEnabledInputSources()
+	{
+		if (_inputSources == null || _inputSources.Length == 0)
+		{
+			// Return default sources from available inputs
+			return AvailableInputSources?.Select(v => new InputSourceItem(v, InputSourceItem.GetDefaultLabel(v), true)).ToArray()
+				?? Array.Empty<InputSourceItem>();
+		}
+		return _inputSources.Where(x => x.IsEnabled).ToArray();
+	}
 
 	#endregion
 

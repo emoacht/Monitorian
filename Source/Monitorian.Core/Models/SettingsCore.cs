@@ -132,6 +132,17 @@ public class SettingsCore : BindableBase
 	private bool _enablesContrast;
 
 	/// <summary>
+	/// Whether to enable input source switching
+	/// </summary>
+	[DataMember]
+	public bool EnablesInputSource
+	{
+		get => _enablesInputSource;
+		set => SetProperty(ref _enablesInputSource, value);
+	}
+	private bool _enablesInputSource;
+
+	/// <summary>
 	/// Monitor customizations by user
 	/// </summary>
 	[DataMember]
@@ -244,12 +255,19 @@ public class MonitorCustomizationItem
 	[DataMember]
 	public byte Highest { get; private set; } = 100;
 
-	public MonitorCustomizationItem(string name, bool isUnison, byte lowest, byte highest)
+	/// <summary>
+	/// Configured input sources with their labels (VCP code 0x60 values)
+	/// </summary>
+	[DataMember]
+	public InputSourceItem[] InputSources { get; private set; }
+
+	public MonitorCustomizationItem(string name, bool isUnison, byte lowest, byte highest, InputSourceItem[] inputSources = null)
 	{
 		this.Name = name;
 		this.IsUnison = isUnison;
 		this.Lowest = lowest;
 		this.Highest = highest;
+		this.InputSources = inputSources;
 	}
 
 	internal bool IsValid
@@ -261,6 +279,72 @@ public class MonitorCustomizationItem
 	{
 		get => (Name is null)
 			&& (IsUnison == default)
-			&& (Lowest, Highest) is (0, 100);
+			&& (Lowest, Highest) is (0, 100)
+			&& (InputSources is null || InputSources.Length == 0);
+	}
+}
+
+/// <summary>
+/// Input source configuration item
+/// </summary>
+[DataContract]
+public class InputSourceItem
+{
+	/// <summary>
+	/// VCP code 0x60 value for this input source
+	/// </summary>
+	[DataMember]
+	public byte Value { get; set; }
+
+	/// <summary>
+	/// User-defined label for this input source
+	/// </summary>
+	[DataMember]
+	public string Label { get; set; }
+
+	/// <summary>
+	/// Whether this input is enabled for quick switching
+	/// </summary>
+	[DataMember]
+	public bool IsEnabled { get; set; }
+
+	public InputSourceItem() { }
+
+	public InputSourceItem(byte value, string label, bool isEnabled = true)
+	{
+		this.Value = value;
+		this.Label = label;
+		this.IsEnabled = isEnabled;
+	}
+
+	/// <summary>
+	/// Gets the default label for an input source VCP value
+	/// </summary>
+	public static string GetDefaultLabel(byte value)
+	{
+		return value switch
+		{
+			0x01 => "VGA 1",
+			0x02 => "VGA 2",
+			0x03 => "DVI 1",
+			0x04 => "DVI 2",
+			0x05 => "Composite 1",
+			0x06 => "Composite 2",
+			0x07 => "S-Video 1",
+			0x08 => "S-Video 2",
+			0x09 => "Tuner 1",
+			0x0A => "Tuner 2",
+			0x0B => "Tuner 3",
+			0x0C => "Component 1",
+			0x0D => "Component 2",
+			0x0E => "Component 3",
+			0x0F => "DisplayPort 1",
+			0x10 => "DisplayPort 2",
+			0x11 => "HDMI 1",
+			0x12 => "HDMI 2",
+			0x13 => "USB-C 1",
+			0x14 => "USB-C 2",
+			_ => $"Input {value:X2}"
+		};
 	}
 }

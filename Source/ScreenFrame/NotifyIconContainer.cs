@@ -349,6 +349,7 @@ public class NotifyIconContainer : IDisposable
 			_window.MouseDoubleClick += OnWindowMouseDoubleClick;
 			_window.MouseWheel += OnWindowMouseWheel;
 			_window.MouseLeave += OnWindowMouseLeave;
+			_window.Closed += OnWindowClosed;
 		}
 
 		if (NotifyIconHelper.TryGetNotifyIconRect(NotifyIcon, out Rect iconRect))
@@ -371,6 +372,9 @@ public class NotifyIconContainer : IDisposable
 
 			_watcher ??= new ForegroundWindowWatcher(() =>
 			{
+				if (_window is null)
+					return;
+
 				_window.Visibility = Visibility.Collapsed;
 				_watcher.RemoveHook();
 			});
@@ -379,6 +383,9 @@ public class NotifyIconContainer : IDisposable
 
 		void OnWindowMouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
 		{
+			if (_window is null)
+				return;
+
 			var button = e.ChangedButton switch
 			{
 				System.Windows.Input.MouseButton.Left => MouseButtons.Left,
@@ -391,20 +398,41 @@ public class NotifyIconContainer : IDisposable
 
 		void OnWindowMouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
 		{
+			if (_window is null)
+				return;
+
 			OnMouseDoubleClick(sender, new MouseEventArgs(MouseButtons.Left, e.ClickCount, 0, 0, 0));
 		}
 
 		void OnWindowMouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
 		{
+			if (_window is null)
+				return;
+
 			_mouseWheel?.Invoke(sender, e.Delta);
 		}
 
 		void OnWindowMouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
 		{
+			if (_window is null)
+				return;
+
 			_window.Visibility = Visibility.Collapsed;
 
 			// Changing WindowState of a Window which is Topmost will deactivate the app.
 			//_window.WindowState = WindowState.Minimized;
+		}
+
+		void OnWindowClosed(object sender, EventArgs e)
+		{
+			_window = null;
+
+			var window = (Window)sender;
+			window.MouseUp -= OnWindowMouseUp;
+			window.MouseDoubleClick -= OnWindowMouseDoubleClick;
+			window.MouseWheel -= OnWindowMouseWheel;
+			window.MouseLeave -= OnWindowMouseLeave;
+			window.Closed -= OnWindowClosed;
 		}
 	}
 

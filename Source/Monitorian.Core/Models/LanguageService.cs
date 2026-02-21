@@ -37,20 +37,25 @@ public class LanguageService
 	public static IReadOnlyDictionary<string, string> ResourceDictionary => _resourceDictionary.Value;
 	private static readonly Lazy<Dictionary<string, string>> _resourceDictionary = new(() =>
 	{
-		if (_culture.Value is not null)
+		var culture = _culture.Value ?? CultureInfo.CurrentUICulture;
+
+		// Go back up culture hierarchy. 
+		while (culture != CultureInfo.InvariantCulture)
 		{
-			var resourceSet = new ResourceManager(typeof(Resources)).GetResourceSet(_culture.Value, true, false);
+			var resourceSet = new ResourceManager(typeof(Resources)).GetResourceSet(culture, true, false);
 			if (resourceSet is not null)
 			{
 				return resourceSet.Cast<DictionaryEntry>()
 					.Where(x => x.Key is string)
 					.ToDictionary(x => (string)x.Key, x => x.Value?.ToString());
 			}
+
+			culture = culture.Parent;
 		}
 		return new Dictionary<string, string>();
 	});
 
-	public static bool IsResourceRightToLeft => (_culture.Value?.TextInfo.IsRightToLeft is true);
+	public static bool IsResourceRightToLeft => ((_culture.Value ?? CultureInfo.CurrentUICulture).TextInfo.IsRightToLeft is true);
 
 	/// <summary>
 	/// Switches default and current thread's culture.

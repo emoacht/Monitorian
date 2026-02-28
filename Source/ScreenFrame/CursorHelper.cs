@@ -22,15 +22,24 @@ public static class CursorHelper
 	/// Gets the current location of cursor.
 	/// </summary>
 	/// <returns>Location of cursor</returns>
-	public static Point GetCursorLocation()
+	public static Point? GetCursorLocation()
 	{
-		return TryGetCursorLocation(out POINT location)
-			? location
-			: default(Point); // (0, 0)
+		return GetCursorPos(out POINT buffer) ? buffer : null;
 	}
 
-	internal static bool TryGetCursorLocation(out POINT location)
+	/// <summary>
+	/// Attemps to get the current location of cursor.
+	/// </summary>
+	/// <param name="location">Location of cursor</param>
+	/// <returns>True if successfully gets</returns>
+	public static bool TryGetCursorLocation(out Point location)
 	{
-		return GetCursorPos(out location);
+		if (GetCursorPos(out POINT buffer))
+		{
+			location = buffer;
+			return true;
+		}
+		location = default;
+		return false;
 	}
 }

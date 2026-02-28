@@ -255,7 +255,9 @@ public class NotifyIconContainer : IDisposable
 				break;
 
 			case MouseButtons.Right:
-				if (NotifyIconHelper.TryGetNotifyIconCursorLocation(NotifyIcon, out Point location, isSubstitutable: true))
+				// Retrieve cursor location because MouseEventArgs.Location property of MouseClick event
+				// does not contain data.
+				if (CursorHelper.TryGetCursorLocation(out Point location))
 					MouseRightButtonClick?.Invoke(sender, location);
 
 				break;

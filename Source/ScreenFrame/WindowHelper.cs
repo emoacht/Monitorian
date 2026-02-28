@@ -631,12 +631,17 @@ public static class WindowHelper
 	/// </summary>
 	/// <param name="taskbarRect">Primary taskbar rectangle</param>
 	/// <param name="taskbarAlignment">Primary taskbar alignment</param>
+	/// <param name="notificationAreaRect">Notification area rectangle inside primary taskbar</param>
 	/// <param name="isShown">Whether primary taskbar is shown or hidden</param>
 	/// <returns>True if successfully gets</returns>
-	internal static bool TryGetTaskbar(out Rect taskbarRect, out TaskbarAlignment taskbarAlignment, out bool isShown)
+	internal static bool TryGetTaskbar(out Rect taskbarRect, out TaskbarAlignment taskbarAlignment, out Rect notificationAreaRect, out bool isShown)
 	{
+		notificationAreaRect = default;
+		isShown = false;
+
 		if (TryGetTaskbar(out taskbarRect, out taskbarAlignment)
-			&& TryGetWindow(PrimaryTaskbarWindowClassName, out _, out Rect rect)
+			&& TryGetWindowRect(PrimaryTaskbarWindowClassName, out IntPtr taskbarHandle, out Rect rect)
+			&& TryGetWindowRect(taskbarHandle, NotificationAreaClassName, out _, out notificationAreaRect)
 			&& TryGetMonitorRect(taskbarRect, out Rect monitorRect, out Rect workRect))
 		{
 			// SHAppBarMessage function returns primary taskbar rectangle as if the taskbar
@@ -668,61 +673,35 @@ public static class WindowHelper
 			}
 			return true;
 		}
-		isShown = default;
 		return false;
 	}
 
 	// Primary taskbar does not necessarily locate in primary monitor.
 	private const string PrimaryTaskbarWindowClassName = "Shell_TrayWnd";
 	private const string SecondaryTaskbarWindowClassName = "Shell_SecondaryTrayWnd";
+	private const string NotificationAreaClassName = "TrayNotifyWnd";
 
-	private static bool TryGetWindow(string className, out IntPtr windowHandle, out Rect windowRect)
+	private static bool TryGetWindowRect(string className, out IntPtr windowHandle, out Rect windowRect)
+		=> TryGetWindowRect(IntPtr.Zero, className, out windowHandle, out windowRect);
+
+	private static bool TryGetWindowRect(IntPtr parentHandle, string childClassName, out IntPtr childHandle, out Rect childRect)
 	{
-		windowHandle = FindWindowEx(
+		childHandle = FindWindowEx(
+			parentHandle,
 			IntPtr.Zero,
-			IntPtr.Zero,
-			className,
+			childClassName,
 			null);
-		if (windowHandle != IntPtr.Zero)
+		if (childHandle != IntPtr.Zero)
 		{
 			if (GetWindowRect(
-				windowHandle,
+				childHandle,
 				out RECT rect))
 			{
-				windowRect = rect;
+				childRect = rect;
 				return true;
 			}
 		}
-		windowRect = default;
-		return false;
-	}
-
-	private static bool TryGetChildWindow(string parentClassName, string childClassName, out IntPtr windowHandle, out Rect windowRect)
-	{
-		windowHandle = FindWindowEx(
-			IntPtr.Zero,
-			IntPtr.Zero,
-			parentClassName,
-			null);
-		if (windowHandle != IntPtr.Zero)
-		{
-			windowHandle = FindWindowEx(
-				windowHandle,
-				IntPtr.Zero,
-				childClassName,
-				null);
-			if (windowHandle != IntPtr.Zero)
-			{
-				if (GetWindowRect(
-					windowHandle,
-					out RECT rect))
-				{
-					windowRect = rect;
-					return true;
-				}
-			}
-		}
-		windowRect = default;
+		childRect = default;
 		return false;
 	}
 
@@ -735,7 +714,7 @@ public static class WindowHelper
 	/// <remarks>If primary taskbar is hidden, this method will fail.</remarks>
 	internal static bool TryGetPrimaryTaskbar(out Rect taskbarRect, out TaskbarAlignment taskbarAlignment)
 	{
-		if (TryGetWindow(PrimaryTaskbarWindowClassName, out IntPtr taskbarHandle, out Rect rect))
+		if (TryGetWindowRect(PrimaryTaskbarWindowClassName, out IntPtr taskbarHandle, out Rect rect))
 		{
 			var monitorHandle = MonitorFromWindow(
 				taskbarHandle,
@@ -861,14 +840,14 @@ public static class WindowHelper
 		// (NotifyIconOverflowWindow) still exists but seems no longer used. Instead, another
 		// window (TopLevelWindowForOverflowXamlIsland) hosts overflow area. Its rectangle
 		// includes margin surrounding it.
-		if (TryGetWindow("NotifyIconOverflowWindow", out _, out Rect windowRect)
+		if (TryGetWindowRect("NotifyIconOverflowWindow", out _, out Rect windowRect)
 			&& IsValid(windowRect))
 		{
 			overflowAreaRect = windowRect;
 			isMarginIncluded = false;
 			return true;
 		}
-		if (TryGetWindow("TopLevelWindowForOverflowXamlIsland", out _, out windowRect)
+		if (TryGetWindowRect("TopLevelWindowForOverflowXamlIsland", out _, out windowRect)
 			&& IsValid(windowRect))
 		{
 			overflowAreaRect = windowRect;

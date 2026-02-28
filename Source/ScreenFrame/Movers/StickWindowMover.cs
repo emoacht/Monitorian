@@ -77,7 +77,8 @@ public class StickWindowMover : BasicWindowMover
 	/// <returns>True if successfully gets</returns>
 	protected bool TryGetAdjacentLocationToTaskbar(double windowWidth, double windowHeight, out Rect location)
 	{
-		if (!WindowHelper.TryGetTaskbar(out Rect taskbarRect, out TaskbarAlignment taskbarAlignment, out Rect notificationAreaRect, out bool isShown))
+		if (!WindowHelper.TryGetTaskbar(out Rect taskbarRect, out TaskbarAlignment taskbarAlignment, out Rect notificationAreaRect,
+			out bool isShown, out bool isHeightConfirmed))
 		{
 			location = default;
 			return false;
@@ -88,6 +89,7 @@ public class StickWindowMover : BasicWindowMover
 		var isIconLocationReliable = false;
 		var overflowAreaRect = default(Rect);
 		var isMarginIncluded = false;
+		var isHeightReliable = !OsVersion.Is11Build22621OrGreater || isHeightConfirmed;
 
 		if (isShown)
 		{
@@ -123,7 +125,7 @@ public class StickWindowMover : BasicWindowMover
 		var distance = new Vector(0, 0);
 		if (OsVersion.Is11OrGreater && KeepsDistance)
 		{
-			distance = (OsVersion.Is11Build22621OrGreater && isMarginIncluded)
+			distance = isMarginIncluded
 				? new Vector(0, Distance)
 				: new Vector(Distance, Distance);
 			distance *= VisualTreeHelperAddition.GetDpi(_window).ToMatrix();
@@ -154,7 +156,13 @@ public class StickWindowMover : BasicWindowMover
 						PivotAlignment = isLeftToRight ? PivotAlignment.TopRight : PivotAlignment.TopLeft;
 						break;
 					case TaskbarAlignment.Bottom:
-						y = (isShown ? taskbarRect.Top : taskbarRect.Bottom) - (windowHeight - windowMargin.Bottom) - distance.Y;
+						y = (isShown, isHeightReliable, iconPlacement) switch
+						{
+							(true, false, IconPlacement.InTaskbar) => iconRect.Top,
+							(true, false, IconPlacement.InOverflowArea) => overflowAreaRect.Bottom,
+							(true, _, _) => taskbarRect.Top,
+							_ => taskbarRect.Bottom
+						} - (windowHeight - windowMargin.Bottom) - distance.Y;
 						PivotAlignment = isLeftToRight ? PivotAlignment.BottomRight : PivotAlignment.BottomLeft;
 						break;
 				}

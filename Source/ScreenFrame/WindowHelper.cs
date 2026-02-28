@@ -633,36 +633,42 @@ public static class WindowHelper
 	/// <param name="taskbarAlignment">Primary taskbar alignment</param>
 	/// <param name="notificationAreaRect">Notification area rectangle inside primary taskbar</param>
 	/// <param name="isShown">Whether primary taskbar is shown or hidden</param>
+	/// <param name="isHeightConfirmed">Whether primary taskbar height is confirmed</param>
 	/// <returns>True if successfully gets</returns>
-	internal static bool TryGetTaskbar(out Rect taskbarRect, out TaskbarAlignment taskbarAlignment, out Rect notificationAreaRect, out bool isShown)
+	internal static bool TryGetTaskbar(out Rect taskbarRect, out TaskbarAlignment taskbarAlignment, out Rect notificationAreaRect,
+		out bool isShown, out bool isHeightConfirmed)
 	{
 		notificationAreaRect = default;
 		isShown = false;
+		isHeightConfirmed = false;
 
 		if (TryGetTaskbar(out taskbarRect, out taskbarAlignment)
-			&& TryGetWindowRect(PrimaryTaskbarWindowClassName, out IntPtr taskbarHandle, out Rect rect)
+			&& TryGetWindowRect(PrimaryTaskbarWindowClassName, out IntPtr taskbarHandle, out Rect alternativeRect)
 			&& TryGetWindowRect(taskbarHandle, NotificationAreaClassName, out _, out notificationAreaRect)
 			&& TryGetMonitorRect(taskbarRect, out Rect monitorRect, out Rect workRect))
 		{
 			// SHAppBarMessage function returns primary taskbar rectangle as if the taskbar
-			// is fully shown even when it is actually hidden. In contrast, GetWindowRect
+			// were fully shown even when it is actually hidden. In contrast, GetWindowRect
 			// function returns actual, current primary taskbar rectangle. Thus, if those
 			// rectangles match, the taskbar is fully shown.
-			isShown = (taskbarRect == rect)
-				// As of Windows 11 10.0.22621.xxx, current primary taskbar rectangle obtained
-				// specifying the traditional window of primary taskbar (Shell_TrayWnd)
-				// no longer indicates actual height of primary taskbar. Even so, if current
-				// primary taskbar rectangle is contained in monitor rectangle to which primary
-				// taskbar rectangle belongs, the taskbar is fully shown.
-				|| monitorRect.Contains(rect);
+			isShown = (taskbarRect == alternativeRect)
+				// As of Windows 11 (10.0.22621.xxx), current primary taskbar rectangle obtained
+				// from the traditional window of primary taskbar (Shell_TrayWnd) no longer
+				// indicates actual height of primary taskbar. Even so, if current primary
+				// taskbar rectangle is contained in monitor rectangle to which primary taskbar
+				// rectangle belongs, the taskbar is fully shown.
+				|| monitorRect.Contains(alternativeRect);
 
 			if (isShown)
 			{
-				// As a result of the change explained above, primary taskbar rectangle may not
-				// match the rectangle calculated by monitor rectangle and working area rectangle.
-				// In such case, the calculated rectangle seems reliable.
+				// A taskbar rectangle can be calculated by subtracting working area rectangle
+				// from monitor rectangle except when those rectangles match, which occurs
+				// when the taskbar is set to auto-hide.
+				// As a result of the above change, primary taskbar rectangle may not match
+				// the calculated rectangle. In that case, use the calculated rectangle.
 				var height = (monitorRect.Height - workRect.Height);
-				if ((height > 0) && (taskbarRect.Height != height))
+				isHeightConfirmed = (height > 0);
+				if (isHeightConfirmed && (taskbarRect.Height != height))
 				{
 					taskbarRect = new Rect(
 						taskbarRect.Left,

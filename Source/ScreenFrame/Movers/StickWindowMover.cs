@@ -69,6 +69,12 @@ public class StickWindowMover : BasicWindowMover
 	public double Distance { get; set; } = 12D;
 
 	/// <summary>
+	/// Cursor location to specify the monitor where the window is to be shown
+	/// </summary>
+	/// <remarks>This value will be referred multiple times when the window is shown</remarks>
+	public Point? CursorLocation { get; set; } = null;
+
+	/// <summary>
 	/// Attempts to get the adjacent location to NotifyIcon using specified window width and height.
 	/// </summary>
 	/// <param name="windowWidth">Window width</param>
@@ -77,7 +83,8 @@ public class StickWindowMover : BasicWindowMover
 	/// <returns>True if successfully gets</returns>
 	protected bool TryGetAdjacentLocationToTaskbar(double windowWidth, double windowHeight, out Rect location)
 	{
-		if (!WindowHelper.TryGetTaskbar(out Rect taskbarRect, out TaskbarAlignment taskbarAlignment, out Rect notificationAreaRect,
+		if (!WindowHelper.TryGetTaskbar(CursorLocation,
+			out Rect taskbarRect, out TaskbarAlignment taskbarAlignment, out Rect notificationAreaRect,
 			out bool isShown, out bool isHeightConfirmed))
 		{
 			location = default;

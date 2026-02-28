@@ -77,10 +77,14 @@ public class AppControllerCore
 			NotifyIconContainer.ShowIcon(WindowPainter.GetIconPath());
 		};
 
-		_current.MainWindow = new MainWindow(this);
+		var mainWindow = new MainWindow(this);
+		_current.MainWindow = mainWindow;
 
 		if (StartupAgent.IsWindowShowExpected())
-			_current.MainWindow.Show();
+		{
+			mainWindow.CursorLocation = CursorHelper.GetCursorLocation();
+			mainWindow.Show();
+		}
 
 		await ScanAsync();
 
@@ -167,7 +171,7 @@ public class AppControllerCore
 
 	protected async void OnMainWindowShowRequestedByOther(object sender, EventArgs e)
 	{
-		_current.Dispatcher.Invoke(() => ShowMainWindow());
+		_current.Dispatcher.Invoke(() => ShowMainWindow(true));
 		await CheckUpdateAsync();
 
 		if (_brightnessConnector.IsEnabled)
@@ -179,12 +183,13 @@ public class AppControllerCore
 		ShowMenuWindow(e);
 	}
 
-	protected virtual void ShowMainWindow()
+	protected virtual void ShowMainWindow(bool useCursorLocation = false)
 	{
 		var window = (MainWindow)_current.MainWindow;
 		if (window is { CanBeShown: false } or { Visibility: Visibility.Visible, IsForeground: true })
 			return;
 
+		window.CursorLocation = useCursorLocation ? CursorHelper.GetCursorLocation() : null;
 		window.ShowForeground();
 		window.Activate();
 	}

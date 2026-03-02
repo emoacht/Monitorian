@@ -502,8 +502,9 @@ public class AppControllerCore
 
 	private void ReflectMouseWheel(int delta)
 	{
-		var monitor = Monitors.Prepend(SelectedMonitor)
-			.FirstOrDefault(x => x.IsTarget && x.IsControllable);
+		var monitors = Monitors.Where(x => x.IsTarget && x.IsControllable).ToArray();
+		var monitor = monitors.FirstOrDefault(x => ReferenceEquals(x, SelectedMonitor))
+			?? monitors.FirstOrDefault(); // Fallback
 		if (monitor is null)
 			return;
 

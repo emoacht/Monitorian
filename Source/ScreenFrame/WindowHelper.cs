@@ -713,9 +713,9 @@ public static class WindowHelper
 	}
 
 	// Primary taskbar does not necessarily locate in primary monitor.
-	private const string PrimaryTaskbarWindowClassName = "Shell_TrayWnd";
-	private const string SecondaryTaskbarWindowClassName = "Shell_SecondaryTrayWnd";
-	private const string NotificationAreaClassName = "TrayNotifyWnd";
+	internal const string PrimaryTaskbarWindowClassName = "Shell_TrayWnd";
+	internal const string SecondaryTaskbarWindowClassName = "Shell_SecondaryTrayWnd";
+	internal const string NotificationAreaClassName = "TrayNotifyWnd";
 
 	private static bool TryGetWindowRect(string className, out IntPtr windowHandle, out Rect windowRect)
 		=> TryGetWindowRect(IntPtr.Zero, className, out windowHandle, out windowRect);

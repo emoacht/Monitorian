@@ -16,7 +16,7 @@ public static class FlowElement
 	/// language resources. 
 	/// </summary>
 	/// <param name="rootControl">Root control of the logical tree</param>
-	public static void EnsureFlowDirection(ContentControl rootControl)
+	public static void EnsureFlowDirection(DependencyObject rootControl)
 	{
 		if (!LanguageService.IsResourceRightToLeft)
 			return;

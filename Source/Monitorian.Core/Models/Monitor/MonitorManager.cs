@@ -225,7 +225,8 @@ internal class MonitorManager
 							!x.IsInternal &&
 							(x.DisplayIndex == handleItem.DisplayIndex) &&
 							(x.MonitorIndex == physicalItem.MonitorIndex) &&
-							string.Equals(x.Description, physicalItem.Description, StringComparison.OrdinalIgnoreCase));
+							(string.IsNullOrEmpty(physicalItem.Description) ||
+							 string.Equals(x.Description, physicalItem.Description, StringComparison.OrdinalIgnoreCase)));
 					}
 					if (index < 0)
 					{

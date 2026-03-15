@@ -288,6 +288,27 @@ internal class MonitorConfiguration
 					capabilitiesData: (verbose && !vcpCodes.Any() ? GetCapabilitiesData(physicalMonitorHandle, capabilitiesStringLength) : null));
 			}
 		}
+
+		// Capabilities string unavailable (monitor firmware quirk – e.g. AOC Q27G3XMN on
+		// DisplayPort, issue #734).  Try probing VCP 0x10 (Luminance) directly.  If it
+		// responds the monitor is DDC/CI-capable; use the pre-cleared capability so
+		// DdcMonitorItem skips the capabilities-string requirement.
+		for (int attempt = 0; attempt < 5; attempt++)
+		{
+			if (attempt > 0)
+				System.Threading.Thread.Sleep(200);
+
+			var (brightnessResult, _, _, _) = GetVcpValue(physicalMonitorHandle, VcpCode.Luminance);
+			if (brightnessResult.Status == AccessStatus.Succeeded)
+				return MonitorCapability.PreclearedCapability;
+
+			// 0xC0262589 (InvalidMessageCommand) and 0xC0262582 (TransmissionFailed) are
+			// both transient on AOC Q27G3XMN - keep retrying. Only give up on hard failures.
+			if (brightnessResult.Status is not AccessStatus.DdcFailed
+									   and not AccessStatus.TransmissionFailed)
+				break;
+		}
+
 		return new MonitorCapability(
 			isHighLevelBrightnessSupported: isHighLevelSupported,
 			isLowLevelBrightnessSupported: false,
@@ -666,7 +687,7 @@ internal class MonitorConfiguration
 	private static bool CheckPossibleTransientStatus(AccessStatus oldStatus, AccessStatus newStatus)
 	{
 		return (oldStatus is AccessStatus.None)
-			&& (newStatus is AccessStatus.TransmissionFailed);
+			&& (newStatus is AccessStatus.TransmissionFailed or AccessStatus.DdcFailed);
 	}
 
 	#region Error

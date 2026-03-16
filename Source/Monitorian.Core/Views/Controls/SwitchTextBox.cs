@@ -42,8 +42,7 @@ public class SwitchTextBox : TextBox
 		this.Unloaded += OnUnloaded;
 
 		_window = Window.GetWindow(this);
-		if (_window is not null)
-			_window.Closed += OnClosed;
+		_window?.Closed += OnClosed;
 	}
 
 	private void OnUnloaded(object sender, RoutedEventArgs e)

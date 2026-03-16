@@ -277,9 +277,7 @@ public class EnhancedSlider : Slider
 
 	protected virtual void CloseToolTip(Track track)
 	{
-		if (_autoToolTip is not null)
-			_autoToolTip.IsOpen = false;
-
+		_autoToolTip?.IsOpen = false;
 		track.Thumb.ToolTip = null;
 	}
 

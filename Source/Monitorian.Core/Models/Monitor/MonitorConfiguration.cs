@@ -666,7 +666,8 @@ internal class MonitorConfiguration
 	private static bool CheckPossibleTransientStatus(AccessStatus oldStatus, AccessStatus newStatus)
 	{
 		return (oldStatus is AccessStatus.None)
-			&& (newStatus is AccessStatus.TransmissionFailed);
+			&& (newStatus is AccessStatus.DdcMessageInvalid or
+							 AccessStatus.TransmissionFailed);
 	}
 
 	#region Error
@@ -684,11 +685,11 @@ internal class MonitorConfiguration
 	{
 		return unchecked((uint)errorCode) switch
 		{
-			ERROR_GRAPHICS_DDCCI_VCP_NOT_SUPPORTED or
-			ERROR_GRAPHICS_DDCCI_INVALID_DATA or
+			ERROR_GRAPHICS_DDCCI_VCP_NOT_SUPPORTED => AccessStatus.DdcNotSupported,
+			ERROR_GRAPHICS_DDCCI_INVALID_DATA => AccessStatus.DdcDataInvalid,
 			ERROR_GRAPHICS_DDCCI_INVALID_MESSAGE_COMMAND or
 			ERROR_GRAPHICS_DDCCI_INVALID_MESSAGE_LENGTH or
-			ERROR_GRAPHICS_DDCCI_INVALID_MESSAGE_CHECKSUM => AccessStatus.DdcFailed,
+			ERROR_GRAPHICS_DDCCI_INVALID_MESSAGE_CHECKSUM => AccessStatus.DdcMessageInvalid,
 			ERROR_GRAPHICS_I2C_ERROR_TRANSMITTING_DATA => AccessStatus.TransmissionFailed,
 			ERROR_GRAPHICS_MONITOR_NO_LONGER_EXISTS => AccessStatus.NoLongerExist,
 			_ => AccessStatus.Failed

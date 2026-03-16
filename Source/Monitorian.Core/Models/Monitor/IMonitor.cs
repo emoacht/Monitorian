@@ -38,7 +38,11 @@ public enum AccessStatus
 	None = 0,
 	Succeeded,
 	Failed,
-	DdcFailed,
+
+	DdcNotSupported,
+	DdcDataInvalid,
+	DdcMessageInvalid,
+
 	TransmissionFailed,
 	NoLongerExist,
 	NotSupported

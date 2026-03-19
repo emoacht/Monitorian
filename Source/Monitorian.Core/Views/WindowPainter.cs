@@ -114,11 +114,17 @@ public class WindowPainter : ScreenFrame.Painter.WindowPainter
 
 	protected override string TranslucentBrushKey { get; } = "App.Background.Translucent";
 
+	public IReadOnlyList<(string darkThemeUriString, string lightThemeUriString)> ThemeSets => _themeSets.ToArray();
+	private readonly List<(string darkThemeUriString, string lightThemeUriString)> _themeSets =
+	[
+		(null, @"/Monitorian.Core;component/Views/Themes/LightTheme.xaml")
+	];
+
+	public void AddThemeSet(string darkThemeUriString, string lightThemeUriString) =>
+		_themeSets.Add((darkThemeUriString, lightThemeUriString));
+
 	protected override void ChangeThemes(ColorTheme oldTheme, ColorTheme newTheme)
 	{
-		//const string DarkThemeUriString = @"/Monitorian.Core;component/Views/Themes/DarkTheme.xaml";
-		const string LightThemeUriString = @"/Monitorian.Core;component/Views/Themes/LightTheme.xaml";
-
 		switch (oldTheme, newTheme)
 		{
 			case (ColorTheme.Unknown, ColorTheme.Dark):
@@ -126,12 +132,16 @@ public class WindowPainter : ScreenFrame.Painter.WindowPainter
 				break;
 
 			case (ColorTheme.Light, ColorTheme.Dark):
-				ChangeResources(oldUriString: LightThemeUriString, newUriString: null);
+				foreach (var (darkThemeUriString, lightThemeUriString) in ThemeSets)
+					ChangeResources(oldUriString: lightThemeUriString, newUriString: darkThemeUriString);
+
 				break;
 
 			case (ColorTheme.Unknown, ColorTheme.Light):
 			case (ColorTheme.Dark, ColorTheme.Light):
-				ChangeResources(oldUriString: null, newUriString: LightThemeUriString);
+				foreach (var (darkThemeUriString, lightThemeUriString) in ThemeSets)
+					ChangeResources(oldUriString: darkThemeUriString, newUriString: lightThemeUriString);
+
 				break;
 		}
 	}

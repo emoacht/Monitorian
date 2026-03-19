@@ -24,7 +24,6 @@ public abstract class WindowPainter : IDisposable
 	public WindowPainter(IReadOnlyList<string> args)
 	{
 		CheckArguments(args);
-		ApplyInitialTheme();
 	}
 
 	/// <summary>
@@ -244,7 +243,10 @@ public abstract class WindowPainter : IDisposable
 	/// </summary>
 	public event EventHandler ThemeChanged;
 
-	private void ApplyInitialTheme()
+	/// <summary>
+	/// Applies initial theme.
+	/// </summary>
+	public void ApplyInitialTheme()
 	{
 		if (RespondsThemeChanged)
 			Theme = ThemeInfo.GetWindowsTheme();

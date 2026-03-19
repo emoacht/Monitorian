@@ -31,8 +31,8 @@ public class AppControllerCore
 	public ObservableCollection<MonitorViewModel> Monitors { get; }
 	protected readonly object _monitorsLock = new();
 
-	public NotifyIconContainer NotifyIconContainer { get; }
 	public WindowPainter WindowPainter { get; }
+	public NotifyIconContainer NotifyIconContainer { get; }
 
 	private readonly SessionWatcher _sessionWatcher;
 	private readonly PowerWatcher _powerWatcher;
@@ -51,8 +51,8 @@ public class AppControllerCore
 		Monitors = new ObservableCollection<MonitorViewModel>();
 		BindingOperations.EnableCollectionSynchronization(Monitors, _monitorsLock);
 
-		NotifyIconContainer = new NotifyIconContainer();
 		WindowPainter = new WindowPainter();
+		NotifyIconContainer = new NotifyIconContainer();		
 
 		_sessionWatcher = new SessionWatcher();
 		_powerWatcher = new PowerWatcher();
@@ -71,6 +71,7 @@ public class AppControllerCore
 		OnSettingsInitiated();
 		await OperationRecorder.RecordAsync($"Connectable by named pipes: {_keeper.StartupAgent.IsConnectable}");
 
+		WindowPainter.ApplyInitialTheme();
 		NotifyIconContainer.ShowIcon(WindowPainter.GetIconPath(), ProductInfo.Title);
 		WindowPainter.ThemeChanged += (_, _) =>
 		{

@@ -119,6 +119,7 @@
     <Compile Include="ViewModels\ScrollWindowViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
     <Compile Include="Views\Behaviors\FocusElementAction.cs" />
+    <Compile Include="Views\Behaviors\FocusControlBahavior.cs" />
     <Compile Include="Views\Behaviors\FocusMenuBehavior.cs" />
     <Compile Include="Views\Behaviors\ItemBehavior.cs" />
     <Compile Include="Views\Behaviors\ItemSelectorBehavior.cs" />

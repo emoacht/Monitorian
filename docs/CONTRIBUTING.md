@@ -43,8 +43,10 @@ Thanks to your interest in contributing to this project.
 - Read [Globalization](https://github.com/emoacht/Monitorian#globalization) in readme.
 - Use phrases used by the OS as much as possible.
 - Do not try to explain everything. You cannot create a flawless expression in a short sentence like menu item.
+- Do not edit the readme.
 
 ### 4.2 PR for functionality
 
-- Open an issue and get agreement for your proposed change before starting your work.
-- It is recommended to use the latest features of C#.
+- <ins>Open an issue and get agreement for your proposed change before starting your work.</ins>
+- Split the changes into dedicated commits based on their reasons and objectives. Avoid adding unrelated changes into a commit.
+- It is recommended to use the latest features of C# whenever possible.

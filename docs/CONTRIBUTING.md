@@ -18,7 +18,7 @@ Thanks to your interest in contributing to this project.
 
 - Include all information necessary for a reader who has no knowledge about your monitor or other devices to understand and reproduce the issue.
 
-- Add __probe.log__ and __operation.log__. A video clip is not so helpful because it will not give information on what is happening internally.
+- Add __probe.log__ and __operation.log__. A video clip is not very helpful because it will not provide information about what is happening internally.
 
 - An issue which includes no meaningful clue CAN BE CLOSED without review.
 
@@ -43,8 +43,10 @@ Thanks to your interest in contributing to this project.
 - Read [Globalization](https://github.com/emoacht/Monitorian#globalization) in readme.
 - Use phrases used by the OS as much as possible.
 - Do not try to explain everything. You cannot create a flawless expression in a short sentence like menu item.
+- Do not edit the readme.
 
 ### 4.2 PR for functionality
 
-- Open an issue and get agreement for your proposed change before starting your work.
-- It is recommended to use the latest features of C#.
+- <ins>Open an issue and get agreement for your proposed change before starting your work.</ins>
+- Split the changes into dedicated commits based on their reasons and objectives. Avoid adding unrelated changes into a commit.
+- It is recommended to use the latest features of C#, provided that they are supported in this project.

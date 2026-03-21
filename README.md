@@ -24,6 +24,7 @@ Additional languages:
  - German (de) by [@uDEV2019](https://github.com/uDEV2019)
  - Greek (el-GR) by [@NickMihal](https://github.com/NickMihal)
  - Spanish (es) by [@josemirm](https://github.com/josemirm) and [@ericmp33](https://github.com/ericmp33)
+ - Persian (fa-IR) by [@sinadalvand](https://github.com/sinadalvand)
  - French (fr) by [@AlexZeGamer](https://github.com/AlexZeGamer) and [@Rikiiiiiii](https://github.com/rikiiiiiii)
  - Italian (it) by [@GhostyJade](https://github.com/GhostyJade)
  - Japanese (ja-JP) by [@emoacht](https://github.com/emoacht)
@@ -60,7 +61,7 @@ Additional languages:
    ```
 
  * Other:<br>
-:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/4.13.0-Installer/MonitorianInstaller4130.zip)
+:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/4.14.0-Installer/MonitorianInstaller3140.zip)
 
 ## Install/Uninstall
 
@@ -140,11 +141,11 @@ From Task Scheduler, it can be performed by the path to its alias `%LOCALAPPDATA
 
 ![Task Scheduler](Images/TaskScheduler_action.png)
 
-In addition, you can define commands and make them execute when a specified condition is met, when a specified daily due time comes, or when a specified hot key is pressed:
+In addition, you can customize flexible and versatile commands for specific needs:
 
- - [Conditional Commands](https://github.com/emoacht/Monitorian/blob/master/docs/COMMANDS.md#conditional-commands)
- - [Time Commands](https://github.com/emoacht/Monitorian/blob/master/docs/COMMANDS.md#time-commands)
- - [Key Commands](https://github.com/emoacht/Monitorian/blob/master/docs/COMMANDS.md#key-commands)
+ - [Conditional Commands](https://github.com/emoacht/Monitorian/blob/master/docs/COMMANDS.md#conditional-commands) - To be executed when a specified condition is met
+ - [Time Commands](https://github.com/emoacht/Monitorian/blob/master/docs/COMMANDS.md#time-commands) - To be executed when a specified daily due time comes
+ - [Key Commands](https://github.com/emoacht/Monitorian/blob/master/docs/COMMANDS.md#key-commands) - To be executed a specified hot key is pressed
 
 The code for add-on features is not included in this repository.
 
@@ -171,6 +172,8 @@ This function has been tested and worked well in most cases. Therefore, if a mon
 If you think it is worth to report, read [reporting](#reporting) and then create an issue with logs and other relevant information.
 
 ## Development
+
+To begin with, please read [contributing guidelines](https://github.com/emoacht/Monitorian/blob/master/docs/CONTRIBUTING.md).
 
 This app is a WPF app developed and tested with Surface Pro series.
 
@@ -229,6 +232,11 @@ An alternative language can be shown by adding a Resources (.resx) file into `/S
  - VESA [Monitor Control Command Set (MCCS)](https://www.google.co.jp/search?q=VESA+Monitor+Control+Command+Set+Standard+MCCS) standard
 
 ## History
+
+Ver 4.14 2026-3-22
+
+ - Fix window placement
+ - Add Persian (fa-IR) language. Thanks to @sinadalvand!
 
 Ver 4.13 2025-8-4
 

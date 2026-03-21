@@ -42,34 +42,6 @@ internal static class NotifyIconHelper
 	}
 
 	/// <summary>
-	/// Attempts to get the location of cursor when cursor is over a specified NotifyIcon.
-	/// </summary>
-	/// <param name="notifyIcon">NotifyIcon</param>
-	/// <param name="location">Location of cursor</param>
-	/// <param name="isSubstitutable">Whether to substitute the NotifyIcon for cursor when cursor is not over the NotifyIcon</param>
-	/// <returns>True if successfully gets</returns>
-	/// <remarks>MouseEventArgs.Location property of MouseClick event does not contain data.</remarks>
-	public static bool TryGetNotifyIconCursorLocation(NotifyIcon notifyIcon, out Point location, bool isSubstitutable)
-	{
-		if (TryGetNotifyIconRect(notifyIcon, out Rect iconRect))
-		{
-			if (CursorHelper.TryGetCursorLocation(out POINT source))
-			{
-				location = source;
-				if (iconRect.Contains(location))
-					return true;
-			}
-			if (isSubstitutable)
-			{
-				location = iconRect.Location;
-				return true;
-			}
-		}
-		location = default;
-		return false;
-	}
-
-	/// <summary>
 	/// Attempts to get the rectangle of a specified NotifyIcon.
 	/// </summary>
 	/// <param name="notifyIcon">NotifyIcon</param>
@@ -86,6 +58,9 @@ internal static class NotifyIconHelper
 		if (!TryGetNotifyIconIdentifier(notifyIcon, out NOTIFYICONIDENTIFIER identifier))
 			return false;
 
+		// On Windows 11 (any version newer than 10.0.22621.xxx), when RTL layout is applied and
+		// NotifyIcon locates in the taskbar, Shell_NotifyIconGetRect function returns incorrect
+		// location as if LTR layout were applied.
 		var result = Shell_NotifyIconGetRect(ref identifier, out RECT iconLocation);
 		switch (result)
 		{

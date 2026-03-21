@@ -243,7 +243,8 @@ public class MonitorViewModel : ViewModelBase
 
 				switch (result.Status)
 				{
-					case AccessStatus.DdcFailed:
+					case AccessStatus.DdcDataInvalid:
+					case AccessStatus.DdcMessageInvalid:
 					case AccessStatus.TransmissionFailed:
 					case AccessStatus.NoLongerExist:
 						_controller.OnMonitorsChangeFound();
@@ -367,7 +368,8 @@ public class MonitorViewModel : ViewModelBase
 
 				switch (result.Status)
 				{
-					case AccessStatus.DdcFailed:
+					case AccessStatus.DdcDataInvalid:
+					case AccessStatus.DdcMessageInvalid:
 					case AccessStatus.TransmissionFailed:
 					case AccessStatus.NoLongerExist:
 						_controller.OnMonitorsChangeFound();
@@ -408,7 +410,8 @@ public class MonitorViewModel : ViewModelBase
 
 				switch (result.Status)
 				{
-					case AccessStatus.DdcFailed:
+					case AccessStatus.DdcDataInvalid:
+					case AccessStatus.DdcMessageInvalid:
 					case AccessStatus.TransmissionFailed:
 					case AccessStatus.NoLongerExist:
 						_controller.OnMonitorsChangeFound();

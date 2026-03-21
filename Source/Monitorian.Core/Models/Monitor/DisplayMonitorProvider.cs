@@ -115,7 +115,8 @@ internal class DisplayMonitorProvider
 			{
 				foreach (var device in devices)
 				{
-					if (!device.Properties.TryGetValue(deviceInstanceIdKey, out object value))
+					// Null check is inserted because NullReferenceException is observed in this method.
+					if ((device is null) || !device.Properties.TryGetValue(deviceInstanceIdKey, out object value))
 						continue;
 
 					var deviceInstanceId = value as string;

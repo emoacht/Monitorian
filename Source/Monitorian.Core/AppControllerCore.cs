@@ -31,8 +31,8 @@ public class AppControllerCore
 	public ObservableCollection<MonitorViewModel> Monitors { get; }
 	protected readonly object _monitorsLock = new();
 
-	public NotifyIconContainer NotifyIconContainer { get; }
 	public WindowPainter WindowPainter { get; }
+	public NotifyIconContainer NotifyIconContainer { get; }
 
 	private readonly SessionWatcher _sessionWatcher;
 	private readonly PowerWatcher _powerWatcher;
@@ -51,8 +51,8 @@ public class AppControllerCore
 		Monitors = new ObservableCollection<MonitorViewModel>();
 		BindingOperations.EnableCollectionSynchronization(Monitors, _monitorsLock);
 
-		NotifyIconContainer = new NotifyIconContainer();
 		WindowPainter = new WindowPainter();
+		NotifyIconContainer = new NotifyIconContainer();		
 
 		_sessionWatcher = new SessionWatcher();
 		_powerWatcher = new PowerWatcher();
@@ -71,16 +71,21 @@ public class AppControllerCore
 		OnSettingsInitiated();
 		await OperationRecorder.RecordAsync($"Connectable by named pipes: {_keeper.StartupAgent.IsConnectable}");
 
+		WindowPainter.ApplyInitialTheme();
 		NotifyIconContainer.ShowIcon(WindowPainter.GetIconPath(), ProductInfo.Title);
 		WindowPainter.ThemeChanged += (_, _) =>
 		{
 			NotifyIconContainer.ShowIcon(WindowPainter.GetIconPath());
 		};
 
-		_current.MainWindow = new MainWindow(this);
+		var mainWindow = new MainWindow(this);
+		_current.MainWindow = mainWindow;
 
 		if (StartupAgent.IsWindowShowExpected())
-			_current.MainWindow.Show();
+		{
+			mainWindow.CursorLocation = CursorHelper.GetCursorLocation();
+			mainWindow.Show();
+		}
 
 		await ScanAsync();
 
@@ -167,7 +172,7 @@ public class AppControllerCore
 
 	protected async void OnMainWindowShowRequestedByOther(object sender, EventArgs e)
 	{
-		_current.Dispatcher.Invoke(() => ShowMainWindow());
+		_current.Dispatcher.Invoke(() => ShowMainWindow(true));
 		await CheckUpdateAsync();
 
 		if (_brightnessConnector.IsEnabled)
@@ -179,12 +184,13 @@ public class AppControllerCore
 		ShowMenuWindow(e);
 	}
 
-	protected virtual void ShowMainWindow()
+	protected virtual void ShowMainWindow(bool useCursorLocation = false)
 	{
 		var window = (MainWindow)_current.MainWindow;
 		if (window is { CanBeShown: false } or { Visibility: Visibility.Visible, IsForeground: true })
 			return;
 
+		window.CursorLocation = useCursorLocation ? CursorHelper.GetCursorLocation() : null;
 		window.ShowForeground();
 		window.Activate();
 	}
@@ -497,8 +503,9 @@ public class AppControllerCore
 
 	private void ReflectMouseWheel(int delta)
 	{
-		var monitor = Monitors.Prepend(SelectedMonitor)
-			.FirstOrDefault(x => x.IsTarget && x.IsControllable);
+		var monitors = Monitors.Where(x => x.IsTarget && x.IsControllable).ToArray();
+		var monitor = monitors.FirstOrDefault(x => ReferenceEquals(x, SelectedMonitor))
+			?? monitors.FirstOrDefault(); // Fallback
 		if (monitor is null)
 			return;
 

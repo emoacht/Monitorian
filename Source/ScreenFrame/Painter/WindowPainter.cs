@@ -24,7 +24,6 @@ public abstract class WindowPainter : IDisposable
 	public WindowPainter(IReadOnlyList<string> args)
 	{
 		CheckArguments(args);
-		ApplyInitialTheme();
 	}
 
 	/// <summary>
@@ -84,7 +83,7 @@ public abstract class WindowPainter : IDisposable
 			{
 				case ThemeOption when Enum.TryParse(arguments[i + 1], true, out ColorTheme buffer):
 					Theme = buffer;
-					RespondsThemeChanged = false;
+					IsThemeSpecified = true;
 					i++;
 					break;
 
@@ -188,7 +187,7 @@ public abstract class WindowPainter : IDisposable
 	{
 		switch (msg)
 		{
-			case WM_SETTINGCHANGE when (Marshal.PtrToStringAuto(lParam) == "ImmersiveColorSet") && RespondsThemeChanged:
+			case WM_SETTINGCHANGE when (Marshal.PtrToStringAuto(lParam) == "ImmersiveColorSet") && !IsThemeSpecified:
 				OnThemeChanged();
 				break;
 
@@ -235,18 +234,21 @@ public abstract class WindowPainter : IDisposable
 	#region Theme
 
 	/// <summary>
-	/// Whether to respond when the color theme for Windows is changed
+	/// Whether the color theme for Windows is specified by the option
 	/// </summary>
-	protected bool RespondsThemeChanged { get; set; } = true; // Default
+	protected bool IsThemeSpecified { get; set; }
 
 	/// <summary>
 	/// Occurs when the color theme for Windows is changed.
 	/// </summary>
 	public event EventHandler ThemeChanged;
 
-	private void ApplyInitialTheme()
+	/// <summary>
+	/// Applies initial theme.
+	/// </summary>
+	public void ApplyInitialTheme()
 	{
-		if (RespondsThemeChanged)
+		if (!IsThemeSpecified)
 			Theme = ThemeInfo.GetWindowsTheme();
 
 		ChangeThemes(oldTheme: ColorTheme.Unknown, newTheme: Theme);

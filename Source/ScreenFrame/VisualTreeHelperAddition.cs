@@ -164,7 +164,7 @@ public static class VisualTreeHelperAddition
 		var taskbarHandle = FindWindowEx(
 			IntPtr.Zero,
 			IntPtr.Zero,
-			"Shell_TrayWnd",
+			PrimaryTaskbarWindowClassName,
 			string.Empty);
 		if (taskbarHandle == IntPtr.Zero)
 			return SystemDpi;
@@ -172,7 +172,7 @@ public static class VisualTreeHelperAddition
 		var notificationAreaHandle = FindWindowEx(
 			taskbarHandle,
 			IntPtr.Zero,
-			"TrayNotifyWnd",
+			NotificationAreaClassName,
 			string.Empty);
 		if (notificationAreaHandle == IntPtr.Zero)
 			return SystemDpi;

@@ -120,6 +120,12 @@ public partial class MainWindow : Window
 
 	#region Show/Hide
 
+	internal Point? CursorLocation
+	{
+		get => _mover.CursorLocation;
+		set => _mover.CursorLocation = value;
+	}
+
 	public bool IsForeground => _mover.IsForeground();
 
 	public void ShowForeground()
@@ -147,6 +153,9 @@ public partial class MainWindow : Window
 				if (restoredFocusedElement != currentFocusedElement)
 					FocusManager.SetFocusedElement(this, currentFocusedElement);
 			}
+
+			// Set time to prevent hiding procedure from being triggered.
+			_preventionTime = DateTimeOffset.Now + TimeSpan.FromSeconds(0.1);
 		}
 		catch (ArgumentException ex) when ((uint)ex.HResult is 0x80070057)
 		{

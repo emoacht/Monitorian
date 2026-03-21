@@ -627,102 +627,117 @@ public static class WindowHelper
 	}
 
 	/// <summary>
-	/// Attempts to get the information on primary taskbar.
+	/// Attempts to get the information on primary taskbar or secondary taskbar if specified.
 	/// </summary>
-	/// <param name="taskbarRect">Primary taskbar rectangle</param>
-	/// <param name="taskbarAlignment">Primary taskbar alignment</param>
-	/// <param name="isShown">Whether primary taskbar is shown or hidden</param>
+	/// <param name="cursorLocation">Cursor location to specify the monitor where the taskbar locates</param>
+	/// <param name="taskbarRect">Taskbar rectangle</param>
+	/// <param name="taskbarAlignment">Taskbar alignment</param>
+	/// <param name="notificationAreaRect">Notification area rectangle inside primary taskbar</param>
+	/// <param name="isShown">Whether the taskbar is shown</param>
+	/// <param name="isHeightConfirmed">Whether the taskbar height is confirmed</param>
 	/// <returns>True if successfully gets</returns>
-	internal static bool TryGetTaskbar(out Rect taskbarRect, out TaskbarAlignment taskbarAlignment, out bool isShown)
+	internal static bool TryGetTaskbar(Point? cursorLocation,
+		out Rect taskbarRect, out TaskbarAlignment taskbarAlignment, out Rect notificationAreaRect,
+		out bool isShown, out bool isHeightConfirmed)
 	{
+		notificationAreaRect = default;
+		isShown = false;
+		isHeightConfirmed = false;
+
 		if (TryGetTaskbar(out taskbarRect, out taskbarAlignment)
-			&& TryGetWindow(PrimaryTaskbarWindowClassName, out _, out Rect rect)
+			&& TryGetWindowRect(PrimaryTaskbarWindowClassName, out IntPtr taskbarHandle, out Rect alternativeRect)
 			&& TryGetMonitorRect(taskbarRect, out Rect monitorRect, out Rect workRect))
 		{
-			// SHAppBarMessage function returns primary taskbar rectangle as if the taskbar
-			// is fully shown even when it is actually hidden. In contrast, GetWindowRect
-			// function returns actual, current primary taskbar rectangle. Thus, if those
-			// rectangles match, the taskbar is fully shown.
-			isShown = (taskbarRect == rect)
-				// As of Windows 11 10.0.22621.xxx, current primary taskbar rectangle obtained
-				// specifying the traditional window of primary taskbar (Shell_TrayWnd)
-				// no longer indicates actual height of primary taskbar. Even so, if current
-				// primary taskbar rectangle is contained in monitor rectangle to which primary
-				// taskbar rectangle belongs, the taskbar is fully shown.
-				|| monitorRect.Contains(rect);
-
-			if (isShown)
+			if (!cursorLocation.HasValue || monitorRect.Contains(cursorLocation.Value))
 			{
-				// As a result of the change explained above, primary taskbar rectangle may not
-				// match the rectangle calculated by monitor rectangle and working area rectangle.
-				// In such case, the calculated rectangle seems reliable.
-				var height = (monitorRect.Height - workRect.Height);
-				if ((height > 0) && (taskbarRect.Height != height))
+				// Primary taskbar
+				if (TryGetWindowRect(taskbarHandle, NotificationAreaClassName, out _, out notificationAreaRect))
 				{
-					taskbarRect = new Rect(
-						taskbarRect.Left,
-						((monitorRect.Top != workRect.Top) ? monitorRect.Top : workRect.Bottom),
-						taskbarRect.Width,
-						height);
+					// SHAppBarMessage function returns primary taskbar rectangle as if the taskbar
+					// were fully shown even when it is actually hidden. In contrast, GetWindowRect
+					// function returns actual, current primary taskbar rectangle. Thus, if those
+					// rectangles match, the taskbar is fully shown.
+					isShown = (taskbarRect == alternativeRect)
+						// As of Windows 11 (10.0.22621.xxx), current primary taskbar rectangle obtained
+						// from the traditional window of primary taskbar (Shell_TrayWnd) no longer
+						// indicates actual height of primary taskbar. Even so, if current primary
+						// taskbar rectangle is contained in monitor rectangle to which primary taskbar
+						// rectangle belongs, the taskbar is fully shown.
+						|| monitorRect.Contains(alternativeRect);
+
+					if (isShown)
+					{
+						// A taskbar rectangle can be calculated by subtracting working area rectangle
+						// from monitor rectangle except when those rectangles match, which occurs
+						// when the taskbar is set to auto-hide.
+						// As a result of the above change, primary taskbar rectangle may not match
+						// the calculated rectangle. In that case, use the calculated rectangle.
+						var height = (monitorRect.Height - workRect.Height);
+						isHeightConfirmed = (height > 0);
+						if (isHeightConfirmed && (taskbarRect.Height != height))
+						{
+							taskbarRect = new Rect(
+								taskbarRect.Left,
+								((monitorRect.Top != workRect.Top) ? monitorRect.Top : workRect.Bottom),
+								taskbarRect.Width,
+								height);
+						}
+					}
+					return true;
 				}
 			}
-			return true;
-		}
-		isShown = default;
-		return false;
-	}
-
-	// Primary taskbar does not necessarily locate in primary monitor.
-	private const string PrimaryTaskbarWindowClassName = "Shell_TrayWnd";
-	private const string SecondaryTaskbarWindowClassName = "Shell_SecondaryTrayWnd";
-
-	private static bool TryGetWindow(string className, out IntPtr windowHandle, out Rect windowRect)
-	{
-		windowHandle = FindWindowEx(
-			IntPtr.Zero,
-			IntPtr.Zero,
-			className,
-			null);
-		if (windowHandle != IntPtr.Zero)
-		{
-			if (GetWindowRect(
-				windowHandle,
-				out RECT rect))
+			else
 			{
-				windowRect = rect;
-				return true;
-			}
-		}
-		windowRect = default;
-		return false;
-	}
-
-	private static bool TryGetChildWindow(string parentClassName, string childClassName, out IntPtr windowHandle, out Rect windowRect)
-	{
-		windowHandle = FindWindowEx(
-			IntPtr.Zero,
-			IntPtr.Zero,
-			parentClassName,
-			null);
-		if (windowHandle != IntPtr.Zero)
-		{
-			windowHandle = FindWindowEx(
-				windowHandle,
-				IntPtr.Zero,
-				childClassName,
-				null);
-			if (windowHandle != IntPtr.Zero)
-			{
-				if (GetWindowRect(
-					windowHandle,
-					out RECT rect))
+				// Secondary taskbar
+				if (TryGetMonitorRect(cursorLocation.Value, out monitorRect, out workRect))
 				{
-					windowRect = rect;
+					(taskbarRect, taskbarAlignment) = GetTaskbarRectAlignment(monitorRect, workRect);
+					// When a secondary taskbar is set auto-hide, working area rectangle matches monitor rectangle.
+					// Conversely, when those rectangles differ, the secondary taskbar is shown.
+					isShown = isHeightConfirmed = (taskbarAlignment != default);
+					if (!isShown)
+					{
+						// When a secondary taskbar is hidden, its alignment cannot be reliably inferred.
+						// As a fallback, assume the secondary taskbar is aligned to the bottom.
+						// Accordingly, use monitor rectangle as taskbar rectangle. Its Top property is
+						// ignorable because when the taskbar is hidden, the value of opposite side
+						// will not be referred in calculation.
+						taskbarRect = monitorRect;
+						taskbarAlignment = TaskbarAlignment.Bottom;
+					}
 					return true;
 				}
 			}
 		}
-		windowRect = default;
+		return false;
+	}
+
+	// Primary taskbar does not necessarily locate in primary monitor.
+	internal const string PrimaryTaskbarWindowClassName = "Shell_TrayWnd";
+	internal const string SecondaryTaskbarWindowClassName = "Shell_SecondaryTrayWnd";
+	internal const string NotificationAreaClassName = "TrayNotifyWnd";
+
+	private static bool TryGetWindowRect(string className, out IntPtr windowHandle, out Rect windowRect)
+		=> TryGetWindowRect(IntPtr.Zero, className, out windowHandle, out windowRect);
+
+	private static bool TryGetWindowRect(IntPtr parentHandle, string childClassName, out IntPtr childHandle, out Rect childRect)
+	{
+		childHandle = FindWindowEx(
+			parentHandle,
+			IntPtr.Zero,
+			childClassName,
+			null);
+		if (childHandle != IntPtr.Zero)
+		{
+			if (GetWindowRect(
+				childHandle,
+				out RECT rect))
+			{
+				childRect = rect;
+				return true;
+			}
+		}
+		childRect = default;
 		return false;
 	}
 
@@ -735,7 +750,7 @@ public static class WindowHelper
 	/// <remarks>If primary taskbar is hidden, this method will fail.</remarks>
 	internal static bool TryGetPrimaryTaskbar(out Rect taskbarRect, out TaskbarAlignment taskbarAlignment)
 	{
-		if (TryGetWindow(PrimaryTaskbarWindowClassName, out IntPtr taskbarHandle, out Rect rect))
+		if (TryGetWindowRect(PrimaryTaskbarWindowClassName, out IntPtr taskbarHandle, out Rect rect))
 		{
 			var monitorHandle = MonitorFromWindow(
 				taskbarHandle,
@@ -768,35 +783,27 @@ public static class WindowHelper
 		return false;
 	}
 
-	/// <summary>
-	/// Attempts to get the information on secondary taskbar inside a specified monitor rectangle.
-	/// </summary>
-	/// <param name="monitorRect">Monitor rectangle</param>
-	/// <param name="taskbarRect">Secondary taskbar rectangle</param>
-	/// <param name="taskbarAlignment">Secondary taskbar alignment</param>
-	/// <returns>True if successfully gets</returns>
-	/// <remarks>If secondary taskbar is hidden, this method will fail.</remarks>
-	internal static bool TryGetSecondaryTaskbar(Rect monitorRect, out Rect taskbarRect, out TaskbarAlignment taskbarAlignment) =>
-		TryGetTaskbar(SecondaryTaskbarWindowClassName, monitorRect, out taskbarRect, out taskbarAlignment);
+	private static IEnumerable<Rect> EnumerateSecondaryTaskbars() =>
+		EnumerateWindowRects(SecondaryTaskbarWindowClassName);
 
-	private static bool TryGetTaskbar(string className, Rect monitorRect, out Rect taskbarRect, out TaskbarAlignment taskbarAlignment)
+	private static IEnumerable<Rect> EnumerateWindowRects(string className)
 	{
-		var matchRect = Rect.Empty;
+		var windowHandles = new List<IntPtr>();
 
 		if (EnumWindows(
 			Proc,
 			IntPtr.Zero))
 		{
-			if (matchRect != Rect.Empty)
+			foreach (var windowHandle in windowHandles)
 			{
-				taskbarRect = matchRect;
-				taskbarAlignment = GetTaskbarAlignment(monitorRect, taskbarRect);
-				return true;
+				if (GetWindowRect(
+					windowHandle,
+					out RECT rect))
+				{
+					yield return rect;
+				}
 			}
 		}
-		taskbarRect = Rect.Empty;
-		taskbarAlignment = default;
-		return false;
 
 		bool Proc(IntPtr windowHandle, IntPtr lParam)
 		{
@@ -808,22 +815,7 @@ public static class WindowHelper
 				buffer.Capacity) > 0)
 			{
 				if (buffer.ToString() == className)
-				{
-					if (GetWindowRect(
-						windowHandle,
-						out RECT rect))
-					{
-						// If monitor rectangle intersects with taskbar rectangle but
-						// does not contain it, the taskbar is hidden in full or part and
-						// the monitor to which the taskbar belongs cannot necessarily be
-						// determined.
-						if (monitorRect.Contains(rect))
-						{
-							matchRect = rect;
-							return false;
-						}
-					}
-				}
+					windowHandles.Add(windowHandle);
 			}
 			return true;
 		}
@@ -840,6 +832,21 @@ public static class WindowHelper
 			(true, true, true, bottom: false) => TaskbarAlignment.Top,
 			(left: false, true, true, true) => TaskbarAlignment.Right,
 			(true, top: false, true, true) => TaskbarAlignment.Bottom,
+			_ => default
+		};
+	}
+
+	private static (Rect taskbarRect, TaskbarAlignment taskbarAlignment) GetTaskbarRectAlignment(Rect monitorRect, Rect workRect)
+	{
+		return (left: (monitorRect.Left == workRect.Left),
+				top: (monitorRect.Top == workRect.Top),
+				right: (monitorRect.Right == workRect.Right),
+				bottom: (monitorRect.Bottom == workRect.Bottom)) switch
+		{
+			(left: false, true, true, true) => (new Rect(monitorRect.TopLeft, workRect.BottomLeft), TaskbarAlignment.Left),
+			(true, top: false, true, true) => (new Rect(monitorRect.TopLeft, workRect.TopRight), TaskbarAlignment.Top),
+			(true, true, right: false, true) => (new Rect(workRect.TopRight, monitorRect.BottomRight), TaskbarAlignment.Right),
+			(true, true, true, bottom: false) => (new Rect(workRect.BottomLeft, monitorRect.BottomRight), TaskbarAlignment.Bottom),
 			_ => default
 		};
 	}
@@ -861,14 +868,14 @@ public static class WindowHelper
 		// (NotifyIconOverflowWindow) still exists but seems no longer used. Instead, another
 		// window (TopLevelWindowForOverflowXamlIsland) hosts overflow area. Its rectangle
 		// includes margin surrounding it.
-		if (TryGetWindow("NotifyIconOverflowWindow", out _, out Rect windowRect)
+		if (TryGetWindowRect("NotifyIconOverflowWindow", out _, out Rect windowRect)
 			&& IsValid(windowRect))
 		{
 			overflowAreaRect = windowRect;
 			isMarginIncluded = false;
 			return true;
 		}
-		if (TryGetWindow("TopLevelWindowForOverflowXamlIsland", out _, out windowRect)
+		if (TryGetWindowRect("TopLevelWindowForOverflowXamlIsland", out _, out windowRect)
 			&& IsValid(windowRect))
 		{
 			overflowAreaRect = windowRect;

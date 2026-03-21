@@ -69,6 +69,12 @@ public class StickWindowMover : BasicWindowMover
 	public double Distance { get; set; } = 12D;
 
 	/// <summary>
+	/// Cursor location to specify the monitor where the window is to be shown
+	/// </summary>
+	/// <remarks>This value will be referred multiple times when the window is shown</remarks>
+	public Point? CursorLocation { get; set; } = null;
+
+	/// <summary>
 	/// Attempts to get the adjacent location to NotifyIcon using specified window width and height.
 	/// </summary>
 	/// <param name="windowWidth">Window width</param>
@@ -77,7 +83,9 @@ public class StickWindowMover : BasicWindowMover
 	/// <returns>True if successfully gets</returns>
 	protected bool TryGetAdjacentLocationToTaskbar(double windowWidth, double windowHeight, out Rect location)
 	{
-		if (!WindowHelper.TryGetTaskbar(out Rect taskbarRect, out TaskbarAlignment taskbarAlignment, out bool isShown))
+		if (!WindowHelper.TryGetTaskbar(CursorLocation,
+			out Rect taskbarRect, out TaskbarAlignment taskbarAlignment, out Rect notificationAreaRect,
+			out bool isShown, out bool isHeightConfirmed))
 		{
 			location = default;
 			return false;
@@ -85,18 +93,27 @@ public class StickWindowMover : BasicWindowMover
 
 		var iconPlacement = IconPlacement.Unknown;
 		var iconRect = default(Rect);
+		var isIconLocationReliable = false;
 		var overflowAreaRect = default(Rect);
 		var isMarginIncluded = false;
+		var isHeightReliable = !OsVersion.Is11Build22621OrGreater || isHeightConfirmed;
 
 		if (isShown)
 		{
 			if (NotifyIconHelper.TryGetNotifyIconRect(_notifyIcon, out iconRect))
 			{
-				if (taskbarRect.Contains(
+				var iconCenter = new Point(
 					iconRect.X + iconRect.Width / 2D,
-					iconRect.Y + iconRect.Height / 2D))
+					iconRect.Y + iconRect.Height / 2D);
+
+				if (taskbarRect.Contains(iconCenter))
 				{
 					iconPlacement = IconPlacement.InTaskbar;
+
+					// On Windows 11 (any version newer than 10.0.22621.xxx), obtained icon rectangle
+					// may indicate incorrect location.
+					isIconLocationReliable = !OsVersion.Is11Build22621OrGreater
+						|| notificationAreaRect.Contains(iconCenter);
 				}
 				else if (WindowHelper.TryGetOverflowAreaRect(out overflowAreaRect, out bool buffer)
 					&& overflowAreaRect.Contains(iconRect))
@@ -115,7 +132,7 @@ public class StickWindowMover : BasicWindowMover
 		var distance = new Vector(0, 0);
 		if (OsVersion.Is11OrGreater && KeepsDistance)
 		{
-			distance = (OsVersion.Is11Build22621OrGreater && isMarginIncluded)
+			distance = isMarginIncluded
 				? new Vector(0, Distance)
 				: new Vector(Distance, Distance);
 			distance *= VisualTreeHelperAddition.GetDpi(_window).ToMatrix();
@@ -131,10 +148,10 @@ public class StickWindowMover : BasicWindowMover
 		{
 			case TaskbarAlignment.Top:
 			case TaskbarAlignment.Bottom:
-				x = iconPlacement switch
+				x = (iconPlacement, isIconLocationReliable) switch
 				{
-					IconPlacement.InTaskbar => isLeftToRight ? iconRect.Right : iconRect.Left,
-					IconPlacement.InOverflowArea => isLeftToRight ? (overflowAreaRect.Left - distance.X) : (overflowAreaRect.Right + distance.X),
+					(IconPlacement.InTaskbar, true) => isLeftToRight ? iconRect.Right : iconRect.Left,
+					(IconPlacement.InOverflowArea, _) => isLeftToRight ? (overflowAreaRect.Left - distance.X) : (overflowAreaRect.Right + distance.X),
 					_ => isLeftToRight ? (taskbarRect.Right - distance.X) : (taskbarRect.Left + distance.X), // Fallback
 				};
 				x -= isLeftToRight ? (windowWidth - windowMargin.Right) : windowMargin.Left;
@@ -146,7 +163,13 @@ public class StickWindowMover : BasicWindowMover
 						PivotAlignment = isLeftToRight ? PivotAlignment.TopRight : PivotAlignment.TopLeft;
 						break;
 					case TaskbarAlignment.Bottom:
-						y = (isShown ? taskbarRect.Top : taskbarRect.Bottom) - (windowHeight - windowMargin.Bottom) - distance.Y;
+						y = (isShown, isHeightReliable, iconPlacement) switch
+						{
+							(true, false, IconPlacement.InTaskbar) => iconRect.Top,
+							(true, false, IconPlacement.InOverflowArea) => overflowAreaRect.Bottom,
+							(true, _, _) => taskbarRect.Top,
+							_ => taskbarRect.Bottom
+						} - (windowHeight - windowMargin.Bottom) - distance.Y;
 						PivotAlignment = isLeftToRight ? PivotAlignment.BottomRight : PivotAlignment.BottomLeft;
 						break;
 				}

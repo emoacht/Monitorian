@@ -64,8 +64,7 @@ public class MainWindowViewModel : ViewModelBase
 					{
 						var monitor = MonitorsView.Cast<MonitorViewModel>()
 							.FirstOrDefault(x => ReferenceEquals(x, _controller.SelectedMonitor));
-						if (monitor is not null)
-							monitor.IsSelected = true;
+						monitor?.IsSelected = true;
 					}
 				}
 				break;
@@ -113,7 +112,6 @@ public class MainWindowViewModel : ViewModelBase
 	internal void Deactivate()
 	{
 		var monitor = MonitorsView.Cast<MonitorViewModel>().FirstOrDefault(x => x.IsSelectedByKey);
-		if (monitor is not null)
-			monitor.IsByKey = false;
+		monitor?.IsByKey = false;
 	}
 }

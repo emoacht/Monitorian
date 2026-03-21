@@ -46,8 +46,10 @@ public partial class DevSection : UserControl
 
 	private void ContentPanel_Initialized(object sender, EventArgs e)
 	{
-		if ((sender is StackPanel panel) &&
-			(_additionalItems is { Length: > 0 }))
+		if (sender is not StackPanel panel)
+			return;
+
+		if (_additionalItems is { Length: > 0 })
 		{
 			foreach (var (item, index) in _additionalItems)
 			{
@@ -56,6 +58,7 @@ public partial class DevSection : UserControl
 			}
 		}
 
-		FlowElement.EnsureFlowDirection(this);
+		// An element created dynamically within a template will not be part of logical tree.
+		FlowElement.EnsureFlowDirection(panel);
 	}
 }

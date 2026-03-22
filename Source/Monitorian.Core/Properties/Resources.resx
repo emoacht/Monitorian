@@ -186,4 +186,10 @@
   <data name="UseLargeElements" xml:space="preserve">
     <value>Use large sliders</value>
   </data>
+  <data name="SwitchInputSource" xml:space="preserve">
+    <value>Switch input source</value>
+  </data>
+  <data name="EnableInputSource" xml:space="preserve">
+    <value>Enable switching input source</value>
+  </data>
 </root>

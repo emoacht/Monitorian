@@ -136,6 +136,7 @@
     <Compile Include="Views\Controls\FrameworkElementMargin.cs" />
     <Compile Include="Views\Controls\FrameworkElementSize.cs" />
     <Compile Include="Views\Controls\IconButton.cs" />
+    <Compile Include="Views\Controls\InputSourceButton.cs" />
     <Compile Include="Views\Controls\MultiToggleButton.cs" />
     <Compile Include="Views\Controls\PulseLabel.cs" />
     <Compile Include="Views\Controls\SwitchTextBox.cs" />
@@ -150,6 +151,9 @@
     <Compile Include="Views\Input\MouseAddition.cs" />
     <Compile Include="Views\DevSection.xaml.cs">
       <DependentUpon>DevSection.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\InputSourceConfigWindow.xaml.cs">
+      <DependentUpon>InputSourceConfigWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -284,6 +288,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Generic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\InputSourceConfigWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

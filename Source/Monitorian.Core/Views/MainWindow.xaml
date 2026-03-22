@@ -574,6 +574,94 @@
 			<Setter Property="FillIconData" Value="M 0,0 L 0,10 5,10 5,0 Z M 10,0 L 10,10"/>
 		</Style>
 
+		<Style x:Key="InputSourceButtonStyle" TargetType="{x:Type controls:InputSourceButton}">
+			<Setter Property="Focusable" Value="False"/>
+			<Setter Property="Width" Value="28"/>
+			<Setter Property="Height" Value="30"/>
+			<Setter Property="Padding" Value="0"/>
+			<Setter Property="IsLastVisibleButton" Value="False"/>
+			<Setter Property="Foreground" Value="{StaticResource Icon.Foreground.Normal}"/>
+			<Setter Property="SnapsToDevicePixels" Value="True"/>
+			<Setter Property="UseLayoutRounding" Value="True"/>
+			<Setter Property="ToolTipService.InitialShowDelay" Value="1000"/>
+			<Setter Property="StrokeIconData" Value="M 1,2 L 1,8 5,8 5,2 Z M 6,4 L 10,4 M 6,6 L 10,6"/>
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="{x:Type controls:InputSourceButton}">
+						<Grid>
+							<Border x:Name="border"
+									Background="Transparent">
+								<Grid Margin="{TemplateBinding Padding}">
+									<Grid Height="{Binding RelativeSource={RelativeSource Self}, Path=ActualWidth}"
+										  Margin="7,6" VerticalAlignment="Center"
+										  RenderOptions.EdgeMode="Aliased">
+										<Path x:Name="StrokeIcon"
+											  Data="{TemplateBinding StrokeIconData}" Stretch="Uniform"
+											  Stroke="{TemplateBinding Foreground}" StrokeThickness="1"/>
+										<Path x:Name="FillIcon"
+											  Data="{TemplateBinding FillIconData}" Stretch="Uniform"
+											  Fill="{TemplateBinding Foreground}"/>
+									</Grid>
+								</Grid>
+							</Border>
+
+							<VisualStateManager.VisualStateGroups>
+								<VisualStateGroup x:Name="CommonStates">
+									<VisualState x:Name="Normal"/>
+									<VisualState x:Name="MouseOver">
+										<Storyboard>
+											<ColorAnimation Storyboard.TargetName="border"
+															Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)"
+															Duration="0:0:0.1"
+															To="{DynamicResource Icon.Background.MouseOverColor}"/>
+											<ColorAnimation Storyboard.TargetName="StrokeIcon"
+															Storyboard.TargetProperty="(Shape.Stroke).(SolidColorBrush.Color)"
+															Duration="0:0:0.1"
+															To="{DynamicResource App.ForegroundColor}"/>
+											<ColorAnimation Storyboard.TargetName="FillIcon"
+															Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)"
+															Duration="0:0:0.1"
+															To="{DynamicResource App.ForegroundColor}"/>
+										</Storyboard>
+									</VisualState>
+									<VisualState x:Name="Pressed">
+										<Storyboard>
+											<ColorAnimation Storyboard.TargetName="border"
+															Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)"
+															Duration="0"
+															To="{DynamicResource Icon.Background.PressedColor}"/>
+											<ColorAnimation Storyboard.TargetName="StrokeIcon"
+															Storyboard.TargetProperty="(Shape.Stroke).(SolidColorBrush.Color)"
+															Duration="0"
+															To="{DynamicResource App.ForegroundColor}"/>
+											<ColorAnimation Storyboard.TargetName="FillIcon"
+															Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)"
+															Duration="0"
+															To="{DynamicResource App.ForegroundColor}"/>
+										</Storyboard>
+									</VisualState>
+									<VisualState x:Name="Disabled">
+										<Storyboard>
+											<DoubleAnimation Storyboard.TargetName="border"
+															 Storyboard.TargetProperty="Opacity"
+															 Duration="0"
+															 To="0"/>
+										</Storyboard>
+									</VisualState>
+								</VisualStateGroup>
+							</VisualStateManager.VisualStateGroups>
+						</Grid>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+			<Style.Triggers>
+				<Trigger Property="IsLastVisibleButton" Value="True">
+					<Setter Property="Width" Value="31"/>
+					<Setter Property="Padding" Value="0,0,3,0"/>
+				</Trigger>
+			</Style.Triggers>
+		</Style>
+
 		<!-- Number Label -->
 		<Style x:Key="NumberLabelStyle" TargetType="{x:Type Label}">
 			<Setter Property="VerticalAlignment" Value="Center"/>
@@ -651,6 +739,11 @@
 													 IsEnabled="{Binding IsContrastSupported, Mode=OneWay}"
 													 Visibility="{Binding Settings.EnablesContrast, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverterKey}}"
 													 IsChecked="{Binding IsContrastChanging, Mode=TwoWay}"/>
+
+								<!-- Input Source -->
+								<controls:InputSourceButton Style="{StaticResource InputSourceButtonStyle}"
+														   ToolTip="{x:Static properties:Resources.SwitchInputSource}"
+														   Visibility="{Binding Settings.EnablesInputSource, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverterKey}}"/>
 							</StackPanel>
 						</Grid>
 

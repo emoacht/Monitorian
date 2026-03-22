@@ -266,5 +266,23 @@ namespace Monitorian.Core.Properties {
                 return ResourceManager.GetString("UseLargeElements", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Switch input source.
+        /// </summary>
+        public static string SwitchInputSource {
+            get {
+                return ResourceManager.GetString("SwitchInputSource", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Enable switching input source.
+        /// </summary>
+        public static string EnableInputSource {
+            get {
+                return ResourceManager.GetString("EnableInputSource", resourceCulture);
+            }
+        }
     }
 }

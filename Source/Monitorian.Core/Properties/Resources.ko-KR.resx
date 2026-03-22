@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AdjustSdrContent" xml:space="preserve">
-    <value>SDR 콘텐츠 밝기 조절</value>
+    <value>SDR 콘텐츠 밝기 조정</value>
   </data>
   <data name="Arguments" xml:space="preserve">
     <value>명령줄 인수</value>
@@ -130,7 +130,7 @@
     <value>조정 가능한 범위 변경</value>
   </data>
   <data name="ChangeUnison" xml:space="preserve">
-    <value>동시에 밝기 변경</value>
+    <value>밝기를 동시에 변경</value>
   </data>
   <data name="Close" xml:space="preserve">
     <value>닫기</value>
@@ -157,10 +157,10 @@
     <value>마우스 수직 스크롤</value>
   </data>
   <data name="OrderArrangement" xml:space="preserve">
-    <value>모니터별 순서 배열</value>
+    <value>모니터 배열별 정렬</value>
   </data>
   <data name="RestoreReconnection" xml:space="preserve">
-    <value>다시 연결시 밝기 복원</value>
+    <value>다시 연결 시 밝기 복원</value>
   </data>
   <data name="Settings" xml:space="preserve">
     <value>설정</value>
@@ -172,7 +172,7 @@
     <value>현재 번호 표시</value>
   </data>
   <data name="StartSignIn" xml:space="preserve">
-    <value>로그인시 시작</value>
+    <value>로그인 시 시작</value>
   </data>
   <data name="TouchpadHorizontalSwipe" xml:space="preserve">
     <value>터치패드 수평 스와이프</value>

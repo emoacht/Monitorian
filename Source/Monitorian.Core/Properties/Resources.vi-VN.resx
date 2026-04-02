@@ -156,9 +156,6 @@
   <data name="MouseVerticalWheel" xml:space="preserve">
     <value>Cuộn dọc bằng chuột</value>
   </data>
-  <data name="OrderArrangement" xml:space="preserve">
-    <value>Tạo nhật ký hoạt động</value>
-  </data>
   <data name="RestoreReconnection" xml:space="preserve">
     <value>Khôi phục độ sáng khi kết nối lại</value>
   </data>
@@ -170,6 +167,9 @@
   </data>
   <data name="ShowNumber" xml:space="preserve">
     <value>Hiển thị số hiện tại</value>
+  </data>
+  <data name="SortArrangement" xml:space="preserve">
+    <value>Tạo nhật ký hoạt động</value>
   </data>
   <data name="StartSignIn" xml:space="preserve">
     <value>Khởi động khi đăng nhập</value>

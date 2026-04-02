@@ -156,9 +156,6 @@
   <data name="MouseVerticalWheel" xml:space="preserve">
     <value>Vertikal rullning med mus</value>
   </data>
-  <data name="OrderArrangement" xml:space="preserve">
-    <value>Sortera efter bildskärmarnas placering</value>
-  </data>
   <data name="RestoreReconnection" xml:space="preserve">
     <value>Återställ ljusstyrkan vid återanslutning</value>
   </data>
@@ -170,6 +167,9 @@
   </data>
   <data name="ShowNumber" xml:space="preserve">
     <value>Visa aktuellt nummer</value>
+  </data>
+  <data name="SortArrangement" xml:space="preserve">
+    <value>Sortera efter bildskärmarnas placering</value>
   </data>
   <data name="StartSignIn" xml:space="preserve">
     <value>Starta vid inloggning</value>

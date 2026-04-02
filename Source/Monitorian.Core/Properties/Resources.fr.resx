@@ -153,9 +153,6 @@
   <data name="MouseVerticalWheel" xml:space="preserve">
     <value>Défilement vertical de la souris</value>
   </data>
-  <data name="OrderArrangement" xml:space="preserve">
-    <value>Trier par disposition des écrans</value>
-  </data>
   <data name="RestoreReconnection" xml:space="preserve">
     <value>Restaurer la luminosité à la reconnexion</value>
   </data>
@@ -164,6 +161,9 @@
   </data>
   <data name="ShowAdjusted" xml:space="preserve">
     <value>Afficher la luminosité ajustée</value>
+  </data>
+  <data name="SortArrangement" xml:space="preserve">
+    <value>Trier par disposition des écrans</value>
   </data>
   <data name="StartSignIn" xml:space="preserve">
     <value>Exécuter au démarrage</value>

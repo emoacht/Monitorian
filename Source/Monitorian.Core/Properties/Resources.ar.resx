@@ -153,9 +153,6 @@
   <data name="MouseVerticalWheel" xml:space="preserve">
     <value>عجلة الفأرة الرأسية</value>
   </data>
-  <data name="OrderArrangement" xml:space="preserve">
-    <value>فرز حسب تخطيط الشاشة</value>
-  </data>
   <data name="RestoreReconnection" xml:space="preserve">
     <value>استعادة السطوع عند إعادة الاتصال</value>
   </data>
@@ -167,6 +164,9 @@
   </data>
   <data name="ShowNumber" xml:space="preserve">
     <value>عرض الرقم الحالي</value>
+  </data>
+  <data name="SortArrangement" xml:space="preserve">
+    <value>فرز حسب تخطيط الشاشة</value>
   </data>
   <data name="StartSignIn" xml:space="preserve">
     <value>ابدا البرنامج عند بدء التشغيل</value>

@@ -178,15 +178,6 @@ namespace Monitorian.Core.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Order by monitors arrangement.
-        /// </summary>
-        public static string OrderArrangement {
-            get {
-                return ResourceManager.GetString("OrderArrangement", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Restore brightness on reconnection.
         /// </summary>
         public static string RestoreReconnection {
@@ -219,6 +210,15 @@ namespace Monitorian.Core.Properties {
         public static string ShowNumber {
             get {
                 return ResourceManager.GetString("ShowNumber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sort by monitor arrangement.
+        /// </summary>
+        public static string SortArrangement {
+            get {
+                return ResourceManager.GetString("SortArrangement", resourceCulture);
             }
         }
         

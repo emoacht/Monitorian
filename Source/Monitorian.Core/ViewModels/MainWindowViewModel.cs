@@ -27,7 +27,7 @@ public class MainWindowViewModel : ViewModelBase
 			if (_monitorsView is null)
 			{
 				_monitorsView = new ListCollectionView(_controller.Monitors);
-				if (Settings.OrdersArrangement)
+				if (Settings.SortsArrangement)
 				{
 					_monitorsView.SortDescriptions.Add(new SortDescription(nameof(MonitorViewModel.MonitorTopLeft), ListSortDirection.Ascending));
 					_monitorsView.IsLiveSorting = true;
@@ -85,11 +85,11 @@ public class MainWindowViewModel : ViewModelBase
 	{
 		switch (e.PropertyName)
 		{
-			case nameof(Settings.OrdersArrangement):
+			case nameof(Settings.SortsArrangement):
 				var description = new SortDescription(nameof(MonitorViewModel.MonitorTopLeft), ListSortDirection.Ascending);
 				int index = MonitorsView.SortDescriptions.IndexOf(description);
 
-				switch (Settings.OrdersArrangement, index)
+				switch (Settings.SortsArrangement, index)
 				{
 					case (true, < 0):
 						MonitorsView.SortDescriptions.Insert(0, description);

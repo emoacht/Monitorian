@@ -52,15 +52,15 @@ public class SettingsCore : BindableBase
 	private bool _showsAdjusted = true; // default
 
 	/// <summary>
-	/// Whether to order by monitors arrangement
+	/// Whether to sort by monitor arrangement
 	/// </summary>
 	[DataMember]
-	public bool OrdersArrangement
+	public bool SortsArrangement
 	{
-		get => _ordersArrangement;
-		set => SetProperty(ref _ordersArrangement, value);
+		get => _sortsArrangement;
+		set => SetProperty(ref _sortsArrangement, value);
 	}
-	private bool _ordersArrangement = true; // default
+	private bool _sortsArrangement = true; // default
 
 	/// <summary>
 	/// Whether to defer change until stopped

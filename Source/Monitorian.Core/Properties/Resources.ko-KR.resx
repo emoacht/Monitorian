@@ -156,9 +156,6 @@
   <data name="MouseVerticalWheel" xml:space="preserve">
     <value>마우스 수직 스크롤</value>
   </data>
-  <data name="OrderArrangement" xml:space="preserve">
-    <value>모니터 배열별 정렬</value>
-  </data>
   <data name="RestoreReconnection" xml:space="preserve">
     <value>다시 연결 시 밝기 복원</value>
   </data>
@@ -170,6 +167,9 @@
   </data>
   <data name="ShowNumber" xml:space="preserve">
     <value>현재 번호 표시</value>
+  </data>
+  <data name="SortArrangement" xml:space="preserve">
+    <value>모니터 배열별 정렬</value>
   </data>
   <data name="StartSignIn" xml:space="preserve">
     <value>로그인 시 시작</value>

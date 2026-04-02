@@ -153,9 +153,6 @@
   <data name="MouseVerticalWheel" xml:space="preserve">
     <value>Pionowe przewijanie myszą</value>
   </data>
-  <data name="OrderArrangement" xml:space="preserve">
-    <value>Sortuj według układu monitorów</value>
-  </data>
   <data name="RestoreReconnection" xml:space="preserve">
     <value>Przywróć jasność po połączeniu</value>
   </data>
@@ -167,6 +164,9 @@
   </data>
   <data name="ShowNumber" xml:space="preserve">
     <value>Pokaż obecną wartość</value>
+  </data>
+  <data name="SortArrangement" xml:space="preserve">
+    <value>Sortuj według układu monitorów</value>
   </data>
   <data name="StartSignIn" xml:space="preserve">
     <value>Uruchom przy logowaniu</value>

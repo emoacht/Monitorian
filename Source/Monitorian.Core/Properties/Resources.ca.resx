@@ -156,9 +156,6 @@
   <data name="MouseVerticalWheel" xml:space="preserve">
     <value>Desplaçament vertical amb el ratolí</value>
   </data>
-  <data name="OrderArrangement" xml:space="preserve">
-    <value>Ordenar per posició dels monitors</value>
-  </data>
   <data name="RestoreReconnection" xml:space="preserve">
     <value>Restaura brillantor en connectar</value>
   </data>
@@ -170,6 +167,9 @@
   </data>
   <data name="ShowNumber" xml:space="preserve">
     <value>Mostrar número</value>
+  </data>
+  <data name="SortArrangement" xml:space="preserve">
+    <value>Ordenar per posició dels monitors</value>
   </data>
   <data name="StartSignIn" xml:space="preserve">
     <value>Executar en iniciar sessió</value>

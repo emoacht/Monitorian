@@ -156,9 +156,6 @@
   <data name="MouseVerticalWheel" xml:space="preserve">
     <value>Mouse vertical wheel</value>
   </data>
-  <data name="OrderArrangement" xml:space="preserve">
-    <value>Order by monitors arrangement</value>
-  </data>
   <data name="RestoreReconnection" xml:space="preserve">
     <value>Restore brightness on reconnection</value>
   </data>
@@ -170,6 +167,9 @@
   </data>
   <data name="ShowNumber" xml:space="preserve">
     <value>Show current number</value>
+  </data>
+  <data name="SortArrangement" xml:space="preserve">
+    <value>Sort by monitor arrangement</value>
   </data>
   <data name="StartSignIn" xml:space="preserve">
     <value>Start on sign in</value>

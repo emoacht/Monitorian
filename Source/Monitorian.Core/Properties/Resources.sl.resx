@@ -156,9 +156,6 @@
   <data name="MouseVerticalWheel" xml:space="preserve">
     <value>Navpično kolesce miške</value>
   </data>
-  <data name="OrderArrangement" xml:space="preserve">
-    <value>Razvrsti po razporeditvi monitorjev</value>
-  </data>
   <data name="RestoreReconnection" xml:space="preserve">
     <value>Ob ponovni povezavi obnovi svetlost</value>
   </data>
@@ -170,6 +167,9 @@
   </data>
   <data name="ShowNumber" xml:space="preserve">
     <value>Prikaži trenutno število</value>
+  </data>
+  <data name="SortArrangement" xml:space="preserve">
+    <value>Razvrsti po razporeditvi monitorjev</value>
   </data>
   <data name="StartSignIn" xml:space="preserve">
     <value>Začni ob prijavi</value>

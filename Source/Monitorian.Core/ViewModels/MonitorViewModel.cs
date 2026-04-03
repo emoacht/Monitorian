@@ -50,6 +50,7 @@ public class MonitorViewModel : ViewModelBase
 	public byte DisplayIndex => _monitor.DisplayIndex;
 	public byte MonitorIndex => _monitor.MonitorIndex;
 	public Rect MonitorRect => _monitor.MonitorRect;
+	public ConnectionType Connection => _monitor.Connection;
 	public bool IsInternal => _monitor.IsInternal;
 
 	#region Customization

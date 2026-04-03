@@ -25,7 +25,7 @@ internal class MonitorManager
 
 		public string DeviceInstanceId => _deviceConfigItem.DeviceInstanceId;
 		public string DisplayName { get; }
-		public string ConnectionDescription { get; }
+		public ConnectionType Connection { get; }
 		public bool IsInternal => _deviceConfigItem.IsInternal;
 		public DisplayIdSet DisplayIdSet => _deviceConfigItem.DisplayIdSet;
 
@@ -39,9 +39,9 @@ internal class MonitorManager
 				? displayMonitorItem.DisplayName
 				: deviceConfigItem.DisplayName;
 
-			ConnectionDescription = !string.IsNullOrWhiteSpace(displayMonitorItem?.ConnectionDescription)
-				? displayMonitorItem.ConnectionDescription
-				: deviceConfigItem.ConnectionDescription;
+			Connection = (displayMonitorItem is { Connection: not ConnectionType.Unknown })
+				? displayMonitorItem.Connection
+				: deviceConfigItem.Connection;
 		}
 	}
 
@@ -55,7 +55,8 @@ internal class MonitorManager
 		public string AlternativeDescription { get; }
 		public byte DisplayIndex => _deviceItem.DisplayIndex;
 		public byte MonitorIndex => _deviceItem.MonitorIndex;
-		public bool IsInternal => _displayItem.IsInternal;
+		public ConnectionType Connection => _displayItem.Connection;
+		public bool IsInternal => _displayItem.IsInternal;		
 		public DisplayIdSet DisplayIdSet => _displayItem.DisplayIdSet;
 
 		public BasicItem(
@@ -145,9 +146,9 @@ internal class MonitorManager
 				yield return new BasicItem(deviceItem, displayItem, displayItem.DisplayName);
 			}
 			else if (Regex.IsMatch(deviceItem.Description, "^Generic (?:PnP|Non-PnP) Monitor$", RegexOptions.IgnoreCase)
-				&& !string.IsNullOrWhiteSpace(displayItem.ConnectionDescription))
+				&& (displayItem.Connection is not ConnectionType.Unknown))
 			{
-				yield return new BasicItem(deviceItem, displayItem, $"{deviceItem.Description} ({displayItem.ConnectionDescription})");
+				yield return new BasicItem(deviceItem, displayItem, $"{deviceItem.Description} ({displayItem.Connection})");
 			}
 			else if (!string.IsNullOrWhiteSpace(deviceItem.Description))
 			{
@@ -201,6 +202,7 @@ internal class MonitorManager
 						displayIndex: basicItem.DisplayIndex,
 						monitorIndex: basicItem.MonitorIndex,
 						monitorRect: handleItem.MonitorRect,
+						connection: basicItem.Connection,
 						isInternal: basicItem.IsInternal,
 						monitorHandle: handleItem.MonitorHandle,
 						displayIdSet: basicItem.DisplayIdSet,
@@ -256,6 +258,7 @@ internal class MonitorManager
 						displayIndex: basicItem.DisplayIndex,
 						monitorIndex: basicItem.MonitorIndex,
 						monitorRect: handleItem.MonitorRect,
+						connection: basicItem.Connection,
 						handle: physicalItem.Handle,
 						capability: capability);
 
@@ -286,7 +289,8 @@ internal class MonitorManager
 						displayIndex: basicItem.DisplayIndex,
 						monitorIndex: basicItem.MonitorIndex,
 						monitorRect: handleItem.MonitorRect,
-						isInternal: basicItem.IsInternal,
+						connection: basicItem.Connection,
+						isInternal: basicItem.IsInternal,						
 						brightnessLevels: desktopItem.BrightnessLevels);
 
 					basicItems.RemoveAt(index);
@@ -303,6 +307,7 @@ internal class MonitorManager
 					description: basicItem.AlternativeDescription,
 					displayIndex: basicItem.DisplayIndex,
 					monitorIndex: basicItem.MonitorIndex,
+					connection: basicItem.Connection,
 					isInternal: basicItem.IsInternal);
 			}
 		}

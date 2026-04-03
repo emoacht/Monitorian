@@ -20,14 +20,16 @@ internal class WmiMonitorItem : MonitorItem
 		byte displayIndex,
 		byte monitorIndex,
 		Rect monitorRect,
-		bool isInternal,
+		ConnectionType connection,
+		bool isInternal,		
 		IEnumerable<byte> brightnessLevels) : base(
 			deviceInstanceId: deviceInstanceId,
 			description: description,
 			displayIndex: displayIndex,
 			monitorIndex: monitorIndex,
 			monitorRect: monitorRect,
-			isInternal: isInternal,
+			connection: connection,
+			isInternal: isInternal,			
 			isReachable: true)
 	{
 		this._brightnessLevels = brightnessLevels?.ToArray() ?? throw new ArgumentNullException(nameof(brightnessLevels));

@@ -35,50 +35,50 @@ internal class DisplayMonitorProvider
 		public string DisplayName { get; }
 
 		/// <summary>
-		/// Native resolution in raw pixels.
+		/// Connection type
 		/// </summary>
 		[DataMember(Order = 2)]
+		public ConnectionType Connection { get; }
+
+		/// <summary>
+		/// Whether the display is connected internally
+		/// </summary>
+		[DataMember(Order = 3)]
+		public bool IsInternal { get; }
+
+		/// <summary>
+		/// Native resolution in raw pixels.
+		/// </summary>
+		[DataMember(Order = 4)]
 		public Size NativeResolution { get; }
 
 		/// <summary>
 		/// Physical size in inches
 		/// </summary>
-		[DataMember(Order = 3)]
+		[DataMember(Order = 5)]
 		public Size PhysicalSize { get; }
 
 		/// <summary>
 		/// Physical diagonal Length in inches
 		/// </summary>
-		[DataMember(Order = 4)]
-		public float PhysicalDiagonalLength { get; }
-
-		/// <summary>
-		/// Whether the display is connected internally
-		/// </summary>
-		[DataMember(Order = 5)]
-		public bool IsInternal { get; }
-
-		/// <summary>
-		/// Connection description
-		/// </summary>
 		[DataMember(Order = 6)]
-		public string ConnectionDescription { get; }
+		public float PhysicalDiagonalLength { get; }
 
 		internal DisplayItem(
 			string deviceInstanceId,
 			string displayName,
-			Windows.Graphics.SizeInt32 nativeResolution,
-			Windows.Foundation.Size physicalSize,
+			ConnectionType connection,
 			bool isInternal,
-			string connectionDescription)
+			Windows.Graphics.SizeInt32 nativeResolution,
+			Windows.Foundation.Size physicalSize)
 		{
 			this.DeviceInstanceId = deviceInstanceId;
 			this.DisplayName = displayName;
+			this.Connection = connection;
+			this.IsInternal = isInternal;
 			this.NativeResolution = new Size(nativeResolution.Width, nativeResolution.Height);
 			this.PhysicalSize = new Size(physicalSize.Width, physicalSize.Height);
 			this.PhysicalDiagonalLength = GetDiagonal(PhysicalSize);
-			this.IsInternal = isInternal;
-			this.ConnectionDescription = connectionDescription;
 		}
 
 		private static float GetDiagonal(Size source) =>
@@ -130,18 +130,18 @@ internal class DisplayMonitorProvider
 
 					//Debug.WriteLine($"DeviceInstanceId: {deviceInstanceId}");
 					//Debug.WriteLine($"DisplayName: {displayMonitor.DisplayName}");
+					//Debug.WriteLine($"ConnectionKind: {displayMonitor.ConnectionKind} {displayMonitor.PhysicalConnector}");
 					//Debug.WriteLine($"NativeResolution: {displayMonitor.NativeResolutionInRawPixels.Width},{displayMonitor.NativeResolutionInRawPixels.Height}");
 					//Debug.WriteLine($"PhysicalSize: {displayMonitor.PhysicalSizeInInches.Value.Width:F2},{displayMonitor.PhysicalSizeInInches.Value.Height:F2}");
-					//Debug.WriteLine($"ConnectionKind: {displayMonitor.ConnectionKind}");
 					//Debug.WriteLine($"MinLuminanceInNits: {displayMonitor.MinLuminanceInNits}, MaxLuminanceInNits: {displayMonitor.MaxLuminanceInNits}");
 
 					items.Add(new DisplayItem(
 						deviceInstanceId: deviceInstanceId,
 						displayName: displayMonitor.DisplayName,
-						nativeResolution: displayMonitor.NativeResolutionInRawPixels,
-						physicalSize: displayMonitor.PhysicalSizeInInches ?? default,
+						connection: GetConnectionType(displayMonitor.ConnectionKind, displayMonitor.PhysicalConnector),
 						isInternal: (displayMonitor.ConnectionKind is Windows.Devices.Display.DisplayMonitorConnectionKind.Internal),
-						connectionDescription: GetConnectionDescription(displayMonitor.ConnectionKind, displayMonitor.PhysicalConnector)));
+						nativeResolution: displayMonitor.NativeResolutionInRawPixels,
+						physicalSize: displayMonitor.PhysicalSizeInInches ?? default));
 				}
 			}
 #if DEBUG
@@ -171,33 +171,21 @@ internal class DisplayMonitorProvider
 		return Array.Empty<DisplayItem>();
 	}
 
-	private static string GetConnectionDescription(Windows.Devices.Display.DisplayMonitorConnectionKind connectionKind, Windows.Devices.Display.DisplayMonitorPhysicalConnectorKind connectorKind)
+	private static ConnectionType GetConnectionType(Windows.Devices.Display.DisplayMonitorConnectionKind connectionKind, Windows.Devices.Display.DisplayMonitorPhysicalConnectorKind connectorKind)
 	{
-		switch (connectionKind)
+		return (connectionKind, connectorKind) switch
 		{
-			case Windows.Devices.Display.DisplayMonitorConnectionKind.Internal:
-			case Windows.Devices.Display.DisplayMonitorConnectionKind.Virtual:
-			case Windows.Devices.Display.DisplayMonitorConnectionKind.Wireless:
-				return connectionKind.ToString();
-
-			case Windows.Devices.Display.DisplayMonitorConnectionKind.Wired:
-				switch (connectorKind)
-				{
-					case Windows.Devices.Display.DisplayMonitorPhysicalConnectorKind.HD15:
-						return "VGA";
-
-					case Windows.Devices.Display.DisplayMonitorPhysicalConnectorKind.AnalogTV:
-					case Windows.Devices.Display.DisplayMonitorPhysicalConnectorKind.DisplayPort:
-						return connectorKind.ToString();
-
-					case Windows.Devices.Display.DisplayMonitorPhysicalConnectorKind.Dvi:
-					case Windows.Devices.Display.DisplayMonitorPhysicalConnectorKind.Hdmi:
-					case Windows.Devices.Display.DisplayMonitorPhysicalConnectorKind.Lvds:
-					case Windows.Devices.Display.DisplayMonitorPhysicalConnectorKind.Sdi:
-						return connectorKind.ToString().ToUpper();
-				}
-				break;
-		}
-		return null;
+			(Windows.Devices.Display.DisplayMonitorConnectionKind.Internal, _) => ConnectionType.Internal,
+			(Windows.Devices.Display.DisplayMonitorConnectionKind.Virtual, _) => ConnectionType.Virtual,
+			(Windows.Devices.Display.DisplayMonitorConnectionKind.Wireless, _) => ConnectionType.Wireless,
+			(Windows.Devices.Display.DisplayMonitorConnectionKind.Wired, Windows.Devices.Display.DisplayMonitorPhysicalConnectorKind.HD15) => ConnectionType.VGA,
+			(Windows.Devices.Display.DisplayMonitorConnectionKind.Wired, Windows.Devices.Display.DisplayMonitorPhysicalConnectorKind.AnalogTV) => ConnectionType.AnalogTV,
+			(Windows.Devices.Display.DisplayMonitorConnectionKind.Wired, Windows.Devices.Display.DisplayMonitorPhysicalConnectorKind.Dvi) => ConnectionType.DVI,
+			(Windows.Devices.Display.DisplayMonitorConnectionKind.Wired, Windows.Devices.Display.DisplayMonitorPhysicalConnectorKind.Hdmi) => ConnectionType.HDMI,
+			(Windows.Devices.Display.DisplayMonitorConnectionKind.Wired, Windows.Devices.Display.DisplayMonitorPhysicalConnectorKind.Lvds) => ConnectionType.LVDS,
+			(Windows.Devices.Display.DisplayMonitorConnectionKind.Wired, Windows.Devices.Display.DisplayMonitorPhysicalConnectorKind.Sdi) => ConnectionType.SDI,
+			(Windows.Devices.Display.DisplayMonitorConnectionKind.Wired, Windows.Devices.Display.DisplayMonitorPhysicalConnectorKind.DisplayPort) => ConnectionType.DisplayPort,
+			_ => ConnectionType.Unknown
+		};
 	}
 }

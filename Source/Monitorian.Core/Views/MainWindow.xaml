@@ -13,7 +13,8 @@
 		AllowsTransparency="True" WindowStyle="None"
 		Background="{DynamicResource App.Background.Plain}">
 	<Window.Resources>
-		<sys:Double x:Key="SliderHeight">52</sys:Double>
+		<sys:Double x:Key="SliderHeightLarge">52</sys:Double>
+		<sys:Double x:Key="SliderHeightSmall">36</sys:Double>
 		<sys:Double x:Key="ThumbHeight">40</sys:Double>
 		<sys:Double x:Key="BracketHeight">8</sys:Double>
 
@@ -98,14 +99,14 @@
 
 							<ControlTemplate x:Key="SliderThumbHorizontalLarge" TargetType="{x:Type Thumb}">
 								<Grid HorizontalAlignment="Center" VerticalAlignment="Center">
-									<Rectangle Height="{DynamicResource BracketHeight}"
+									<Rectangle Height="{StaticResource BracketHeight}"
 											   VerticalAlignment="Top"
 											   Fill="{TemplateBinding Background}"/>
-									<Rectangle Height="{DynamicResource BracketHeight}"
+									<Rectangle Height="{StaticResource BracketHeight}"
 											   VerticalAlignment="Bottom"
 											   Fill="{TemplateBinding Background}"/>
 
-									<Rectangle Width="11" Height="{DynamicResource ThumbHeight}"
+									<Rectangle Width="11" Height="{StaticResource ThumbHeight}"
 											   Margin="2"
 											   Fill="{TemplateBinding Foreground}"/>
 								</Grid>
@@ -135,14 +136,17 @@
 							</ControlTemplate>
 
 							<ControlTemplate x:Key="ShadowThumbLarge" TargetType="{x:Type ContentControl}">
-								<Rectangle Width="8"
-										   controls:FrameworkElementMargin.Vertical="{DynamicResource BracketHeight}"
-										   Fill="{TemplateBinding Foreground}"/>
+								<Grid VerticalAlignment="Center" >
+									<Rectangle Height="{StaticResource ThumbHeight}"
+											   Margin="2"/>
+									<Rectangle Width="8"
+											   controls:FrameworkElementMargin.Vertical="{StaticResource BracketHeight}"
+											   Fill="{TemplateBinding Foreground}"/>
+								</Grid>
 							</ControlTemplate>
 
 							<ControlTemplate x:Key="ShadowThumbSmall" TargetType="{x:Type ContentControl}">
-								<Ellipse Width="{Binding RelativeSource={RelativeSource Self}, Path=ActualHeight}"
-										 controls:FrameworkElementMargin.Vertical="{DynamicResource BracketHeight}"
+								<Ellipse Width="13" Height="13"
 										 Fill="{TemplateBinding Foreground}"/>
 							</ControlTemplate>
 						</ControlTemplate.Resources>
@@ -257,7 +261,7 @@
 
 									<ControlTemplate x:Key="SliderThumbHorizontalLarge" TargetType="{x:Type Thumb}">
 										<Grid HorizontalAlignment="Center" VerticalAlignment="Center">
-											<Rectangle Width="9" Height="{DynamicResource ThumbHeight}"
+											<Rectangle Width="9" Height="{StaticResource ThumbHeight}"
 													   Margin="2"
 													   Fill="{TemplateBinding Foreground}"/>
 										</Grid>
@@ -362,7 +366,7 @@
 
 							<ControlTemplate x:Key="SliderThumbHorizontalLarge" TargetType="{x:Type Thumb}">
 								<Grid HorizontalAlignment="Center" VerticalAlignment="Center">
-									<Rectangle Width="11" Height="{DynamicResource ThumbHeight}"
+									<Rectangle Width="11" Height="{StaticResource ThumbHeight}"
 											   Margin="2"
 											   Fill="{TemplateBinding Foreground}"/>
 								</Grid>
@@ -655,9 +659,19 @@
 						</Grid>
 
 						<Grid Grid.Row="1"
-							  Height="{DynamicResource SliderHeight}"
 							  Margin="0,0,12,0"
 							  Visibility="{Binding IsControllable, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverterKey}}">
+							<Grid.Style>
+								<Style TargetType="{x:Type Grid}">
+									<Setter Property="Height" Value="{StaticResource SliderHeightLarge}"/>
+									<Style.Triggers>
+										<DataTrigger Binding="{Binding Settings.UsesLargeElements}" Value="False">
+											<Setter Property="Height" Value="{StaticResource SliderHeightSmall}"/>
+										</DataTrigger>
+									</Style.Triggers>
+								</Style>
+							</Grid.Style>
+
 							<Grid.ColumnDefinitions>
 								<ColumnDefinition Width="4"/>
 								<ColumnDefinition Width="*"/>

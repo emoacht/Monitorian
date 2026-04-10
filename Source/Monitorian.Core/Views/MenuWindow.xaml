@@ -89,8 +89,8 @@
 		<ContentControl Style="{StaticResource MenuItemStyle}">
 			<ToggleButton Padding="8,4"
 						  Style="{StaticResource CheckButtonItemStyle}"
-						  Content="{x:Static properties:Resources.OrderArrangement}"
-						  IsChecked="{Binding Settings.OrdersArrangement}"/>
+						  Content="{x:Static properties:Resources.SortArrangement}"
+						  IsChecked="{Binding Settings.SortsArrangement}"/>
 		</ContentControl>
 
 		<ContentControl Style="{StaticResource MenuItemStyle}">
@@ -137,6 +137,13 @@
 						  Style="{StaticResource CheckButtonItemStyle}"
 						  Content="{x:Static properties:Resources.EnableContrast}"
 						  IsChecked="{Binding Settings.EnablesContrast}"/>
+		</ContentControl>
+
+		<ContentControl Style="{StaticResource MenuItemStyle}">
+			<ToggleButton Padding="8,4"
+						  Style="{StaticResource CheckButtonItemStyle}"
+						  Content="{x:Static properties:Resources.EnableIdentity}"
+						  IsChecked="{Binding Settings.EnablesIdentity}"/>
 		</ContentControl>
 
 		<Separator Style="{StaticResource MenuSeparatorStyle}"/>

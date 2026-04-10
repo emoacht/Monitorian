@@ -23,6 +23,7 @@ internal class DdcMonitorItem : MonitorItem
 		byte displayIndex,
 		byte monitorIndex,
 		Rect monitorRect,
+		ConnectionType connection,
 		SafePhysicalMonitorHandle handle,
 		MonitorCapability capability) : base(
 			deviceInstanceId: deviceInstanceId,
@@ -30,6 +31,7 @@ internal class DdcMonitorItem : MonitorItem
 			displayIndex: displayIndex,
 			monitorIndex: monitorIndex,
 			monitorRect: monitorRect,
+			connection: connection,
 			isInternal: false,
 			isReachable: true)
 	{

@@ -153,9 +153,6 @@
   <data name="MouseVerticalWheel" xml:space="preserve">
     <value>Fare ile dikey kaydırma</value>
   </data>
-  <data name="OrderArrangement" xml:space="preserve">
-    <value>Monitör düzenine göre sırala</value>
-  </data>
   <data name="RestoreReconnection" xml:space="preserve">
     <value>Yeniden bağlanınca parlaklığı geri getir</value>
   </data>
@@ -167,6 +164,9 @@
   </data>
   <data name="ShowNumber" xml:space="preserve">
     <value>Geçerli numarayı göster</value>
+  </data>
+  <data name="SortArrangement" xml:space="preserve">
+    <value>Monitör düzenine göre sırala</value>
   </data>
   <data name="StartSignIn" xml:space="preserve">
     <value>Başlangıçta başlat</value>

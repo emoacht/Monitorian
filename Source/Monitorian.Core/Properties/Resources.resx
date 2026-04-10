@@ -141,6 +141,9 @@
   <data name="EnableContrast" xml:space="preserve">
     <value>Enable changing contrast</value>
   </data>
+  <data name="EnableIdentity" xml:space="preserve">
+    <value>Enable showing monitor identity</value>
+  </data>
   <data name="EnableRange" xml:space="preserve">
     <value>Enable changing adjustable range</value>
   </data>
@@ -156,9 +159,6 @@
   <data name="MouseVerticalWheel" xml:space="preserve">
     <value>Mouse vertical wheel</value>
   </data>
-  <data name="OrderArrangement" xml:space="preserve">
-    <value>Order by monitors arrangement</value>
-  </data>
   <data name="RestoreReconnection" xml:space="preserve">
     <value>Restore brightness on reconnection</value>
   </data>
@@ -168,8 +168,14 @@
   <data name="ShowAdjusted" xml:space="preserve">
     <value>Show adjusted brightness</value>
   </data>
+  <data name="ShowIdentity" xml:space="preserve">
+    <value>Show monitor identity</value>
+  </data>
   <data name="ShowNumber" xml:space="preserve">
     <value>Show current number</value>
+  </data>
+  <data name="SortArrangement" xml:space="preserve">
+    <value>Sort by monitor arrangement</value>
   </data>
   <data name="StartSignIn" xml:space="preserve">
     <value>Start on sign in</value>

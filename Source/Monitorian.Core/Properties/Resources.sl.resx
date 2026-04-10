@@ -118,72 +118,72 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AdjustSdrContent" xml:space="preserve">
-    <value>Điều chỉnh độ sáng nội dung SDR</value>
+    <value>Prilagodi svetlost vsebine SDR</value>
   </data>
   <data name="Arguments" xml:space="preserve">
-    <value>Tham số dòng lệnh</value>
+    <value>Argumenti ukazne vrstice</value>
   </data>
   <data name="ChangeContrast" xml:space="preserve">
-    <value>Thay đổi độ tương phản</value>
+    <value>Spremeni kontrast</value>
   </data>
   <data name="ChangeRange" xml:space="preserve">
-    <value>Thay đổi phạm vi điều chỉnh</value>
+    <value>Spremeni nastavljivo območje</value>
   </data>
   <data name="ChangeUnison" xml:space="preserve">
-    <value>Thay đổi độ sáng đồng loạt</value>
+    <value>Sočasno spreminjanje svetlosti</value>
   </data>
   <data name="Close" xml:space="preserve">
-    <value>Đóng</value>
+    <value>Zapri</value>
   </data>
   <data name="DeferChange" xml:space="preserve">
-    <value>Hoãn thay đổi cho đến khi dừng</value>
+    <value>Odloži spremembo, dokler ni ustavljeno</value>
   </data>
   <data name="EnableContrast" xml:space="preserve">
-    <value>Bật thay đổi độ tương phản</value>
+    <value>Omogoči spreminjanje kontrasta</value>
   </data>
   <data name="EnableRange" xml:space="preserve">
-    <value>Bật thay đổi phạm vi điều chỉnh</value>
+    <value>Omogoči spreminjanje nastavljivega obsega</value>
   </data>
   <data name="EnableUnison" xml:space="preserve">
-    <value>Bật thay đổi độ sáng đồng loạt</value>
+    <value>Omogoči sočasno spreminjanje svetlosti</value>
   </data>
   <data name="InvertScrollDirection" xml:space="preserve">
-    <value>Đảo ngược hướng cuộn</value>
+    <value>Obrni smer pomikanja</value>
   </data>
   <data name="MouseHorizontalWheel" xml:space="preserve">
-    <value>Cuộn ngang bằng chuột</value>
+    <value>Vodoravno kolesce miške</value>
   </data>
   <data name="MouseVerticalWheel" xml:space="preserve">
-    <value>Cuộn dọc bằng chuột</value>
+    <value>Navpično kolesce miške</value>
   </data>
   <data name="RestoreReconnection" xml:space="preserve">
-    <value>Khôi phục độ sáng khi kết nối lại</value>
+    <value>Ob ponovni povezavi obnovi svetlost</value>
   </data>
   <data name="Settings" xml:space="preserve">
-    <value>Cài đặt</value>
+    <value>Nastavitve</value>
   </data>
   <data name="ShowAdjusted" xml:space="preserve">
-    <value>Hiển thị độ sáng đã điều chỉnh</value>
+    <value>Prikaži prilagojeno svetlost</value>
   </data>
   <data name="ShowNumber" xml:space="preserve">
-    <value>Hiển thị số hiện tại</value>
+    <value>Prikaži trenutno število</value>
   </data>
   <data name="SortArrangement" xml:space="preserve">
-    <value>Tạo nhật ký hoạt động</value>
+    <value>Razvrsti po razporeditvi monitorjev</value>
   </data>
   <data name="StartSignIn" xml:space="preserve">
-    <value>Khởi động khi đăng nhập</value>
+    <value>Začni ob prijavi</value>
   </data>
   <data name="TouchpadHorizontalSwipe" xml:space="preserve">
-    <value>Vuốt ngang trên bàn di chuột</value>
+    <value>Vodoravno drsenje po sledilni ploščici</value>
   </data>
   <data name="TouchpadVerticalSwipe" xml:space="preserve">
-    <value>Vuốt dọc trên bàn di chuột</value>
+    <value>Navpično drsenje po sledilni ploščici</value>
   </data>
   <data name="UseAccentColor" xml:space="preserve">
-    <value>Sử dụng màu nhấn cho độ sáng</value>
+    <value>Za svetlost uporabi barvo poudarka</value>
   </data>
   <data name="UseLargeElements" xml:space="preserve">
-    <value>Sử dụng thanh trượt lớn</value>
+    <value>Uporabi velike drsnike</value>
   </data>
 </root>

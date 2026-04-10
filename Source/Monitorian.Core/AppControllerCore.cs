@@ -52,7 +52,7 @@ public class AppControllerCore
 		BindingOperations.EnableCollectionSynchronization(Monitors, _monitorsLock);
 
 		WindowPainter = new WindowPainter();
-		NotifyIconContainer = new NotifyIconContainer();		
+		NotifyIconContainer = new NotifyIconContainer();
 
 		_sessionWatcher = new SessionWatcher();
 		_powerWatcher = new PowerWatcher();
@@ -268,6 +268,12 @@ public class AppControllerCore
 			case nameof(Settings.EnablesContrast) when !Settings.EnablesContrast:
 				foreach (var m in Monitors)
 					m.IsContrastChanging = false;
+
+				break;
+
+			case nameof(Settings.EnablesIdentity) when !Settings.EnablesIdentity:
+				foreach (var m in Monitors)
+					m.IsIdentityShown = false;
 
 				break;
 

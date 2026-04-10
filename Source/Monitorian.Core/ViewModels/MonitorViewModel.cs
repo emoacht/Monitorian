@@ -50,6 +50,7 @@ public class MonitorViewModel : ViewModelBase
 	public byte DisplayIndex => _monitor.DisplayIndex;
 	public byte MonitorIndex => _monitor.MonitorIndex;
 	public Rect MonitorRect => _monitor.MonitorRect;
+	public ConnectionType Connection => _monitor.Connection;
 	public bool IsInternal => _monitor.IsInternal;
 
 	#region Customization
@@ -533,6 +534,20 @@ public class MonitorViewModel : ViewModelBase
 		private set => SetProperty(ref _warningMessage, value);
 	}
 	private string _warningMessage;
+
+	#endregion
+
+	#region Identity
+
+	public bool IsIdentityShown
+	{
+		get => _isIdentityShown;
+		set => SetProperty(ref _isIdentityShown, value);
+	}
+	private bool _isIdentityShown;
+
+	public EdidInfo Edid => _edid ??= EdidInfo.ReadFromRegistry(DeviceInstanceId);
+	private EdidInfo _edid;
 
 	#endregion
 

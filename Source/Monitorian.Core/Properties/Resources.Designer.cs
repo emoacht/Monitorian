@@ -133,6 +133,15 @@ namespace Monitorian.Core.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Enable showing monitor identity.
+        /// </summary>
+        public static string EnableIdentity {
+            get {
+                return ResourceManager.GetString("EnableIdentity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enable changing adjustable range.
         /// </summary>
         public static string EnableRange {
@@ -178,15 +187,6 @@ namespace Monitorian.Core.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Order by monitors arrangement.
-        /// </summary>
-        public static string OrderArrangement {
-            get {
-                return ResourceManager.GetString("OrderArrangement", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Restore brightness on reconnection.
         /// </summary>
         public static string RestoreReconnection {
@@ -214,11 +214,29 @@ namespace Monitorian.Core.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show monitor identity.
+        /// </summary>
+        public static string ShowIdentity {
+            get {
+                return ResourceManager.GetString("ShowIdentity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show current number.
         /// </summary>
         public static string ShowNumber {
             get {
                 return ResourceManager.GetString("ShowNumber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sort by monitor arrangement.
+        /// </summary>
+        public static string SortArrangement {
+            get {
+                return ResourceManager.GetString("SortArrangement", resourceCulture);
             }
         }
         

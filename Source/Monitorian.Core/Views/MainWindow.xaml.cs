@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Data;
 using System.Windows.Input;
 
-using Monitorian.Core.Helper;
 using Monitorian.Core.Models;
 using Monitorian.Core.ViewModels;
 using ScreenFrame.Movers;
@@ -42,81 +37,6 @@ public partial class MainWindow : Window
 		//{
 		//};
 	}
-
-	public override void OnApplyTemplate()
-	{
-		base.OnApplyTemplate();
-
-		CheckDefaultHeights();
-
-		BindingOperations.SetBinding(
-			this,
-			UsesLargeElementsProperty,
-			new Binding(nameof(SettingsCore.UsesLargeElements))
-			{
-				Source = ViewModel.Settings,
-				Mode = BindingMode.OneWay
-			});
-
-		//this.InvalidateProperty(UsesLargeElementsProperty);
-	}
-
-	protected override void OnClosed(EventArgs e)
-	{
-		BindingOperations.ClearBinding(
-			this,
-			UsesLargeElementsProperty);
-
-		base.OnClosed(e);
-	}
-
-	#region Elements
-
-	private const double ShrinkFactor = 0.64;
-	private Dictionary<string, double> _defaultHeights;
-	private const string SliderHeightName = "SliderHeight";
-
-	private void CheckDefaultHeights()
-	{
-		_defaultHeights = this.Resources.Cast<DictionaryEntry>()
-			.Where(x => (x.Key is string key) && key.EndsWith("Height", StringComparison.Ordinal))
-			.Where(x => x.Value is double height and > 0D)
-			.ToDictionary(x => (string)x.Key, x => (double)x.Value);
-	}
-
-	public bool UsesLargeElements
-	{
-		get { return (bool)GetValue(UsesLargeElementsProperty); }
-		set { SetValue(UsesLargeElementsProperty, value); }
-	}
-	public static readonly DependencyProperty UsesLargeElementsProperty =
-		DependencyProperty.Register(
-			"UsesLargeElements",
-			typeof(bool),
-			typeof(MainWindow),
-			new PropertyMetadata(
-				true,
-				(d, e) =>
-				{
-					// Setting the same value will not trigger calling this method.
-
-					var window = (MainWindow)d;
-					if (window._defaultHeights is null)
-						return;
-
-					var factor = (bool)e.NewValue ? 1D : ShrinkFactor;
-
-					foreach (var (key, value) in window._defaultHeights)
-					{
-						var buffer = value * factor;
-						if (key == SliderHeightName)
-							buffer = Math.Ceiling(buffer / 4) * 4;
-
-						window.Resources[key] = buffer;
-					}
-				}));
-
-	#endregion
 
 	#region Show/Hide
 

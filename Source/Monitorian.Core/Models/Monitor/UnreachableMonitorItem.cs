@@ -9,12 +9,14 @@ internal class UnreachableMonitorItem : MonitorItem
 		string description,
 		byte displayIndex,
 		byte monitorIndex,
+		ConnectionType connection,
 		bool isInternal) : base(
 			deviceInstanceId: deviceInstanceId,
 			description: description,
 			displayIndex: displayIndex,
 			monitorIndex: monitorIndex,
 			monitorRect: Rect.Empty,
+			connection: connection,
 			isInternal: isInternal,
 			isReachable: false)
 	{ }

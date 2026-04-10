@@ -16,6 +16,7 @@ internal class HdrMonitorItem : MonitorItem
 		byte displayIndex,
 		byte monitorIndex,
 		Rect monitorRect,
+		ConnectionType connection,
 		bool isInternal,
 		IntPtr monitorHandle,
 		DisplayIdSet displayIdSet,
@@ -25,6 +26,7 @@ internal class HdrMonitorItem : MonitorItem
 			displayIndex: displayIndex,
 			monitorIndex: monitorIndex,
 			monitorRect: monitorRect,
+			connection: connection,
 			isInternal: isInternal,
 			isReachable: true)
 	{

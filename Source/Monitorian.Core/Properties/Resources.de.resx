@@ -153,9 +153,6 @@
   <data name="MouseVerticalWheel" xml:space="preserve">
     <value>Maus vertikales Scrollen</value>
   </data>
-  <data name="OrderArrangement" xml:space="preserve">
-    <value>Nach Monitoranordnung sortieren</value>
-  </data>
   <data name="RestoreReconnection" xml:space="preserve">
     <value>Helligkeit bei Wiederverbinden wiederherstellen</value>
   </data>
@@ -167,6 +164,9 @@
   </data>
   <data name="ShowNumber" xml:space="preserve">
     <value>Nummer anzeigen</value>
+  </data>
+  <data name="SortArrangement" xml:space="preserve">
+    <value>Nach Monitoranordnung sortieren</value>
   </data>
   <data name="StartSignIn" xml:space="preserve">
     <value>Beim Anmelden starten</value>

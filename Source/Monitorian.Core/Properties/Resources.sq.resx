@@ -156,9 +156,6 @@
   <data name="MouseVerticalWheel" xml:space="preserve">
     <value>Rrëshqitje vertikale me miun</value>
   </data>
-  <data name="OrderArrangement" xml:space="preserve">
-    <value>Rendit sipas vendosjes së monitorave</value>
-  </data>
   <data name="RestoreReconnection" xml:space="preserve">
     <value>Rivendos ndriçimin gjatë rilidhjes</value>
   </data>
@@ -170,6 +167,9 @@
   </data>
   <data name="ShowNumber" xml:space="preserve">
     <value>Trego numrin e tanishëm</value>
+  </data>
+  <data name="SortArrangement" xml:space="preserve">
+    <value>Rendit sipas vendosjes së monitorave</value>
   </data>
   <data name="StartSignIn" xml:space="preserve">
     <value>Nis në hyrje</value>

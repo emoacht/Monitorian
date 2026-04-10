@@ -12,6 +12,7 @@ internal abstract class MonitorItem : IMonitor
 	public byte DisplayIndex { get; }
 	public byte MonitorIndex { get; }
 	public Rect MonitorRect { get; }
+	public ConnectionType Connection { get; }
 	public bool IsInternal { get; }
 	public bool IsReachable { get; }
 
@@ -25,6 +26,7 @@ internal abstract class MonitorItem : IMonitor
 		byte displayIndex,
 		byte monitorIndex,
 		Rect monitorRect,
+		ConnectionType connection,
 		bool isInternal,
 		bool isReachable)
 	{
@@ -38,6 +40,7 @@ internal abstract class MonitorItem : IMonitor
 		this.DisplayIndex = displayIndex;
 		this.MonitorIndex = monitorIndex;
 		this.MonitorRect = monitorRect;
+		this.Connection = connection;
 		this.IsInternal = isInternal;
 		this.IsReachable = isReachable;
 	}
@@ -65,6 +68,7 @@ internal abstract class MonitorItem : IMonitor
 			(nameof(DisplayIndex), DisplayIndex),
 			(nameof(MonitorIndex), MonitorIndex),
 			(nameof(MonitorRect), MonitorRect),
+			(nameof(Connection), Connection),
 			(nameof(IsInternal), IsInternal),
 			(nameof(IsReachable), IsReachable),
 			(nameof(IsBrightnessSupported), IsBrightnessSupported),

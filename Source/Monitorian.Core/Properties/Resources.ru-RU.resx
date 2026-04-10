@@ -153,9 +153,6 @@
   <data name="MouseVerticalWheel" xml:space="preserve">
     <value>Вертикальная прокрутка мыши</value>
   </data>
-  <data name="OrderArrangement" xml:space="preserve">
-    <value>Упорядочить по расположению мониторов</value>
-  </data>
   <data name="RestoreReconnection" xml:space="preserve">
     <value>Восстановить яркость при повторном подключении</value>
   </data>
@@ -167,6 +164,9 @@
   </data>
   <data name="ShowNumber" xml:space="preserve">
     <value>Показывать текущую яркость</value>
+  </data>
+  <data name="SortArrangement" xml:space="preserve">
+    <value>Упорядочить по расположению мониторов</value>
   </data>
   <data name="StartSignIn" xml:space="preserve">
     <value>Запускать при входе в систему</value>

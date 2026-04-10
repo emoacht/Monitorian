@@ -141,6 +141,9 @@
   <data name="EnableContrast" xml:space="preserve">
     <value>コントラストを変更可能にする</value>
   </data>
+  <data name="EnableIdentity" xml:space="preserve">
+    <value>モニター識別情報を表示可能にする</value>
+  </data>
   <data name="EnableRange" xml:space="preserve">
     <value>調整可能な幅を変更可能にする</value>
   </data>
@@ -156,9 +159,6 @@
   <data name="MouseVerticalWheel" xml:space="preserve">
     <value>マウス垂直ホイール</value>
   </data>
-  <data name="OrderArrangement" xml:space="preserve">
-    <value>モニター配置に従って並べる</value>
-  </data>
   <data name="RestoreReconnection" xml:space="preserve">
     <value>再接続時に明るさを復元する</value>
   </data>
@@ -168,8 +168,14 @@
   <data name="ShowAdjusted" xml:space="preserve">
     <value>調整後の明るさを表示する</value>
   </data>
+  <data name="ShowIdentity" xml:space="preserve">
+    <value>モニター識別情報を表示する</value>
+  </data>
   <data name="ShowNumber" xml:space="preserve">
     <value>現在の数字を表示する</value>
+  </data>
+  <data name="SortArrangement" xml:space="preserve">
+    <value>モニター配置に従って並べる</value>
   </data>
   <data name="StartSignIn" xml:space="preserve">
     <value>サインイン時に起動する</value>

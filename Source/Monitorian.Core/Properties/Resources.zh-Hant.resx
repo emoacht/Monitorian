@@ -156,9 +156,6 @@
   <data name="MouseVerticalWheel" xml:space="preserve">
     <value>滑鼠垂直捲動</value>
   </data>
-  <data name="OrderArrangement" xml:space="preserve">
-    <value>按顯示器排列呈現</value>
-  </data>
   <data name="RestoreReconnection" xml:space="preserve">
     <value>重新連線時恢復亮度</value>
   </data>
@@ -170,6 +167,9 @@
   </data>
   <data name="ShowNumber" xml:space="preserve">
     <value>顯示目前數值</value>
+  </data>
+  <data name="SortArrangement" xml:space="preserve">
+    <value>按顯示器排列呈現</value>
   </data>
   <data name="StartSignIn" xml:space="preserve">
     <value>開機時啟動</value>

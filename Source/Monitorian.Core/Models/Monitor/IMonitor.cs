@@ -13,6 +13,7 @@ public interface IMonitor : IDisposable
 	byte DisplayIndex { get; }
 	byte MonitorIndex { get; }
 	Rect MonitorRect { get; }
+	ConnectionType Connection { get; }
 	bool IsInternal { get; }
 	bool IsReachable { get; }
 	bool IsBrightnessSupported { get; }
@@ -31,6 +32,25 @@ public interface IMonitor : IDisposable
 
 	(AccessResult result, ValueData data) GetValue(byte code);
 	(AccessResult result, ValueData data) SetValue(byte code, int value);
+}
+
+public enum ConnectionType
+{
+	Unknown = 0,
+	Internal,
+	Wired,
+	VGA,
+	AnalogTV,
+	DVI,
+	HDMI,
+	LVDS,
+	SDI,
+	DisplayPort,
+	SDTV,
+	Wireless,
+	Miracast,
+	Virtual,
+	Other
 }
 
 public enum AccessStatus

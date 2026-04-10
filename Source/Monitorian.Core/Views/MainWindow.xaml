@@ -13,7 +13,8 @@
 		AllowsTransparency="True" WindowStyle="None"
 		Background="{DynamicResource App.Background.Plain}">
 	<Window.Resources>
-		<sys:Double x:Key="SliderHeight">52</sys:Double>
+		<sys:Double x:Key="SliderHeightLarge">52</sys:Double>
+		<sys:Double x:Key="SliderHeightSmall">36</sys:Double>
 		<sys:Double x:Key="ThumbHeight">40</sys:Double>
 		<sys:Double x:Key="BracketHeight">8</sys:Double>
 
@@ -98,14 +99,14 @@
 
 							<ControlTemplate x:Key="SliderThumbHorizontalLarge" TargetType="{x:Type Thumb}">
 								<Grid HorizontalAlignment="Center" VerticalAlignment="Center">
-									<Rectangle Height="{DynamicResource BracketHeight}"
+									<Rectangle Height="{StaticResource BracketHeight}"
 											   VerticalAlignment="Top"
 											   Fill="{TemplateBinding Background}"/>
-									<Rectangle Height="{DynamicResource BracketHeight}"
+									<Rectangle Height="{StaticResource BracketHeight}"
 											   VerticalAlignment="Bottom"
 											   Fill="{TemplateBinding Background}"/>
 
-									<Rectangle Width="11" Height="{DynamicResource ThumbHeight}"
+									<Rectangle Width="11" Height="{StaticResource ThumbHeight}"
 											   Margin="2"
 											   Fill="{TemplateBinding Foreground}"/>
 								</Grid>
@@ -135,14 +136,17 @@
 							</ControlTemplate>
 
 							<ControlTemplate x:Key="ShadowThumbLarge" TargetType="{x:Type ContentControl}">
-								<Rectangle Width="8"
-										   controls:FrameworkElementMargin.Vertical="{DynamicResource BracketHeight}"
-										   Fill="{TemplateBinding Foreground}"/>
+								<Grid VerticalAlignment="Center" >
+									<Rectangle Height="{StaticResource ThumbHeight}"
+											   Margin="2"/>
+									<Rectangle Width="8"
+											   controls:FrameworkElementMargin.Vertical="{StaticResource BracketHeight}"
+											   Fill="{TemplateBinding Foreground}"/>
+								</Grid>
 							</ControlTemplate>
 
 							<ControlTemplate x:Key="ShadowThumbSmall" TargetType="{x:Type ContentControl}">
-								<Ellipse Width="{Binding RelativeSource={RelativeSource Self}, Path=ActualHeight}"
-										 controls:FrameworkElementMargin.Vertical="{DynamicResource BracketHeight}"
+								<Ellipse Width="13" Height="13"
 										 Fill="{TemplateBinding Foreground}"/>
 							</ControlTemplate>
 						</ControlTemplate.Resources>
@@ -257,7 +261,7 @@
 
 									<ControlTemplate x:Key="SliderThumbHorizontalLarge" TargetType="{x:Type Thumb}">
 										<Grid HorizontalAlignment="Center" VerticalAlignment="Center">
-											<Rectangle Width="9" Height="{DynamicResource ThumbHeight}"
+											<Rectangle Width="9" Height="{StaticResource ThumbHeight}"
 													   Margin="2"
 													   Fill="{TemplateBinding Foreground}"/>
 										</Grid>
@@ -362,7 +366,7 @@
 
 							<ControlTemplate x:Key="SliderThumbHorizontalLarge" TargetType="{x:Type Thumb}">
 								<Grid HorizontalAlignment="Center" VerticalAlignment="Center">
-									<Rectangle Width="11" Height="{DynamicResource ThumbHeight}"
+									<Rectangle Width="11" Height="{StaticResource ThumbHeight}"
 											   Margin="2"
 											   Fill="{TemplateBinding Foreground}"/>
 								</Grid>
@@ -492,14 +496,14 @@
 									Background="Transparent">
 								<Grid Margin="{TemplateBinding Padding}">
 									<Grid Height="{Binding RelativeSource={RelativeSource Self}, Path=ActualWidth}"
-										  Margin="7,6" VerticalAlignment="Center"
-										  RenderOptions.EdgeMode="Aliased">
+											  Margin="7,6" VerticalAlignment="Center"
+											  RenderOptions.EdgeMode="Aliased">
 										<Path x:Name="StrokeIcon"
-											  Data="{TemplateBinding StrokeIconData}" Stretch="Uniform"
-											  Stroke="{TemplateBinding Foreground}" StrokeThickness="1"/>
+												  Data="{TemplateBinding StrokeIconData}" Stretch="Uniform"
+												  Stroke="{TemplateBinding Foreground}" StrokeThickness="1"/>
 										<Path x:Name="FillIcon"
-											  Data="{TemplateBinding FillIconData}" Stretch="Uniform"
-											  Fill="{TemplateBinding Foreground}"/>
+												  Data="{TemplateBinding FillIconData}" Stretch="Uniform"
+												  Fill="{TemplateBinding Foreground}"/>
 									</Grid>
 								</Grid>
 							</Border>
@@ -574,6 +578,11 @@
 			<Setter Property="FillIconData" Value="M 0,0 L 0,10 5,10 5,0 Z M 10,0 L 10,10"/>
 		</Style>
 
+		<Style x:Key="IdentityButtonStyle" TargetType="{x:Type controls:IconButton}" BasedOn="{StaticResource IconButtonStyle}">
+			<Setter Property="StrokeIconData" Value="M 4,0 L 4,2 7,2 7,0 Z M 4,4 L 4,10 7,10 7,4 Z"/>
+			<Setter Property="FillIconData" Value="M 4,0 L 4,2 7,2 7,0 Z M 7,10 7,4"/>
+		</Style>
+
 		<!-- Number Label -->
 		<Style x:Key="NumberLabelStyle" TargetType="{x:Type Label}">
 			<Setter Property="VerticalAlignment" Value="Center"/>
@@ -615,6 +624,7 @@
 							<RowDefinition Height="Auto"/>
 							<RowDefinition Height="Auto"/>
 							<RowDefinition Height="Auto"/>
+							<RowDefinition Height="Auto"/>
 						</Grid.RowDefinitions>
 
 						<Grid Grid.Row="0">
@@ -651,13 +661,30 @@
 													 IsEnabled="{Binding IsContrastSupported, Mode=OneWay}"
 													 Visibility="{Binding Settings.EnablesContrast, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverterKey}}"
 													 IsChecked="{Binding IsContrastChanging, Mode=TwoWay}"/>
+
+								<!-- Identity -->
+								<controls:IconButton x:Name="IdentityButton"
+													 Style="{StaticResource IdentityButtonStyle}"
+													 ToolTip="{x:Static properties:Resources.ShowIdentity}"
+													 Visibility="{Binding Settings.EnablesIdentity, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverterKey}}"
+													 IsChecked="{Binding IsIdentityShown, Mode=TwoWay}"/>
 							</StackPanel>
 						</Grid>
 
 						<Grid Grid.Row="1"
-							  Height="{DynamicResource SliderHeight}"
 							  Margin="0,0,12,0"
 							  Visibility="{Binding IsControllable, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverterKey}}">
+							<Grid.Style>
+								<Style TargetType="{x:Type Grid}">
+									<Setter Property="Height" Value="{StaticResource SliderHeightLarge}"/>
+									<Style.Triggers>
+										<DataTrigger Binding="{Binding Settings.UsesLargeElements}" Value="False">
+											<Setter Property="Height" Value="{StaticResource SliderHeightSmall}"/>
+										</DataTrigger>
+									</Style.Triggers>
+								</Style>
+							</Grid.Style>
+
 							<Grid.ColumnDefinitions>
 								<ColumnDefinition Width="4"/>
 								<ColumnDefinition Width="*"/>
@@ -742,15 +769,38 @@
 								   Visibility="{Binding IsContrastChanging, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverterKey}}"/>
 						</Grid>
 
-						<!-- Message -->
+						<!-- Identity -->
 						<Grid Grid.Row="2"
+							  Visibility="{Binding IsIdentityShown, Mode=OneWay, Converter={StaticResource BooleanToVisibilityConverterKey}}">
+							<StackPanel Margin="12,2,12,2"
+										TextElement.Foreground="{StaticResource App.Foreground}"
+										TextElement.FontSize="10">
+								<TextBlock>
+									<Run Text="{Binding Edid.Manufacturer, Mode=OneTime, StringFormat='Manufacturer: {0}\,'}"/>
+									<Run Text="{Binding Edid.ManufactureYear, Mode=OneTime, StringFormat='Year: {0}\,'}"/>
+									<Run Text="{Binding Edid.SerialNumber, Mode=OneTime, StringFormat='S/N: {0}', TargetNullValue=''}"/>
+									<LineBreak/>
+									<Run Text="{Binding Connection, Mode=OneTime, StringFormat=Connection: {0}}"/>
+								</TextBlock>
+								<StackPanel Orientation="Horizontal">
+									<TextBlock VerticalAlignment="Center"
+											   Text="Device Instance ID:"/>
+									<controls:FocusTextBox VerticalAlignment="Center"
+														   Style="{StaticResource IdentityTextBoxStyle}"
+														   Text="{Binding DeviceInstanceId, Mode=OneTime}"/>
+								</StackPanel>
+							</StackPanel>
+						</Grid>
+
+						<!-- Message -->
+						<Grid Grid.Row="3"
 							  Visibility="{Binding NormalMessage, Mode=OneWay, Converter={StaticResource ObjectToVisibilityConverterKey}}">
 							<TextBlock Style="{StaticResource PlainTextStyle}"
 									   Margin="12,2,12,2"
 									   TextWrapping="Wrap"
 									   Text="{Binding NormalMessage, Mode=OneWay}"/>
 						</Grid>
-						<Grid Grid.Row="3"
+						<Grid Grid.Row="4"
 							  Visibility="{Binding WarningMessage, Mode=OneWay, Converter={StaticResource ObjectToVisibilityConverterKey}}">
 							<TextBlock Style="{StaticResource InvalidTextStyle}"
 									   Margin="12,2,12,2"

@@ -156,9 +156,6 @@
   <data name="MouseVerticalWheel" xml:space="preserve">
     <value>اسکرول عمودی ماوس</value>
   </data>
-  <data name="OrderArrangement" xml:space="preserve">
-    <value>مرتب‌سازی بر اساس چیدمان نمایشگرها</value>
-  </data>
   <data name="RestoreReconnection" xml:space="preserve">
     <value>بازیابی روشنایی هنگام اتصالِ دوباره</value>
   </data>
@@ -170,6 +167,9 @@
   </data>
   <data name="ShowNumber" xml:space="preserve">
     <value>نمایش عدد فعلی</value>
+  </data>
+  <data name="SortArrangement" xml:space="preserve">
+    <value>مرتب‌سازی بر اساس چیدمان نمایشگرها</value>
   </data>
   <data name="StartSignIn" xml:space="preserve">
     <value>اجرا هنگام ورود به سیستم</value>

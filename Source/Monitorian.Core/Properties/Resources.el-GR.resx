@@ -156,9 +156,6 @@
   <data name="MouseVerticalWheel" xml:space="preserve">
     <value>Κάθετη κύλιση με το ποντίκι</value>
   </data>
-  <data name="OrderArrangement" xml:space="preserve">
-    <value>Ταξινόμηση κατά διάταξη οθονών</value>
-  </data>
   <data name="RestoreReconnection" xml:space="preserve">
     <value>Επαναφορά της φωτεινότητας κατά την επανασύνδεση</value>
   </data>
@@ -170,6 +167,9 @@
   </data>
   <data name="ShowNumber" xml:space="preserve">
     <value>Εμφάνιση τρέχοντος αριθμού</value>
+  </data>
+  <data name="SortArrangement" xml:space="preserve">
+    <value>Ταξινόμηση κατά διάταξη οθονών</value>
   </data>
   <data name="StartSignIn" xml:space="preserve">
     <value>Άνοιγμα κατά την εκίνηση</value>

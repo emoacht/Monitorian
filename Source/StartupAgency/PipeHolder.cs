@@ -50,7 +50,7 @@ internal class PipeHolder
 			// Start server.
 			try
 			{
-				StartServer(_cts.Value.Token);
+				StartServer(TimeSpan.FromSeconds(1), _cts.Value.Token);
 
 				return (created: true, started: true, null);
 			}
@@ -90,7 +90,7 @@ internal class PipeHolder
 
 	#region Server
 
-	private void StartServer(CancellationToken cancellationToken)
+	private void StartServer(TimeSpan timeout, CancellationToken cancellationToken)
 	{
 		if (cancellationToken.IsCancellationRequested)
 			return;
@@ -118,16 +118,15 @@ internal class PipeHolder
 				if (cancellationToken.IsCancellationRequested)
 					break;
 
-				if (!await WaitAndConnectClientAsync(cancellationToken))
+				if (!await WaitAndConnectClientAsync(timeout, cancellationToken))
 					break;
 			}
 		}, cancellationToken);
 	}
 
-	private async Task<bool> WaitAndConnectClientAsync(CancellationToken cancellationToken)
+	private async Task<bool> WaitAndConnectClientAsync(TimeSpan timeout, CancellationToken cancellationToken)
 	{
-		// As this method is not awaited on main thread, exceptions must be caught within
-		// this method.
+		// Since this method is not awaited on main thread, any exception must be caught within it.
 
 		NamedPipeServerStream server = null;
 		try
@@ -156,7 +155,27 @@ internal class PipeHolder
 			{
 				while (true)
 				{
-					var value = await reader.ReadLineAsync().ConfigureAwait(false);
+					// If no newline char is found, ReadLineAsync method will wait indefinitely.
+					var readTask = reader.ReadLineAsync();
+					var completedTask = await Task.WhenAny(readTask, Task.Delay(timeout)).ConfigureAwait(false);
+					if (completedTask != readTask)
+					{
+						// If timed out, close underlying stream to release it.
+						server.Close();
+
+						try
+						{
+							// Closing underlying stream during operation may cause an exception.
+							await readTask;
+						}
+						catch
+						{
+						}
+						Trace.WriteLine("Named pipe read operation timed out.");
+						break;
+					}
+
+					var value = readTask.Result;
 					// Check if value is string.Empty which indicates the end of writing.
 					if (string.IsNullOrEmpty(value))
 						break;
@@ -169,7 +188,7 @@ internal class PipeHolder
 
 			if (server.IsConnected)
 			{
-				using (var writer = new StreamWriter(server, Encoding.UTF8) { AutoFlush = true })
+				using (var writer = new StreamWriter(server, new UTF8Encoding(false)) { AutoFlush = true })
 				{
 					await writer.WriteAsync(response).ConfigureAwait(false);
 
@@ -193,7 +212,7 @@ internal class PipeHolder
 		if (cancellationToken.IsCancellationRequested)
 			return null;
 
-		using var client = new NamedPipeClientStream(PipeName);
+		using var client = new NamedPipeClientStream(".", PipeName, PipeDirection.InOut, PipeOptions.Asynchronous);
 
 		try
 		{
@@ -204,13 +223,15 @@ internal class PipeHolder
 			return null;
 		}
 
-		using (var writer = new StreamWriter(client, Encoding.UTF8, 1024, leaveOpen: true) { AutoFlush = true })
+		using (var writer = new StreamWriter(client, new UTF8Encoding(false), 1024, leaveOpen: true) { AutoFlush = true })
 		{
 			if (args is { Length: > 0 })
 			{
-				// Filter out null because it causes NullReferenceException in WriteLineAsync
+				// Filter out null because it will cause NullReferenceException in WriteLineAsync
 				// method on .NET Framework.
 				// Filter out string.Empty because it is used to indicate the end of writing.
+				// Newline chars would confuse ReadLineAsync method, which relies on them to detect
+				// line endings, but they are not expected here.
 				foreach (var arg in args.Where(x => !string.IsNullOrEmpty(x)))
 					await writer.WriteLineAsync(arg).ConfigureAwait(false);
 			}

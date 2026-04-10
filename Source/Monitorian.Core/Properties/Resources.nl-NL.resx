@@ -156,9 +156,6 @@
   <data name="MouseVerticalWheel" xml:space="preserve">
     <value>Verticaal scrollen met muis</value>
   </data>
-  <data name="OrderArrangement" xml:space="preserve">
-    <value>Ordenen op monitor volgorde</value>
-  </data>
   <data name="RestoreReconnection" xml:space="preserve">
     <value>Herstel helderheid bij verbinden</value>
   </data>
@@ -170,6 +167,9 @@
   </data>
   <data name="ShowNumber" xml:space="preserve">
     <value>Toon huidige waarde</value>
+  </data>
+  <data name="SortArrangement" xml:space="preserve">
+    <value>Ordenen op monitor volgorde</value>
   </data>
   <data name="StartSignIn" xml:space="preserve">
     <value>Opstarten bij aanmelding</value>

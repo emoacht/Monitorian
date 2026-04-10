@@ -69,6 +69,7 @@
     <Compile Include="Models\Monitor\DisplayConfig.cs" />
     <Compile Include="Models\Monitor\DisplayInformationProvider.cs" />
     <Compile Include="Models\Monitor\DisplayMonitorProvider.cs" />
+    <Compile Include="Models\Monitor\EdidInfo.cs" />
     <Compile Include="Models\Monitor\Error.cs" />
     <Compile Include="Models\Monitor\HdrMonitorItem.cs" />
     <Compile Include="Models\Monitor\IMonitor.cs" />
@@ -133,12 +134,12 @@
     <Compile Include="Views\Controls\Sliders\RangeSlider.cs" />
     <Compile Include="Views\Controls\Sliders\ShadowSlider.cs" />
     <Compile Include="Views\Controls\FlowElement.cs" />
+    <Compile Include="Views\Controls\FocusTextBox.cs" />
     <Compile Include="Views\Controls\FrameworkElementMargin.cs" />
     <Compile Include="Views\Controls\FrameworkElementSize.cs" />
     <Compile Include="Views\Controls\IconButton.cs" />
     <Compile Include="Views\Controls\MultiToggleButton.cs" />
     <Compile Include="Views\Controls\PulseLabel.cs" />
-    <Compile Include="Views\Controls\SwitchTextBox.cs" />
     <Compile Include="Views\Converters\BooleanInverseConverter.cs" />
     <Compile Include="Views\Converters\BooleanToVisibilityTurnConverter.cs" />
     <Compile Include="Views\Converters\ObjectToVisibilityConverter.cs" />
@@ -242,6 +243,10 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.ru-RU.resx">
+      <DependentUpon>Resources.resx</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.sl.resx">
       <DependentUpon>Resources.resx</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>

@@ -133,6 +133,15 @@ namespace Monitorian.Core.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Enable showing monitor identity.
+        /// </summary>
+        public static string EnableIdentity {
+            get {
+                return ResourceManager.GetString("EnableIdentity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enable changing adjustable range.
         /// </summary>
         public static string EnableRange {
@@ -201,6 +210,15 @@ namespace Monitorian.Core.Properties {
         public static string ShowAdjusted {
             get {
                 return ResourceManager.GetString("ShowAdjusted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show monitor identity.
+        /// </summary>
+        public static string ShowIdentity {
+            get {
+                return ResourceManager.GetString("ShowIdentity", resourceCulture);
             }
         }
         

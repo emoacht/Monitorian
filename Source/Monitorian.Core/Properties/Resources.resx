@@ -141,6 +141,9 @@
   <data name="EnableContrast" xml:space="preserve">
     <value>Enable changing contrast</value>
   </data>
+  <data name="EnableIdentity" xml:space="preserve">
+    <value>Enable showing monitor identity</value>
+  </data>
   <data name="EnableRange" xml:space="preserve">
     <value>Enable changing adjustable range</value>
   </data>
@@ -164,6 +167,9 @@
   </data>
   <data name="ShowAdjusted" xml:space="preserve">
     <value>Show adjusted brightness</value>
+  </data>
+  <data name="ShowIdentity" xml:space="preserve">
+    <value>Show monitor identity</value>
   </data>
   <data name="ShowNumber" xml:space="preserve">
     <value>Show current number</value>

@@ -308,6 +308,33 @@
 		</Setter>
 	</Style>
 
+	<!-- Identity TextBox -->
+	<Style x:Key="IdentityTextBoxStyle" TargetType="{x:Type TextBox}" BasedOn="{StaticResource {x:Type TextBox}}">
+		<Setter Property="Foreground" Value="{StaticResource App.Foreground}"/>
+		<Setter Property="CaretBrush" Value="{StaticResource App.Foreground}"/>
+		<Setter Property="FontSize" Value="10"/>
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type TextBox}">
+					<Border x:Name="border"
+							BorderBrush="{DynamicResource App.Border.Outline}" BorderThickness="1"
+							Background="{DynamicResource App.Background.Plain}"
+							SnapsToDevicePixels="True">
+						<ScrollViewer x:Name="PART_ContentHost"
+									  VerticalScrollBarVisibility="Hidden"
+									  Focusable="False"/>
+					</Border>
+					<ControlTemplate.Triggers>
+						<Trigger Property="IsFocused" Value="False">
+							<Setter Property="BorderBrush" TargetName="border" Value="Transparent"/>
+							<Setter Property="Background" TargetName="border" Value="Transparent"/>
+						</Trigger>
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
 	<!-- Plain TextBox -->
 	<Style x:Key="PlainTextBoxStyle" TargetType="{x:Type TextBox}" BasedOn="{StaticResource {x:Type TextBox}}">
 		<Setter Property="Foreground" Value="{StaticResource App.Foreground}"/>

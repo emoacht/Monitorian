@@ -132,6 +132,17 @@ public class SettingsCore : BindableBase
 	private bool _enablesContrast;
 
 	/// <summary>
+	/// Whether to enable showing monitor identity
+	/// </summary>
+	[DataMember]
+	public bool EnablesIdentity
+	{
+		get => _enablesIdentity;
+		set => SetProperty(ref _enablesIdentity, value);
+	}
+	private bool _enablesIdentity = true;
+
+	/// <summary>
 	/// Monitor customizations by user
 	/// </summary>
 	[DataMember]

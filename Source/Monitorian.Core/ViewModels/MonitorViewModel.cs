@@ -537,6 +537,20 @@ public class MonitorViewModel : ViewModelBase
 
 	#endregion
 
+	#region Identity
+
+	public bool IsIdentityShown
+	{
+		get => _isIdentityShown;
+		set => SetProperty(ref _isIdentityShown, value);
+	}
+	private bool _isIdentityShown;
+
+	public EdidInfo Edid => _edid ??= EdidInfo.ReadFromRegistry(DeviceInstanceId);
+	private EdidInfo _edid;
+
+	#endregion
+
 	#region Focus
 
 	public bool IsByKey

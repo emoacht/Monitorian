@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -139,13 +139,16 @@
     <value>중지될 때까지 변경 연기</value>
   </data>
   <data name="EnableContrast" xml:space="preserve">
-    <value>대비 변경 사용</value>
+    <value>대비 변경 사용함</value>
+  </data>
+  <data name="EnableIdentity" xml:space="preserve">
+    <value>모니터 식별 표시 사용함</value>
   </data>
   <data name="EnableRange" xml:space="preserve">
-    <value>조정 가능한 범위 변경 사용</value>
+    <value>조정 가능한 범위 변경 사용함</value>
   </data>
   <data name="EnableUnison" xml:space="preserve">
-    <value>동시에 밝기 변경 사용</value>
+    <value>동시에 밝기 변경 사용함</value>
   </data>
   <data name="InvertScrollDirection" xml:space="preserve">
     <value>스크롤 방향 반전</value>
@@ -164,6 +167,9 @@
   </data>
   <data name="ShowAdjusted" xml:space="preserve">
     <value>조정된 밝기 표시</value>
+  </data>
+  <data name="ShowIdentity" xml:space="preserve">
+    <value>모니터 식별 표시</value>
   </data>
   <data name="ShowNumber" xml:space="preserve">
     <value>현재 번호 표시</value>

@@ -141,6 +141,9 @@
   <data name="EnableContrast" xml:space="preserve">
     <value>Omogoči spreminjanje kontrasta</value>
   </data>
+  <data name="EnableIdentity" xml:space="preserve"> 
+   <value>Omogoči prikaz identitete monitorja</value>
+  </data> 
   <data name="EnableRange" xml:space="preserve">
     <value>Omogoči spreminjanje nastavljivega obsega</value>
   </data>
@@ -167,6 +170,9 @@
   </data>
   <data name="ShowAdjusted" xml:space="preserve">
     <value>Prikaži prilagojeno svetlost</value>
+  </data>
+  <data name="ShowIdentity" xml:space="preserve">
+    <value>Prikaži identiteto monitorja</value>
   </data>
   <data name="ShowNumber" xml:space="preserve">
     <value>Prikaži trenutno število</value>

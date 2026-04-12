@@ -549,6 +549,10 @@ public class MonitorViewModel : ViewModelBase
 	public EdidInfo Edid => _edid ??= EdidInfo.ReadFromRegistry(DeviceInstanceId);
 	private EdidInfo _edid;
 
+	public string Date => $"{Edid?.ManufactureYear}{GetWeek(Edid?.ManufactureWeek)}";
+
+	private static string GetWeek(int? week) => (week is > 0 and <= 53) ? $"-W{week:D2}" : string.Empty;
+
 	#endregion
 
 	#region Focus

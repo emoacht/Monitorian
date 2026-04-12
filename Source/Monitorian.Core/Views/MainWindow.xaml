@@ -776,17 +776,16 @@
 										TextElement.Foreground="{StaticResource App.Foreground}"
 										TextElement.FontSize="10">
 								<TextBlock>
-									<Run Text="{Binding Edid.Manufacturer, Mode=OneTime, StringFormat='Manufacturer: {0}\,'}"/>
-									<Run Text="{Binding Edid.ManufactureYear, Mode=OneTime, StringFormat='Year: {0}\,'}"/>
-									<Run Text="{Binding Edid.SerialNumber, Mode=OneTime, StringFormat='S/N: {0}', TargetNullValue=''}"/>
+									<Run Text="{Binding Edid.Manufacturer, Mode=OneTime, StringFormat='Vendor: {0}'}"/>
+									<Run Text="{Binding Date, Mode=OneTime, StringFormat='| Date: {0}'}"/>
+									<Run Text="{Binding Edid.SerialNumber, Mode=OneTime, StringFormat='| S/N, S/T: {0}', TargetNullValue=''}"/>
 									<LineBreak/>
-									<Run Text="{Binding Connection, Mode=OneTime, StringFormat=Connection: {0}}"/>
+									<Run Text="{Binding Connection, Mode=OneTime, StringFormat='Connection: {0}'}"/>
 								</TextBlock>
 								<StackPanel Orientation="Horizontal">
 									<TextBlock VerticalAlignment="Center"
 											   Text="Device Instance ID:"/>
-									<controls:FocusTextBox VerticalAlignment="Center"
-														   Style="{StaticResource IdentityTextBoxStyle}"
+									<controls:FocusTextBox Style="{StaticResource IdentityTextBoxStyle}"
 														   Text="{Binding DeviceInstanceId, Mode=OneTime}"/>
 								</StackPanel>
 							</StackPanel>

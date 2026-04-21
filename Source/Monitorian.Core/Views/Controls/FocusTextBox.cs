@@ -86,7 +86,8 @@ public class SwitchTextBox : FocusTextBox
 		this.Unloaded += OnUnloaded;
 
 		_window = Window.GetWindow(this);
-		_window?.Closed += OnClosed;
+		if (_window is not null)
+			_window.Closed += OnClosed;
 	}
 
 	private void OnUnloaded(object sender, RoutedEventArgs e)

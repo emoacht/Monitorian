@@ -105,7 +105,11 @@ public class StartupAgent : IDisposable
 	public Func<string[], Task<string>> HandleRequestAsync
 	{
 		get => _holder?.HandleRequestAsync;
-		set => _holder?.HandleRequestAsync = value;
+		set
+		{
+			if (_holder is not null)
+				_holder.HandleRequestAsync = value;
+		}
 	}
 
 	/// <summary>

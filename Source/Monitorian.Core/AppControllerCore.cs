@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -427,6 +427,13 @@ public class AppControllerCore
 				foreach (var m in Monitors.Where(x => !x.IsControllable))
 					m.IsTarget = !controllableMonitorExists;
 
+				// If any reachable monitor failed to report brightness (e.g. DDC/CI not yet initialized on a DisplayPort monitor after reboot),
+				// schedule additional rescans so the monitor can recover once the link is ready.
+				if (Monitors.Any(x => x.IsReachable && !x.IsControllable))
+				{
+					ScheduleDdcRecoveryScan();
+				}
+
 				OperationRecorder.AddGroupRecordItems(nameof(Monitors), Monitors.Select(x => x.ToString()));
 				await OperationRecorder.EndGroupRecordAsync();
 
@@ -441,6 +448,33 @@ public class AppControllerCore
 
 				Interlocked.Exchange(ref _scanCount, 0);
 			}
+		}
+	}
+
+	private int _ddcRecoveryScanCount;
+	private static readonly int[] _ddcRecoveryIntervals = [5, 5, 10, 10, 15, 15];
+
+	private async void ScheduleDdcRecoveryScan()
+	{
+		var count = Interlocked.Increment(ref _ddcRecoveryScanCount);
+		if (count > 1)
+			return; // Already scheduled
+
+		try
+		{
+			foreach (var interval in _ddcRecoveryIntervals)
+			{
+				await Task.Delay(TimeSpan.FromSeconds(interval));
+
+				if (!Monitors.Any(x => x.IsReachable && !x.IsControllable))
+					break; // All monitors recovered
+
+				await ScanAsync(TimeSpan.FromSeconds(1));
+			}
+		}
+		finally
+		{
+			Interlocked.Exchange(ref _ddcRecoveryScanCount, 0);
 		}
 	}
 

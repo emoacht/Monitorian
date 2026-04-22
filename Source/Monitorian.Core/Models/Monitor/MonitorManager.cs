@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -56,7 +56,7 @@ internal class MonitorManager
 		public byte DisplayIndex => _deviceItem.DisplayIndex;
 		public byte MonitorIndex => _deviceItem.MonitorIndex;
 		public ConnectionType Connection => _displayItem.Connection;
-		public bool IsInternal => _displayItem.IsInternal;		
+		public bool IsInternal => _displayItem.IsInternal;
 		public DisplayIdSet DisplayIdSet => _displayItem.DisplayIdSet;
 
 		public BasicItem(
@@ -219,16 +219,14 @@ internal class MonitorManager
 			{
 				foreach (var physicalItem in physicalItems)
 				{
-					int index = -1;
-					if (physicalItem.Capability.IsBrightnessSupported ||
-						_preclearedIds.Value.Any())
-					{
-						index = basicItems.FindIndex(x =>
-							!x.IsInternal &&
-							(x.DisplayIndex == handleItem.DisplayIndex) &&
-							(x.MonitorIndex == physicalItem.MonitorIndex) &&
-							string.Equals(x.Description, physicalItem.Description, StringComparison.OrdinalIgnoreCase));
-					}
+					// Try to match by DisplayIndex, MonitorIndex, and Description for external monitors regardless of whether brightness is reported as supported.
+					// After a reboot or reconnect, DDC/CI over DisplayPort may not be fully initialized yet and the capability query can transiently report brightness as unsupported.
+					int index = basicItems.FindIndex(x =>
+						!x.IsInternal &&
+						(x.DisplayIndex == handleItem.DisplayIndex) &&
+						(x.MonitorIndex == physicalItem.MonitorIndex) &&
+						string.Equals(x.Description, physicalItem.Description, StringComparison.OrdinalIgnoreCase));
+
 					if (index < 0)
 					{
 						physicalItem.Handle.Dispose();
@@ -246,21 +244,33 @@ internal class MonitorManager
 					{
 						capability = MonitorCapability.PreclearedCapability;
 					}
+
+					if (capability is not null)
+					{
+						yield return new DdcMonitorItem(
+							deviceInstanceId: basicItem.DeviceInstanceId,
+							description: basicItem.AlternativeDescription,
+							displayIndex: basicItem.DisplayIndex,
+							monitorIndex: basicItem.MonitorIndex,
+							monitorRect: handleItem.MonitorRect,
+							connection: basicItem.Connection,
+							handle: physicalItem.Handle,
+							capability: capability);
+					}
 					else
 					{
-						physicalItem.Handle.Dispose();
-						continue;
+						// The monitor was matched but DDC/CI brightness is not (yet) supported.
+						// Keep it as a DdcMonitorItem with the physical handle so that subsequent rescans can retry the capability query once the DDC/CI link is ready.
+						yield return new DdcMonitorItem(
+							deviceInstanceId: basicItem.DeviceInstanceId,
+							description: basicItem.AlternativeDescription,
+							displayIndex: basicItem.DisplayIndex,
+							monitorIndex: basicItem.MonitorIndex,
+							monitorRect: handleItem.MonitorRect,
+							connection: basicItem.Connection,
+							handle: physicalItem.Handle,
+							capability: physicalItem.Capability);
 					}
-
-					yield return new DdcMonitorItem(
-						deviceInstanceId: basicItem.DeviceInstanceId,
-						description: basicItem.AlternativeDescription,
-						displayIndex: basicItem.DisplayIndex,
-						monitorIndex: basicItem.MonitorIndex,
-						monitorRect: handleItem.MonitorRect,
-						connection: basicItem.Connection,
-						handle: physicalItem.Handle,
-						capability: capability);
 
 					basicItems.RemoveAt(index);
 					if (basicItems.Count == 0)
@@ -290,7 +300,7 @@ internal class MonitorManager
 						monitorIndex: basicItem.MonitorIndex,
 						monitorRect: handleItem.MonitorRect,
 						connection: basicItem.Connection,
-						isInternal: basicItem.IsInternal,						
+						isInternal: basicItem.IsInternal,
 						brightnessLevels: desktopItem.BrightnessLevels);
 
 					basicItems.RemoveAt(index);
@@ -451,8 +461,8 @@ internal class MonitorManager
 		[DataMember(Order = 0)]
 		public string System { get; private set; }
 
-		// When Name property of DataMemberAttribute contains a space or specific character 
-		// (e.g. !, ?), DataContractJsonSerializer.WriteObject method will internally throw 
+		// When Name property of DataMemberAttribute contains a space or specific character
+		// (e.g. !, ?), DataContractJsonSerializer.WriteObject method will internally throw
 		// a System.Xml.XmlException while it will work fine.
 		[DataMember(Order = 1, Name = "Device Context - DeviceItems")]
 		public DeviceContext.DeviceItem[] DeviceItems { get; private set; }

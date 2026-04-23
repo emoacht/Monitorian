@@ -69,7 +69,7 @@ public class AppControllerCore
 		Settings.PropertyChanged += OnSettingsChanged;
 
 		OnSettingsInitiated();
-		await OperationRecorder.RecordAsync($"Connectable by named pipes: {_keeper.StartupAgent.IsConnectable}");
+		await OperationRecorder.RecordAsync($"Connectable by named pipes: {StartupAgent.IsConnectable}");
 
 		WindowPainter.ApplyInitialTheme();
 		NotifyIconContainer.ShowIcon(WindowPainter.GetIconPath(), ProductInfo.Title);
@@ -98,7 +98,7 @@ public class AppControllerCore
 			NotifyIconContainer.MouseWheel += (_, delta) => ReflectMouseWheel(delta);
 
 		_sessionWatcher.Subscribe((e) => OnMonitorsChangeInferred(nameof(SessionWatcher), e));
-		_powerWatcher.Subscribe((e) => OnMonitorsChangeInferred(nameof(PowerWatcher), e));
+		_powerWatcher.Subscribe((e) => OnMonitorsChangeInferred(nameof(PowerWatcher), e), StartupAgent.IsStartedOnSignIn());
 		_displaySettingsWatcher.Subscribe((e) =>
 		{
 			if (!_powerWatcher.IsDisplayOff)

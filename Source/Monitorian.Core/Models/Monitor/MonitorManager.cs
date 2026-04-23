@@ -56,7 +56,7 @@ internal class MonitorManager
 		public byte DisplayIndex => _deviceItem.DisplayIndex;
 		public byte MonitorIndex => _deviceItem.MonitorIndex;
 		public ConnectionType Connection => _displayItem.Connection;
-		public bool IsInternal => _displayItem.IsInternal;		
+		public bool IsInternal => _displayItem.IsInternal;
 		public DisplayIdSet DisplayIdSet => _displayItem.DisplayIdSet;
 
 		public BasicItem(
@@ -290,7 +290,7 @@ internal class MonitorManager
 						monitorIndex: basicItem.MonitorIndex,
 						monitorRect: handleItem.MonitorRect,
 						connection: basicItem.Connection,
-						isInternal: basicItem.IsInternal,						
+						isInternal: basicItem.IsInternal,
 						brightnessLevels: desktopItem.BrightnessLevels);
 
 					basicItems.RemoveAt(index);
@@ -359,6 +359,30 @@ internal class MonitorManager
 		{
 			DisplayIndex = handleItem.DisplayIndex;
 			DisplayItem = new DisplayInformationProvider.DisplayItem(handleItem.MonitorHandle);
+		}
+	}
+
+	[DataContract]
+	private class InstalledItemPlus : DeviceInformation.InstalledItem
+	{
+		[DataMember(Order = 3)]
+		public string Manufacture
+		{ get; private set; }
+
+		[DataMember(Order = 4)]
+		public string Date { get; private set; }
+
+		public InstalledItemPlus(DeviceInformation.InstalledItem installedItem) : base(
+			deviceInstanceId: installedItem.DeviceInstanceId,
+			description: installedItem.Description,
+			isRemovable: installedItem.IsRemovable)
+		{
+			var edid = EdidInfo.ReadFromRegistry(installedItem.DeviceInstanceId);
+			if (edid is not null)
+			{
+				Manufacture = edid.Manufacturer;
+				Date = $"{edid.ManufactureYear}-W{edid.ManufactureWeek:D2}";
+			}
 		}
 	}
 
@@ -467,7 +491,7 @@ internal class MonitorManager
 		public DisplayItemPlus[] DisplayInformationItems { get; private set; }
 
 		[DataMember(Order = 5, Name = "Device Installation - InstalledItems")]
-		public DeviceInformation.InstalledItem[] InstalledItems { get; private set; }
+		public InstalledItemPlus[] InstalledItems { get; private set; }
 
 		[DataMember(Order = 6, Name = "Monitor Configuration - PhysicalItems")]
 		public Dictionary<DeviceContext.HandleItem, PhysicalItemPlus[]> PhysicalItems { get; private set; }
@@ -511,7 +535,8 @@ internal class MonitorManager
 						.Select(x => new DisplayItemPlus(x)).ToArray()),
 
 				GetTask(nameof(InstalledItems), () =>
-					InstalledItems = DeviceInformation.EnumerateInstalledMonitors().ToArray()),
+					InstalledItems = DeviceInformation.EnumerateInstalledMonitors()
+						.Select(x => new InstalledItemPlus(x)).ToArray()),
 
 				GetTask(nameof(PhysicalItems), () =>
 					PhysicalItems = DeviceContext.GetMonitorHandles().ToDictionary(

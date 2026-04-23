@@ -142,7 +142,7 @@ public static class MouseAddition
 
 	private static void HandleMouseHorizontalWheel(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
 	{
-		int delta = unchecked((short)((long)wParam >> 16));
+		int delta = (short)((uint)wParam >> 16);
 		if (delta == 0)
 			return;
 

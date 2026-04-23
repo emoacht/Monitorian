@@ -30,7 +30,7 @@ internal class SystemEventsComplement
 	{
 		public Guid PowerSetting;
 		public uint DataLength;
-		public IntPtr Data;
+		//public IntPtr Data;
 	}
 
 	private const int DEVICE_NOTIFY_WINDOW_HANDLE = 0x00000000;
@@ -54,11 +54,14 @@ internal class SystemEventsComplement
 			switch (m.Msg)
 			{
 				case WM_POWERBROADCAST:
-					if (m.WParam.ToInt32() is PBT_POWERSETTINGCHANGE)
+					if (m.WParam.ToInt64() is PBT_POWERSETTINGCHANGE)
 					{
-						var data = Marshal.PtrToStructure<POWERBROADCAST_SETTING>(m.LParam);
-						var buffer = (data.DataLength == 4 /* DWORD */) ? data.Data.ToInt32() : 0;
-						_action.Invoke(new PowerSettingChangedEventArgs(data.PowerSetting, buffer));
+						var setting = Marshal.PtrToStructure<POWERBROADCAST_SETTING>(m.LParam);
+						var data = (setting.DataLength == 4 /* DWORD */)
+							? Marshal.ReadInt32(m.LParam, Marshal.SizeOf<POWERBROADCAST_SETTING>())
+							: 0;
+
+						_action.Invoke(new PowerSettingChangedEventArgs(setting.PowerSetting, data));
 					}
 					break;
 			}

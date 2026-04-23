@@ -198,7 +198,7 @@ internal class DeviceInformation
 				IntPtr.Zero, // DISPLAY
 				IntPtr.Zero,
 				DIGCF.DIGCF_DEVICEINTERFACE | DIGCF.DIGCF_PRESENT);
-			if (deviceInfoSet.ToInt32() is INVALID_HANDLE_VALUE) // Assuming 32bit process
+			if (deviceInfoSet.ToInt64() is INVALID_HANDLE_VALUE)
 			{
 				Debug.WriteLine($"Failed to get device information list. {Error.GetMessage()}");
 				yield break;

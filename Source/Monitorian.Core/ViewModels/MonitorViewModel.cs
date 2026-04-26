@@ -20,7 +20,6 @@ public class MonitorViewModel : ViewModelBase
 	{
 		this._controller = controller ?? throw new ArgumentNullException(nameof(controller));
 		this._monitor = monitor ?? throw new ArgumentNullException(nameof(monitor));
-		SetTopLeft();
 
 		LoadCustomization();
 	}
@@ -35,9 +34,17 @@ public class MonitorViewModel : ViewModelBase
 			{
 				this._monitor.Dispose();
 				this._monitor = monitor;
-				SetTopLeft();
-				OnPropertyChanged(string.Empty);
 			}
+
+			OnPropertyChanged(nameof(DisplayIndex));
+			OnPropertyChanged(nameof(MonitorIndex));
+			OnPropertyChanged(nameof(Connection));
+			OnPropertyChanged(nameof(Name));
+			OnPropertyChanged(nameof(IsContrastSupported));
+			OnPropertyChanged(nameof(IsContrastChanging));
+			OnPropertyChanged(nameof(IsReachable));
+			OnPropertyChanged(nameof(IsControllable));
+			OnPropertyChanged(nameof(MonitorTopLeft));
 		}
 		else
 		{
@@ -592,21 +599,25 @@ public class MonitorViewModel : ViewModelBase
 
 	public ulong MonitorTopLeft
 	{
-		get => _monitorTopLeft;
-		private set => SetProperty(ref _monitorTopLeft, value);
+		get
+		{
+			if (_monitorLocation != MonitorRect.Location)
+			{
+				_monitorLocation = MonitorRect.Location;
+				_monitorTopLeft = GetTopLeft(_monitorLocation.Value);
+			}
+			return _monitorTopLeft;
+		}
 	}
+	private Point? _monitorLocation;
 	private ulong _monitorTopLeft;
 
-	private void SetTopLeft()
+	private static ulong GetTopLeft(Point location)
 	{
-		MonitorTopLeft = GetTopLeft(_monitor.MonitorRect.Location);
-
-		static ulong GetTopLeft(Point location)
-		{
-			var x = (long)Math.Round(location.X, MidpointRounding.AwayFromZero) + int.MaxValue;
-			var y = (long)Math.Round(location.Y, MidpointRounding.AwayFromZero) + int.MaxValue;
-			return (ulong)x | ((ulong)y << 32);
-		}
+		// This location's fractional part can be safely truncated as it comes from Win32 RECT.
+		var x = (long)location.X - int.MinValue;
+		var y = (long)location.Y - int.MinValue;
+		return (uint)x | ((ulong)y << 32);
 	}
 
 	#endregion

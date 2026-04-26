@@ -140,7 +140,7 @@ public class SettingsCore : BindableBase
 		get => _enablesIdentity;
 		set => SetProperty(ref _enablesIdentity, value);
 	}
-	private bool _enablesIdentity = true;
+	private bool _enablesIdentity;
 
 	/// <summary>
 	/// Monitor customizations by user

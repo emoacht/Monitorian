@@ -228,6 +228,18 @@ internal class MonitorManager
 							(x.DisplayIndex == handleItem.DisplayIndex) &&
 							(x.MonitorIndex == physicalItem.MonitorIndex) &&
 							string.Equals(x.Description, physicalItem.Description, StringComparison.OrdinalIgnoreCase));
+
+						// Fallback: some monitors (e.g., Samsung 4K models connected via
+						// certain interfaces) may report different descriptions in
+						// EnumDisplayDevices vs GetPhysicalMonitorsFromHMONITOR.
+						// Try matching by display/monitor index only.
+						if (index < 0)
+						{
+							index = basicItems.FindIndex(x =>
+								!x.IsInternal &&
+								(x.DisplayIndex == handleItem.DisplayIndex) &&
+								(x.MonitorIndex == physicalItem.MonitorIndex));
+						}
 					}
 					if (index < 0)
 					{

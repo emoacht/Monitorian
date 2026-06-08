@@ -288,9 +288,19 @@ internal class MonitorConfiguration
 					capabilitiesData: (verbose && !vcpCodes.Any() ? GetCapabilitiesData(physicalMonitorHandle, capabilitiesStringLength) : null));
 			}
 		}
+		// Fallback: Probe brightness directly via DDC/CI when capabilities
+		// don't explicitly report support. Some monitors (e.g., certain Samsung 4K
+		// models) respond to brightness VCP commands but don't report MC_CAPS_BRIGHTNESS
+		// or include Luminance in their capabilities string in a parseable format.
+		bool isLowLevelProbed = false;
+		if (!isHighLevelSupported)
+		{
+			isLowLevelProbed = ProbeBrightness(physicalMonitorHandle);
+		}
+
 		return new MonitorCapability(
 			isHighLevelBrightnessSupported: isHighLevelSupported,
-			isLowLevelBrightnessSupported: false,
+			isLowLevelBrightnessSupported: isLowLevelProbed,
 			isContrastSupported: false);
 
 		static string MakeCapabilitiesReport(IReadOnlyDictionary<byte, byte[]> vcpCodeValues)
@@ -326,6 +336,47 @@ internal class MonitorConfiguration
 				Marshal.FreeHGlobal(dataPointer);
 			}
 		}
+	}
+
+	/// <summary>
+	/// Probes if brightness can be read via DDC/CI, even when capabilities don't report it.
+	/// Tries high-level GetMonitorBrightness first, then falls back to low-level VCP Luminance.
+	/// </summary>
+	/// <param name="physicalMonitorHandle">Physical monitor handle</param>
+	/// <returns>True if brightness can be read successfully</returns>
+	/// <remarks>
+	/// Some monitors (e.g., certain Samsung 4K models) respond to brightness VCP commands
+	/// but don't report MC_CAPS_BRIGHTNESS or include Luminance in their capabilities
+	/// string in a parseable format. This method probes actual DDC/CI communication
+	/// to determine real brightness support.
+	/// </remarks>
+	private static bool ProbeBrightness(SafePhysicalMonitorHandle physicalMonitorHandle)
+	{
+		if ((physicalMonitorHandle is null) || physicalMonitorHandle.IsClosed)
+			return false;
+
+		// Try high-level brightness function first
+		if (GetMonitorBrightness(
+			physicalMonitorHandle,
+			out uint _,
+			out uint _,
+			out uint _))
+		{
+			return true;
+		}
+
+		// Try low-level VCP code for Luminance
+		if (GetVCPFeatureAndVCPFeatureReply(
+			physicalMonitorHandle,
+			(byte)VcpCode.Luminance,
+			out _,
+			out uint _,
+			out uint _))
+		{
+			return true;
+		}
+
+		return false;
 	}
 
 	private static IEnumerable<byte> EnumerateVcpCodes(string source)

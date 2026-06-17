@@ -1,9 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -40,6 +41,23 @@ public class AppControllerCore
 	private readonly DisplayInformationWatcher _displayInformationWatcher;
 	private readonly BrightnessWatcher _brightnessWatcher;
 	private readonly BrightnessConnector _brightnessConnector;
+
+	#region Global Hotkeys
+	[DllImport("user32.dll")]
+	private static extern bool RegisterHotKey(IntPtr hWnd, int id, uint fsModifiers, uint vk);
+
+	[DllImport("user32.dll")]
+	private static extern bool UnregisterHotKey(IntPtr hWnd, int id);
+
+	[DllImport("user32.dll")]
+	private static extern uint MapVirtualKey(uint uCode, uint uMapType);
+
+	private const int WM_HOTKEY_MSG = 0x0312;
+	private const int HOTKEY_ID_BRIGHTNESS_INC = 1;
+	private const int HOTKEY_ID_BRIGHTNESS_DEC = 2;
+
+	private HwndSource _hwndSource;
+	#endregion
 
 	public AppControllerCore(AppKeeper keeper, SettingsCore settings)
 	{
@@ -86,6 +104,12 @@ public class AppControllerCore
 			mainWindow.CursorLocation = CursorHelper.GetCursorLocation();
 			mainWindow.Show();
 		}
+
+		// Set up global hotkey support
+		var hwndPtr = new System.Windows.Interop.WindowInteropHelper(mainWindow).Handle;
+		_hwndSource = HwndSource.FromHwnd(hwndPtr);
+		_hwndSource.AddHook(WndProc);
+		RegisterBrightnessHotkeys();
 
 		await ScanAsync();
 
@@ -142,6 +166,11 @@ public class AppControllerCore
 
 	public virtual void End()
 	{
+		// Clean up global hotkeys
+		UnregisterBrightnessHotkeys();
+		_hwndSource?.RemoveHook(WndProc);
+		_hwndSource?.Dispose();
+
 		MonitorsDispose();
 
 		NotifyIconContainer.Dispose();
@@ -598,6 +627,66 @@ public class AppControllerCore
 	#endregion
 
 	#region Clean
+
+	#region Global Hotkeys
+
+	private void RegisterBrightnessHotkeys()
+	{
+		var hwnd = new System.Windows.Interop.WindowInteropHelper(_current.MainWindow).Handle;
+
+		var incVk = MapVirtualKey((uint)Settings.IncreaseBrightnessKey, 0);
+		if (incVk > 0)
+			RegisterHotKey(hwnd, HOTKEY_ID_BRIGHTNESS_INC, 0, incVk);
+
+		var decVk = MapVirtualKey((uint)Settings.DecreaseBrightnessKey, 0);
+		if (decVk > 0)
+			RegisterHotKey(hwnd, HOTKEY_ID_BRIGHTNESS_DEC, 0, decVk);
+	}
+
+	private void UnregisterBrightnessHotkeys()
+	{
+		var hwnd = new System.Windows.Interop.WindowInteropHelper(_current.MainWindow).Handle;
+		UnregisterHotKey(hwnd, HOTKEY_ID_BRIGHTNESS_INC);
+		UnregisterHotKey(hwnd, HOTKEY_ID_BRIGHTNESS_DEC);
+	}
+
+	private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+	{
+		if (msg == WM_HOTKEY_MSG)
+		{
+			var hotKeyId = wParam.ToInt32();
+			if (hotKeyId == HOTKEY_ID_BRIGHTNESS_INC)
+			{
+				OnBrightnessIncrementGlobal();
+			}
+			else if (hotKeyId == HOTKEY_ID_BRIGHTNESS_DEC)
+			{
+				OnBrightnessDecrementGlobal();
+			}
+			handled = true;
+		}
+		return hwnd;
+	}
+
+	private void OnBrightnessIncrementGlobal()
+	{
+		_current.Dispatcher.Invoke(() =>
+		{
+			var monitor = SelectedMonitor ?? Monitors.FirstOrDefault(x => x.IsTarget && x.IsControllable);
+			monitor?.IncrementBrightness(ViewManager.WheelFactor, false);
+		});
+	}
+
+	private void OnBrightnessDecrementGlobal()
+	{
+		_current.Dispatcher.Invoke(() =>
+		{
+			var monitor = SelectedMonitor ?? Monitors.FirstOrDefault(x => x.IsTarget && x.IsControllable);
+			monitor?.DecrementBrightness(ViewManager.WheelFactor, false);
+		});
+	}
+
+	#endregion
 
 	protected virtual Task CleanAsync()
 	{

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
@@ -174,6 +174,28 @@ public class SettingsCore : BindableBase
 		set => SetProperty(ref _recordsOperationLog, value);
 	}
 	private bool _recordsOperationLog;
+
+	/// <summary>
+	/// Key to increase brightness via global hotkey
+	/// </summary>
+	[DataMember]
+	public int IncreaseBrightnessKey
+	{
+		get => _increaseBrightnessKey;
+		set => SetProperty(ref _increaseBrightnessKey, value);
+	}
+	private int _increaseBrightnessKey = (int)System.Windows.Input.Key.PageUp;
+
+	/// <summary>
+	/// Key to decrease brightness via global hotkey
+	/// </summary>
+	[DataMember]
+	public int DecreaseBrightnessKey
+	{
+		get => _decreaseBrightnessKey;
+		set => SetProperty(ref _decreaseBrightnessKey, value);
+	}
+	private int _decreaseBrightnessKey = (int)System.Windows.Input.Key.PageDown;
 
 	#endregion
 

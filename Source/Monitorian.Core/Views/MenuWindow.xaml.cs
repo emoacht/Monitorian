@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows;
@@ -43,6 +43,43 @@ public partial class MenuWindow : Window
 		base.OnApplyTemplate();
 
 		FlowElement.EnsureFlowDirection(this);
+	}
+
+	private void HotkeyTextBox_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+	{
+		e.Handled = true;
+		var textBox = (System.Windows.Controls.TextBox)sender;
+
+		// Build the key combination display string
+		var key = e.Key;
+		var modifiers = System.Windows.Input.Keyboard.Modifiers;
+
+		string displayText;
+		int keyValue;
+
+		if (modifiers == System.Windows.Input.ModifierKeys.None)
+		{
+			displayText = key.ToString();
+			keyValue = (int)key;
+		}
+		else
+		{
+			displayText = $"{modifiers}+{key}";
+			keyValue = (int)key;
+		}
+
+		var vm = (MenuWindowViewModel)this.DataContext;
+
+		if (textBox.Tag.ToString() == "Increase")
+		{
+			vm.Settings.IncreaseBrightnessKey = keyValue;
+			textBox.Text = displayText;
+		}
+		else
+		{
+			vm.Settings.DecreaseBrightnessKey = keyValue;
+			textBox.Text = displayText;
+		}
 	}
 
 	private void InvertScrollDirection_Click(object sender, RoutedEventArgs e)

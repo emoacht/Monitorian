@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Windows.ApplicationModel;
 
 namespace StartupAgency.Bridge;
@@ -19,11 +19,19 @@ public static class StartupTaskBroker
 	/// <returns>True if the startup task can be enabled</returns>
 	public static bool CanEnable(string taskId)
 	{
-		if (!PlatformInfo.IsPackaged)
-			return false;
+		try
+		{
+			if (!PlatformInfo.IsPackaged)
+				return false;
 
-		var task = GetStartupTask(taskId);
-		return (task.State is not StartupTaskState.DisabledByUser);
+			var task = GetStartupTask(taskId);
+			return (task.State is not StartupTaskState.DisabledByUser);
+		}
+		catch (Exception ex) when (ex.HResult == unchecked((int)0x800706be) || ex.HResult == unchecked((int)0x80131500))
+		{
+			System.Diagnostics.Debug.WriteLine("RPC failed during wake state in CanEnable. Defaulting to false.");
+			return false;
+		}
 	}
 
 	/// <summary>
@@ -33,11 +41,20 @@ public static class StartupTaskBroker
 	/// <returns>True if the startup task has been enabled</returns>
 	public static bool IsEnabled(string taskId)
 	{
-		if (!PlatformInfo.IsPackaged)
-			return false;
+		try
+		{
+			if (!PlatformInfo.IsPackaged)
+				return false;
 
-		var task = GetStartupTask(taskId);
-		return (task.State is StartupTaskState.Enabled);
+			var task = GetStartupTask(taskId);
+			return task.State == Windows.ApplicationModel.StartupTaskState.Enabled;
+		}
+		catch (Exception ex) when (ex.HResult == unchecked((int)0x800706be) || ex.HResult == unchecked((int)0x80131500))
+		{
+			// Swallow the RPC/COM exception during wake and fail gracefully
+			System.Diagnostics.Debug.WriteLine("RPC failed during wake state. Defaulting to false.");
+			return false;
+		}
 	}
 
 	/// <summary>
@@ -47,21 +64,29 @@ public static class StartupTaskBroker
 	/// <returns>True if the startup task is enabled</returns>
 	public static bool Enable(string taskId)
 	{
-		if (!PlatformInfo.IsPackaged)
-			return false;
-
-		var task = GetStartupTask(taskId);
-		switch (task.State)
+		try
 		{
-			case StartupTaskState.Enabled:
-				return true;
-
-			case StartupTaskState.Disabled:
-				var result = task.RequestEnableAsync().AsTask().Result;
-				return (result is StartupTaskState.Enabled);
-
-			default:
+			if (!PlatformInfo.IsPackaged)
 				return false;
+
+			var task = GetStartupTask(taskId);
+			switch (task.State)
+			{
+				case StartupTaskState.Enabled:
+					return true;
+
+				case StartupTaskState.Disabled:
+					var result = task.RequestEnableAsync().AsTask().Result;
+					return (result is StartupTaskState.Enabled);
+
+				default:
+					return false;
+			}
+		}
+		catch (Exception ex) when (ex.HResult == unchecked((int)0x800706be) || ex.HResult == unchecked((int)0x80131500))
+		{
+			System.Diagnostics.Debug.WriteLine("RPC failed during wake state in Enable. Defaulting to false.");
+			return false;
 		}
 	}
 
@@ -71,15 +96,22 @@ public static class StartupTaskBroker
 	/// <param name="taskId">Startup task ID</param>
 	public static void Disable(string taskId)
 	{
-		if (!PlatformInfo.IsPackaged)
-			return;
-
-		var task = GetStartupTask(taskId);
-		switch (task.State)
+		try
 		{
-			case StartupTaskState.Enabled:
-				task.Disable();
-				break;
+			if (!PlatformInfo.IsPackaged)
+				return;
+
+			var task = GetStartupTask(taskId);
+			switch (task.State)
+			{
+				case StartupTaskState.Enabled:
+					task.Disable();
+					break;
+			}
+		}
+		catch (Exception ex) when (ex.HResult == unchecked((int)0x800706be) || ex.HResult == unchecked((int)0x80131500))
+		{
+			System.Diagnostics.Debug.WriteLine("RPC failed during wake state in Disable. Aborting cleanly.");
 		}
 	}
 

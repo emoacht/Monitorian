@@ -151,7 +151,7 @@
 		<ContentControl Style="{StaticResource MenuItemStyle}">
 			<StackPanel Orientation="Horizontal">
 				<TextBlock Text="Brightness Up:" VerticalAlignment="Center" Width="80" 
-						   Foreground="{StaticResource App.Foreground.Plain}"/>
+						   Style="{StaticResource PlainTextStyle}"/>
 				<TextBox x:Name="IncreaseKeyBox" Text="Alt+Win+PageUp" Width="120" IsReadOnly="True" 
 						 Background="Transparent" BorderThickness="1"
 						 PreviewKeyDown="HotkeyTextBox_PreviewKeyDown" Tag="Increase"/>
@@ -161,7 +161,7 @@
 		<ContentControl Style="{StaticResource MenuItemStyle}">
 			<StackPanel Orientation="Horizontal">
 				<TextBlock Text="Brightness Down:" VerticalAlignment="Center" Width="80" 
-						   Foreground="{StaticResource App.Foreground.Plain}"/>
+						   Style="{StaticResource PlainTextStyle}"/>
 				<TextBox x:Name="DecreaseKeyBox" Text="Alt+Win+PageDown" Width="120" IsReadOnly="True" 
 						 Background="Transparent" BorderThickness="1"
 						 PreviewKeyDown="HotkeyTextBox_PreviewKeyDown" Tag="Decrease"/>

@@ -149,7 +149,7 @@
 		<Separator Style="{StaticResource MenuSeparatorStyle}"/>
 
 		<ContentControl Style="{StaticResource MenuItemStyle}">
-			<StackPanel Orientation="Horizontal" Padding="8,4">
+			<StackPanel Orientation="Horizontal">
 				<TextBlock Text="Brightness Up:" VerticalAlignment="Center" Width="80" 
 						   Foreground="{StaticResource App.Foreground.Plain}"/>
 				<TextBox x:Name="IncreaseKeyBox" Text="Alt+Win+PageUp" Width="120" IsReadOnly="True" 
@@ -159,7 +159,7 @@
 		</ContentControl>
 
 		<ContentControl Style="{StaticResource MenuItemStyle}">
-			<StackPanel Orientation="Horizontal" Padding="8,4">
+			<StackPanel Orientation="Horizontal">
 				<TextBlock Text="Brightness Down:" VerticalAlignment="Center" Width="80" 
 						   Foreground="{StaticResource App.Foreground.Plain}"/>
 				<TextBox x:Name="DecreaseKeyBox" Text="Alt+Win+PageDown" Width="120" IsReadOnly="True" 

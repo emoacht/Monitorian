@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
+using System.Windows.Interop;
 
 using Monitorian.Core.Models;
 using Monitorian.Core.Models.Monitor;

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -111,7 +111,7 @@ public class StartupAgent : IDisposable
 	/// <summary>
 	/// Options
 	/// </summary>
-	public static IReadOnlyCollection<string> Options => [HideOption];
+	public static IReadOnlyCollection<string> Options => new[] { HideOption };
 
 	private const string HideOption = "/hide";
 

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -29,7 +29,7 @@ public abstract class WindowPainter : IDisposable
 	/// <summary>
 	/// Options
 	/// </summary>
-	protected static IReadOnlyCollection<string> Options => [ThemeOption, TextureOption, CornerOption];
+	protected static IReadOnlyCollection<string> Options => new[] { ThemeOption, TextureOption, CornerOption };
 
 	private const string ThemeOption = "/theme";
 
@@ -103,7 +103,7 @@ public abstract class WindowPainter : IDisposable
 
 	#region Window
 
-	private readonly List<Window> _windows = [];
+	private readonly List<Window> _windows = new();
 
 	/// <summary>
 	/// Adds a window to be painted.

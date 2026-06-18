@@ -107,9 +107,9 @@ public class AppControllerCore
 		}
 
 		// Set up global hotkey support
-		var hwndPtr = new System.Windows.Interop.WindowInteropHelper(mainWindow).Handle;
+		var hwndPtr = new System.Windows.Interop.WindowInteropHelper(mainWindow).EnsureHandle();
 		_hwndSource = HwndSource.FromHwnd(hwndPtr);
-		_hwndSource.AddHook(WndProc);
+		_hwndSource?.AddHook(WndProc);
 		RegisterBrightnessHotkeys();
 
 		await ScanAsync();
@@ -633,16 +633,14 @@ public class AppControllerCore
 
 	private void RegisterBrightnessHotkeys()
 	{
-		var hwnd = new System.Windows.Interop.WindowInteropHelper(_current.MainWindow).Handle;
+		var hwnd = new System.Windows.Interop.WindowInteropHelper(_current.MainWindow).EnsureHandle();
 
 		// ---- INCREASE BRIGHTNESS HOTKEY ----
-		// Dynamically read the Modifiers and Key from Settings
 		uint incModifiers = (uint)Settings.IncreaseBrightnessModifiers | MOD_NOREPEAT;
 		uint incVk = (uint)System.Windows.Input.KeyInterop.VirtualKeyFromKey((System.Windows.Input.Key)Settings.IncreaseBrightnessKey);
 		
 		if (incVk > 0)
 			RegisterHotKey(hwnd, HOTKEY_ID_BRIGHTNESS_INC, incModifiers, incVk);
-
 
 		// ---- DECREASE BRIGHTNESS HOTKEY ----
 		uint decModifiers = (uint)Settings.DecreaseBrightnessModifiers | MOD_NOREPEAT;
@@ -654,7 +652,7 @@ public class AppControllerCore
 
 	private void UnregisterBrightnessHotkeys()
 	{
-		var hwnd = new System.Windows.Interop.WindowInteropHelper(_current.MainWindow).Handle;
+		var hwnd = new System.Windows.Interop.WindowInteropHelper(_current.MainWindow).EnsureHandle();
 		UnregisterHotKey(hwnd, HOTKEY_ID_BRIGHTNESS_INC);
 		UnregisterHotKey(hwnd, HOTKEY_ID_BRIGHTNESS_DEC);
 	}
@@ -684,7 +682,11 @@ public class AppControllerCore
 		_current.Dispatcher.Invoke(() =>
 		{
 			var monitor = SelectedMonitor ?? Monitors.FirstOrDefault(x => x.IsTarget && x.IsControllable);
-			monitor?.IncrementBrightness(ViewManager.WheelFactor, false);
+			if (monitor != null)
+			{
+				EnsureUnisonWorkable(monitor);
+				monitor.IncrementBrightness(ViewManager.WheelFactor, false);
+			}
 		});
 	}
 
@@ -693,7 +695,11 @@ public class AppControllerCore
 		_current.Dispatcher.Invoke(() =>
 		{
 			var monitor = SelectedMonitor ?? Monitors.FirstOrDefault(x => x.IsTarget && x.IsControllable);
-			monitor?.DecrementBrightness(ViewManager.WheelFactor, false);
+			if (monitor != null)
+			{
+				EnsureUnisonWorkable(monitor);
+				monitor.DecrementBrightness(ViewManager.WheelFactor, false);
+			}
 		});
 	}
 

@@ -176,6 +176,17 @@ public class SettingsCore : BindableBase
 	private bool _recordsOperationLog;
 
 	/// <summary>
+	/// Modifiers for increase brightness global hotkey
+	/// </summary>
+	[DataMember]
+	public int IncreaseBrightnessModifiers
+	{
+		get => _increaseBrightnessModifiers;
+		set => SetProperty(ref _increaseBrightnessModifiers, value);
+	}
+	private int _increaseBrightnessModifiers = (int)(System.Windows.Input.ModifierKeys.Alt | System.Windows.Input.ModifierKeys.Windows);
+
+	/// <summary>
 	/// Key to increase brightness via global hotkey
 	/// </summary>
 	[DataMember]
@@ -185,6 +196,17 @@ public class SettingsCore : BindableBase
 		set => SetProperty(ref _increaseBrightnessKey, value);
 	}
 	private int _increaseBrightnessKey = (int)System.Windows.Input.Key.PageUp;
+
+	/// <summary>
+	/// Modifiers for decrease brightness global hotkey
+	/// </summary>
+	[DataMember]
+	public int DecreaseBrightnessModifiers
+	{
+		get => _decreaseBrightnessModifiers;
+		set => SetProperty(ref _decreaseBrightnessModifiers, value);
+	}
+	private int _decreaseBrightnessModifiers = (int)(System.Windows.Input.ModifierKeys.Alt | System.Windows.Input.ModifierKeys.Windows);
 
 	/// <summary>
 	/// Key to decrease brightness via global hotkey

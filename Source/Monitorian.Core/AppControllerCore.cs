@@ -50,12 +50,12 @@ public class AppControllerCore
 	[DllImport("user32.dll")]
 	private static extern bool UnregisterHotKey(IntPtr hWnd, int id);
 
-	[DllImport("user32.dll")]
-	private static extern uint MapVirtualKey(uint uCode, uint uMapType);
-
 	private const int WM_HOTKEY_MSG = 0x0312;
 	private const int HOTKEY_ID_BRIGHTNESS_INC = 1;
 	private const int HOTKEY_ID_BRIGHTNESS_DEC = 2;
+
+	// The MOD_NOREPEAT flag (0x4000) prevents the hotkey from firing 100 times a second if the user holds the keys down.
+	private const uint MOD_NOREPEAT = 0x4000;
 
 	private HwndSource _hwndSource;
 	#endregion
@@ -635,13 +635,21 @@ public class AppControllerCore
 	{
 		var hwnd = new System.Windows.Interop.WindowInteropHelper(_current.MainWindow).Handle;
 
-		var incVk = MapVirtualKey((uint)Settings.IncreaseBrightnessKey, 0);
+		// ---- INCREASE BRIGHTNESS HOTKEY ----
+		// Dynamically read the Modifiers and Key from Settings
+		uint incModifiers = (uint)Settings.IncreaseBrightnessModifiers | MOD_NOREPEAT;
+		uint incVk = (uint)System.Windows.Input.KeyInterop.VirtualKeyFromKey((System.Windows.Input.Key)Settings.IncreaseBrightnessKey);
+		
 		if (incVk > 0)
-			RegisterHotKey(hwnd, HOTKEY_ID_BRIGHTNESS_INC, 0, incVk);
+			RegisterHotKey(hwnd, HOTKEY_ID_BRIGHTNESS_INC, incModifiers, incVk);
 
-		var decVk = MapVirtualKey((uint)Settings.DecreaseBrightnessKey, 0);
+
+		// ---- DECREASE BRIGHTNESS HOTKEY ----
+		uint decModifiers = (uint)Settings.DecreaseBrightnessModifiers | MOD_NOREPEAT;
+		uint decVk = (uint)System.Windows.Input.KeyInterop.VirtualKeyFromKey((System.Windows.Input.Key)Settings.DecreaseBrightnessKey);
+		
 		if (decVk > 0)
-			RegisterHotKey(hwnd, HOTKEY_ID_BRIGHTNESS_DEC, 0, decVk);
+			RegisterHotKey(hwnd, HOTKEY_ID_BRIGHTNESS_DEC, decModifiers, decVk);
 	}
 
 	private void UnregisterBrightnessHotkeys()
@@ -666,7 +674,9 @@ public class AppControllerCore
 			}
 			handled = true;
 		}
-		return hwnd;
+		
+		// MUST return IntPtr.Zero so the window can continue processing other messages normally
+		return IntPtr.Zero; 
 	}
 
 	private void OnBrightnessIncrementGlobal()

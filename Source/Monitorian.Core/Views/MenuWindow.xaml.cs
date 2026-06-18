@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 
 using Monitorian.Core.Models;
 using Monitorian.Core.ViewModels;
@@ -41,45 +42,108 @@ public partial class MenuWindow : Window
 	public override void OnApplyTemplate()
 	{
 		base.OnApplyTemplate();
-
 		FlowElement.EnsureFlowDirection(this);
+
+		// Initialize shortcut text
+		IncreaseKeyBox.Text = FormatShortcut(ViewModel.Settings.IncreaseBrightnessModifiers, ViewModel.Settings.IncreaseBrightnessKey);
+		DecreaseKeyBox.Text = FormatShortcut(ViewModel.Settings.DecreaseBrightnessModifiers, ViewModel.Settings.DecreaseBrightnessKey);
+	}
+
+	private void HotkeyTextBox_GotFocus(object sender, RoutedEventArgs e)
+	{
+		var textBox = (TextBox)sender;
+		textBox.Text = "Press a shortcut...";
+		textBox.BorderBrush = System.Windows.Media.Brushes.DeepSkyBlue; // Highlight color
+	}
+
+	private void HotkeyTextBox_LostFocus(object sender, RoutedEventArgs e)
+	{
+		var textBox = (TextBox)sender;
+		textBox.BorderBrush = System.Windows.Media.Brushes.Gray; // Restore default
+
+		if (textBox.Tag.ToString() == "Increase")
+			textBox.Text = FormatShortcut(ViewModel.Settings.IncreaseBrightnessModifiers, ViewModel.Settings.IncreaseBrightnessKey);
+		else
+			textBox.Text = FormatShortcut(ViewModel.Settings.DecreaseBrightnessModifiers, ViewModel.Settings.DecreaseBrightnessKey);
 	}
 
 	private void HotkeyTextBox_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
 	{
 		e.Handled = true;
-		var textBox = (System.Windows.Controls.TextBox)sender;
+		var textBox = (TextBox)sender;
 
-		// Build the key combination display string
-		var key = e.Key;
+		// Extract true key (handling system keys like Alt shortcuts)
+		var key = e.Key == System.Windows.Input.Key.System ? e.SystemKey : e.Key;
+
+		// Cancel on Escape
+		if (key == System.Windows.Input.Key.Escape)
+		{
+			System.Windows.Input.Keyboard.ClearFocus();
+			return;
+		}
+
+		// Clear on Backspace or Delete
+		if (key == System.Windows.Input.Key.Back || key == System.Windows.Input.Key.Delete)
+		{
+			if (textBox.Tag.ToString() == "Increase")
+			{
+				ViewModel.Settings.IncreaseBrightnessModifiers = 0;
+				ViewModel.Settings.IncreaseBrightnessKey = 0;
+			}
+			else
+			{
+				ViewModel.Settings.DecreaseBrightnessModifiers = 0;
+				ViewModel.Settings.DecreaseBrightnessKey = 0;
+			}
+			System.Windows.Input.Keyboard.ClearFocus();
+			return;
+		}
+
+		// Ignore modifier-only presses (Wait for the user to hit an actual key)
+		if (key == System.Windows.Input.Key.LeftAlt || key == System.Windows.Input.Key.RightAlt ||
+			key == System.Windows.Input.Key.LeftCtrl || key == System.Windows.Input.Key.RightCtrl ||
+			key == System.Windows.Input.Key.LeftShift || key == System.Windows.Input.Key.RightShift ||
+			key == System.Windows.Input.Key.LWin || key == System.Windows.Input.Key.RWin)
+		{
+			return;
+		}
+
+		// Successfully captured a full chord
 		var modifiers = System.Windows.Input.Keyboard.Modifiers;
-
-		string displayText;
-		int keyValue;
-
-		if (modifiers == System.Windows.Input.ModifierKeys.None)
-		{
-			displayText = key.ToString();
-			keyValue = (int)key;
-		}
-		else
-		{
-			displayText = $"{modifiers}+{key}";
-			keyValue = (int)key;
-		}
-
-		var vm = (MenuWindowViewModel)this.DataContext;
 
 		if (textBox.Tag.ToString() == "Increase")
 		{
-			vm.Settings.IncreaseBrightnessKey = keyValue;
-			textBox.Text = displayText;
+			ViewModel.Settings.IncreaseBrightnessModifiers = (int)modifiers;
+			ViewModel.Settings.IncreaseBrightnessKey = (int)key;
 		}
 		else
 		{
-			vm.Settings.DecreaseBrightnessKey = keyValue;
-			textBox.Text = displayText;
+			ViewModel.Settings.DecreaseBrightnessModifiers = (int)modifiers;
+			ViewModel.Settings.DecreaseBrightnessKey = (int)key;
 		}
+
+		// Drop focus to trigger LostFocus (which updates UI and formats text)
+		System.Windows.Input.Keyboard.ClearFocus();
+	}
+
+	private string FormatShortcut(int modifiersInt, int keyInt)
+	{
+		if (keyInt == 0) return "None";
+		var modifiers = (ModifierKeys)modifiersInt;
+		var key = (Key)keyInt;
+
+		string text = "";
+		if (modifiers.HasFlag(ModifierKeys.Windows)) text += "Win + ";
+		if (modifiers.HasFlag(ModifierKeys.Control)) text += "Ctrl + ";
+		if (modifiers.HasFlag(ModifierKeys.Alt)) text += "Alt + ";
+		if (modifiers.HasFlag(ModifierKeys.Shift)) text += "Shift + ";
+
+		// Clean up common key names for UI
+		var keyStr = key.ToString();
+		if (key >= Key.D0 && key <= Key.D9) keyStr = keyStr.TrimStart('D');
+
+		text += keyStr;
+		return text;
 	}
 
 	private void InvertScrollDirection_Click(object sender, RoutedEventArgs e)

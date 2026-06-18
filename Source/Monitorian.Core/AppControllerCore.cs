@@ -312,7 +312,14 @@ public class AppControllerCore
 					await OperationRecorder.EnableAsync("Enabled");
 				else
 					OperationRecorder.Disable();
+				break;
 
+			case nameof(Settings.IncreaseBrightnessKey):
+			case nameof(Settings.IncreaseBrightnessModifiers):
+			case nameof(Settings.DecreaseBrightnessKey):
+			case nameof(Settings.DecreaseBrightnessModifiers):
+				UnregisterBrightnessHotkeys();
+				RegisterBrightnessHotkeys();
 				break;
 		}
 	}
@@ -633,7 +640,8 @@ public class AppControllerCore
 
 	private void RegisterBrightnessHotkeys()
 	{
-		var hwnd = new System.Windows.Interop.WindowInteropHelper(_current.MainWindow).EnsureHandle();
+		if (_hwndSource == null) return;
+		var hwnd = _hwndSource.Handle;
 
 		// ---- INCREASE BRIGHTNESS HOTKEY ----
 		uint incModifiers = (uint)Settings.IncreaseBrightnessModifiers | MOD_NOREPEAT;
@@ -652,7 +660,8 @@ public class AppControllerCore
 
 	private void UnregisterBrightnessHotkeys()
 	{
-		var hwnd = new System.Windows.Interop.WindowInteropHelper(_current.MainWindow).EnsureHandle();
+		if (_hwndSource == null) return;
+		var hwnd = _hwndSource.Handle;
 		UnregisterHotKey(hwnd, HOTKEY_ID_BRIGHTNESS_INC);
 		UnregisterHotKey(hwnd, HOTKEY_ID_BRIGHTNESS_DEC);
 	}

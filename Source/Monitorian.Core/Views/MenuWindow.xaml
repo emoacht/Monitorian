@@ -149,22 +149,32 @@
 		<Separator Style="{StaticResource MenuSeparatorStyle}"/>
 
 		<ContentControl Style="{StaticResource MenuItemStyle}">
-			<StackPanel Orientation="Horizontal">
-				<TextBlock Text="Brightness Up:" VerticalAlignment="Center" Width="80" 
+			<StackPanel Orientation="Horizontal" Margin="8,4">
+				<TextBlock Text="Brightness Up:" VerticalAlignment="Center" Width="100" 
 						   Style="{StaticResource PlainTextStyle}"/>
-				<TextBox x:Name="IncreaseKeyBox" Text="Alt+Win+PageUp" Width="120" IsReadOnly="True" 
-						 Background="Transparent" BorderThickness="1"
-						 PreviewKeyDown="HotkeyTextBox_PreviewKeyDown" Tag="Increase"/>
+				<TextBox x:Name="IncreaseKeyBox" Width="130" IsReadOnly="True" 
+						 Background="Transparent" Foreground="{StaticResource App.Foreground}"
+						 BorderThickness="1" BorderBrush="{StaticResource App.Foreground.Shadow}"
+						 Padding="4,2" TextAlignment="Center" Cursor="Hand"
+						 PreviewKeyDown="HotkeyTextBox_PreviewKeyDown" 
+						 GotFocus="HotkeyTextBox_GotFocus"
+						 LostFocus="HotkeyTextBox_LostFocus"
+						 Tag="Increase"/>
 			</StackPanel>
 		</ContentControl>
 
 		<ContentControl Style="{StaticResource MenuItemStyle}">
-			<StackPanel Orientation="Horizontal">
-				<TextBlock Text="Brightness Down:" VerticalAlignment="Center" Width="80" 
+			<StackPanel Orientation="Horizontal" Margin="8,4">
+				<TextBlock Text="Brightness Down:" VerticalAlignment="Center" Width="100" 
 						   Style="{StaticResource PlainTextStyle}"/>
-				<TextBox x:Name="DecreaseKeyBox" Text="Alt+Win+PageDown" Width="120" IsReadOnly="True" 
-						 Background="Transparent" BorderThickness="1"
-						 PreviewKeyDown="HotkeyTextBox_PreviewKeyDown" Tag="Decrease"/>
+				<TextBox x:Name="DecreaseKeyBox" Width="130" IsReadOnly="True" 
+						 Background="Transparent" Foreground="{StaticResource App.Foreground}"
+						 BorderThickness="1" BorderBrush="{StaticResource App.Foreground.Shadow}"
+						 Padding="4,2" TextAlignment="Center" Cursor="Hand"
+						 PreviewKeyDown="HotkeyTextBox_PreviewKeyDown" 
+						 GotFocus="HotkeyTextBox_GotFocus"
+						 LostFocus="HotkeyTextBox_LostFocus"
+						 Tag="Decrease"/>
 			</StackPanel>
 		</ContentControl>
 

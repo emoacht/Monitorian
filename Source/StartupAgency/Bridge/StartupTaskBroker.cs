@@ -22,7 +22,9 @@ public static class StartupTaskBroker
 		if (!PlatformInfo.IsPackaged)
 			return false;
 
-		var task = GetStartupTask(taskId);
+		if (!TryGetStartupTask(taskId, out var task))
+			return false;
+
 		return (task.State is not StartupTaskState.DisabledByUser);
 	}
 
@@ -31,12 +33,14 @@ public static class StartupTaskBroker
 	/// </summary>
 	/// <param name="taskId">Startup task ID</param>
 	/// <returns>True if the startup task has been enabled</returns>
-	public static bool IsEnabled(string taskId)
+	public static bool? IsEnabled(string taskId)
 	{
 		if (!PlatformInfo.IsPackaged)
 			return false;
 
-		var task = GetStartupTask(taskId);
+		if (!TryGetStartupTask(taskId, out var task))
+			return null;
+
 		return (task.State is StartupTaskState.Enabled);
 	}
 
@@ -50,7 +54,9 @@ public static class StartupTaskBroker
 		if (!PlatformInfo.IsPackaged)
 			return false;
 
-		var task = GetStartupTask(taskId);
+		if (!TryGetStartupTask(taskId, out var task))
+			return false;
+
 		switch (task.State)
 		{
 			case StartupTaskState.Enabled:
@@ -74,7 +80,9 @@ public static class StartupTaskBroker
 		if (!PlatformInfo.IsPackaged)
 			return;
 
-		var task = GetStartupTask(taskId);
+		if (!TryGetStartupTask(taskId, out var task))
+			return;
+
 		switch (task.State)
 		{
 			case StartupTaskState.Enabled:
@@ -83,11 +91,22 @@ public static class StartupTaskBroker
 		}
 	}
 
-	private static StartupTask GetStartupTask(string taskId)
+	private static bool TryGetStartupTask(string taskId, out StartupTask task)
 	{
 		if (string.IsNullOrWhiteSpace(taskId))
 			throw new ArgumentNullException(nameof(taskId));
 
-		return StartupTask.GetAsync(taskId).AsTask().Result;
+		try
+		{
+			task = StartupTask.GetAsync(taskId).AsTask().Result;
+			return true;
+		}
+		catch (Exception ex) when ((uint)ex.HResult is 0x800706BE)
+		{
+			// Error message: The remote procedure call failed.
+			// Error code: 0x06BA = RPC_S_CALL_FAILED
+			task = null;
+			return false;
+		}
 	}
 }

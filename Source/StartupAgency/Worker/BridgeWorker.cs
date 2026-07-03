@@ -28,7 +28,7 @@ internal class BridgeWorker : IStartupWorker
 
 	public bool? IsStartedOnSignIn()
 	{
-		if (!IsRegistered())
+		if (IsRegistered() is false)
 			return false;
 
 		if (OsVersion.Is10Build17134OrGreater)
@@ -61,7 +61,7 @@ internal class BridgeWorker : IStartupWorker
 
 	public bool CanRegister() => StartupTaskBroker.CanEnable(_taskId);
 
-	public bool IsRegistered() => StartupTaskBroker.IsEnabled(_taskId);
+	public bool? IsRegistered() => StartupTaskBroker.IsEnabled(_taskId);
 
 	public bool Register() => StartupTaskBroker.Enable(_taskId);
 

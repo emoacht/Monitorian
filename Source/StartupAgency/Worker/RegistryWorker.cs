@@ -33,7 +33,7 @@ internal class RegistryWorker : IStartupWorker
 
 	public bool CanRegister() => true;
 
-	public bool IsRegistered()
+	public bool? IsRegistered()
 	{
 		using (var key = Registry.CurrentUser.OpenSubKey(Run, false))
 		{
@@ -44,7 +44,7 @@ internal class RegistryWorker : IStartupWorker
 
 	public bool Register()
 	{
-		if (IsRegistered())
+		if (IsRegistered() is true)
 			return false;
 
 		using (var key = Registry.CurrentUser.OpenSubKey(Run, true))

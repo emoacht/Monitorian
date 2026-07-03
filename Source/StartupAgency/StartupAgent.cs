@@ -152,7 +152,7 @@ public class StartupAgent : IDisposable
 	/// Determines whether caller instance has been registered in startup.
 	/// </summary>
 	/// <returns>True if has been already registered</returns>
-	public bool IsRegistered()
+	public bool? IsRegistered()
 	{
 		CheckWorker();
 		return _worker.IsRegistered();

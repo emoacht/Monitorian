@@ -127,7 +127,7 @@ public class WindowPainter : ScreenFrame.Painter.WindowPainter
 	{
 		switch (oldTheme, newTheme)
 		{
-			case (ColorTheme.Unknown, ColorTheme.Dark):
+			case (ColorTheme.None, ColorTheme.Dark):
 				// Leave as is.
 				break;
 
@@ -137,7 +137,7 @@ public class WindowPainter : ScreenFrame.Painter.WindowPainter
 
 				break;
 
-			case (ColorTheme.Unknown, ColorTheme.Light):
+			case (ColorTheme.None, ColorTheme.Light):
 			case (ColorTheme.Dark, ColorTheme.Light):
 				foreach (var (darkThemeUriString, lightThemeUriString) in ThemeSets)
 					ChangeResources(oldUriString: darkThemeUriString, newUriString: lightThemeUriString);

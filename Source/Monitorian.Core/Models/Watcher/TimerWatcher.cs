@@ -53,9 +53,16 @@ internal abstract class TimerWatcher : IDisposable
 			_timer.Interval = _intervals[Count];
 			_timer.Start();
 		}
+		else
+		{
+			TimerFinish();
+		}
 	}
 
 	protected abstract void TimerTick();
+
+	protected virtual void TimerFinish()
+	{ }
 
 	#region IDisposable
 

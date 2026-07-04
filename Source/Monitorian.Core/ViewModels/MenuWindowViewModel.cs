@@ -60,7 +60,7 @@ public class MenuWindowViewModel : ViewModelBase
 			{
 				_isRegistered = _controller.StartupAgent.IsRegistered();
 			}
-			return _isRegistered.Value;
+			return _isRegistered.GetValueOrDefault();
 		}
 		set
 		{

@@ -15,6 +15,9 @@ internal class PowerWatcher : IDisposable
 	private void RaiseDisplayStateChanged(DisplayStates state, int count) =>
 		_onPowerChanged?.Invoke(new DisplayStateChangedCountEventArgs(state, count));
 
+	private void RaiseSystemStarted(int count) =>
+		_onPowerChanged?.Invoke(new SystemStartedCountEventArgs(count));
+
 	private SystemEventsComplement _complement;
 
 	private class PowerDataWatcher<T> : TimerWatcher
@@ -38,6 +41,25 @@ internal class PowerWatcher : IDisposable
 	private readonly PowerDataWatcher<PowerModes> _statusWatcher;
 	private readonly PowerDataWatcher<DisplayStates> _stateWatcher;
 
+	private class SystemStartedWatcher : TimerWatcher
+	{
+		private readonly Action<int> _action;
+
+		public SystemStartedWatcher(Action<int> action, params int[] intervals) : base(intervals) => this._action = action;
+
+		protected override void TimerTick() => _action.Invoke(Count);
+
+		protected override void TimerFinish()
+		{
+			this.Dispose();
+
+			if (_action.Target is PowerWatcher watcher)
+				watcher._startedWatcher = null;
+		}
+	}
+
+	private SystemStartedWatcher _startedWatcher;
+
 	public PowerWatcher()
 	{
 		// Conform invocation timings so that the action would be executed efficiently when
@@ -47,7 +69,7 @@ internal class PowerWatcher : IDisposable
 		_stateWatcher = new PowerDataWatcher<DisplayStates>(this.RaiseDisplayStateChanged, 5, 5);
 	}
 
-	public void Subscribe(Action<ICountEventArgs> onPowerChanged)
+	public void Subscribe(Action<ICountEventArgs> onPowerChanged, bool? isSystemStarted)
 	{
 		this._onPowerChanged = onPowerChanged ?? throw new ArgumentNullException(nameof(onPowerChanged));
 		SystemEvents.PowerModeChanged += OnPowerModeChanged;
@@ -57,6 +79,12 @@ internal class PowerWatcher : IDisposable
 		_complement = new SystemEventsComplement();
 		_complement.PowerSettingChanged += (_, e) => OnDisplayStateChanged(powerSettingChanged.Invoke(e));
 		_complement.RegisterPowerSettingEvent(powerSettingGuids);
+
+		if (isSystemStarted is true)
+		{
+			_startedWatcher = new SystemStartedWatcher(this.RaiseSystemStarted, 30, 30);
+			_startedWatcher.TimerStart();
+		}
 	}
 
 	private void OnPowerModeChanged(object sender, PowerModeChangedEventArgs e)
@@ -96,7 +124,7 @@ internal class PowerWatcher : IDisposable
 				_stateWatcher.TimerStop();
 				RaiseDisplayStateChanged(state, 0);
 				break;
-		};
+		}
 	}
 
 	#region IDisposable
@@ -122,6 +150,7 @@ internal class PowerWatcher : IDisposable
 			_resumeWatcher.Dispose();
 			_statusWatcher.Dispose();
 			_stateWatcher.Dispose();
+			_startedWatcher?.Dispose();
 		}
 
 		// Free any unmanaged objects here.
@@ -140,5 +169,13 @@ public class PowerModeChangedCountEventArgs : CountEventArgs<PowerModes>
 public class DisplayStateChangedCountEventArgs : CountEventArgs<DisplayStates>
 {
 	public DisplayStateChangedCountEventArgs(DisplayStates state, int count) : base(state, count)
+	{ }
+}
+
+public class SystemStartedCountEventArgs : CountEventArgs
+{
+	public override string Description => $" SystemStarted {Count}";
+
+	public SystemStartedCountEventArgs(int count) : base(count)
 	{ }
 }

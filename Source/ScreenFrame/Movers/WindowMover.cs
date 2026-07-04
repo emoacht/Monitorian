@@ -173,7 +173,7 @@ public abstract class WindowMover
 	/// </summary>
 	protected virtual void HandleShowWindow(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
 	{
-		var isShown = Convert.ToBoolean(wParam.ToInt32());
+		var isShown = Convert.ToBoolean((uint)wParam);
 		if (isShown)
 		{
 			_watcher ??= new ForegroundWindowWatcher(() => ForegroundWindowChanged?.Invoke(this, EventArgs.Empty));
@@ -200,7 +200,7 @@ public abstract class WindowMover
 	/// </summary>
 	protected virtual void HandleActivateApp(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
 	{
-		var isActivated = Convert.ToBoolean(wParam.ToInt32());
+		var isActivated = Convert.ToBoolean((uint)wParam);
 		if (isActivated)
 		{
 			AppActivated?.Invoke(_window, EventArgs.Empty);

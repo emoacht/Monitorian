@@ -138,7 +138,7 @@ internal class DisplayMonitorProvider
 					items.Add(new DisplayItem(
 						deviceInstanceId: deviceInstanceId,
 						displayName: displayMonitor.DisplayName,
-						connection: GetConnectionType(displayMonitor.ConnectionKind, displayMonitor.PhysicalConnector),
+						connection: ConnectionTypeConverter.Convert(displayMonitor.ConnectionKind, displayMonitor.PhysicalConnector),
 						isInternal: (displayMonitor.ConnectionKind is Windows.Devices.Display.DisplayMonitorConnectionKind.Internal),
 						nativeResolution: displayMonitor.NativeResolutionInRawPixels,
 						physicalSize: displayMonitor.PhysicalSizeInInches ?? default));
@@ -169,23 +169,5 @@ internal class DisplayMonitorProvider
 		{
 		}
 		return Array.Empty<DisplayItem>();
-	}
-
-	private static ConnectionType GetConnectionType(Windows.Devices.Display.DisplayMonitorConnectionKind connectionKind, Windows.Devices.Display.DisplayMonitorPhysicalConnectorKind connectorKind)
-	{
-		return (connectionKind, connectorKind) switch
-		{
-			(Windows.Devices.Display.DisplayMonitorConnectionKind.Internal, _) => ConnectionType.Internal,
-			(Windows.Devices.Display.DisplayMonitorConnectionKind.Virtual, _) => ConnectionType.Virtual,
-			(Windows.Devices.Display.DisplayMonitorConnectionKind.Wireless, _) => ConnectionType.Wireless,
-			(Windows.Devices.Display.DisplayMonitorConnectionKind.Wired, Windows.Devices.Display.DisplayMonitorPhysicalConnectorKind.HD15) => ConnectionType.VGA,
-			(Windows.Devices.Display.DisplayMonitorConnectionKind.Wired, Windows.Devices.Display.DisplayMonitorPhysicalConnectorKind.AnalogTV) => ConnectionType.AnalogTV,
-			(Windows.Devices.Display.DisplayMonitorConnectionKind.Wired, Windows.Devices.Display.DisplayMonitorPhysicalConnectorKind.Dvi) => ConnectionType.DVI,
-			(Windows.Devices.Display.DisplayMonitorConnectionKind.Wired, Windows.Devices.Display.DisplayMonitorPhysicalConnectorKind.Hdmi) => ConnectionType.HDMI,
-			(Windows.Devices.Display.DisplayMonitorConnectionKind.Wired, Windows.Devices.Display.DisplayMonitorPhysicalConnectorKind.Lvds) => ConnectionType.LVDS,
-			(Windows.Devices.Display.DisplayMonitorConnectionKind.Wired, Windows.Devices.Display.DisplayMonitorPhysicalConnectorKind.Sdi) => ConnectionType.SDI,
-			(Windows.Devices.Display.DisplayMonitorConnectionKind.Wired, Windows.Devices.Display.DisplayMonitorPhysicalConnectorKind.DisplayPort) => ConnectionType.DisplayPort,
-			_ => ConnectionType.Unknown
-		};
 	}
 }

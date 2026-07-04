@@ -16,7 +16,7 @@ internal interface IStartupWorker
 	/// <summary>
 	/// Determines whether caller instance is registered in startup.
 	/// </summary>
-	bool IsRegistered();
+	bool? IsRegistered();
 
 	/// <summary>
 	/// Registers caller instance to startup.

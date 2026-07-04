@@ -140,7 +140,7 @@ public class SettingsCore : BindableBase
 		get => _enablesIdentity;
 		set => SetProperty(ref _enablesIdentity, value);
 	}
-	private bool _enablesIdentity = true;
+	private bool _enablesIdentity;
 
 	/// <summary>
 	/// Monitor customizations by user
@@ -255,12 +255,16 @@ public class MonitorCustomizationItem
 	[DataMember]
 	public byte Highest { get; private set; } = 100;
 
-	public MonitorCustomizationItem(string name, bool isUnison, byte lowest, byte highest)
+	[DataMember]
+	public long Changed { get; private set; } = 0;
+
+	public MonitorCustomizationItem(string name, bool isUnison, byte lowest, byte highest, long changed)
 	{
 		this.Name = name;
 		this.IsUnison = isUnison;
 		this.Lowest = lowest;
 		this.Highest = highest;
+		this.Changed = changed;
 	}
 
 	internal bool IsValid
@@ -272,6 +276,7 @@ public class MonitorCustomizationItem
 	{
 		get => (Name is null)
 			&& (IsUnison == default)
-			&& (Lowest, Highest) is (0, 100);
+			&& (Lowest, Highest) is (0, 100)
+			&& (Changed == default);
 	}
 }

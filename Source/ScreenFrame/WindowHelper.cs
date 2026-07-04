@@ -557,7 +557,7 @@ public static class WindowHelper
 				buffer,
 				buffer.Capacity) > 0)
 			{
-				int currentGeneration = lParam.ToInt32();
+				int currentGeneration = (int)lParam;
 				int nextGeneration = currentGeneration + 1;
 				var name = buffer.ToString();
 

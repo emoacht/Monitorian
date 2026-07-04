@@ -69,7 +69,7 @@ public class AppControllerCore
 		Settings.PropertyChanged += OnSettingsChanged;
 
 		OnSettingsInitiated();
-		await OperationRecorder.RecordAsync($"Connectable by named pipes: {_keeper.StartupAgent.IsConnectable}");
+		await OperationRecorder.RecordAsync($"Connectable by named pipes: {StartupAgent.IsConnectable}");
 
 		WindowPainter.ApplyInitialTheme();
 		NotifyIconContainer.ShowIcon(WindowPainter.GetIconPath(), ProductInfo.Title);
@@ -98,7 +98,7 @@ public class AppControllerCore
 			NotifyIconContainer.MouseWheel += (_, delta) => ReflectMouseWheel(delta);
 
 		_sessionWatcher.Subscribe((e) => OnMonitorsChangeInferred(nameof(SessionWatcher), e));
-		_powerWatcher.Subscribe((e) => OnMonitorsChangeInferred(nameof(PowerWatcher), e));
+		_powerWatcher.Subscribe((e) => OnMonitorsChangeInferred(nameof(PowerWatcher), e), StartupAgent.IsStartedOnSignIn());
 		_displaySettingsWatcher.Subscribe((e) =>
 		{
 			if (!_powerWatcher.IsDisplayOff)
@@ -111,8 +111,9 @@ public class AppControllerCore
 		{
 			if (!_sessionWatcher.IsLocked)
 			{
-				Update(deviceInstanceId, sdrWhiteLevel);
-				await OperationRecorder.RecordAsync($"SDR White Level: {sdrWhiteLevel} nits");
+				// Modified for debugging
+				Update(deviceInstanceId, sdrWhiteLevel, out var displayIdSetString);
+				await OperationRecorder.RecordAsync($"SDR White Level: {sdrWhiteLevel} nits | {deviceInstanceId} | {displayIdSetString}");
 			}
 		});
 
@@ -490,9 +491,11 @@ public class AppControllerCore
 		monitor?.UpdateBrightness(brightness);
 	}
 
-	protected virtual void Update(string deviceInstanceId, float sdrWhiteLevel)
+	// Modified for debugging
+	protected virtual void Update(string deviceInstanceId, float sdrWhiteLevel, out string displayIdSetString)
 	{
 		var monitor = Monitors.FirstOrDefault(x => deviceInstanceId == x.DeviceInstanceId);
+		displayIdSetString = monitor?.DisplayIdSetString;
 
 		EnsureUnisonWorkable(monitor);
 		monitor?.UpdateBrightness((int)sdrWhiteLevel);
@@ -551,7 +554,7 @@ public class AppControllerCore
 
 	#region Customization
 
-	protected internal virtual bool TryLoadCustomization(string deviceInstanceId, ref string name, ref bool isUnison, ref byte lowest, ref byte highest)
+	protected internal virtual bool TryLoadCustomization(string deviceInstanceId, ref string name, ref bool isUnison, ref byte lowest, ref byte highest, ref long changed)
 	{
 		if (Settings.MonitorCustomizations.TryGetValue(deviceInstanceId, out MonitorCustomizationItem m)
 			&& m.IsValid)
@@ -560,14 +563,15 @@ public class AppControllerCore
 			isUnison = m.IsUnison && Settings.EnablesUnison;
 			lowest = m.Lowest;
 			highest = m.Highest;
+			changed = m.Changed;
 			return true;
 		}
 		return false;
 	}
 
-	protected internal virtual void SaveCustomization(string deviceInstanceId, string name, bool isUnison, byte lowest, byte highest)
+	protected internal virtual void SaveCustomization(string deviceInstanceId, string name, bool isUnison, byte lowest, byte highest, long changed)
 	{
-		MonitorCustomizationItem m = new(name, isUnison, lowest, highest);
+		MonitorCustomizationItem m = new(name, isUnison, lowest, highest, changed);
 		if (m.IsValid && !m.IsDefault)
 		{
 			Settings.MonitorCustomizations.Add(deviceInstanceId, m);

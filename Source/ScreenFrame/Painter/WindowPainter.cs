@@ -192,7 +192,7 @@ public abstract class WindowPainter : IDisposable
 				break;
 
 			case WM_DWMCOLORIZATIONCOLORCHANGED when RespondsAccentColorChanged:
-				OnAccentColorChanged(ColorExtension.FromUInt32((uint)wParam));
+				OnAccentColorChanged(ColorExtension.FromUInt32((uint)wParam.ToInt64()));
 				break;
 		}
 		return IntPtr.Zero;
@@ -251,7 +251,7 @@ public abstract class WindowPainter : IDisposable
 		if (!IsThemeSpecified)
 			Theme = ThemeInfo.GetWindowsTheme();
 
-		ChangeThemes(oldTheme: ColorTheme.Unknown, newTheme: Theme);
+		ChangeThemes(oldTheme: ColorTheme.None, newTheme: Theme);
 	}
 
 	private bool ApplyChangedTheme()

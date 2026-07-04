@@ -10,6 +10,9 @@ internal class HdrMonitorItem : MonitorItem
 {
 	private readonly DisplayIdSet _displayIdSet;
 
+	// Added for debugging
+	public string DisplayIdSetString => $"{_displayIdSet.AdapterId.HighPart:x8}-{_displayIdSet.AdapterId.LowPart:x8}_{_displayIdSet.Id}";
+
 	public HdrMonitorItem(
 		string deviceInstanceId,
 		string description,

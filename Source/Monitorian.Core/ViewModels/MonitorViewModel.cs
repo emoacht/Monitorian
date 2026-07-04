@@ -16,11 +16,13 @@ public class MonitorViewModel : ViewModelBase
 
 	private IMonitor _monitor;
 
+	// Added for debugging
+	public string DisplayIdSetString => (_monitor is HdrMonitorItem monitor) ? monitor.DisplayIdSetString : null;
+
 	public MonitorViewModel(AppControllerCore controller, IMonitor monitor)
 	{
 		this._controller = controller ?? throw new ArgumentNullException(nameof(controller));
 		this._monitor = monitor ?? throw new ArgumentNullException(nameof(monitor));
-		SetTopLeft();
 
 		LoadCustomization();
 	}
@@ -35,9 +37,17 @@ public class MonitorViewModel : ViewModelBase
 			{
 				this._monitor.Dispose();
 				this._monitor = monitor;
-				SetTopLeft();
-				OnPropertyChanged(string.Empty);
 			}
+
+			OnPropertyChanged(nameof(DisplayIndex));
+			OnPropertyChanged(nameof(MonitorIndex));
+			OnPropertyChanged(nameof(Connection));
+			OnPropertyChanged(nameof(Name));
+			OnPropertyChanged(nameof(IsContrastSupported));
+			OnPropertyChanged(nameof(IsContrastChanging));
+			OnPropertyChanged(nameof(IsReachable));
+			OnPropertyChanged(nameof(IsControllable));
+			OnPropertyChanged(nameof(MonitorTopLeft));
 		}
 		else
 		{
@@ -55,8 +65,8 @@ public class MonitorViewModel : ViewModelBase
 
 	#region Customization
 
-	private void LoadCustomization() => _controller.TryLoadCustomization(DeviceInstanceId, ref _name, ref _isUnison, ref _rangeLowest, ref _rangeHighest);
-	private void SaveCustomization() => _controller.SaveCustomization(DeviceInstanceId, _name, _isUnison, _rangeLowest, _rangeHighest);
+	private void LoadCustomization() => _controller.TryLoadCustomization(DeviceInstanceId, ref _name, ref _isUnison, ref _rangeLowest, ref _rangeHighest, ref _changedTicks);
+	private void SaveCustomization() => _controller.SaveCustomization(DeviceInstanceId, _name, _isUnison, _rangeLowest, _rangeHighest, _changedTicks);
 
 	public string Name
 	{
@@ -121,6 +131,20 @@ public class MonitorViewModel : ViewModelBase
 	private byte _rangeHighest = 100;
 
 	private double GetRangeRate() => Math.Abs(RangeHighest - RangeLowest) / 100D;
+
+	public DateTimeOffset ContrastChangedTime
+	{
+		get => new DateTimeOffset(_changedTicks, TimeSpan.Zero);
+		set
+		{
+			if ((value == default) || (value.UtcTicks - _changedTicks >= TimeSpan.TicksPerMinute))
+			{
+				_changedTicks = value.UtcTicks;
+				SaveCustomization();
+			}
+		}
+	}
+	private long _changedTicks = 0;
 
 	#endregion
 
@@ -266,14 +290,35 @@ public class MonitorViewModel : ViewModelBase
 
 	public bool IsContrastChanging
 	{
-		get => IsContrastSupported && _isContrastChanging;
+		get
+		{
+			if (!IsContrastSupported)
+				return false;
+
+			if (_isContrastChanging is null)
+			{
+				_isContrastChanging = (DateTimeOffset.Now - ContrastChangedTime <= TimeSpan.FromDays(3));
+				if (_isContrastChanging.Value)
+					UpdateContrast();
+			}
+			return _isContrastChanging.Value;
+		}
 		set
 		{
-			if (SetProperty(ref _isContrastChanging, value) && value)
-				UpdateContrast();
+			if (SetProperty(ref _isContrastChanging, value))
+			{
+				if (value)
+				{
+					UpdateContrast();
+				}
+				else
+				{
+					ContrastChangedTime = default;
+				}
+			}
 		}
 	}
-	private bool _isContrastChanging = false;
+	private bool? _isContrastChanging;
 
 	public int Contrast
 	{
@@ -360,6 +405,10 @@ public class MonitorViewModel : ViewModelBase
 		{
 			case AccessStatus.Succeeded:
 				ContrastUpdatedTime = DateTimeOffset.Now;
+
+				if (IsContrastChanging)
+					ContrastChangedTime = ContrastUpdatedTime;
+
 				OnPropertyChanged(nameof(Contrast));
 				OnSucceeded();
 				return true;
@@ -549,6 +598,10 @@ public class MonitorViewModel : ViewModelBase
 	public EdidInfo Edid => _edid ??= EdidInfo.ReadFromRegistry(DeviceInstanceId);
 	private EdidInfo _edid;
 
+	public string Date => $"{Edid?.ManufactureYear}{GetWeek(Edid?.ManufactureWeek)}";
+
+	private static string GetWeek(int? week) => (week is > 0 and <= 53) ? $"-W{week:D2}" : string.Empty;
+
 	#endregion
 
 	#region Focus
@@ -588,21 +641,25 @@ public class MonitorViewModel : ViewModelBase
 
 	public ulong MonitorTopLeft
 	{
-		get => _monitorTopLeft;
-		private set => SetProperty(ref _monitorTopLeft, value);
+		get
+		{
+			if (_monitorLocation != MonitorRect.Location)
+			{
+				_monitorLocation = MonitorRect.Location;
+				_monitorTopLeft = GetTopLeft(_monitorLocation.Value);
+			}
+			return _monitorTopLeft;
+		}
 	}
+	private Point? _monitorLocation;
 	private ulong _monitorTopLeft;
 
-	private void SetTopLeft()
+	private static ulong GetTopLeft(Point location)
 	{
-		MonitorTopLeft = GetTopLeft(_monitor.MonitorRect.Location);
-
-		static ulong GetTopLeft(Point location)
-		{
-			var x = (long)Math.Round(location.X, MidpointRounding.AwayFromZero) + int.MaxValue;
-			var y = (long)Math.Round(location.Y, MidpointRounding.AwayFromZero) + int.MaxValue;
-			return (ulong)x | ((ulong)y << 32);
-		}
+		// This location's fractional part can be safely truncated as it comes from Win32 RECT.
+		var x = (long)location.X - int.MinValue;
+		var y = (long)location.Y - int.MinValue;
+		return (uint)x | ((ulong)y << 32);
 	}
 
 	#endregion

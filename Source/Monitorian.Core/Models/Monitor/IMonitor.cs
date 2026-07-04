@@ -34,25 +34,6 @@ public interface IMonitor : IDisposable
 	(AccessResult result, ValueData data) SetValue(byte code, int value);
 }
 
-public enum ConnectionType
-{
-	Unknown = 0,
-	Internal,
-	Wired,
-	VGA,
-	AnalogTV,
-	DVI,
-	HDMI,
-	LVDS,
-	SDI,
-	DisplayPort,
-	SDTV,
-	Wireless,
-	Miracast,
-	Virtual,
-	Other
-}
-
 public enum AccessStatus
 {
 	None = 0,

@@ -62,6 +62,7 @@
     <Compile Include="Helper\SimpleSerialization.cs" />
     <Compile Include="Helper\StringExtension.cs" />
     <Compile Include="Helper\Throttle.cs" />
+    <Compile Include="Models\Monitor\ConnectionType.cs" />
     <Compile Include="Models\Monitor\DdcMonitorItem.cs" />
     <Compile Include="Models\Monitor\DeviceContext.cs" />
     <Compile Include="Models\Monitor\DeviceConversion.cs" />
@@ -315,10 +316,10 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Windows.SDK.Contracts">
-      <Version>10.0.26100.1</Version>
+      <Version>10.0.28000.2270</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf">
-      <Version>1.1.135</Version>
+      <Version>1.1.142</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

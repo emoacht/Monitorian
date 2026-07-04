@@ -43,9 +43,9 @@ public static class ThemeInfo
 public enum ColorTheme
 {
 	/// <summary>
-	/// Unknown
+	/// None
 	/// </summary>
-	Unknown = 0,
+	None = 0,
 
 	/// <summary>
 	/// Dark mode

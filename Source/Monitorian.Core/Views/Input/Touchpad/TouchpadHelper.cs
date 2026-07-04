@@ -116,11 +116,11 @@ internal static class TouchpadHelper
 	}
 
 	[DllImport("Hid.dll", SetLastError = true)]
-	private static extern uint HidP_GetCaps(
+	private static extern int HidP_GetCaps(
 		IntPtr PreparsedData,
 		out HIDP_CAPS Capabilities);
 
-	private const uint HIDP_STATUS_SUCCESS = 0x00110000;
+	private const int HIDP_STATUS_SUCCESS = 0x00110000;
 
 	[StructLayout(LayoutKind.Sequential)]
 	private struct HIDP_CAPS
@@ -147,7 +147,7 @@ internal static class TouchpadHelper
 	}
 
 	[DllImport("Hid.dll", CharSet = CharSet.Auto)]
-	private static extern uint HidP_GetValueCaps(
+	private static extern int HidP_GetValueCaps(
 		HIDP_REPORT_TYPE ReportType,
 		[Out] HIDP_VALUE_CAPS[] ValueCaps,
 		ref ushort ValueCapsLength,
@@ -221,7 +221,7 @@ internal static class TouchpadHelper
 	}
 
 	[DllImport("Hid.dll", CharSet = CharSet.Auto)]
-	private static extern uint HidP_GetUsageValue(
+	private static extern int HidP_GetUsageValue(
 		HIDP_REPORT_TYPE ReportType,
 		ushort UsagePage,
 		ushort LinkCollection,

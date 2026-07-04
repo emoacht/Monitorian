@@ -62,8 +62,8 @@ public class MonitorViewModel : ViewModelBase
 
 	#region Customization
 
-	private void LoadCustomization() => _controller.TryLoadCustomization(DeviceInstanceId, ref _name, ref _isUnison, ref _rangeLowest, ref _rangeHighest);
-	private void SaveCustomization() => _controller.SaveCustomization(DeviceInstanceId, _name, _isUnison, _rangeLowest, _rangeHighest);
+	private void LoadCustomization() => _controller.TryLoadCustomization(DeviceInstanceId, ref _name, ref _isUnison, ref _rangeLowest, ref _rangeHighest, ref _changedTicks);
+	private void SaveCustomization() => _controller.SaveCustomization(DeviceInstanceId, _name, _isUnison, _rangeLowest, _rangeHighest, _changedTicks);
 
 	public string Name
 	{
@@ -128,6 +128,20 @@ public class MonitorViewModel : ViewModelBase
 	private byte _rangeHighest = 100;
 
 	private double GetRangeRate() => Math.Abs(RangeHighest - RangeLowest) / 100D;
+
+	public DateTimeOffset ContrastChangedTime
+	{
+		get => new DateTimeOffset(_changedTicks, TimeSpan.Zero);
+		set
+		{
+			if ((value == default) || (value.UtcTicks - _changedTicks >= TimeSpan.TicksPerMinute))
+			{
+				_changedTicks = value.UtcTicks;
+				SaveCustomization();
+			}
+		}
+	}
+	private long _changedTicks = 0;
 
 	#endregion
 
@@ -273,14 +287,35 @@ public class MonitorViewModel : ViewModelBase
 
 	public bool IsContrastChanging
 	{
-		get => IsContrastSupported && _isContrastChanging;
+		get
+		{
+			if (!IsContrastSupported)
+				return false;
+
+			if (_isContrastChanging is null)
+			{
+				_isContrastChanging = (DateTimeOffset.Now - ContrastChangedTime <= TimeSpan.FromDays(3));
+				if (_isContrastChanging.Value)
+					UpdateContrast();
+			}
+			return _isContrastChanging.Value;
+		}
 		set
 		{
-			if (SetProperty(ref _isContrastChanging, value) && value)
-				UpdateContrast();
+			if (SetProperty(ref _isContrastChanging, value))
+			{
+				if (value)
+				{
+					UpdateContrast();
+				}
+				else
+				{
+					ContrastChangedTime = default;
+				}
+			}
 		}
 	}
-	private bool _isContrastChanging = false;
+	private bool? _isContrastChanging;
 
 	public int Contrast
 	{
@@ -367,6 +402,10 @@ public class MonitorViewModel : ViewModelBase
 		{
 			case AccessStatus.Succeeded:
 				ContrastUpdatedTime = DateTimeOffset.Now;
+
+				if (IsContrastChanging)
+					ContrastChangedTime = ContrastUpdatedTime;
+
 				OnPropertyChanged(nameof(Contrast));
 				OnSucceeded();
 				return true;

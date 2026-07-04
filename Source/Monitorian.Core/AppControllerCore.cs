@@ -551,7 +551,7 @@ public class AppControllerCore
 
 	#region Customization
 
-	protected internal virtual bool TryLoadCustomization(string deviceInstanceId, ref string name, ref bool isUnison, ref byte lowest, ref byte highest)
+	protected internal virtual bool TryLoadCustomization(string deviceInstanceId, ref string name, ref bool isUnison, ref byte lowest, ref byte highest, ref long changed)
 	{
 		if (Settings.MonitorCustomizations.TryGetValue(deviceInstanceId, out MonitorCustomizationItem m)
 			&& m.IsValid)
@@ -560,14 +560,15 @@ public class AppControllerCore
 			isUnison = m.IsUnison && Settings.EnablesUnison;
 			lowest = m.Lowest;
 			highest = m.Highest;
+			changed = m.Changed;
 			return true;
 		}
 		return false;
 	}
 
-	protected internal virtual void SaveCustomization(string deviceInstanceId, string name, bool isUnison, byte lowest, byte highest)
+	protected internal virtual void SaveCustomization(string deviceInstanceId, string name, bool isUnison, byte lowest, byte highest, long changed)
 	{
-		MonitorCustomizationItem m = new(name, isUnison, lowest, highest);
+		MonitorCustomizationItem m = new(name, isUnison, lowest, highest, changed);
 		if (m.IsValid && !m.IsDefault)
 		{
 			Settings.MonitorCustomizations.Add(deviceInstanceId, m);

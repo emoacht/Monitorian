@@ -251,7 +251,7 @@ public abstract class WindowPainter : IDisposable
 		if (!IsThemeSpecified)
 			Theme = ThemeInfo.GetWindowsTheme();
 
-		ChangeThemes(oldTheme: ColorTheme.Unknown, newTheme: Theme);
+		ChangeThemes(oldTheme: ColorTheme.None, newTheme: Theme);
 	}
 
 	private bool ApplyChangedTheme()

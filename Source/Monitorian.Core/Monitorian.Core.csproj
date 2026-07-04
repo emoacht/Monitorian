@@ -62,6 +62,7 @@
     <Compile Include="Helper\SimpleSerialization.cs" />
     <Compile Include="Helper\StringExtension.cs" />
     <Compile Include="Helper\Throttle.cs" />
+    <Compile Include="Models\Monitor\ConnectionType.cs" />
     <Compile Include="Models\Monitor\DdcMonitorItem.cs" />
     <Compile Include="Models\Monitor\DeviceContext.cs" />
     <Compile Include="Models\Monitor\DeviceConversion.cs" />

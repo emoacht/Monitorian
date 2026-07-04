@@ -34,6 +34,7 @@ Additional languages:
  - Portuguese (pt-BR) by [@guilhermgonzaga](https://github.com/guilhermgonzaga)
  - Romanian (ro) by [@calini](https://github.com/calini)
  - Russian (ru-RU) by [@SigmaTel71](https://github.com/SigmaTel71) and [@San4es](https://github.com/San4es)
+ - Slovenian (sl) by [@anderlli0053](https://github.com/anderlli0053)
  - Albanian (sq) by @RDN000
  - Swedish (sv-SE) by [@Sopor](https://github.com/Sopor)
  - Turkish (tr-TR) by [@webbudesign](https://github.com/webbudesign)
@@ -61,7 +62,7 @@ Additional languages:
    ```
 
  * Other:<br>
-:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/4.14.0-Installer/MonitorianInstaller3140.zip)
+:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/4.15.2-Installer/MonitorianInstaller4152.zip)
 
 ## Install/Uninstall
 
@@ -232,6 +233,11 @@ An alternative language can be shown by adding a Resources (.resx) file into `/S
  - VESA [Monitor Control Command Set (MCCS)](https://www.google.co.jp/search?q=VESA+Monitor+Control+Command+Set+Standard+MCCS) standard
 
 ## History
+
+Ver 4.15 2026-7-4
+
+ - Enable showing monitor identity
+ - Add Slovenian (sl) language. Thanks to @anderlli0053!
 
 Ver 4.14 2026-3-22
 

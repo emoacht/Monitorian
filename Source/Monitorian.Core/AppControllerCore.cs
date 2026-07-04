@@ -111,8 +111,9 @@ public class AppControllerCore
 		{
 			if (!_sessionWatcher.IsLocked)
 			{
-				Update(deviceInstanceId, sdrWhiteLevel);
-				await OperationRecorder.RecordAsync($"SDR White Level: {sdrWhiteLevel} nits");
+				// Modified for debugging
+				Update(deviceInstanceId, sdrWhiteLevel, out var displayIdSetString);
+				await OperationRecorder.RecordAsync($"SDR White Level: {sdrWhiteLevel} nits | {deviceInstanceId} | {displayIdSetString}");
 			}
 		});
 
@@ -490,9 +491,11 @@ public class AppControllerCore
 		monitor?.UpdateBrightness(brightness);
 	}
 
-	protected virtual void Update(string deviceInstanceId, float sdrWhiteLevel)
+	// Modified for debugging
+	protected virtual void Update(string deviceInstanceId, float sdrWhiteLevel, out string displayIdSetString)
 	{
 		var monitor = Monitors.FirstOrDefault(x => deviceInstanceId == x.DeviceInstanceId);
+		displayIdSetString = monitor?.DisplayIdSetString;
 
 		EnsureUnisonWorkable(monitor);
 		monitor?.UpdateBrightness((int)sdrWhiteLevel);

@@ -16,6 +16,9 @@ public class MonitorViewModel : ViewModelBase
 
 	private IMonitor _monitor;
 
+	// Added for debugging
+	public string DisplayIdSetString => (_monitor is HdrMonitorItem monitor) ? monitor.DisplayIdSetString : null;
+
 	public MonitorViewModel(AppControllerCore controller, IMonitor monitor)
 	{
 		this._controller = controller ?? throw new ArgumentNullException(nameof(controller));

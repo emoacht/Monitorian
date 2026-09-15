@@ -1,0 +1,16 @@
+<Window x:Class="Monitorian.Core.Views.OsdWindow"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		Width="70" Height="40"
+		ResizeMode="NoResize" SizeToContent="WidthAndHeight"
+		ShowInTaskbar="False" Topmost="True"
+		AllowsTransparency="True" WindowStyle="None"
+		Background="#CC000000" Opacity="0"
+		IsHitTestVisible="False">
+	<Border CornerRadius="6" BorderThickness="1" BorderBrush="#55FFFFFF">
+		<TextBlock x:Name="ValueText" 
+				   Foreground="White" FontSize="16" FontWeight="SemiBold"
+				   HorizontalAlignment="Center" VerticalAlignment="Center"
+				   Margin="12,8"/>
+	</Border>
+</Window>

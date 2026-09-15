@@ -154,6 +154,17 @@ public class SettingsCore : BindableBase
 	private bool _enablesIdentity;
 
 	/// <summary>
+	/// Whether to enable tray icon wheel scrolling
+	/// </summary>
+	[DataMember]
+	public bool EnablesIconWheel
+	{
+		get => _enablesIconWheel;
+		set => SetProperty(ref _enablesIconWheel, value);
+	}
+	private bool _enablesIconWheel;
+
+	/// <summary>
 	/// Monitor customizations by user
 	/// </summary>
 	[DataMember]

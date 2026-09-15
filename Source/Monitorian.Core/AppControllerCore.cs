@@ -94,8 +94,11 @@ public class AppControllerCore
 		NotifyIconContainer.MouseLeftButtonClick += OnMainWindowShowRequestedBySelf;
 		NotifyIconContainer.MouseRightButtonClick += OnMenuWindowShowRequested;
 
-		if (ViewManager.IsIconWheelEnabled())
-			NotifyIconContainer.MouseWheel += (_, delta) => ReflectMouseWheel(delta);
+		NotifyIconContainer.MouseWheel += (_, delta) =>
+		{
+			if (ViewManager.IsIconWheelEnabled() || Settings.EnablesIconWheel)
+				ReflectMouseWheel(delta);
+		};
 
 		_sessionWatcher.Subscribe((e) => OnMonitorsChangeInferred(nameof(SessionWatcher), e));
 		_powerWatcher.Subscribe((e) => OnMonitorsChangeInferred(nameof(PowerWatcher), e), StartupAgent.IsStartedOnSignIn());

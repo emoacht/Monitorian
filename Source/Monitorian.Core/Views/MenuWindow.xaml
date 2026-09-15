@@ -1,4 +1,4 @@
-﻿<Window x:Class="Monitorian.Core.Views.MenuWindow"
+<Window x:Class="Monitorian.Core.Views.MenuWindow"
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 		xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
@@ -144,6 +144,22 @@
 						  Style="{StaticResource CheckButtonItemStyle}"
 						  Content="{x:Static properties:Resources.EnableIdentity}"
 						  IsChecked="{Binding Settings.EnablesIdentity}"/>
+		</ContentControl>
+
+		<Separator Style="{StaticResource MenuSeparatorStyle}"/>
+
+		<ContentControl Style="{StaticResource MenuItemStyle}">
+			<ToggleButton Padding="8,4"
+						  Style="{StaticResource CheckButtonItemStyle}"
+						  Content="Restore brightness on wake"
+						  IsChecked="{Binding Settings.RestoresBrightnessOnWake}"/>
+		</ContentControl>
+
+		<ContentControl Style="{StaticResource MenuItemStyle}">
+			<ToggleButton Padding="8,4"
+						  Style="{StaticResource CheckButtonItemStyle}"
+						  Content="Enable tray icon scroll"
+						  IsChecked="{Binding Settings.EnablesIconWheel}"/>
 		</ContentControl>
 
 		<Separator Style="{StaticResource MenuSeparatorStyle}"/>

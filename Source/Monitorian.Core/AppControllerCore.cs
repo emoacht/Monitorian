@@ -299,10 +299,15 @@ public class AppControllerCore
 			 (e is PowerModeChangedCountEventArgs pm && pm.Data == Microsoft.Win32.PowerModes.Resume) ||
 			 (e is SessionSwitchCountEventArgs sw && sw.Data == Microsoft.Win32.SessionSwitchReason.SessionUnlock)))
 		{
-			foreach (var m in Monitors)
+			// Give DDC/CI hardware a brief moment to reconnect before pushing brightness commands
+			Task.Run(async () =>
 			{
-				m.RestoreBrightness();
-			}
+				await Task.Delay(2000);
+				foreach (var m in Monitors)
+				{
+					m.RestoreBrightness();
+				}
+			});
 		}
 
 		await ProceedScanAsync(e);

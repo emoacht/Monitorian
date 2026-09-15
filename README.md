@@ -1,4 +1,4 @@
-﻿# Monitorian
+# Monitorian
 
 Monitorian is a Windows desktop tool to adjust the brightness of multiple monitors with ease.
 
@@ -75,12 +75,15 @@ msiexec /a [source msi file path] targetdir=[destination folder path (absolute p
 In such case, please note the following:
 
  - The settings file (and other file) will be created at: `[system drive]\Users\[user name]\AppData\Local\Monitorian\`
+   - **Note:** You can launch the application with the `/portable` argument to force it to store settings locally in its own executable folder instead of using the system's `AppData` directory.
  - When you check [Start on sign in], a registry value will be added to: `HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run`
 
 ## Remarks
 
  - The monitor name shown in main window can be changed to distinguish monitors easily. To change the name, press and hold it until it turns to be editable.
  - To adjust the brightness by a touchpad, place two fingers on it and swipe horizontally. The touchpad must be a precision touchpad.
+ - You can scroll over the application's tray icon with your mouse wheel to adjust brightness seamlessly. A small on-screen display (OSD) will show the brightness percentage. This feature can be toggled in the application's settings menu.
+ - Advanced settings also include an option to actively restore your last explicitly set brightness when the computer wakes from sleep or a screen timeout.
  - The number of monitors shown at a time is up to 4.
  - In case an external monitor is not shown, read [detection of external monitors](#detection-of-external-monitors).
  - This app identifies each monitor by an unique identifier given by the OS. Even with the same PC and monitor, this identifier may vary depending on the type of connection (e.g. USB-C DisplayPort Alt mode) or the selection of connectors of the same type. Consequently, if a monitor is reconnected to the different connector, it may not be regarded as the same monitor and some functions may not work as expected.

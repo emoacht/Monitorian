@@ -7,7 +7,7 @@ This document serves as a historical record of the interactions, prompts, and co
 The following is a chronological list of the user's prompts that guided the development of new features and fixes:
 
 1. **"test if the new app works"** -> **"okay if you are confident then open a PR"**
-   - *AI Action:* Implemented the Portable Mode feature (parsing `/portable`) and prepared the code for a Pull Request.
+   - *AI Action:* Implemented the Portable Mode feature (detecting `portable.ini`) and prepared the code for a Pull Request.
 
 2. **"give me commands to setup the git"** -> **"okay i have done that. Now you should do the remaining"**
    - *AI Action:* Guided the user through setting up Git CLI and authenticating.
@@ -43,7 +43,7 @@ The following is a chronological list of the user's prompts that guided the deve
 
 | Feature / Fix | Branch | Pull Request | Status | Description |
 | :--- | :--- | :--- | :--- | :--- |
-| **Portable Mode** | `feature/portable-mode` | [#776](https://github.com/emoacht/Monitorian/pull/776) | Updated | Bypasses `AppData` usage when launched with `/portable`. |
+| **Portable Mode** | `feature/portable-mode` | [#776](https://github.com/emoacht/Monitorian/pull/776) | Updated | Bypasses `AppData` usage when launched with a `portable.ini` file. |
 | **Restore on Wake** | `feature/brightness-restore` | [#777](https://github.com/emoacht/Monitorian/pull/777) | Updated | Fixes Issue #115. Hooks into `SystemEvents.PowerModeChanged` and `DisplaySettingsWatcher` to reapply brightness on wake. Includes a `Task.Delay` to handle hardware DDC/CI wake times. |
 | **Incremental UI** | `feature/ui-settings-exposure` | [#778](https://github.com/emoacht/Monitorian/pull/778) | Updated | Fixes Issue #190. Exposes `/iconwheel` and `/restore hard` explicitly in the `MenuWindow.xaml` settings. |
 | **Tray Icon OSD** | `feature/icon-scroll-osd` | [#779](https://github.com/emoacht/Monitorian/pull/779) | Updated | Fixes Issue #637. Adds a dynamic, auto-theming, fading WPF overlay above the tray icon when adjusting brightness via mouse scroll. |

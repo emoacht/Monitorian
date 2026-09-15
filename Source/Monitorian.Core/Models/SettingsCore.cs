@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
@@ -83,6 +83,17 @@ public class SettingsCore : BindableBase
 		set => SetProperty(ref _adjustsSdrContent, value);
 	}
 	private bool _adjustsSdrContent;
+
+	/// <summary>
+	/// Whether to restore brightness on wake
+	/// </summary>
+	[DataMember]
+	public bool RestoresBrightnessOnWake
+	{
+		get => _restoresBrightnessOnWake;
+		set => SetProperty(ref _restoresBrightnessOnWake, value);
+	}
+	private bool _restoresBrightnessOnWake;
 
 	/// <summary>
 	/// Whether to invert scroll direction

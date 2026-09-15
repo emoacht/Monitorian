@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -293,6 +293,17 @@ public class AppControllerCore
 	protected virtual async void OnMonitorsChangeInferred(object sender, ICountEventArgs e = null)
 	{
 		await OperationRecorder.RecordAsync($"{nameof(OnMonitorsChangeInferred)} ({sender}{e?.Description})");
+
+		if (Settings.RestoresBrightnessOnWake &&
+			((e is DisplayStateChangedCountEventArgs ds && ds.Data == DisplayStates.On) ||
+			 (e is PowerModeChangedCountEventArgs pm && pm.Data == Microsoft.Win32.PowerModes.Resume) ||
+			 (e is SessionSwitchCountEventArgs sw && sw.Data == Microsoft.Win32.SessionSwitchReason.SessionUnlock)))
+		{
+			foreach (var m in Monitors)
+			{
+				m.RestoreBrightness();
+			}
+		}
 
 		await ProceedScanAsync(e);
 	}

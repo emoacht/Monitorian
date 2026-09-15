@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -165,6 +165,16 @@ public class MonitorViewModel : ViewModelBase
 		}
 	}
 
+	public int LastKnownBrightness { get; private set; } = -1;
+
+	public void RestoreBrightness()
+	{
+		if (LastKnownBrightness >= 0 && LastKnownBrightness != Brightness)
+		{
+			SetBrightness(LastKnownBrightness, false);
+		}
+	}
+
 	public int BrightnessSystemAdjusted => _monitor.BrightnessSystemAdjusted;
 	public int BrightnessUnison => Brightness;
 
@@ -180,6 +190,8 @@ public class MonitorViewModel : ViewModelBase
 		{
 			case AccessStatus.Succeeded:
 				BrightnessUpdatedTime = DateTimeOffset.Now;
+				if (LastKnownBrightness < 0)
+					LastKnownBrightness = Brightness;
 				OnPropertyChanged(nameof(BrightnessUnison)); // This must be prior to Brightness.
 				OnPropertyChanged(nameof(Brightness));
 				OnPropertyChanged(nameof(BrightnessSystemAdjusted));
@@ -258,6 +270,7 @@ public class MonitorViewModel : ViewModelBase
 		{
 			case AccessStatus.Succeeded:
 				BrightnessUpdatedTime = DateTimeOffset.Now;
+				LastKnownBrightness = brightness;
 				OnPropertyChanged(nameof(BrightnessUnison)); // This must be prior to Brightness.
 				OnPropertyChanged(nameof(Brightness));
 				OnSucceeded();

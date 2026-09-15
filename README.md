@@ -75,7 +75,7 @@ msiexec /a [source msi file path] targetdir=[destination folder path (absolute p
 In such case, please note the following:
 
  - The settings file (and other file) will be created at: `[system drive]\Users\[user name]\AppData\Local\Monitorian\`
-   - **Note:** You can launch the application with the `/portable` argument to force it to store settings locally in its own executable folder instead of using the system's `AppData` directory.
+   - **Note:** You can create an empty file named `portable.ini` alongside the executable to force it to store settings locally in its own folder instead of using the system's `AppData` directory.
  - When you check [Start on sign in], a registry value will be added to: `HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run`
 
 ## Remarks

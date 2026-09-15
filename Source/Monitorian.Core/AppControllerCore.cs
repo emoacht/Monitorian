@@ -148,6 +148,8 @@ public class AppControllerCore
 		NotifyIconContainer.Dispose();
 		WindowPainter.Dispose();
 
+		_osdWindow?.Close();
+
 		_sessionWatcher.Dispose();
 		_powerWatcher.Dispose();
 		_displaySettingsWatcher.Dispose();

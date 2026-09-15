@@ -5,11 +5,11 @@
 		ResizeMode="NoResize" SizeToContent="WidthAndHeight"
 		ShowInTaskbar="False" Topmost="True"
 		AllowsTransparency="True" WindowStyle="None"
-		Background="#CC000000" Opacity="0"
+		Background="{DynamicResource App.Background.Plain}" Opacity="0"
 		IsHitTestVisible="False">
-	<Border CornerRadius="6" BorderThickness="1" BorderBrush="#55FFFFFF">
+	<Border CornerRadius="6" BorderThickness="1" BorderBrush="{DynamicResource App.Border.Outline}">
 		<TextBlock x:Name="ValueText" 
-				   Foreground="White" FontSize="16" FontWeight="SemiBold"
+				   Foreground="{DynamicResource App.Foreground}" FontSize="16" FontWeight="SemiBold"
 				   HorizontalAlignment="Center" VerticalAlignment="Center"
 				   Margin="12,8"/>
 	</Border>

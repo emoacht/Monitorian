@@ -29,7 +29,7 @@ internal class SessionWatcher : TimerWatcher
 			case SessionSwitchReason.SessionUnlock:
 				IsLocked = false;
 				RaiseSessionSwitch(e.Reason, 0);
-				TimerStart(e);
+				TimerStart(e.Reason);
 				break;
 			case SessionSwitchReason.SessionLogoff:
 			case SessionSwitchReason.SessionLock:
@@ -42,9 +42,9 @@ internal class SessionWatcher : TimerWatcher
 
 	private SessionSwitchReason _reason;
 
-	protected virtual void TimerStart(SessionSwitchEventArgs e)
+	protected virtual void TimerStart(SessionSwitchReason reason)
 	{
-		this._reason = e.Reason;
+		this._reason = reason;
 		TimerStart();
 	}
 

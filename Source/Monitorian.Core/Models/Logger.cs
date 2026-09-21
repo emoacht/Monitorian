@@ -147,7 +147,8 @@ public class Logger
 	/// Copies operation log from AppData to Desktop.
 	/// </summary>
 	/// <param name="threshold">Threshold of log's content (in the number of characters)</param>
-	public static async Task CopyOperationAsync(int threshold = 10000)
+	/// <remarks>It is estimated to average 30 characters per line.</remarks>
+	public static async Task CopyOperationAsync(int threshold = 30000)
 	{
 		var buffer = new StringBuilder();
 

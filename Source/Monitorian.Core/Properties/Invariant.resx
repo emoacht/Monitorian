@@ -124,7 +124,7 @@
     <value>Save operation log to Desktop?</value>
   </data>
   <data name="CopyOperationWaitMessage" xml:space="preserve">
-    <value>Wait until more information is recorded to operation log.</value>
+    <value>Wait until more records accumulate in operation log.</value>
   </data>
   <data name="License" xml:space="preserve">
     <value>License</value>

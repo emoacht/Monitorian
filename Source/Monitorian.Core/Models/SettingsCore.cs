@@ -27,7 +27,7 @@ public class SettingsCore : BindableBase
 		get => _usesLargeElements;
 		set => SetProperty(ref _usesLargeElements, value);
 	}
-	private bool _usesLargeElements = true; // Default
+	private bool _usesLargeElements = false; // Default
 
 	/// <summary>
 	/// Whether to use accent color for brightness

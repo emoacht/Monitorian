@@ -132,9 +132,14 @@ public class StickWindowMover : BasicWindowMover
 		var distance = new Vector(0, 0);
 		if (OsVersion.Is11OrGreater && KeepsDistance)
 		{
-			distance = isMarginIncluded
-				? new Vector(0, Distance)
-				: new Vector(Distance, Distance);
+			distance = (isMarginIncluded, taskbarAlignment) switch
+			{
+				(true, TaskbarAlignment.Top) or
+				(true, TaskbarAlignment.Bottom) => new Vector(0, Distance),
+				(true, TaskbarAlignment.Left) or
+				(true, TaskbarAlignment.Right) => new Vector(Distance, 0),
+				_ => new Vector(Distance, Distance)
+			};
 			distance *= VisualTreeHelperAddition.GetDpi(_window).ToMatrix();
 		}
 

@@ -390,6 +390,18 @@ internal class DisplayConfig
 		public bool IsAvailable { get; }
 
 		public DisplayIdSet DisplayIdSet { get; }
+		[DataMember(Order = 6, Name = nameof(DisplayIdSet))]
+		private string _displayIdSetString;
+
+		// Added for debugging
+		[DataMember(Order = 7)]
+		public int DisplayIndex { get; }
+
+		[OnSerializing]
+		private void OnSerializing(StreamingContext context)
+		{
+			_displayIdSetString = DisplayIdSet.ToString();
+		}
 
 		public DisplayItem(
 			string deviceInstanceId,
@@ -398,7 +410,8 @@ internal class DisplayConfig
 			bool isInternal,
 			float refreshRate,
 			bool isAvailable,
-			DisplayIdSet displayIdSet)
+			DisplayIdSet displayIdSet,
+			int displayIndex)
 		{
 			this.DeviceInstanceId = deviceInstanceId;
 			this.DisplayName = displayName;
@@ -407,6 +420,7 @@ internal class DisplayConfig
 			this.RefreshRate = refreshRate;
 			this.IsAvailable = isAvailable;
 			this.DisplayIdSet = displayIdSet;
+			this.DisplayIndex = displayIndex;
 		}
 	}
 
@@ -434,27 +448,35 @@ internal class DisplayConfig
 
 		foreach (var displayPath in displayPaths)
 		{
-			var displayMode = displayModes
+			var targetDisplayMode = displayModes
 				.Where(x => x.infoType is DISPLAYCONFIG_MODE_INFO_TYPE.DISPLAYCONFIG_MODE_INFO_TYPE_TARGET)
 				.FirstOrDefault(x => x.adapterId.Equals(displayPath.targetInfo.adapterId)
 								  && x.id == displayPath.targetInfo.id);
-			if (displayMode.Equals(default(DISPLAYCONFIG_MODE_INFO)))
+			if (targetDisplayMode.Equals(default(DISPLAYCONFIG_MODE_INFO)))
 				continue;
 
-			var displayIdSet = new DisplayIdSet(displayMode.adapterId, displayMode.id);
-			if (!TryGetDeviceName(displayIdSet, out var deviceName))
+			var targetDisplayIdSet = new DisplayIdSet(targetDisplayMode.adapterId, targetDisplayMode.id);
+			if (!TryGetDeviceName(targetDisplayIdSet, out DISPLAYCONFIG_TARGET_DEVICE_NAME targetDeviceName))
 				continue;
 
-			var deviceInstanceId = DeviceConversion.ConvertToDeviceInstanceId(deviceName.monitorDevicePath);
+			var deviceInstanceId = DeviceConversion.ConvertToDeviceInstanceId(targetDeviceName.monitorDevicePath);
+
+			// Added for debugging
+			var sourceDisplayIdSet = new DisplayIdSet(displayPath.sourceInfo.adapterId, displayPath.sourceInfo.id);
+			int displayIndex = TryGetDeviceName(sourceDisplayIdSet, out DISPLAYCONFIG_SOURCE_DEVICE_NAME sourceDeviceName)
+				&& DeviceContext.TryGetDisplayIndex(sourceDeviceName.viewGdiDeviceName, out byte index)
+				? (int)index
+				: -1;
 
 			yield return new DisplayItem(
 				deviceInstanceId: deviceInstanceId,
-				displayName: deviceName.monitorFriendlyDeviceName,
-				connection: ConnectionTypeConverter.Convert(deviceName.outputTechnology),
-				isInternal: (deviceName.outputTechnology is DISPLAYCONFIG_VIDEO_OUTPUT_TECHNOLOGY.DISPLAYCONFIG_OUTPUT_TECHNOLOGY_INTERNAL),
+				displayName: targetDeviceName.monitorFriendlyDeviceName,
+				connection: ConnectionTypeConverter.Convert(targetDeviceName.outputTechnology),
+				isInternal: (targetDeviceName.outputTechnology is DISPLAYCONFIG_VIDEO_OUTPUT_TECHNOLOGY.DISPLAYCONFIG_OUTPUT_TECHNOLOGY_INTERNAL),
 				refreshRate: displayPath.targetInfo.refreshRate.Numerator / (float)displayPath.targetInfo.refreshRate.Denominator,
 				isAvailable: displayPath.targetInfo.targetAvailable,
-				displayIdSet: displayIdSet);
+				displayIdSet: targetDisplayIdSet,
+				displayIndex: displayIndex);
 		}
 	}
 
@@ -466,6 +488,24 @@ internal class DisplayConfig
 			{
 				type = DISPLAYCONFIG_DEVICE_INFO_TYPE.DISPLAYCONFIG_DEVICE_INFO_GET_TARGET_NAME,
 				size = (uint)Marshal.SizeOf<DISPLAYCONFIG_TARGET_DEVICE_NAME>(),
+				adapterId = displayIdSet.AdapterId,
+				id = displayIdSet.Id
+			}
+		};
+
+		int error = DisplayConfigGetDeviceInfo(ref deviceName);
+		return (error is ERROR_SUCCESS);
+	}
+
+	// Added for debugging
+	private static bool TryGetDeviceName(DisplayIdSet displayIdSet, out DISPLAYCONFIG_SOURCE_DEVICE_NAME deviceName)
+	{
+		deviceName = new DISPLAYCONFIG_SOURCE_DEVICE_NAME
+		{
+			header = new DISPLAYCONFIG_DEVICE_INFO_HEADER
+			{
+				type = DISPLAYCONFIG_DEVICE_INFO_TYPE.DISPLAYCONFIG_DEVICE_INFO_GET_SOURCE_NAME,
+				size = (uint)Marshal.SizeOf<DISPLAYCONFIG_SOURCE_DEVICE_NAME>(),
 				adapterId = displayIdSet.AdapterId,
 				id = displayIdSet.Id
 			}
@@ -579,4 +619,6 @@ internal class DisplayIdSet(DisplayConfig.LUID adapterId, uint id)
 	/// https://learn.microsoft.com/en-us/uwp/api/windows.devices.display.displaymonitor.displayadaptertargetid
 	/// </remarks>
 	public readonly uint Id = id;
+
+	public override string ToString() => $"{highPart:x8}-{lowPart:x8}_{Id}";
 }

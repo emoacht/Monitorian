@@ -293,7 +293,8 @@ internal class DeviceContext
 		}
 	}
 
-	private static bool TryGetDisplayIndex(string deviceName, out byte index)
+	// Modified for debugging
+	internal static bool TryGetDisplayIndex(string deviceName, out byte index)
 	{
 		// The typical format of device name is as follows:
 		// EnumDisplayDevices (display), GetMonitorInfo : \\.\DISPLAY[index starting at 1]

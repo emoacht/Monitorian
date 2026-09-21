@@ -62,7 +62,7 @@ Additional languages:
    ```
 
  * Other:<br>
-:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/4.15.2-Installer/MonitorianInstaller4152.zip)
+:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/4.16.0-Installer/MonitorianInstaller4160.zip)
 
 ## Install/Uninstall
 
@@ -233,6 +233,10 @@ An alternative language can be shown by adding a Resources (.resx) file into `/S
  - VESA [Monitor Control Command Set (MCCS)](https://www.google.co.jp/search?q=VESA+Monitor+Control+Command+Set+Standard+MCCS) standard
 
 ## History
+
+Ver 4.16 2026-9-21
+
+ - Correct window location on Windows 11
 
 Ver 4.15 2026-7-4
 

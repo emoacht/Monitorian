@@ -130,7 +130,7 @@
     <value>Zmień zakres regulacji</value>
   </data>
   <data name="ChangeUnison" xml:space="preserve">
-    <value>Równoczesne dostosowowywanie</value>
+    <value>Równoczesne dostosowywanie</value>
   </data>
   <data name="Close" xml:space="preserve">
     <value>Zamknij</value>
@@ -148,7 +148,7 @@
     <value>Włącz dostosowywalny zakres</value>
   </data>
   <data name="EnableUnison" xml:space="preserve">
-    <value>Włącz równoczesne dostosowowywanie</value>
+    <value>Włącz równoczesne dostosowywanie</value>
   </data>
   <data name="InvertScrollDirection" xml:space="preserve">
     <value>Odwróć kierunek przewijania</value>

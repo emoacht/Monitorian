@@ -30,7 +30,7 @@ Additional languages:
  - Japanese (ja-JP) by [@emoacht](https://github.com/emoacht)
  - Korean (ko-KR) by [@VenusGirl](https://github.com/VenusGirl)
  - Dutch (nl-NL) by [@JordyEGNL](https://github.com/JordyEGNL)
- - Polish (pl-PL) by [@Daxxxis](https://github.com/Daxxxis) and [@FakeMichau](https://github.com/FakeMichau)
+ - Polish (pl-PL) by [@Daxxxis](https://github.com/Daxxxis), [@FakeMichau](https://github.com/FakeMichau) and [@Blizzeq](https://github.com/Blizzeq)
  - Portuguese (pt-BR) by [@guilhermgonzaga](https://github.com/guilhermgonzaga)
  - Romanian (ro) by [@calini](https://github.com/calini)
  - Russian (ru-RU) by [@SigmaTel71](https://github.com/SigmaTel71) and [@San4es](https://github.com/San4es)
@@ -62,7 +62,7 @@ Additional languages:
    ```
 
  * Other:<br>
-:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/4.16.0-Installer/MonitorianInstaller4160.zip)
+:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/4.16.1-Installer/MonitorianInstaller4161.zip)
 
 ## Install/Uninstall
 

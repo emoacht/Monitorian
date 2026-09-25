@@ -10,9 +10,6 @@ internal class HdrMonitorItem : MonitorItem
 {
 	private readonly DisplayIdSet _displayIdSet;
 
-	// Added for debugging
-	public string DisplayIdSetString => _displayIdSet.ToString();
-
 	public HdrMonitorItem(
 		string deviceInstanceId,
 		string description,
@@ -56,6 +53,10 @@ internal class HdrMonitorItem : MonitorItem
 
 		float brightness = ((buffer - MinimumWhiteLevel) / (MaximumWhiteLevel - MinimumWhiteLevel) * 100F);
 		this.Brightness = (int)Math.Round(brightness, MidpointRounding.AwayFromZero);
+
+		// Added for debugging
+		var recordTask = OperationRecorder.RecordAsync($"UPDATE {DeviceInstanceId} | {_displayIdSet} | SDR White Level: {buffer}, Brightness: {Brightness}");
+
 		return AccessResult.Succeeded;
 	}
 
@@ -71,6 +72,10 @@ internal class HdrMonitorItem : MonitorItem
 		{
 			this.Brightness = brightness;
 		}
+
+		// Added for debugging
+		var recordTask = OperationRecorder.RecordAsync($"SET    {DeviceInstanceId} | {_displayIdSet} | SDR White Level: {sdrWhiteLevel}, Brightness: {Brightness}");
+
 		return result;
 	}
 

@@ -35,11 +35,9 @@ internal class RegistryWorker : IStartupWorker
 
 	public bool? IsRegistered()
 	{
-		using (var key = Registry.CurrentUser.OpenSubKey(Run, false))
-		{
-			var existingValue = key.GetValue(_name) as string;
-			return string.Equals(existingValue, _pathWithOption, StringComparison.OrdinalIgnoreCase);
-		}
+		using var key = Registry.CurrentUser.OpenSubKey(Run, false);
+		var value = key.GetValue(_name) as string;
+		return string.Equals(value, _pathWithOption, StringComparison.OrdinalIgnoreCase);
 	}
 
 	public bool Register()
@@ -47,21 +45,15 @@ internal class RegistryWorker : IStartupWorker
 		if (IsRegistered() is true)
 			return false;
 
-		using (var key = Registry.CurrentUser.OpenSubKey(Run, true))
-		{
-			key.SetValue(_name, _pathWithOption, RegistryValueKind.String);
-			return true;
-		}
+		using var key = Registry.CurrentUser.OpenSubKey(Run, true);
+		key.SetValue(_name, _pathWithOption, RegistryValueKind.String);
+		return true;
 	}
 
 	public void Unregister()
 	{
-		using (var key = Registry.CurrentUser.OpenSubKey(Run, true))
-		{
-			if (!key.GetValueNames().Contains(_name)) // The content of value doesn't matter.
-				return;
-
+		using var key = Registry.CurrentUser.OpenSubKey(Run, true);
+		if (key.GetValueNames().Contains(_name)) // The content of value doesn't matter.
 			key.DeleteValue(_name, false);
-		}
 	}
 }

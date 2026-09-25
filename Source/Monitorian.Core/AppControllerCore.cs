@@ -110,11 +110,7 @@ public class AppControllerCore
 		_displayInformationWatcher.Subscribe(async (deviceInstanceId, sdrWhiteLevel) =>
 		{
 			if (!_sessionWatcher.IsLocked)
-			{
-				// Modified for debugging
-				Update(deviceInstanceId, sdrWhiteLevel, out var displayIdSetString);
-				await OperationRecorder.RecordAsync($"SDR White Level: {sdrWhiteLevel} nits | {deviceInstanceId} | {displayIdSetString}");
-			}
+				Update(deviceInstanceId, sdrWhiteLevel);
 		});
 
 		if (Monitors.Any(x => x.IsInternal))
@@ -240,13 +236,12 @@ public class AppControllerCore
 				break;
 
 			case nameof(Settings.AdjustsSdrContent):
-				if (Settings.AdjustsSdrContent)
-				{
-					if (_displayInformationWatcher.TryEnable())
-						OnMonitorsChangeInferred($"SettingsChanged {nameof(Settings.AdjustsSdrContent)}");
-				}
-				else
-					_displayInformationWatcher.Disable();
+				var isChanged = Settings.AdjustsSdrContent
+					? _displayInformationWatcher.TryEnable()
+					: _displayInformationWatcher.Disable();
+
+				if (isChanged)
+					OnMonitorsChangeInferred($"SettingsChanged {nameof(Settings.AdjustsSdrContent)}");
 
 				break;
 
@@ -491,11 +486,9 @@ public class AppControllerCore
 		monitor?.UpdateBrightness(brightness);
 	}
 
-	// Modified for debugging
-	protected virtual void Update(string deviceInstanceId, float sdrWhiteLevel, out string displayIdSetString)
+	protected virtual void Update(string deviceInstanceId, float sdrWhiteLevel)
 	{
 		var monitor = Monitors.FirstOrDefault(x => deviceInstanceId == x.DeviceInstanceId);
-		displayIdSetString = monitor?.DisplayIdSetString;
 
 		EnsureUnisonWorkable(monitor);
 		monitor?.UpdateBrightness((int)sdrWhiteLevel);

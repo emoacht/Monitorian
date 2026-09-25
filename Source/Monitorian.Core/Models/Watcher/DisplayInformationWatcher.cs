@@ -35,13 +35,14 @@ internal class DisplayInformationWatcher : IDisposable
 		return true;
 	}
 
-	public void Disable()
+	public bool Disable()
 	{
 		if (!IsEnabled)
-			return;
+			return false;
 
 		DisplayInformationProvider.AdvancedColorInfoChanged -= OnAdvancedColorInfoChanged;
 		IsEnabled = false;
+		return true;
 	}
 
 	#region IDisposable

@@ -236,13 +236,12 @@ public class AppControllerCore
 				break;
 
 			case nameof(Settings.AdjustsSdrContent):
-				if (Settings.AdjustsSdrContent)
-				{
-					if (_displayInformationWatcher.TryEnable())
-						OnMonitorsChangeInferred($"SettingsChanged {nameof(Settings.AdjustsSdrContent)}");
-				}
-				else
-					_displayInformationWatcher.Disable();
+				var isChanged = Settings.AdjustsSdrContent
+					? _displayInformationWatcher.TryEnable()
+					: _displayInformationWatcher.Disable();
+
+				if (isChanged)
+					OnMonitorsChangeInferred($"SettingsChanged {nameof(Settings.AdjustsSdrContent)}");
 
 				break;
 

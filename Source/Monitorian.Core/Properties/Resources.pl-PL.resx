@@ -120,6 +120,9 @@
   <data name="AdjustSdrContent" xml:space="preserve">
     <value>Dostosuj jasność treści SDR</value>
   </data>
+  <data name="Arguments" xml:space="preserve">
+    <value>Argumenty wiersza polecenia</value>
+  </data>
   <data name="ChangeContrast" xml:space="preserve">
     <value>Zmień kontrast</value>
   </data>
@@ -127,7 +130,7 @@
     <value>Zmień zakres regulacji</value>
   </data>
   <data name="ChangeUnison" xml:space="preserve">
-    <value>Równoczesne dostosowowywanie</value>
+    <value>Równoczesne dostosowywanie</value>
   </data>
   <data name="Close" xml:space="preserve">
     <value>Zamknij</value>
@@ -138,11 +141,14 @@
   <data name="EnableContrast" xml:space="preserve">
     <value>Włącz zmienianie kontrastu</value>
   </data>
+  <data name="EnableIdentity" xml:space="preserve">
+    <value>Włącz pokazywanie identyfikacji monitora</value>
+  </data>
   <data name="EnableRange" xml:space="preserve">
     <value>Włącz dostosowywalny zakres</value>
   </data>
   <data name="EnableUnison" xml:space="preserve">
-    <value>Włącz równoczesne dostosowowywanie</value>
+    <value>Włącz równoczesne dostosowywanie</value>
   </data>
   <data name="InvertScrollDirection" xml:space="preserve">
     <value>Odwróć kierunek przewijania</value>
@@ -161,6 +167,9 @@
   </data>
   <data name="ShowAdjusted" xml:space="preserve">
     <value>Pokazuj dostosowaną jasność</value>
+  </data>
+  <data name="ShowIdentity" xml:space="preserve">
+    <value>Pokaż identyfikację monitora</value>
   </data>
   <data name="ShowNumber" xml:space="preserve">
     <value>Pokaż obecną wartość</value>

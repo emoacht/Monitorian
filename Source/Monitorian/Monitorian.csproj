@@ -69,7 +69,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="AppController.cs" />
+    <Compile Include="AppController1.cs" />
     <Compile Include="Models\Settings.cs" />
   </ItemGroup>
   <ItemGroup>

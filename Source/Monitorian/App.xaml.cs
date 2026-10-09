@@ -7,7 +7,7 @@ namespace Monitorian;
 public partial class App : Application
 {
 	private AppKeeper _keeper;
-	private AppController _controller;
+	private AppController1 _controller;
 
 	protected override async void OnStartup(StartupEventArgs e)
 	{
@@ -20,7 +20,7 @@ public partial class App : Application
 			return;
 		}
 
-		_controller = new AppController(_keeper);
+		_controller = new AppController1(_keeper);
 		await _controller.InitiateAsync();
 
 		//this.MainWindow = new MainWindow();

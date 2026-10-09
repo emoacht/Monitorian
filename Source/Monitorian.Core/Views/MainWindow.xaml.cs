@@ -14,7 +14,7 @@ public partial class MainWindow : Window
 	private readonly StickWindowMover _mover;
 	public MainWindowViewModel ViewModel => (MainWindowViewModel)this.DataContext;
 
-	public MainWindow(AppControllerCore controller)
+	public MainWindow(AppController controller)
 	{
 		LanguageService.Switch();
 

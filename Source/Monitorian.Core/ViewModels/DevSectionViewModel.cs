@@ -9,10 +9,10 @@ namespace Monitorian.Core.ViewModels;
 
 public class DevSectionViewModel : ViewModelBase
 {
-	private readonly AppControllerCore _controller;
+	private readonly AppController _controller;
 	public SettingsCore Settings => _controller.Settings;
 
-	public DevSectionViewModel(AppControllerCore controller)
+	public DevSectionViewModel(AppController controller)
 	{
 		this._controller = controller ?? throw new ArgumentNullException(nameof(controller));
 

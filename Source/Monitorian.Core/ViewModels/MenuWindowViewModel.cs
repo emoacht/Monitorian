@@ -8,10 +8,10 @@ namespace Monitorian.Core.ViewModels;
 
 public class MenuWindowViewModel : ViewModelBase
 {
-	private readonly AppControllerCore _controller;
+	private readonly AppController _controller;
 	public SettingsCore Settings => _controller.Settings;
 
-	public MenuWindowViewModel(AppControllerCore controller)
+	public MenuWindowViewModel(AppController controller)
 	{
 		this._controller = controller ?? throw new ArgumentNullException(nameof(controller));
 

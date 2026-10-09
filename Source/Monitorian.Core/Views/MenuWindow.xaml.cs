@@ -15,10 +15,10 @@ namespace Monitorian.Core.Views;
 public partial class MenuWindow : Window
 {
 	private readonly FloatWindowMover _mover;
-	private readonly AppControllerCore _controller;
+	private readonly AppController _controller;
 	public MenuWindowViewModel ViewModel => (MenuWindowViewModel)this.DataContext;
 
-	public MenuWindow(AppControllerCore controller, Point pivot)
+	public MenuWindow(AppController controller, Point pivot)
 	{
 		LanguageService.Switch();
 

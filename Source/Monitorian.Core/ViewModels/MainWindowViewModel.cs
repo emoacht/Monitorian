@@ -10,10 +10,10 @@ namespace Monitorian.Core.ViewModels;
 
 public class MainWindowViewModel : ViewModelBase
 {
-	private readonly AppControllerCore _controller;
+	private readonly AppController _controller;
 	public SettingsCore Settings => _controller.Settings;
 
-	public MainWindowViewModel(AppControllerCore controller)
+	public MainWindowViewModel(AppController controller)
 	{
 		this._controller = controller ?? throw new ArgumentNullException(nameof(controller));
 		this._controller.ScanningChanged += OnScanningChanged;

@@ -429,7 +429,7 @@ internal class MonitorConfiguration
 			return GetValue(physicalMonitorHandle, (byte)VcpCode.Luminance);
 
 		if (!EnsurePhysicalMonitorHandle(physicalMonitorHandle))
-			return (result: AccessResult.Failed, 0, 0, 0);
+			return (result: AccessResult.HandleClosed, 0, 0, 0);
 
 		if (GetMonitorBrightness(
 			physicalMonitorHandle,
@@ -465,7 +465,7 @@ internal class MonitorConfiguration
 	public static (AccessResult result, uint minimum, uint current, uint maximum) GetValue(SafePhysicalMonitorHandle physicalMonitorHandle, byte vcpCode)
 	{
 		if (!EnsurePhysicalMonitorHandle(physicalMonitorHandle))
-			return (result: AccessResult.Failed, 0, 0, 0);
+			return (result: AccessResult.HandleClosed, 0, 0, 0);
 
 		var status = AccessStatus.None;
 		while (true)
@@ -505,7 +505,7 @@ internal class MonitorConfiguration
 			return SetValue(physicalMonitorHandle, (byte)VcpCode.Luminance, brightness);
 
 		if (!EnsurePhysicalMonitorHandle(physicalMonitorHandle))
-			return AccessResult.Failed;
+			return AccessResult.HandleClosed;
 
 		// SetMonitorBrightness function may return true even when it actually failed.
 		if (SetMonitorBrightness(
@@ -533,7 +533,7 @@ internal class MonitorConfiguration
 	public static AccessResult SetValue(SafePhysicalMonitorHandle physicalMonitorHandle, byte vcpCode, uint value)
 	{
 		if (!EnsurePhysicalMonitorHandle(physicalMonitorHandle))
-			return AccessResult.Failed;
+			return AccessResult.HandleClosed;
 
 		var status = AccessStatus.None;
 		while (true)

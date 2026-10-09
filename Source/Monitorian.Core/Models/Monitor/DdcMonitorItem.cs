@@ -127,10 +127,12 @@ internal class DdcMonitorItem : MonitorItem
 	public override (AccessResult result, ValueData data) SetValue(byte code, int value)
 	{
 		if ((_capability.CapabilitiesCodes is null)
-			|| !_capability.CapabilitiesCodes.TryGetValue(code, out var values)
-			|| (value is < byte.MinValue or > byte.MaxValue)
-			|| (values?.Contains((byte)value) is false))
+			|| !_capability.CapabilitiesCodes.TryGetValue(code, out var values))
 			return (AccessResult.NotSupported, null);
+
+		if ((value is < byte.MinValue or > byte.MaxValue)
+			|| (values?.Contains((byte)value) is false))
+			return (AccessResult.ParameterInvalid, new ValueData(default, values));
 
 		var result = MonitorConfiguration.SetValue(_handle, code, (uint)value);
 

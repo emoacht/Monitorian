@@ -100,7 +100,7 @@
     <Compile Include="Models\Logger.cs" />
     <Compile Include="Models\OperationRecorder.cs" />
     <Compile Include="Models\ProductInfo.cs" />
-    <Compile Include="Models\SettingsCore.cs" />
+    <Compile Include="Models\Settings.cs" />
     <Compile Include="Models\SystemInfo.cs" />
     <Compile Include="Models\TempService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

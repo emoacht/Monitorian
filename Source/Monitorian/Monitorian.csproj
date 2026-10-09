@@ -70,7 +70,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="AppController1.cs" />
-    <Compile Include="Models\Settings.cs" />
+    <Compile Include="Models\Settings1.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">

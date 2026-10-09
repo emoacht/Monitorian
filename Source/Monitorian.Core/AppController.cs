@@ -26,7 +26,7 @@ public abstract class AppController
 	protected readonly AppKeeper _keeper;
 	protected internal StartupAgent StartupAgent => _keeper.StartupAgent;
 
-	protected internal SettingsCore Settings { get; }
+	protected internal Settings Settings { get; }
 
 	public ObservableCollection<MonitorViewModel> Monitors { get; }
 	protected readonly object _monitorsLock = new();
@@ -41,7 +41,7 @@ public abstract class AppController
 	private readonly BrightnessWatcher _brightnessWatcher;
 	private readonly BrightnessConnector _brightnessConnector;
 
-	public AppController(AppKeeper keeper, SettingsCore settings)
+	public AppController(AppKeeper keeper, Settings settings)
 	{
 		this._keeper = keeper ?? throw new ArgumentNullException(nameof(keeper));
 		this.Settings = settings ?? throw new ArgumentNullException(nameof(settings));

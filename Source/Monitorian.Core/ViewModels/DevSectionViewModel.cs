@@ -10,7 +10,7 @@ namespace Monitorian.Core.ViewModels;
 public class DevSectionViewModel : ViewModelBase
 {
 	private readonly AppController _controller;
-	public SettingsCore Settings => _controller.Settings;
+	public Settings Settings => _controller.Settings;
 
 	public DevSectionViewModel(AppController controller)
 	{

@@ -19,7 +19,7 @@ internal class MSMonitor
 	public class DesktopItem
 	{
 		[DataMember(Order = 0)]
-		public string DeviceInstanceId { get; }
+		public string InstanceName { get; }
 
 		[DataMember(Order = 1)]
 		public string Description { get; }
@@ -35,62 +35,59 @@ internal class MSMonitor
 		}
 
 		public DesktopItem(
-			string deviceInstanceId,
-			string description)
-		{
-			this.DeviceInstanceId = deviceInstanceId;
-			this.Description = description;
-		}
-
-		public DesktopItem(
-			string deviceInstanceId,
+			string instanceName,
 			string description,
-			byte[] brightnessLevels) : this(
-				deviceInstanceId: deviceInstanceId,
-				description: description)
+			byte[] brightnessLevels)
 		{
+			this.InstanceName = instanceName;
+			this.Description = description;
 			this.BrightnessLevels = brightnessLevels;
 		}
 	}
 
 	#endregion
 
-	public static IEnumerable<DesktopItem> EnumerateDesktopMonitors()
+	public static IEnumerable<DesktopItem> EnumerateDesktopMonitors(bool verbose = false)
 	{
 		if (_isBrightnessEventWatchable is false)
 			yield break;
 
-		var monitors = new List<DesktopItem>();
+		List<(string deviceInstaceId, string description)> list = null;
 
-		using (var @class = new ManagementClass("Win32_DesktopMonitor"))
+		if (verbose)
 		{
-			try
+			list = [];
+
+			// Win32_DesktopMonitor does not always return the correct values.
+			using (var @class = new ManagementClass("Win32_DesktopMonitor"))
 			{
-				using var instances = @class.GetInstances();
-
-				foreach (ManagementObject instance in instances)
+				try
 				{
-					using (instance)
+					using var instances = @class.GetInstances();
+
+					foreach (ManagementObject instance in instances)
 					{
-						var pnpDeviceId = (string)instance.GetPropertyValue("PNPDeviceID");
-						if (string.IsNullOrWhiteSpace(pnpDeviceId))
-							continue;
+						using (instance)
+						{
+							var pnpDeviceId = (string)instance.GetPropertyValue("PNPDeviceID");
+							if (string.IsNullOrWhiteSpace(pnpDeviceId))
+								continue;
 
-						var description = (string)instance.GetPropertyValue("Description");
-						if (string.IsNullOrWhiteSpace(description))
-							continue;
+							var description = (string)instance.GetPropertyValue("Description");
+							if (string.IsNullOrWhiteSpace(description))
+								continue;
 
-						monitors.Add(new DesktopItem(
-							deviceInstanceId: pnpDeviceId,
-							description: description));
+							list.Add((
+								deviceInstaceId: pnpDeviceId,
+								description));
+						}
 					}
 				}
-			}
-			catch (ManagementException me)
-			{
-				Debug.WriteLine($"Failed to get and enumerate instances by Win32_DesktopMonitor. HResult: 0x{me.HResult:X8} ErrorCode: {me.ErrorCode}" + Environment.NewLine
-					+ me);
-				yield break;
+				catch (ManagementException me)
+				{
+					Debug.WriteLine($"Failed to get and enumerate instances by Win32_DesktopMonitor. HResult: 0x{me.HResult:X8} ErrorCode: {me.ErrorCode}" + Environment.NewLine
+						+ me);
+				}
 			}
 		}
 
@@ -137,20 +134,22 @@ internal class MSMonitor
 					using var instance = (ManagementObject)enumerator.Current;
 
 					var instanceName = (string)instance.GetPropertyValue("InstanceName");
-					var monitor = monitors.FirstOrDefault(x => instanceName.StartsWith(x.DeviceInstanceId, StringComparison.OrdinalIgnoreCase));
-					if (monitor is null)
+					if (string.IsNullOrEmpty(instanceName))
 						continue;
+
+					var description = list?
+						.FirstOrDefault(x => instanceName.StartsWith(x.deviceInstaceId, StringComparison.OrdinalIgnoreCase)).description;
 
 					var level = (byte[])instance.GetPropertyValue("Level");
 
-					//Debug.WriteLine($"DeviceInstanceId: {monitor.DeviceInstanceId}");
-					//Debug.WriteLine($"Description: {monitor.Description}");
+					//Debug.WriteLine($"Instance name: {instanceName}");
+					//Debug.WriteLine($"Description: {description}");
 					//Debug.WriteLine($"Level length: {level.Length}");
 					//Debug.WriteLine($"Active (unreliable): {(bool)instance["Active"]}");
 
 					yield return new DesktopItem(
-						deviceInstanceId: monitor.DeviceInstanceId,
-						description: monitor.Description,
+						instanceName: instanceName,
+						description: description,
 						brightnessLevels: level);
 				}
 			}

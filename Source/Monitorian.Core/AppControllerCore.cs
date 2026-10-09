@@ -494,15 +494,6 @@ public class AppControllerCore
 		monitor?.UpdateBrightness((int)sdrWhiteLevel);
 	}
 
-	protected virtual async Task UpdateMessageAsync(string deviceInstanceId, string message)
-	{
-		var monitor = Monitors.FirstOrDefault(x => string.Equals(x.DeviceInstanceId, deviceInstanceId, StringComparison.OrdinalIgnoreCase));
-		if (monitor is not null)
-		{
-			await monitor.AddNormalMessageAsync(message, TimeSpan.FromSeconds(30));
-		}
-	}
-
 	private void ReflectMouseWheel(int delta)
 	{
 		var monitors = Monitors.Where(x => x.IsTarget && x.IsControllable).ToArray();

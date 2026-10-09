@@ -431,26 +431,26 @@ internal class MonitorManager
 		private void TestContrast()
 		{
 			var (getResult, minimum, current, maximum) = MonitorConfiguration.GetContrast(Handle);
-			var isGetSuccess = (getResult.Status is AccessStatus.Succeeded);
-			var (isValid, expected) = GetExpected(isGetSuccess, minimum, current, maximum);
-			GetContrast = $"Success: {isGetSuccess}" + (isGetSuccess ? $", Valid: {isValid} (Minimum: {minimum}, Current: {current}, Maximum: {maximum})" : string.Empty);
+			var getSuccess = (getResult.Status is AccessStatus.Succeeded);
+			var (isValid, expected) = GetExpected(getSuccess, minimum, current, maximum);
+			GetContrast = $"Success: {getSuccess}" + (getSuccess ? $", Valid: {isValid} (Minimum: {minimum}, Current: {current}, Maximum: {maximum})" : string.Empty);
 
 			var setResult = MonitorConfiguration.SetContrast(Handle, expected);
-			var isSetSuccess = (setResult.Status is AccessStatus.Succeeded);
+			var setSuccess = (setResult.Status is AccessStatus.Succeeded);
 			var (_, _, actual, _) = MonitorConfiguration.GetContrast(Handle);
-			SetContrast = $"Success: {isSetSuccess}" + (isSetSuccess ? $", Match: {expected == actual} (Expected: {expected}, Actual: {actual})" : string.Empty);
+			SetContrast = $"Success: {setSuccess}" + (setSuccess ? $", Match: {expected == actual} (Expected: {expected}, Actual: {actual})" : string.Empty);
 
-			if (isSetSuccess)
+			if (setSuccess)
 				MonitorConfiguration.SetContrast(Handle, current);
 		}
 
-		private static (bool, uint) GetExpected(bool isSuccess, uint minimum, uint current, uint maximum)
+		private static (bool, uint) GetExpected(bool success, uint minimum, uint current, uint maximum)
 		{
 			const uint m = 5;
 
 			var isValid = (maximum - minimum >= m * 2) && (minimum <= current) && (current <= maximum);
 
-			if (!isSuccess)
+			if (!success)
 			{
 				return (isValid, (uint)(DateTime.Now.Ticks % 101));
 			}

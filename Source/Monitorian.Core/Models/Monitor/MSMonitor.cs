@@ -207,17 +207,17 @@ internal class MSMonitor
 					{
 						object result = instance.InvokeMethod("WmiSetBrightness", [(uint)timeout, (byte)brightness]);
 
-						var isSuccess = (result is null); // Return value will be null if succeeded.
-						if (!isSuccess)
+						bool success = (result is null); // Return value will be null if succeeded.
+						if (!success)
 						{
 							var errorCode = (uint)result;
-							isSuccess = (errorCode is 0);
-							if (!isSuccess)
+							success = (errorCode is 0);
+							if (!success)
 							{
 								Debug.WriteLine($"Failed to set brightness. 0x{errorCode:X8}");
 							}
 						}
-						return isSuccess;
+						return success;
 					}
 				}
 			}

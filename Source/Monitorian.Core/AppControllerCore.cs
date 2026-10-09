@@ -107,7 +107,7 @@ public class AppControllerCore
 			}
 		});
 
-		_displayInformationWatcher.Subscribe(async (deviceInstanceId, sdrWhiteLevel) =>
+		_displayInformationWatcher.Subscribe((deviceInstanceId, sdrWhiteLevel) =>
 		{
 			if (!_sessionWatcher.IsLocked)
 				Update(deviceInstanceId, sdrWhiteLevel);

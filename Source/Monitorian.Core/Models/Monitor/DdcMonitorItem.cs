@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Windows;
 
 namespace Monitorian.Core.Models.Monitor;
@@ -169,6 +170,11 @@ internal class DdcMonitorItem : MonitorItem
 
 internal class SafePhysicalMonitorHandle : SafeHandle
 {
+#if DEBUG
+	private static int _latest = 0;
+	public int Serial { get; } = Interlocked.Increment(ref _latest);
+#endif
+
 	public SafePhysicalMonitorHandle(IntPtr handle) : base(IntPtr.Zero, true)
 	{
 		this.handle = handle; // IntPtr.Zero may be a valid handle.

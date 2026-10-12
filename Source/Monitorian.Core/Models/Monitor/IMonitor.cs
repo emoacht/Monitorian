@@ -46,7 +46,9 @@ public enum AccessStatus
 
 	TransmissionFailed,
 	NoLongerExist,
-	NotSupported
+	NotSupported,
+	ParameterInvalid,
+	HandleClosed
 }
 
 public class AccessResult
@@ -59,6 +61,8 @@ public class AccessResult
 	public static readonly AccessResult Succeeded = new(AccessStatus.Succeeded, null);
 	public static readonly AccessResult Failed = new(AccessStatus.Failed, null);
 	public static readonly AccessResult NotSupported = new(AccessStatus.NotSupported, null);
+	public static readonly AccessResult ParameterInvalid = new(AccessStatus.ParameterInvalid, null);
+	public static readonly AccessResult HandleClosed = new(AccessStatus.HandleClosed, null);
 }
 
 public class ValueData

@@ -19,7 +19,7 @@ public class MonitorConfigurationTest
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Luminance));
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Contrast));
 		Assert.IsFalse(AreIncluded(vcpCodes, VcpCode.SpeakerVolume));
-		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.TemperaturePreset, 4, 11, 5, 6, 8, 9));
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.ColorPreset, 4, 11, 5, 6, 8, 9, 12));
 	}
 
 	[TestMethod]
@@ -32,7 +32,7 @@ public class MonitorConfigurationTest
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Luminance));
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Contrast));
 		Assert.IsFalse(AreIncluded(vcpCodes, VcpCode.SpeakerVolume));
-		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.TemperaturePreset, 5, 8));
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.ColorPreset, 5, 8, 11, 12));
 	}
 
 	[TestMethod]
@@ -45,7 +45,7 @@ public class MonitorConfigurationTest
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Luminance));
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Contrast));
 		Assert.IsFalse(AreIncluded(vcpCodes, VcpCode.SpeakerVolume));
-		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.TemperaturePreset, 4, 5, 8));
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.ColorPreset, 4, 5, 8, 11, 12));
 	}
 
 	[TestMethod]
@@ -58,7 +58,7 @@ public class MonitorConfigurationTest
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Luminance));
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Contrast));
 		Assert.IsFalse(AreIncluded(vcpCodes, VcpCode.SpeakerVolume));
-		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.TemperaturePreset, 4, 5, 6, 8, 9));
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.ColorPreset, 1, 4, 5, 6, 8, 9, 11, 12));
 	}
 
 	[TestMethod]
@@ -71,7 +71,7 @@ public class MonitorConfigurationTest
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Luminance));
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Contrast));
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.SpeakerVolume));
-		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.TemperaturePreset, 5, 8));
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.ColorPreset, 5, 8, 11, 12));
 	}
 
 	[TestMethod]
@@ -84,7 +84,7 @@ public class MonitorConfigurationTest
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Luminance));
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Contrast));
 		Assert.IsFalse(AreIncluded(vcpCodes, VcpCode.SpeakerVolume));
-		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.TemperaturePreset, 4, 5, 6, 8, 9));
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.ColorPreset, 4, 5, 6, 8, 9, 11, 12));
 	}
 
 	[TestMethod]
@@ -97,7 +97,7 @@ public class MonitorConfigurationTest
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Luminance));
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Contrast));
 		Assert.IsFalse(AreIncluded(vcpCodes, VcpCode.SpeakerVolume));
-		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.TemperaturePreset, 5, 8));
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.ColorPreset, 5, 8, 11, 12));
 	}
 
 	[TestMethod]
@@ -110,7 +110,7 @@ public class MonitorConfigurationTest
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Luminance));
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Contrast));
 		Assert.IsFalse(AreIncluded(vcpCodes, VcpCode.SpeakerVolume));
-		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.TemperaturePreset, 5, 8));
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.ColorPreset, 5, 8, 11, 12));
 	}
 
 	[TestMethod]
@@ -123,7 +123,7 @@ public class MonitorConfigurationTest
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Luminance));
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Contrast));
 		Assert.IsFalse(AreIncluded(vcpCodes, VcpCode.SpeakerVolume));
-		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.TemperaturePreset, 4, 5, 6, 8, 9));
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.ColorPreset, 1, 4, 5, 6, 8, 9, 11, 12));
 	}
 
 	[TestMethod]
@@ -136,7 +136,7 @@ public class MonitorConfigurationTest
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Luminance));
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Contrast));
 		Assert.IsFalse(AreIncluded(vcpCodes, VcpCode.SpeakerVolume));
-		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.TemperaturePreset, 5, 8));
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.ColorPreset, 1, 5, 8, 11, 12));
 	}
 
 	[TestMethod]
@@ -149,9 +149,9 @@ public class MonitorConfigurationTest
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Luminance));
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Contrast));
 		Assert.IsFalse(AreIncluded(vcpCodes, VcpCode.SpeakerVolume));
-		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.TemperaturePreset, 5, 8));
-		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.TemperatureIncrement));
-		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.TemperatureRequest));
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.ColorPreset, 1, 5, 8, 11));
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.ColorIncrement));
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.ColorRequest));
 	}
 
 	[TestMethod]
@@ -164,7 +164,7 @@ public class MonitorConfigurationTest
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Luminance));
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Contrast));
 		Assert.IsFalse(AreIncluded(vcpCodes, VcpCode.SpeakerVolume));
-		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.TemperaturePreset, 2, 6, 8));
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.ColorPreset, 1, 2, 6, 8, 11));
 	}
 
 	[TestMethod]
@@ -177,9 +177,9 @@ public class MonitorConfigurationTest
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Luminance));
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Contrast));
 		Assert.IsFalse(AreIncluded(vcpCodes, VcpCode.SpeakerVolume));
-		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.TemperaturePreset, 5, 6, 7, 8));
-		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.TemperatureIncrement));
-		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.TemperatureRequest));
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.ColorPreset, 1, 5, 6, 7, 8, 11));
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.ColorIncrement));
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.ColorRequest));
 	}
 
 	[TestMethod]
@@ -192,7 +192,7 @@ public class MonitorConfigurationTest
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Luminance));
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Contrast));
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.SpeakerVolume));
-		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.TemperaturePreset, 5, 8));
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.ColorPreset, 5, 8, 11));
 	}
 
 	[TestMethod]
@@ -205,7 +205,7 @@ public class MonitorConfigurationTest
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Luminance));
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Contrast));
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.SpeakerVolume));
-		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.TemperaturePreset, 5, 8));
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.ColorPreset, 5, 8, 11));
 	}
 
 	[TestMethod]
@@ -218,7 +218,7 @@ public class MonitorConfigurationTest
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Luminance));
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Contrast));
 		Assert.IsFalse(AreIncluded(vcpCodes, VcpCode.SpeakerVolume));
-		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.TemperaturePreset, 2, 5, 6, 8));
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.ColorPreset, 1, 2, 5, 6, 8, 11, 12, 13));
 	}
 
 	[TestMethod]
@@ -231,7 +231,7 @@ public class MonitorConfigurationTest
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Luminance));
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Contrast));
 		Assert.IsFalse(AreIncluded(vcpCodes, VcpCode.SpeakerVolume));
-		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.TemperaturePreset, 5, 6, 8));
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.ColorPreset, 1, 5, 6, 8, 11));
 	}
 
 	[TestMethod]
@@ -244,7 +244,7 @@ public class MonitorConfigurationTest
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Luminance));
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Contrast));
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.SpeakerVolume));
-		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.TemperaturePreset, 5, 6, 8));
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.ColorPreset, 1, 5, 6, 8, 11));
 	}
 
 	[TestMethod]
@@ -257,9 +257,9 @@ public class MonitorConfigurationTest
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Luminance));
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Contrast));
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.SpeakerVolume));
-		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.TemperaturePreset, 4, 5, 8));
-		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.TemperatureIncrement));
-		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.TemperatureRequest));
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.ColorPreset, 4, 5, 8, 11));
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.ColorIncrement));
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.ColorRequest));
 	}
 
 	[TestMethod]
@@ -272,9 +272,9 @@ public class MonitorConfigurationTest
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Luminance));
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Contrast));
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.SpeakerVolume));
-		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.TemperaturePreset, 4, 5, 8));
-		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.TemperatureIncrement));
-		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.TemperatureRequest));
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.ColorPreset, 4, 5, 8, 11));
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.ColorIncrement));
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.ColorRequest));
 	}
 
 	[TestMethod]
@@ -287,7 +287,7 @@ public class MonitorConfigurationTest
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Luminance));
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Contrast));
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.SpeakerVolume));
-		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.TemperaturePreset, 4, 5, 8));
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.ColorPreset, 4, 5, 8, 11));
 	}
 
 	[TestMethod]
@@ -300,9 +300,9 @@ public class MonitorConfigurationTest
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Luminance));
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Contrast));
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.SpeakerVolume));
-		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.TemperaturePreset, 5, 6, 8));
-		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.TemperatureIncrement));
-		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.TemperatureRequest));
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.ColorPreset, 5, 6, 8, 11));
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.ColorIncrement));
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.ColorRequest));
 	}
 
 	[TestMethod]
@@ -315,7 +315,7 @@ public class MonitorConfigurationTest
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Luminance));
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Contrast));
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.SpeakerVolume));
-		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.TemperaturePreset, 5, 6, 8));
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.ColorPreset, 5, 6, 8, 11));
 	}
 
 	[TestMethod]
@@ -328,7 +328,7 @@ public class MonitorConfigurationTest
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Luminance));
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Contrast));
 		Assert.IsFalse(AreIncluded(vcpCodes, VcpCode.SpeakerVolume));
-		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.TemperaturePreset, 3, 5, 9));
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.ColorPreset, 3, 5, 9, 11));
 	}
 
 	[TestMethod]
@@ -341,7 +341,7 @@ public class MonitorConfigurationTest
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Luminance));
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Contrast));
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.SpeakerVolume));
-		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.TemperaturePreset, 5, 6, 8));
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.ColorPreset, 5, 6, 8, 11));
 	}
 
 	[TestMethod]
@@ -354,7 +354,7 @@ public class MonitorConfigurationTest
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Luminance));
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Contrast));
 		Assert.IsFalse(AreIncluded(vcpCodes, VcpCode.SpeakerVolume));
-		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.TemperaturePreset, 3, 5, 9));
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.ColorPreset, 3, 5, 9, 11));
 	}
 
 	[TestMethod]
@@ -367,7 +367,7 @@ public class MonitorConfigurationTest
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Luminance));
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Contrast));
 		Assert.IsFalse(AreIncluded(vcpCodes, VcpCode.SpeakerVolume));
-		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.TemperaturePreset, 3, 5, 9));
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.ColorPreset, 3, 5, 9, 11));
 	}
 
 	[TestMethod]
@@ -380,7 +380,7 @@ public class MonitorConfigurationTest
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Luminance));
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Contrast));
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.SpeakerVolume));
-		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.TemperaturePreset, 5, 6, 8));
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.ColorPreset, 1, 5, 6, 8, 11));
 	}
 
 	[TestMethod]
@@ -393,7 +393,7 @@ public class MonitorConfigurationTest
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Luminance));
 		Assert.IsFalse(AreIncluded(vcpCodes, VcpCode.Contrast));
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.SpeakerVolume));
-		Assert.IsFalse(AreIncluded(vcpCodes, VcpCode.TemperaturePreset));
+		Assert.IsFalse(AreIncluded(vcpCodes, VcpCode.ColorPreset)); // False
 	}
 
 	[TestMethod]
@@ -406,9 +406,9 @@ public class MonitorConfigurationTest
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Luminance));
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Contrast));
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.SpeakerVolume));
-		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.TemperaturePreset));
-		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.TemperatureIncrement));
-		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.TemperatureRequest));
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.ColorPreset, 1, 8, 6, 5, 4, 11));
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.ColorIncrement));
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.ColorRequest));
 	}
 
 	private enum VcpCode : byte
@@ -416,9 +416,9 @@ public class MonitorConfigurationTest
 		None = 0x0,
 		Luminance = 0x10,
 		Contrast = 0x12,
-		TemperatureIncrement = 0x0B,
-		TemperatureRequest = 0x0C,
-		TemperaturePreset = 0x14,
+		ColorIncrement = 0x0B,
+		ColorRequest = 0x0C,
+		ColorPreset = 0x14,
 		InputSource = 0x60,
 		SpeakerVolume = 0x62,
 		PowerMode = 0xD6,

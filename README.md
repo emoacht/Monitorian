@@ -97,20 +97,32 @@ All hot keys for brightness can be switched to contrast by `To contrast` hot key
 
 ### Command-line options (Add-on features)
 
-You can use command-line options to get/set the brightness or contrast.
+You can use command-line options to get/set [brightness](#brightness), [contrast](#contrast), [color temperature preset](#color-temperature-preset), and [input source](#input-source).
 
-| Actions                                | Options                                |
-|----------------------------------------|----------------------------------------|
-| Get brightness of a monitor.           | /get                                   |
-| Get brightness of a specified monitor. | /get [Device Instance ID]              |
-| Get brightness of all monitors.        | /get all                               |
-| Set brightness of a monitor.           | /set [Brightness]                      |
-| Set brightness of a specified monitor. | /set [Device Instance ID] [Brightness] |
-| Set brightness of all monitors.        | /set all [Brightness]                  |
+#### Brightness
 
-The device instance ID is an unique identifier given by the OS to each monitor. It must be enclosed in quotes. 
+The available options for brightness are as follows: 
 
-You can switch to contrast by inserting `contrast` after `/get` or `/set` (e.g. `/get contrast all`).
+| Actions                               | Options                                |
+|---------------------------------------|----------------------------------------|
+| Get brightness of a monitor.          | /get                                   |
+| Get brightness of a specific monitor. | /get [Device Instance ID]              |
+| Get brightness of all monitors.       | /get all                               |
+| Set brightness of a monitor.          | /set [Brightness]                      |
+| Set brightness of a specific monitor. | /set [Device Instance ID] [Brightness] |
+| Set brightness of all monitors.       | /set all [Brightness]                  |
+
+ - The device instance ID is an unique identifier given by the OS to each monitor. You can find it in monitor identity in this app. It must be enclosed in quotes.
+
+ - The brightness ranges from 0 to 100%. When you use `/set` option, it can be specified with the number itself (e.g. 20), increase (e.g. +10) or decrease (e.g. -10).
+
+ - This app can be called by its name `Monitorian` in command prompt, bat file or desktop shortcut.
+
+For example, you can get brightness of a specific monitor as shown below.
+
+```
+monitorian /get [Device Instance ID of monitor enclosed in quotes]
+```
 
 If this app is called with `/get` or `/set`, it will return
 
@@ -118,7 +130,23 @@ If this app is called with `/get` or `/set`, it will return
 [Device Instance ID] [Monitor name] [Brightness] B
 ```
 
-'B' at the end indicates brightness. In addition, '*' will be added in the case of a selected monitor. 
+'B' at the end indicates brightness. In addition, '*' will be added in the case of a selected monitor.
+
+Similarly, you can create a desktop shortcut to set brightness of a monitor to 50 as shown below.
+
+![Shortcut](Images/Shortcut_set.png)
+
+From Task Scheduler, it can be performed by the path to its alias `%LOCALAPPDATA%\Microsoft\WindowsApps\Monitorian.exe`. For example, to increase brightness of all monitors by 30%, the Action will be the following:
+
+![Task Scheduler](Images/TaskScheduler_action.png)
+
+#### Contrast
+
+The usage for contrast is almost same as brightness. You just need to insert `contrast` sub-option immediately after `/get` or `/set` as shown below.
+
+```
+monitorian /get contrast [Device Instance ID of monitor enclosed in quotes]
+```
 
 If this app is called with `/get contrast` or `/set contrast`, it will return
 
@@ -126,21 +154,74 @@ If this app is called with `/get contrast` or `/set contrast`, it will return
 [Device Instance ID] [Monitor name] [Contrast] C
 ```
 
-'C' at the end indicates contrast. If contrast is not supported by a monitor, '-' will be shown instead.
+'C' at the end indicates contrast. If contrast is not supported by that monitor, 'not_supported' will be shown instead.
 
-The brightness or contrast ranges from 0 to 100%. When you use `/set` option, it can be specified with the number itself (e.g. 20), increase (e.g. +10) or decrease (e.g. -10).
+As the options can be executed consecutively (up to 10 options), you can set brightness and contrast of a monitor at once.
 
-The options can be executed consecutively (e.g. `monitorian /set 20 /set contrast 40`, up to 10 options).
+```
+monitorian /set 20 /set contrast 40
+```
 
-You can call this app by its name `Monitorian` in command prompt, bat file or desktop shortcut.
+#### Color Temperature Preset
 
-For example, creating a desktop shortcut to set brightness of a monitor to 50 will be the following.
+Unlike brightness and contrast, color temperature preset can be set only to pre-defined values. The following values are defined in the standard, but only some of them are supported depending on the monitor model.
 
-![Shortcut](Images/Shortcut_set.png)
+| Value | Name   | 
+|-------|--------|
+| 3     | 4000K  |
+| 4     | 5000K  |
+| 5     | 6500K  | 
+| 6     | 7500K  |
+| 7     | 8200K  |
+| 8     | 9300K  |
+| 9     | 10000K |
+| 10    | 11500K |
+| 11    | User1  |
+| 12    | User2  |
+| 13    | User3  |
 
-From Task Scheduler, it can be performed by the path to its alias `%LOCALAPPDATA%\Microsoft\WindowsApps\Monitorian.exe`. For example, to increase brightness of all monitors by 30%, the Action will be the following:
+The monitor vendors may display these values using different names (e.g., 'warm', 'cool') in OSD menu.
 
-![Task Scheduler](Images/TaskScheduler_action.png)
+The usage is same as brightness except the valid values and `all` sub-option. To get the valid values for a specific model, you can use `/get` with `color` sub-option as shown below.
+
+```
+monitorian /get color [Device Instance ID of monitor enclosed in quotes]
+```
+
+If this app is called with `/get color` or `/set color`, it will return
+
+```
+[Device Instance ID] [Monitor name] [current value] ([valid values]) - [name of current value] L
+```
+
+The valid values will be listed in parentheses. 
+
+#### Input source
+
+Like color temperature preset, input source can be set only to pre-defined values. The following values are defined in the standard and used for modern monitors, but other values that indicate newer types such as USB-C may also appear.
+
+| Value | Type          |
+|-------|---------------|
+| 15    | DisplayPort 1 |
+| 16    | DisplayPort 2 |
+| 17    | HDMI 1        |
+| 18    | HDMI 2        |
+
+The usage is same as brightness except the valid values and `all` sub-option. To get the valid values for a specific model, you can use `/get` with `input` sub-option as shown below.
+
+```
+monitorian /get input [Device Instance ID of monitor enclosed in quotes]
+```
+
+If this app is called with `/get input` or `/set input`, it will return
+
+```
+[Device Instance ID] [Monitor name] [current value] ([valid values]) - [type of current value] I
+```
+
+The valid values will be listed in parentheses. As the values for USB-C and Thunderbolt are not defined, they may be regarded as DisplayPort or represented by other values.
+
+#### Conditional/Time/Key Commands
 
 In addition, you can customize flexible and versatile commands for specific needs:
 

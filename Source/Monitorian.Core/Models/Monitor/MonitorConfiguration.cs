@@ -8,8 +8,6 @@ using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text;
 
-using Monitorian.Core.Helper;
-
 namespace Monitorian.Core.Models.Monitor;
 
 /// <summary>
@@ -92,7 +90,7 @@ internal class MonitorConfiguration
 	private static extern bool GetVCPFeatureAndVCPFeatureReply(
 		SafePhysicalMonitorHandle hMonitor,
 		byte bVCPCode,
-		out LPMC_VCP_CODE_TYPE pvct,
+		out MC_VCP_CODE_TYPE pvct,
 		out uint pdwCurrentValue,
 		out uint pdwMaximumValue);
 
@@ -144,7 +142,7 @@ internal class MonitorConfiguration
 		MC_SUPPORTED_COLOR_TEMPERATURE_11500K = 0x00000080
 	}
 
-	private enum LPMC_VCP_CODE_TYPE
+	private enum MC_VCP_CODE_TYPE
 	{
 		MC_MOMENTARY,
 		MC_SET_PARAMETER
@@ -188,21 +186,10 @@ internal class MonitorConfiguration
 		None = 0x0,
 		Luminance = 0x10,
 		Contrast = 0x12,
-		Temperature = 0x14, // Select Color Preset
+		ColorPreset = 0x14, // Select Color Preset
 		InputSource = 0x60, // Input Select
 		SpeakerVolume = 0x62,
 		PowerMode = 0xD6,
-	}
-
-	private static bool TryConvertVcpCode(byte code, out VcpCode vcpCode)
-	{
-		if (Enum.IsDefined(typeof(VcpCode), code))
-		{
-			vcpCode = (VcpCode)code;
-			return true;
-		}
-		vcpCode = default;
-		return false;
 	}
 
 	public static IEnumerable<PhysicalItem> EnumeratePhysicalMonitors(IntPtr monitorHandle, bool verbose = false)
@@ -258,11 +245,18 @@ internal class MonitorConfiguration
 
 	private static MonitorCapability GetMonitorCapability(SafePhysicalMonitorHandle physicalMonitorHandle, bool verbose)
 	{
-		bool isHighLevelSupported = GetMonitorCapabilities(
+		bool isHighLevelBrightnessSupported = false;
+		if (GetMonitorCapabilities(
 			physicalMonitorHandle,
 			out MC_CAPS caps,
-			out _)
-			&& caps.HasFlag(MC_CAPS.MC_CAPS_BRIGHTNESS);
+			out _))
+		{
+			isHighLevelBrightnessSupported = caps.HasFlag(MC_CAPS.MC_CAPS_BRIGHTNESS);
+		}
+		else
+		{
+			caps = MC_CAPS.MC_CAPS_NONE;
+		}
 
 		if (GetCapabilitiesStringLength(
 			physicalMonitorHandle,
@@ -279,28 +273,28 @@ internal class MonitorConfiguration
 				Dictionary<byte, byte[]> vcpCodes = ExtractVcpCodes(capabilitiesString);
 
 				return new MonitorCapability(
-					isHighLevelBrightnessSupported: isHighLevelSupported,
+					isHighLevelBrightnessSupported: isHighLevelBrightnessSupported,
 					isLowLevelBrightnessSupported: vcpCodes.ContainsKey((byte)VcpCode.Luminance),
 					isContrastSupported: vcpCodes.ContainsKey((byte)VcpCode.Contrast),
-					capabilitiesCodes: FilterVcpCodes(vcpCodes),
+					capabilitiesCodes: vcpCodes,
 					capabilitiesString: (verbose ? capabilitiesString : null),
-					capabilitiesReport: (verbose ? MakeCapabilitiesReport(vcpCodes) : null),
+					capabilitiesReport: (verbose ? MakeCapabilitiesReport(caps, vcpCodes) : null),
 					capabilitiesData: (verbose && !vcpCodes.Any() ? GetCapabilitiesData(physicalMonitorHandle, capabilitiesStringLength) : null));
 			}
 		}
 		return new MonitorCapability(
-			isHighLevelBrightnessSupported: isHighLevelSupported,
+			isHighLevelBrightnessSupported: isHighLevelBrightnessSupported,
 			isLowLevelBrightnessSupported: false,
 			isContrastSupported: false);
 
-		static string MakeCapabilitiesReport(IReadOnlyDictionary<byte, byte[]> vcpCodeValues)
+		static string MakeCapabilitiesReport(MC_CAPS caps, IReadOnlyDictionary<byte, byte[]> vcpCodes)
 		{
-			return $"Luminance: {vcpCodeValues.ContainsKey((byte)VcpCode.Luminance)}, " +
-				   $"Contrast: {vcpCodeValues.ContainsKey((byte)VcpCode.Contrast)}, " +
-				   $"Temperature: {vcpCodeValues.ContainsKey((byte)VcpCode.Temperature)}, " +
-				   $"Input Source: {vcpCodeValues.ContainsKey((byte)VcpCode.InputSource)}, " +
-				   $"Speaker Volume: {vcpCodeValues.ContainsKey((byte)VcpCode.SpeakerVolume)}, " +
-				   $"Power Mode: {vcpCodeValues.ContainsKey((byte)VcpCode.PowerMode)}";
+			return $"Luminance: {caps.HasFlag(MC_CAPS.MC_CAPS_BRIGHTNESS)} - {vcpCodes.ContainsKey((byte)VcpCode.Luminance)}, " +
+				   $"Contrast: {caps.HasFlag(MC_CAPS.MC_CAPS_CONTRAST)} - {vcpCodes.ContainsKey((byte)VcpCode.Contrast)}, " +
+				   $"Color Preset: {caps.HasFlag(MC_CAPS.MC_CAPS_COLOR_TEMPERATURE)} - {vcpCodes.ContainsKey((byte)VcpCode.ColorPreset)}, " +
+				   $"Input Source: {vcpCodes.ContainsKey((byte)VcpCode.InputSource)}, " +
+				   $"Speaker Volume: {vcpCodes.ContainsKey((byte)VcpCode.SpeakerVolume)}, " +
+				   $"Power Mode: {vcpCodes.ContainsKey((byte)VcpCode.PowerMode)}";
 		}
 
 		static byte[] GetCapabilitiesData(SafePhysicalMonitorHandle physicalMonitorHandle, uint capabilitiesStringLength)
@@ -326,58 +320,6 @@ internal class MonitorConfiguration
 				Marshal.FreeHGlobal(dataPointer);
 			}
 		}
-	}
-
-	private static IEnumerable<byte> EnumerateVcpCodes(string source)
-	{
-		if (string.IsNullOrEmpty(source))
-			yield break;
-
-		int index = source.IndexOf("vcp", StringComparison.OrdinalIgnoreCase);
-		if (index < 0)
-			yield break;
-
-		int depth = 0;
-		var buffer = new StringBuilder(2);
-
-		foreach (char c in source.Skip(index + 3))
-		{
-			if (!IsAscii(c))
-				yield break;
-
-			switch (c)
-			{
-				case '(':
-					depth++;
-					break;
-				case ')':
-					depth--;
-					if (depth < 1)
-					{
-						yield break; // End of enumeration
-					}
-					break;
-				default:
-					if (depth == 1)
-					{
-						if (IsHexNumber(c))
-						{
-							buffer.Append(c);
-							if (buffer.Length == 1)
-								continue;
-						}
-						if (0 < buffer.Length)
-						{
-							yield return byte.Parse(buffer.ToString(), NumberStyles.HexNumber, NumberFormatInfo.InvariantInfo);
-							buffer.Clear();
-						}
-					}
-					break;
-			}
-		}
-
-		static bool IsAscii(char c) => c <= 0x7F;
-		static bool IsHexNumber(char c) => c is (>= '0' and <= '9') or (>= 'A' and <= 'F') or (>= 'a' and <= 'f');
 	}
 
 	private static Dictionary<byte, byte[]> ExtractVcpCodes(string source)
@@ -416,7 +358,7 @@ internal class MonitorConfiguration
 						case 1:
 							if (values.Any() && lastKey.HasValue)
 							{
-								dic[lastKey.Value] = values.ToArray();
+								dic[lastKey.Value] = values.OrderBy(x => x).ToArray();
 								values.Clear();
 							}
 							break;
@@ -464,27 +406,6 @@ internal class MonitorConfiguration
 		static bool IsHexNumber(char c) => c is (>= '0' and <= '9') or (>= 'A' and <= 'F') or (>= 'a' and <= 'f');
 	}
 
-	private static Dictionary<byte, byte[]> FilterVcpCodes(Dictionary<byte, byte[]> dic)
-	{
-		if (dic.TryGetValue((byte)VcpCode.Temperature, out byte[] values)
-			&& (values is not null))
-		{
-			// The following color temperatures are defined.
-			//  3:  4000° K
-			//  4:  5000° K
-			//  5:  6500° K
-			//  6:  7500° K
-			//  7:  8200° K
-			//  8:  9300° K
-			//  9: 10000° K
-			// 10: 11500° K
-			// Not all temperatures are supported in practice.
-			// An additional temperature can be inserted depending on a specific model.
-			dic[(byte)VcpCode.Temperature] = values.Clip<byte>(3, 10).ToArray(); // 3 is warmest and 10 is coldest.
-		}
-		return dic;
-	}
-
 	/// <summary>
 	/// Gets raw brightnesses not represented in percentage.
 	/// </summary>
@@ -505,10 +426,10 @@ internal class MonitorConfiguration
 	public static (AccessResult result, uint minimum, uint current, uint maximum) GetBrightness(SafePhysicalMonitorHandle physicalMonitorHandle, bool isHighLevelBrightnessSupported = true)
 	{
 		if (!isHighLevelBrightnessSupported)
-			return GetVcpValue(physicalMonitorHandle, VcpCode.Luminance);
+			return GetValue(physicalMonitorHandle, (byte)VcpCode.Luminance);
 
 		if (!EnsurePhysicalMonitorHandle(physicalMonitorHandle))
-			return (result: AccessResult.Failed, 0, 0, 0);
+			return (result: AccessResult.HandleClosed, 0, 0, 0);
 
 		if (GetMonitorBrightness(
 			physicalMonitorHandle,
@@ -538,28 +459,20 @@ internal class MonitorConfiguration
 	/// </returns>
 	public static (AccessResult result, uint minimum, uint current, uint maximum) GetContrast(SafePhysicalMonitorHandle physicalMonitorHandle)
 	{
-		return GetVcpValue(physicalMonitorHandle, VcpCode.Contrast);
+		return GetValue(physicalMonitorHandle, (byte)VcpCode.Contrast);
 	}
 
-	public static (AccessResult result, uint minimum, uint current, uint maximum) GetValue(SafePhysicalMonitorHandle physicalMonitorHandle, byte code)
-	{
-		if (!TryConvertVcpCode(code, out VcpCode vcpCode))
-			return (result: AccessResult.NotSupported, 0, 0, 0);
-
-		return GetVcpValue(physicalMonitorHandle, vcpCode);
-	}
-
-	private static (AccessResult result, uint minimum, uint current, uint maximum) GetVcpValue(SafePhysicalMonitorHandle physicalMonitorHandle, VcpCode vcpCode)
+	public static (AccessResult result, uint minimum, uint current, uint maximum) GetValue(SafePhysicalMonitorHandle physicalMonitorHandle, byte vcpCode)
 	{
 		if (!EnsurePhysicalMonitorHandle(physicalMonitorHandle))
-			return (result: AccessResult.Failed, 0, 0, 0);
+			return (result: AccessResult.HandleClosed, 0, 0, 0);
 
 		var status = AccessStatus.None;
 		while (true)
 		{
 			if (GetVCPFeatureAndVCPFeatureReply(
 				physicalMonitorHandle,
-				(byte)vcpCode,
+				vcpCode,
 				out _,
 				out uint currentValue,
 				out uint maximumValue))
@@ -589,10 +502,10 @@ internal class MonitorConfiguration
 	public static AccessResult SetBrightness(SafePhysicalMonitorHandle physicalMonitorHandle, uint brightness, bool isHighLevelBrightnessSupported = true)
 	{
 		if (!isHighLevelBrightnessSupported)
-			return SetVcpValue(physicalMonitorHandle, VcpCode.Luminance, brightness);
+			return SetValue(physicalMonitorHandle, (byte)VcpCode.Luminance, brightness);
 
 		if (!EnsurePhysicalMonitorHandle(physicalMonitorHandle))
-			return AccessResult.Failed;
+			return AccessResult.HandleClosed;
 
 		// SetMonitorBrightness function may return true even when it actually failed.
 		if (SetMonitorBrightness(
@@ -614,28 +527,20 @@ internal class MonitorConfiguration
 	/// <returns>Result</returns>
 	public static AccessResult SetContrast(SafePhysicalMonitorHandle physicalMonitorHandle, uint contrast)
 	{
-		return SetVcpValue(physicalMonitorHandle, VcpCode.Contrast, contrast);
+		return SetValue(physicalMonitorHandle, (byte)VcpCode.Contrast, contrast);
 	}
 
-	public static AccessResult SetValue(SafePhysicalMonitorHandle physicalMonitorHandle, byte code, uint value)
-	{
-		if (!TryConvertVcpCode(code, out VcpCode vcpCode))
-			return AccessResult.NotSupported;
-
-		return SetVcpValue(physicalMonitorHandle, vcpCode, value);
-	}
-
-	private static AccessResult SetVcpValue(SafePhysicalMonitorHandle physicalMonitorHandle, VcpCode vcpCode, uint value)
+	public static AccessResult SetValue(SafePhysicalMonitorHandle physicalMonitorHandle, byte vcpCode, uint value)
 	{
 		if (!EnsurePhysicalMonitorHandle(physicalMonitorHandle))
-			return AccessResult.Failed;
+			return AccessResult.HandleClosed;
 
 		var status = AccessStatus.None;
 		while (true)
 		{
 			if (SetVCPFeature(
 				physicalMonitorHandle,
-				(byte)vcpCode,
+				vcpCode,
 				value))
 			{
 				return AccessResult.Succeeded;

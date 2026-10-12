@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 using System.Windows;
 
 using Monitorian.Core.Helper;
@@ -11,12 +10,12 @@ namespace Monitorian.Core.ViewModels;
 
 public class MonitorViewModel : ViewModelBase
 {
-	private readonly AppControllerCore _controller;
-	public SettingsCore Settings => _controller.Settings;
+	private readonly AppController _controller;
+	public Settings Settings => _controller.Settings;
 
 	private IMonitor _monitor;
 
-	public MonitorViewModel(AppControllerCore controller, IMonitor monitor)
+	public MonitorViewModel(AppController controller, IMonitor monitor)
 	{
 		this._controller = controller ?? throw new ArgumentNullException(nameof(controller));
 		this._monitor = monitor ?? throw new ArgumentNullException(nameof(monitor));
@@ -26,15 +25,23 @@ public class MonitorViewModel : ViewModelBase
 
 	private readonly object _lock = new();
 
+	protected void AccessMonitor(Action<IMonitor> action)
+	{
+		lock (_lock)
+		{
+			action.Invoke(_monitor);
+		}
+	}
+
 	internal void Replace(IMonitor monitor)
 	{
 		if (monitor is { IsReachable: true })
 		{
-			lock (_lock)
+			AccessMonitor(_ =>
 			{
 				this._monitor.Dispose();
 				this._monitor = monitor;
-			}
+			});
 
 			OnPropertyChanged(nameof(DisplayIndex));
 			OnPropertyChanged(nameof(MonitorIndex));
@@ -167,11 +174,11 @@ public class MonitorViewModel : ViewModelBase
 
 	public bool UpdateBrightness(int value = -1)
 	{
-		AccessResult result;
-		lock (_lock)
+		AccessResult result = default;
+		AccessMonitor(m =>
 		{
-			result = _monitor.UpdateBrightness(value);
-		}
+			result = m.UpdateBrightness(value);
+		});
 
 		switch (result.Status)
 		{
@@ -189,6 +196,7 @@ public class MonitorViewModel : ViewModelBase
 				switch (result.Status)
 				{
 					case AccessStatus.NoLongerExist:
+					case AccessStatus.HandleClosed:
 						_controller.OnMonitorsChangeFound();
 						break;
 				}
@@ -245,11 +253,11 @@ public class MonitorViewModel : ViewModelBase
 		else if (RangeHighest < brightness)
 			brightness = isCycle ? RangeLowest : RangeHighest;
 
-		AccessResult result;
-		lock (_lock)
+		AccessResult result = default;
+		AccessMonitor(m =>
 		{
-			result = _monitor.SetBrightness(brightness);
-		}
+			result = m.SetBrightness(brightness);
+		});
 
 		switch (result.Status)
 		{
@@ -269,6 +277,7 @@ public class MonitorViewModel : ViewModelBase
 					case AccessStatus.DdcMessageInvalid:
 					case AccessStatus.TransmissionFailed:
 					case AccessStatus.NoLongerExist:
+					case AccessStatus.HandleClosed:
 						_controller.OnMonitorsChangeFound();
 						break;
 				}
@@ -334,11 +343,11 @@ public class MonitorViewModel : ViewModelBase
 
 	public bool UpdateContrast()
 	{
-		AccessResult result;
-		lock (_lock)
+		AccessResult result = default;
+		AccessMonitor(m =>
 		{
-			result = _monitor.UpdateContrast();
-		}
+			result = m.UpdateContrast();
+		});
 
 		switch (result.Status)
 		{
@@ -354,6 +363,7 @@ public class MonitorViewModel : ViewModelBase
 				switch (result.Status)
 				{
 					case AccessStatus.NoLongerExist:
+					case AccessStatus.HandleClosed:
 						_controller.OnMonitorsChangeFound();
 						break;
 				}
@@ -392,11 +402,11 @@ public class MonitorViewModel : ViewModelBase
 	{
 		contrast = Math.Min(100, Math.Max(0, contrast));
 
-		AccessResult result;
-		lock (_lock)
+		AccessResult result = default;
+		AccessMonitor(m =>
 		{
-			result = _monitor.SetContrast(contrast);
-		}
+			result = m.SetContrast(contrast);
+		});
 
 		switch (result.Status)
 		{
@@ -419,6 +429,7 @@ public class MonitorViewModel : ViewModelBase
 					case AccessStatus.DdcMessageInvalid:
 					case AccessStatus.TransmissionFailed:
 					case AccessStatus.NoLongerExist:
+					case AccessStatus.HandleClosed:
 						_controller.OnMonitorsChangeFound();
 						break;
 				}
@@ -428,45 +439,6 @@ public class MonitorViewModel : ViewModelBase
 	}
 
 	public DateTimeOffset ContrastUpdatedTime { get; private set; }
-
-	#endregion
-
-	#region Non-Continuous
-
-	public (bool? success, ValueData data) GetValue(byte code) => AccessValue(() => _monitor.GetValue(code));
-	public (bool? success, ValueData data) SetValue(byte code, int value) => AccessValue(() => _monitor.SetValue(code, value));
-
-	private (bool? success, ValueData data) AccessValue(Func<(AccessResult, ValueData)> access)
-	{
-		(AccessResult result, ValueData data) = (default, null);
-		lock (_lock)
-		{
-			(result, data) = access.Invoke();
-		}
-
-		switch (result.Status)
-		{
-			case AccessStatus.NotSupported:
-				return (null, null);
-
-			case AccessStatus.Succeeded:
-				return (true, data);
-
-			default:
-				_controller.OnMonitorAccessFailed(result);
-
-				switch (result.Status)
-				{
-					case AccessStatus.DdcDataInvalid:
-					case AccessStatus.DdcMessageInvalid:
-					case AccessStatus.TransmissionFailed:
-					case AccessStatus.NoLongerExist:
-						_controller.OnMonitorsChangeFound();
-						break;
-				}
-				return (false, data);
-		}
-	}
 
 	#endregion
 
@@ -554,23 +526,10 @@ public class MonitorViewModel : ViewModelBase
 
 	#region Messages
 
-	private Throttle _clear;
-
-	public async Task AddNormalMessageAsync(string message, TimeSpan duration)
-	{
-		NormalMessage = message;
-
-		_clear ??= new Throttle(
-			duration,
-			() => NormalMessage = null);
-
-		await _clear.PushAsync();
-	}
-
 	public string NormalMessage
 	{
 		get => _normalMessage;
-		private set => SetProperty(ref _normalMessage, value);
+		set => SetProperty(ref _normalMessage, value);
 	}
 	private string _normalMessage;
 
@@ -688,20 +647,20 @@ public class MonitorViewModel : ViewModelBase
 
 	protected override void Dispose(bool disposing)
 	{
-		lock (_lock)
+		if (_isDisposed)
+			return;
+
+		if (disposing)
 		{
-			if (_isDisposed)
-				return;
-
-			if (disposing)
+			AccessMonitor(m =>
 			{
-				_monitor.Dispose();
-			}
-
-			_isDisposed = true;
-
-			base.Dispose(disposing);
+				m.Dispose();
+			});
 		}
+
+		_isDisposed = true;
+
+		base.Dispose(disposing);
 	}
 
 	#endregion

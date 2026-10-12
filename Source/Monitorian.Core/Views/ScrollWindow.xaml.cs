@@ -14,7 +14,7 @@ public partial class ScrollWindow : Window
 {
 	private readonly FloatWindowMover _mover;
 
-	public ScrollWindow(AppControllerCore controller, Rect pivot)
+	public ScrollWindow(AppController controller, Rect pivot)
 	{
 		LanguageService.Switch();
 

@@ -8,10 +8,10 @@ namespace Monitorian.Core.ViewModels;
 
 public class ScrollWindowViewModel : ViewModelBase
 {
-	private readonly AppControllerCore _controller;
-	public SettingsCore Settings => _controller.Settings;
+	private readonly AppController _controller;
+	public Settings Settings => _controller.Settings;
 
-	public ScrollWindowViewModel(AppControllerCore controller)
+	public ScrollWindowViewModel(AppController controller)
 	{
 		this._controller = controller ?? throw new ArgumentNullException(nameof(controller));
 	}

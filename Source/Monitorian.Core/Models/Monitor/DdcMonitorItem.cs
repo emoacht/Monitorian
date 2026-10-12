@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Windows;
 
 namespace Monitorian.Core.Models.Monitor;
@@ -127,10 +128,12 @@ internal class DdcMonitorItem : MonitorItem
 	public override (AccessResult result, ValueData data) SetValue(byte code, int value)
 	{
 		if ((_capability.CapabilitiesCodes is null)
-			|| !_capability.CapabilitiesCodes.TryGetValue(code, out var values)
-			|| (value is < byte.MinValue or > byte.MaxValue)
-			|| (values?.Contains((byte)value) is false))
+			|| !_capability.CapabilitiesCodes.TryGetValue(code, out var values))
 			return (AccessResult.NotSupported, null);
+
+		if ((value is < byte.MinValue or > byte.MaxValue)
+			|| (values?.Contains((byte)value) is false))
+			return (AccessResult.ParameterInvalid, new ValueData(default, values));
 
 		var result = MonitorConfiguration.SetValue(_handle, code, (uint)value);
 
@@ -167,6 +170,11 @@ internal class DdcMonitorItem : MonitorItem
 
 internal class SafePhysicalMonitorHandle : SafeHandle
 {
+#if DEBUG
+	private static int _latest = 0;
+	public int Serial { get; } = Interlocked.Increment(ref _latest);
+#endif
+
 	public SafePhysicalMonitorHandle(IntPtr handle) : base(IntPtr.Zero, true)
 	{
 		this.handle = handle; // IntPtr.Zero may be a valid handle.

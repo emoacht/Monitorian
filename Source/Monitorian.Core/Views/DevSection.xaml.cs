@@ -13,7 +13,7 @@ public partial class DevSection : UserControl
 {
 	private readonly (UIElement, int?)[] _additionalItems;
 
-	public DevSection(AppControllerCore controller, IEnumerable<(UIElement item, int? index)> additionalItems = null)
+	public DevSection(AppController controller, IEnumerable<(UIElement item, int? index)> additionalItems = null)
 	{
 		InitializeComponent();
 

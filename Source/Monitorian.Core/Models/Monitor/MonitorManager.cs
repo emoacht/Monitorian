@@ -278,7 +278,7 @@ internal class MonitorManager
 				{
 					int index = basicItems.FindIndex(x =>
 						(x.DisplayIndex == handleItem.DisplayIndex) &&
-						string.Equals(x.DeviceInstanceId, desktopItem.DeviceInstanceId, StringComparison.OrdinalIgnoreCase));
+						desktopItem.InstanceName.StartsWith(x.DeviceInstanceId, StringComparison.OrdinalIgnoreCase));
 					if (index < 0)
 						continue;
 
@@ -415,42 +415,42 @@ internal class MonitorManager
 		private void TestBrightness()
 		{
 			var (getResult, minimum, current, maximum) = MonitorConfiguration.GetBrightness(Handle, Capability.IsHighLevelBrightnessSupported);
-			var isGetSuccess = (getResult.Status is AccessStatus.Succeeded);
-			var (isValid, expected) = GetExpected(isGetSuccess, minimum, current, maximum);
-			GetBrightness = $"Success: {isGetSuccess}" + (isGetSuccess ? $", Valid: {isValid} (Minimum: {minimum}, Current: {current}, Maximum: {maximum})" : string.Empty);
+			var getSuccess = (getResult.Status is AccessStatus.Succeeded);
+			var (isValid, expected) = GetExpected(getSuccess, minimum, current, maximum);
+			GetBrightness = $"Success: {getSuccess}" + (getSuccess ? $", Valid: {isValid} (Minimum: {minimum}, Current: {current}, Maximum: {maximum})" : string.Empty);
 
 			var setResult = MonitorConfiguration.SetBrightness(Handle, expected, Capability.IsHighLevelBrightnessSupported);
-			var isSetSuccess = (setResult.Status is AccessStatus.Succeeded);
+			var setSuccess = (setResult.Status is AccessStatus.Succeeded);
 			var (_, _, actual, _) = MonitorConfiguration.GetBrightness(Handle, Capability.IsHighLevelBrightnessSupported);
-			SetBrightness = $"Success: {isSetSuccess}" + (isSetSuccess ? $", Match: {expected == actual} (Expected: {expected}, Actual: {actual})" : string.Empty);
+			SetBrightness = $"Success: {setSuccess}" + (setSuccess ? $", Match: {expected == actual} (Expected: {expected}, Actual: {actual})" : string.Empty);
 
-			if (isSetSuccess)
+			if (setSuccess)
 				MonitorConfiguration.SetBrightness(Handle, current, Capability.IsHighLevelBrightnessSupported);
 		}
 
 		private void TestContrast()
 		{
 			var (getResult, minimum, current, maximum) = MonitorConfiguration.GetContrast(Handle);
-			var isGetSuccess = (getResult.Status is AccessStatus.Succeeded);
-			var (isValid, expected) = GetExpected(isGetSuccess, minimum, current, maximum);
-			GetContrast = $"Success: {isGetSuccess}" + (isGetSuccess ? $", Valid: {isValid} (Minimum: {minimum}, Current: {current}, Maximum: {maximum})" : string.Empty);
+			var getSuccess = (getResult.Status is AccessStatus.Succeeded);
+			var (isValid, expected) = GetExpected(getSuccess, minimum, current, maximum);
+			GetContrast = $"Success: {getSuccess}" + (getSuccess ? $", Valid: {isValid} (Minimum: {minimum}, Current: {current}, Maximum: {maximum})" : string.Empty);
 
 			var setResult = MonitorConfiguration.SetContrast(Handle, expected);
-			var isSetSuccess = (setResult.Status is AccessStatus.Succeeded);
+			var setSuccess = (setResult.Status is AccessStatus.Succeeded);
 			var (_, _, actual, _) = MonitorConfiguration.GetContrast(Handle);
-			SetContrast = $"Success: {isSetSuccess}" + (isSetSuccess ? $", Match: {expected == actual} (Expected: {expected}, Actual: {actual})" : string.Empty);
+			SetContrast = $"Success: {setSuccess}" + (setSuccess ? $", Match: {expected == actual} (Expected: {expected}, Actual: {actual})" : string.Empty);
 
-			if (isSetSuccess)
+			if (setSuccess)
 				MonitorConfiguration.SetContrast(Handle, current);
 		}
 
-		private static (bool, uint) GetExpected(bool isSuccess, uint minimum, uint current, uint maximum)
+		private static (bool, uint) GetExpected(bool success, uint minimum, uint current, uint maximum)
 		{
 			const uint m = 5;
 
 			var isValid = (maximum - minimum >= m * 2) && (minimum <= current) && (current <= maximum);
 
-			if (!isSuccess)
+			if (!success)
 			{
 				return (isValid, (uint)(DateTime.Now.Ticks % 101));
 			}
@@ -546,7 +546,7 @@ internal class MonitorManager
 							.ToArray())),
 
 				GetTask(nameof(DesktopItems), () =>
-					DesktopItems = MSMonitor.EnumerateDesktopMonitors().ToArray())
+					DesktopItems = MSMonitor.EnumerateDesktopMonitors(true).ToArray())
 			};
 
 			sw.Start();

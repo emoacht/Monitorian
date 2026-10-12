@@ -14,7 +14,11 @@ A set of conditional commands is a sequence of commands to be executed when a sp
  - __Conditional Value:__ Brightness (from 0 to 100) of a monitor which is regarded as the condition
  - __Commands:__ Commands to be executed when the condition is met
 
-A command can set brightness or contrast of a monitor or all monitors. A set of conditional commands is required for each conditional value of each conditional monitor. Therefore, if you want to execute commands for every brightness, you will need to define 101 sets of conditional commands.
+A command can:
+
+ * Set __brightness__ or __contrast__ of a monitor or all monitors
+ 
+A set of conditional commands is required for each conditional value of each conditional monitor. Therefore, if you want to execute commands for every brightness, you will need to define 101 sets of conditional commands.
 
 The sets of conditional commands must be specified in an array of JSON format. Then, the prepared JSON file must be loaded using `/load` option. Please refer to [Load/Unload Commands](#loadunload-commands).
 
@@ -139,7 +143,10 @@ A set of time commands is a sequence of commands to be executed when a specified
  - __Duration Minutes:__ Minutes (from 1 to 1439) of duration after due time while the commands will be executed
  - __Commands:__ Commands to be executed when the due time comes
 
-A command can set brightness or contrast of a monitor or all monitors.
+A command can:
+
+ * Set __brightness__ or __contrast__ of a monitor or all monitors
+ * Set __color temperature preset__ of a monitor
 
 The duration minutes is for the case where the system starts or resumes after a due time. For example, if the due time is __08:50__ and the duration is __30__ minutes, and the system is turned on at __09:00__, the commands that were supposed to be executed at __08:50__ will be executed. Conversely, if the system is turned on at __9:30__, the commands will not be executed. The longest duration is around 1 day (1439 minutes).
 
@@ -185,6 +192,25 @@ Here are a few remarks:
         "Value": 50
       }
     ]
+  },
+  {
+    "DueTimeHours": 22,
+    "DueTimeMinutes": 0,
+    "DurationMinutes": 60,
+    "Commands": [
+      {
+        "Option": "SetBrightness",
+        "DeviceInstanceId": "[Device Instance ID of monitor 1]",
+        "IsAll": false,
+        "Value": 40
+      },
+      {
+        "Option": "SetColor",
+        "DeviceInstanceId": "[Device Instance ID of monitor 1]",
+        "IsAll": false,
+        "Value": 4
+      }
+    ]
   }
 ]
 ```
@@ -202,7 +228,8 @@ Here are a few remarks:
           "type": "string",
           "enum": [
             "SetBrightness",
-            "SetContrast"
+            "SetContrast",
+            "SetColor"
           ]
         },
         "DeviceInstanceId": {
@@ -274,7 +301,11 @@ A set of key commands is a sequence of commands to be executed when a specified 
  - __Description:__ Description of hot key
  - __Commands:__ Commands to be executed when the hot key is pressed
 
-A command can set brightness or contrast of a monitor or all monitors, or input source of a monitor, or increment or decrement brightness of a monitor or all monitors.
+A command can:
+
+ * Set __brightness__ or __contrast__ of a monitor or all monitors
+ * Set __color temperature preset__ or __input source__ of a monitor
+ * Increment or decrement __brightness__ of a monitor or all monitors
 
 As for the available modifier keys (Alt, Ctrl, Shift, Windows) and keys, please refer the following pages.
 
@@ -284,21 +315,6 @@ As for the available modifier keys (Alt, Ctrl, Shift, Windows) and keys, please 
 If the specified hot key has been already used by the OS or other apps, the same hot key cannot be set. In addition, some combinations are not supported as hot keys.
 
 The sets of key commands must be specified in an array of JSON format. Then, the prepared JSON file must be loaded using `/load` option. Please refer to [Load/Unload Commands](#loadunload-commands).
-
-As for input source, the valid values vary depending on monitor model. To get those values, you can use `/get` option and `input` sub-option as shown below.
-
-```
-monitorian /get input [Device Instance ID of monitor enclosed in quotes]
-```
-
-The valid values will be shown in parentheses. The following are typical values defined in the standard but newer ones such as USB-C are not included.
-
-| Value | Type          |
-|-------|---------------|
-| 15    | DisplayPort 1 |
-| 16    | DisplayPort 2 |
-| 17    | HDMI 1        |
-| 18    | HDMI 2        |
 
 Here are a few remarks:
 
@@ -332,6 +348,18 @@ Here are a few remarks:
         "DeviceInstanceId": null,
         "IsAll": true,
         "Value": 40
+      }
+    ]
+  },
+  {
+    "KeyGesture": "Ctrl+Alt+X",
+    "Description": "Monitor 1 to 5000K",
+    "Commands": [
+      {
+        "Option": "SetColor",
+        "DeviceInstanceId": "[Device Instance ID of monitor 1]",
+        "IsAll": false,
+        "Value": 4
       }
     ]
   },
@@ -388,6 +416,7 @@ Here are a few remarks:
           "enum": [
             "SetBrightness",
             "SetContrast",
+            "SetColor",
             "SetInput",
             "IncrementBrightness",
             "DecrementBrightness"
@@ -448,7 +477,7 @@ Here are a few remarks:
 
 ### Load/Unload Commands
 
-To enable the commands in a JSON file, the file must be loaded using `/load` option. The usage is as follows. (Sub-options for each type are no longer necessary.)
+To enable the commands in a JSON file, the file must be loaded using `/load` option.
 
 ```
 monitorian /load [file path of JSON file enclosed in quotes]

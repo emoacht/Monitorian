@@ -1,0 +1,194 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "array",
+  "items": {
+    "oneOf": [
+      { "$ref": "#/$defs/ConditionalCommand" },
+      { "$ref": "#/$defs/TimeCommand" },
+      { "$ref": "#/$defs/KeyCommand" }
+    ]
+  },
+  "$defs": {
+    "ConditionalCommandCommand": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "Option": {
+          "type": "string",
+          "enum": [
+            "SetBrightness",
+            "SetContrast"
+          ]
+        },
+        "DeviceInstanceId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "IsAll": {
+          "type": "boolean"
+        },
+        "Value": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        }
+      },
+      "required": [
+        "Option",
+        "Value"
+      ]
+    },
+    "ConditionalCommand": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "ConditionalDeviceInstanceId": {
+          "type": "string"
+        },
+        "ConditionalValue": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "Commands": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ConditionalCommandCommand"
+          }
+        }
+      },
+      "required": [
+        "ConditionalDeviceInstanceId",
+        "ConditionalValue",
+        "Commands"
+      ]
+    },
+    "TimeCommandCommand": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "Option": {
+          "type": "string",
+          "enum": [
+            "SetBrightness",
+            "SetContrast",
+            "SetColor"
+          ]
+        },
+        "DeviceInstanceId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "IsAll": {
+          "type": "boolean"
+        },
+        "Value": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        }
+      },
+      "required": [
+        "Option",
+        "Value"
+      ]
+    },
+    "TimeCommand": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "DueTimeHours": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 23
+        },
+        "DueTimeMinutes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 59
+        },
+        "DurationMinutes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1439
+        },
+        "Commands": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TimeCommandCommand"
+          }
+        }
+      },
+      "required": [
+        "DueTimeHours",
+        "DueTimeMinutes",
+        "DurationMinutes",
+        "Commands"
+      ]
+    },
+    "KeyCommandCommand": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "Option": {
+          "type": "string",
+          "enum": [
+            "SetBrightness",
+            "SetContrast",
+            "SetColor",
+            "SetInput",
+            "IncrementBrightness",
+            "DecrementBrightness"
+          ]
+        },
+        "DeviceInstanceId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "IsAll": {
+          "type": "boolean"
+        },
+        "Value": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        }
+      },
+      "required": [
+        "Option",
+        "Value"
+      ]
+    },
+    "KeyCommand": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "KeyGesture": {
+          "type": "string"
+        },
+        "Description": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "Commands": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/KeyCommandCommand"
+          }
+        }
+      },
+      "required": [
+        "KeyGesture",
+        "Commands"
+      ]
+    }
+  }
+}

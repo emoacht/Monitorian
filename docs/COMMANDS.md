@@ -69,7 +69,7 @@ Here are a few remarks:
 
 ``` json
 {
-  "definitions": {
+  "$defs": {
     "Command": {
       "type": "object",
       "additionalProperties": false,
@@ -116,7 +116,7 @@ Here are a few remarks:
         "Commands": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/Command"
+            "$ref": "#/$defs/Command"
           }
         }
       },
@@ -129,10 +129,12 @@ Here are a few remarks:
   },
   "type": "array",
   "items": {
-    "$ref": "#/definitions/ConditionalCommand"
+    "$ref": "#/$defs/ConditionalCommand"
   }
 }
 ```
+
+[Combined JSON Schema](commands-schema.json)
 
 ### Time Commands
 
@@ -219,7 +221,7 @@ Here are a few remarks:
 
 ``` json
 {
-  "definitions": {
+  "$defs": {
     "Command": {
       "type": "object",
       "additionalProperties": false,
@@ -274,7 +276,7 @@ Here are a few remarks:
         "Commands": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/Command"
+            "$ref": "#/$defs/Command"
           }
         }
       },
@@ -288,10 +290,12 @@ Here are a few remarks:
   },
   "type": "array",
   "items": {
-    "$ref": "#/definitions/TimeCommand"
+    "$ref": "#/$defs/TimeCommand"
   }
 }
 ```
+
+[Combined JSON Schema](commands-schema.json)
 
 ### Key Commands
 
@@ -406,7 +410,7 @@ Here are a few remarks:
 
 ``` json
 {
-  "definitions": {
+  "$defs": {
     "Command": {
       "type": "object",
       "additionalProperties": false,
@@ -458,7 +462,7 @@ Here are a few remarks:
         "Commands": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/Command"
+            "$ref": "#/$defs/Command"
           }
         }
       },
@@ -470,10 +474,12 @@ Here are a few remarks:
   },
   "type": "array",
   "items": {
-    "$ref": "#/definitions/KeyCommand"
+    "$ref": "#/$defs/KeyCommand"
   }
 }
 ```
+
+[Combined JSON Schema](commands-schema.json)
 
 ### Load/Unload Commands
 
@@ -489,6 +495,8 @@ After loading the commands, you can browse the loaded commands in Command Settin
 
 ![Screenshot](../Images/Screenshot_commands.png)<br>
 (Device Instance IDs are dummy)
+
+To enable Command Settings window to open without loading a specific JSON file, use `/load` with `any` sub-option.
 
 You can unload all loaded commands using `/unload` option.
 

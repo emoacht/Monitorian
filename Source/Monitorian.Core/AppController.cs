@@ -483,7 +483,10 @@ public abstract class AppController
 			: Monitors.FirstOrDefault(x => x.IsInternal);
 
 		EnsureUnisonWorkable(monitor);
-		monitor?.UpdateBrightness(brightness);
+		if (monitor?.UpdateBrightness(brightness) is true)
+		{
+			SyncBrightnessFromPrimaryMonitor(monitor, brightness);
+		}
 	}
 
 	protected virtual void Update(string deviceInstanceId, float sdrWhiteLevel)
@@ -491,7 +494,40 @@ public abstract class AppController
 		var monitor = Monitors.FirstOrDefault(x => deviceInstanceId == x.DeviceInstanceId);
 
 		EnsureUnisonWorkable(monitor);
-		monitor?.UpdateBrightness((int)sdrWhiteLevel);
+		int brightness = (int)sdrWhiteLevel;
+		if (monitor?.UpdateBrightness(brightness) is true)
+		{
+			SyncBrightnessFromPrimaryMonitor(monitor, brightness);
+		}
+	}
+
+	private int _syncingBrightnessCount;
+
+	protected virtual void SyncBrightnessFromPrimaryMonitor(MonitorViewModel sourceMonitor, int brightness)
+	{
+		if (sourceMonitor is null)
+			return;
+
+		if (Interlocked.CompareExchange(ref _syncingBrightnessCount, 1, 0) != 0)
+			return;
+
+		try
+		{
+			if (!string.Equals(sourceMonitor.DeviceInstanceId, Settings.SelectedDeviceInstanceId, StringComparison.OrdinalIgnoreCase))
+				return;
+
+			foreach (var monitor in Monitors.Where(x =>
+				!ReferenceEquals(x, sourceMonitor)
+				&& x.IsTarget
+				&& x.IsControllable))
+			{
+				monitor.SetBrightness(brightness);
+			}
+		}
+		finally
+		{
+			Interlocked.Exchange(ref _syncingBrightnessCount, 0);
+		}
 	}
 
 	private void ReflectMouseWheel(int delta)

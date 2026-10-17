@@ -1,0 +1,59 @@
+name: Build Release Assets
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-release-assets:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Setup NuGet
+        uses: NuGet/setup-nuget@v2
+
+      - name: Restore NuGet packages
+        run: nuget restore Source/Monitorian.sln
+
+      - name: Build Monitorian Release
+        run: msbuild Source/Monitorian/Monitorian.csproj /p:Configuration=Release /p:Platform="Any CPU"
+
+      - name: Package release binaries
+        id: package
+        shell: pwsh
+        run: |
+          $tag = "${{ github.event.release.tag_name }}"
+          if ([string]::IsNullOrWhiteSpace($tag)) {
+            $tag = "manual-${{ github.run_number }}"
+          }
+
+          $outputDir = "Source/Monitorian/bin/Release"
+          if (!(Test-Path $outputDir)) {
+            throw "Build output not found at $outputDir"
+          }
+
+          $assetName = "Monitorian-$tag.zip"
+          Compress-Archive -Path "$outputDir/*" -DestinationPath $assetName -Force
+          "asset_name=$assetName" >> $env:GITHUB_OUTPUT
+
+      - name: Upload workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.package.outputs.asset_name }}
+          path: ${{ steps.package.outputs.asset_name }}
+
+      - name: Upload asset to release
+        if: github.event_name == 'release'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "${{ github.event.release.tag_name }}" "${{ steps.package.outputs.asset_name }}" --clobber

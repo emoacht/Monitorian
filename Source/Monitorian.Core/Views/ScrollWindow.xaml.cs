@@ -39,14 +39,14 @@ public partial class ScrollWindow : Window
 		base.OnKeyDown(e);
 
 		if (e.Key is Key.Escape)
-			OnCloseTriggered(this, EventArgs.Empty);
+			OnDeactivated(this, EventArgs.Empty);
 	}
 
 	#region Close
 
 	private bool _isClosing = false;
 
-	protected void OnCloseTriggered(object sender, EventArgs e)
+	protected void OnDeactivated(object sender, EventArgs e)
 	{
 		if (!_isClosing && this.IsLoaded)
 			this.Close();

@@ -141,6 +141,9 @@
   <data name="EnableContrast" xml:space="preserve">
     <value>啟用對比度調整</value>
   </data>
+  <data name="EnableIdentity" xml:space="preserve">
+    <value>啟用顯示器識別資訊顯示</value>
+  </data>
   <data name="EnableRange" xml:space="preserve">
     <value>啟用變更調節範圍</value>
   </data>
@@ -164,6 +167,9 @@
   </data>
   <data name="ShowAdjusted" xml:space="preserve">
     <value>顯示調節後亮度</value>
+  </data>
+  <data name="ShowIdentity" xml:space="preserve">
+    <value>顯示顯示器識別資訊</value>
   </data>
   <data name="ShowNumber" xml:space="preserve">
     <value>顯示目前數值</value>

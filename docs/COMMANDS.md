@@ -20,7 +20,7 @@ A command can:
  
 A set of conditional commands is required for each conditional value of each conditional monitor. Therefore, if you want to execute commands for every brightness, you will need to define 101 sets of conditional commands.
 
-The sets of conditional commands must be specified in an array of JSON format. Then, the prepared JSON file must be loaded using `/load` option. Please refer to [Load/Unload Commands](#loadunload-commands).
+The sets of conditional commands must be specified in an array of JSON format. Then the JSON file must be loaded using `/load` option. Please refer to [Load/Unload Commands](#loadunload-commands).
 
 Here are a few remarks:
 
@@ -134,7 +134,7 @@ Here are a few remarks:
 }
 ```
 
-[Combined JSON Schema](commands-schema.json)
+[JSON Schema (combined)](commands-schema.json)
 
 ### Time Commands
 
@@ -152,7 +152,7 @@ A command can:
 
 The duration minutes is for the case where the system starts or resumes after a due time. For example, if the due time is __08:50__ and the duration is __30__ minutes, and the system is turned on at __09:00__, the commands that were supposed to be executed at __08:50__ will be executed. Conversely, if the system is turned on at __9:30__, the commands will not be executed. The longest duration is around 1 day (1439 minutes).
 
-The sets of time commands must be specified in an array of JSON format. Then, the prepared JSON file must be loaded using `/load` option. Please refer to [Load/Unload Commands](#loadunload-commands).
+The sets of time commands must be specified in an array of JSON format. Then the JSON file must be loaded using `/load` option. Please refer to [Load/Unload Commands](#loadunload-commands).
 
 Here are a few remarks:
 
@@ -295,7 +295,7 @@ Here are a few remarks:
 }
 ```
 
-[Combined JSON Schema](commands-schema.json)
+[JSON Schema (combined)](commands-schema.json)
 
 ### Key Commands
 
@@ -318,7 +318,7 @@ As for the available modifier keys (Alt, Ctrl, Shift, Windows) and keys, please 
 
 If the specified hot key has been already used by the OS or other apps, the same hot key cannot be set. In addition, some combinations are not supported as hot keys.
 
-The sets of key commands must be specified in an array of JSON format. Then, the prepared JSON file must be loaded using `/load` option. Please refer to [Load/Unload Commands](#loadunload-commands).
+The sets of key commands must be specified in an array of JSON format. Then the JSON file must be loaded using `/load` option. Please refer to [Load/Unload Commands](#loadunload-commands).
 
 Here are a few remarks:
 
@@ -479,26 +479,36 @@ Here are a few remarks:
 }
 ```
 
-[Combined JSON Schema](commands-schema.json)
+[JSON Schema (combined)](commands-schema.json)
 
 ### Load/Unload Commands
 
-To enable the commands in a JSON file, the file must be loaded using `/load` option.
+To enable conditional/time/key commands, create a command file, which is a JSON file containing all the commands in a single array. The command types (conditional, time, key) and their order do not matter.
+Then load the JSON file using the `/load` option.
 
 ```
 monitorian /load [file path of JSON file enclosed in quotes]
 ```
+Loading new commands replaces all previously loaded commands.
 
-The commands of different types (conditional, time, key) can be stored in one array. Loading new commands will replace all previously loaded ones of the same type.
-
-After loading the commands, you can browse the loaded commands in Command Settings which will appear in menu window.
+After loading, you can browse the commands in Command Settings, accessible from menu window.
 
 ![Screenshot](../Images/Screenshot_commands.png)<br>
 (Device Instance IDs are dummy)
 
-To enable Command Settings window to open without loading a specific JSON file, use `/load` with `any` sub-option.
+To access Command Settings without loading a specific JSON file, use `/load` with `any` sub-option.
 
-You can unload all loaded commands using `/unload` option.
+```
+monitorian /load any
+```
+
+The rules for command file path are:
+
+- The most recently specified path is used, whether it was specified with `/load` option or in Command Settings.
+- The path specified in Command Settings is valid only until this app is closed.
+- If `any` sub-option is used, the path of last loaded command file (if any) is used.
+
+To disable all loaded commands, use `/unload` option.
 
 ```
 monitorian /unload

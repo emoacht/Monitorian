@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -192,7 +193,20 @@ internal class MonitorConfiguration
 		PowerMode = 0xD6,
 	}
 
-	public static IEnumerable<PhysicalItem> EnumeratePhysicalMonitors(IntPtr monitorHandle, bool verbose = false)
+	// Capabilities obtained by DDC/CI keyed by device instance ID. Requesting capabilities
+	// is a long series of DDC/CI transactions and, if a monitor is not ready to respond
+	// (e.g. just after resume), it can block the system for a long time. Once obtained,
+	// the capabilities of the same monitor are not expected to change.
+	private static readonly ConcurrentDictionary<string, MonitorCapability> _capabilityCache = new(StringComparer.OrdinalIgnoreCase);
+
+	/// <summary>
+	/// Enumerates physical monitors.
+	/// </summary>
+	/// <param name="monitorHandle">Monitor handle</param>
+	/// <param name="verbose">Whether to obtain verbose capabilities</param>
+	/// <param name="getCacheKey">Function to get the key (device instance ID) for cached capability from monitor index and description</param>
+	/// <returns>Physical monitors</returns>
+	public static IEnumerable<PhysicalItem> EnumeratePhysicalMonitors(IntPtr monitorHandle, bool verbose = false, Func<int, string, string> getCacheKey = null)
 	{
 		if (!GetNumberOfPhysicalMonitorsFromHMONITOR(
 			monitorHandle,
@@ -228,11 +242,23 @@ internal class MonitorConfiguration
 				//Debug.WriteLine($"Description: {physicalMonitor.szPhysicalMonitorDescription}");
 				//Debug.WriteLine($"Handle: {physicalMonitor.hPhysicalMonitor}");
 
+				var cacheKey = verbose ? null : getCacheKey?.Invoke(monitorIndex, physicalMonitor.szPhysicalMonitorDescription);
+				if ((cacheKey is null) || !_capabilityCache.TryGetValue(cacheKey, out MonitorCapability capability))
+				{
+					capability = (verbose || IsResponsive(handle, physicalMonitor.szPhysicalMonitorDescription))
+						? GetMonitorCapability(handle, verbose)
+						: MonitorCapability.UnresponsiveCapability;
+
+					// Cache only successful results so that failed ones will be retried.
+					if ((cacheKey is not null) && capability.IsBrightnessSupported)
+						_capabilityCache[cacheKey] = capability;
+				}
+
 				yield return new PhysicalItem(
 					description: physicalMonitor.szPhysicalMonitorDescription,
 					monitorIndex: monitorIndex,
 					handle: handle,
-					capability: GetMonitorCapability(handle, verbose));
+					capability: capability);
 
 				monitorIndex++;
 			}
@@ -241,6 +267,38 @@ internal class MonitorConfiguration
 		{
 			// The physical monitor handles should be destroyed at a later stage.
 		}
+	}
+
+	// A single DDC/CI round trip normally takes around 60 ms whether it succeeds or not.
+	private static readonly TimeSpan _probeThreshold = TimeSpan.FromMilliseconds(200);
+
+	/// <summary>
+	/// Checks whether a physical monitor responds to a single DDC/CI request promptly.
+	/// </summary>
+	/// <remarks>
+	/// Requesting capabilities holds a system-wide lock throughout a long series of DDC/CI
+	/// transactions and, if a monitor is not ready to respond (e.g. just after resume), it
+	/// blocks every process from terminating until it gives up. This probe costs only a single
+	/// transaction so that the capabilities request can be postponed to a later scan.
+	/// </remarks>
+	private static bool IsResponsive(SafePhysicalMonitorHandle physicalMonitorHandle, string description)
+	{
+		var stopwatch = Stopwatch.StartNew();
+		bool isSucceeded = GetVCPFeatureAndVCPFeatureReply(
+			physicalMonitorHandle,
+			(byte)VcpCode.Luminance,
+			out _,
+			out _,
+			out _);
+		stopwatch.Stop();
+
+		// Not supported reply means the monitor is responding.
+		var status = isSucceeded ? AccessStatus.Succeeded : GetStatus(Marshal.GetLastWin32Error());
+		bool isResponsive = (status is AccessStatus.Succeeded or AccessStatus.DdcNotSupported)
+			&& (stopwatch.Elapsed < _probeThreshold);
+
+		OperationRecorder.AddGroupRecordItem("Probe", $"{description}: {status} in {stopwatch.ElapsedMilliseconds} ms -> {(isResponsive ? "Responsive" : "Postponed")}");
+		return isResponsive;
 	}
 
 	private static MonitorCapability GetMonitorCapability(SafePhysicalMonitorHandle physicalMonitorHandle, bool verbose)
@@ -669,6 +727,12 @@ internal class MonitorCapability
 		this.CapabilitiesReport = capabilitiesReport;
 		this.CapabilitiesData = (capabilitiesData is not null) ? Convert.ToBase64String(capabilitiesData) : null;
 	}
+
+	public static MonitorCapability UnresponsiveCapability => _unresponsiveCapability.Value;
+	private static readonly Lazy<MonitorCapability> _unresponsiveCapability = new(() =>
+		new(isHighLevelBrightnessSupported: false,
+			isLowLevelBrightnessSupported: false,
+			isContrastSupported: false));
 
 	public static MonitorCapability PreclearedCapability => _preclearedCapability.Value;
 	private static readonly Lazy<MonitorCapability> _preclearedCapability = new(() =>

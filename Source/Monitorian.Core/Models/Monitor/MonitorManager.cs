@@ -170,8 +170,16 @@ internal class MonitorManager
 
 		var handleItems = DeviceContext.GetMonitorHandles();
 
+		// Snapshot because basicItems will be modified while physical monitors are enumerated.
+		var basicItemsSnapshot = basicItems.ToArray();
+
 		var physicalItemsTasks = handleItems
-			.Select(x => Task.Run(() => (x, physicalItems: MonitorConfiguration.EnumeratePhysicalMonitors(x.MonitorHandle))))
+			.Select(x => Task.Run(() => (x, physicalItems: MonitorConfiguration.EnumeratePhysicalMonitors(x.MonitorHandle,
+				getCacheKey: (monitorIndex, description) => basicItemsSnapshot.FirstOrDefault(y =>
+					!y.IsInternal &&
+					(y.DisplayIndex == x.DisplayIndex) &&
+					(y.MonitorIndex == monitorIndex) &&
+					string.Equals(y.Description, description, StringComparison.OrdinalIgnoreCase))?.DeviceInstanceId))))
 			.ToArray();
 
 		await Task.WhenAny(Task.WhenAll(physicalItemsTasks), Task.Delay(timeout, cancellationToken));

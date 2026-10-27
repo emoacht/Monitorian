@@ -73,7 +73,7 @@ public abstract class BasicWindowMover : WindowMover
 	/// Gets Per-Monitor DPI of the monitor.
 	/// </summary>
 	/// <returns>DPI information</returns>
-	protected virtual DpiScale GetDpi() => VisualTreeHelperAddition.GetDpi(_window);
+	public virtual DpiScale GetDpi() => VisualTreeHelperAddition.GetDpi(_window);
 
 	/// <summary>
 	/// Attempts to get the adjacent location using specified window width and height.

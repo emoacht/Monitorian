@@ -140,7 +140,7 @@ public class StickWindowMover : BasicWindowMover
 				(true, TaskbarAlignment.Right) => new Vector(Distance, 0),
 				_ => new Vector(Distance, Distance)
 			};
-			distance *= VisualTreeHelperAddition.GetDpi(_window).ToMatrix();
+			distance *= GetDpi().ToMatrix();
 		}
 
 		double x = 0, y = 0;

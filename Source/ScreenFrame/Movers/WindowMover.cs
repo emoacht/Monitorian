@@ -19,11 +19,6 @@ public abstract class WindowMover
 	protected readonly Window _window;
 
 	/// <summary>
-	/// Per-Monitor DPI of the window
-	/// </summary>
-	public DpiScale Dpi => VisualTreeHelperAddition.GetDpi(_window);
-
-	/// <summary>
 	/// Constructor
 	/// </summary>
 	/// <param name="window">Window to be moved</param>
@@ -48,7 +43,7 @@ public abstract class WindowMover
 		_source = PresentationSource.FromVisual(_window) as HwndSource;
 		_source?.AddHook(WndProc);
 
-		var dpi = VisualTreeHelperAddition.GetDpi(_window);
+		var dpi = VisualTreeHelperAddition.GetDpi(_window); // Window DPI
 		if (!dpi.TypesafeEquals(VisualTreeHelperAddition.SystemDpi))
 		{
 			AdjustWindow(dpi);

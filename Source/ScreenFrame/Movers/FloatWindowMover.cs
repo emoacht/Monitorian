@@ -47,7 +47,7 @@ public class FloatWindowMover : BasicWindowMover
 	/// Gets Per-Monitor DPI of the monitor.
 	/// </summary>
 	/// <returns>DPI information</returns>
-	protected override DpiScale GetDpi() => VisualTreeHelperAddition.GetDpi(_pivot);
+	public override DpiScale GetDpi() => VisualTreeHelperAddition.GetDpi(_pivot);
 
 	/// <summary>
 	/// Attempts to get the adjacent location using specified window width and height.

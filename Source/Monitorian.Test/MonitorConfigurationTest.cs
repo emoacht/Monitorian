@@ -77,6 +77,19 @@ public class MonitorConfigurationTest
 	[TestMethod]
 	public void TestMonitorCapability_D1_06()
 	{
+		// Dell S2721D
+		var source = @"(prot(monitor)type(LCD)model(S2721D)cmds(01 02 03 07 0C E3 F3)vcp(02 04 05 08 10 12 14(05 08 0B 0C) 16 18 1A 52 60(0F 11 12 ) 62 AC AE B2 B6 C6 C8 C9 CA CC(02 0A 03 04 08 09 0D 06 ) D6(01 04 05) DC(00 03 05 ) DF E0 E1 E2(00 1D 02 22 20 21 0E 12 14 ) F0(0C 0F 10 11 ) F1 F2 FD)mswhql(1)asset_eep(40)mccs_ver(2.1))";
+		var (success, vcpCodes) = TestExtractVcpCodes(source);
+		Assert.IsTrue(success);
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Luminance));
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Contrast));
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.SpeakerVolume));
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.ColorPreset, 5, 8, 11, 12));
+	}
+
+	[TestMethod]
+	public void TestMonitorCapability_D1_07()
+	{
 		// DELL U2419H
 		var source = @"(prot(monitor)type(LCD)model(U2419H)cmds(01 02 03 07 0C E3 F3)vcp(02 04 05 08 10 12 14(04 05 06 08 09 0B 0C) 16 18 1A 52 60(0F 11 ) AA(01 02 03 04 ) AC AE B2 B6 C6 C8 C9 CC(02 0A 03 04 08 09 0D 06 ) D6(01 04 05) DC(00 03 05 ) DF E0 E1 E2(00 1D 29 02 04 0C 0D 0F 10 11 13 14 ) E3(16 17 18 19 1A) F0(0C 12 ) F1 F2 FD)mswhql(1)asset_eep(40)mccs_ver(2.1))";
 		var (success, vcpCodes) = TestExtractVcpCodes(source);
@@ -88,7 +101,7 @@ public class MonitorConfigurationTest
 	}
 
 	[TestMethod]
-	public void TestMonitorCapability_D1_07()
+	public void TestMonitorCapability_D1_08()
 	{
 		// DELL P2719H
 		var source = @"(prot(monitor)type(lcd)model(P2719H)cmds(01 02 03 07 0C E3 F3)vcp(02 04 05 08 10 12 14(05 08 0B 0C) 16 18 1A 52 60(01 0F 11) AA(01 02 04) AC AE B2 B6 C6 C8 C9 CC(02 03 04 06 09 0a 0d 0e) D6(01 04 05) DC(00 03 05 ) DF E0 E1 E2(00 02 04 0E 12 14 1D) F0(00 0C) F1 F2 FD)mccs_ver(2.1)mswhql(1))";
@@ -101,7 +114,7 @@ public class MonitorConfigurationTest
 	}
 
 	[TestMethod]
-	public void TestMonitorCapability_D1_08()
+	public void TestMonitorCapability_D1_09()
 	{
 		// DELL P2717H
 		var source = @"(prot(monitor)type(LCD)model(P2717H)cmds(01 02 03 07 0C E3 F3)vcp(02 04 05 08 10 12 14(05 08 0B 0C) 16 18 1A 52 60(01 0F 11) AA(01 02) AC AE B2 B6 C6 C8 C9 D6(01 04 05) DC(00 02 03 05) DF E0 E1 E2(00 1D 01 02 04 0E 12 14) F0(0C) F1 F2 FD)mswhql(1)asset_eep(40)mccs_ver(2.1))";
@@ -114,7 +127,7 @@ public class MonitorConfigurationTest
 	}
 
 	[TestMethod]
-	public void TestMonitorCapability_D1_09()
+	public void TestMonitorCapability_D1_10()
 	{
 		// DELL U2723QE
 		var source = @"(prot(monitor)type(lcd)model(U2723QE)cmds(01 02 03 07 0C E3 F3)vcp(02 04 05 08 10 12 14(01 04 05 06 08 09 0B 0C) 16 18 1A 52 60( 1B 0F 11) AA(01 02 04) AC AE B2 B6 C6 C8 C9 CC(02 03 04 06 09 0A 0D 0E) D6(01 04 05) DC(00 03 05) DF E0 E1 E2(00 02 04 0C 0D 0F 10 11 13 0B 1B 1A 14 23 24 27 3A) E5 E7(02 03) E8 E9(00 01 02 21 22 24) EA EF F0(00 05 06 09 0A 31 32 34 36) F1 F2 FE FD)mccs_ver(2.1)mswhql(1))";
@@ -127,7 +140,7 @@ public class MonitorConfigurationTest
 	}
 
 	[TestMethod]
-	public void TestMonitorCapability_D1_10()
+	public void TestMonitorCapability_D1_11()
 	{
 		// Alienware AW2725Q
 		var source = @"(prot(monitor)type(lcd)model(AW2725Q)cmds(01 02 03 07 0C E3 F3)vcp(02 04 05 08 10 12 14(01 05 08 0B 0C) 16 18 1A 52 60( 0F 11 12) 87 AC AE B2 B6 C6 C8 C9 CA CC(02 03 04 06 09 0A 0D 0E) D6(01 04 05) DC(00 03 ) DF E0 E1 E2(00 04 0E 12 0B 1B 14 1E 1F 20 21 22 2F 23 24 27 3A)E3 E4 E5 E8 E9(00 01 02 21 22 24 29 2A 2D 2E) EA EC(7F FF02) ED(0400 0800 03FF) F0(00 05 06 0A 0D 0E 0F 10 11 13 31 32 34 36) F1 F2 F4(10 11 12 13 14 15 16 17 30 31 32 33 40 41 42 43 44 45 46 A0 A1 A2 A3) F5(1D) FE FD)mccs_ver(2.1)mswhql(1))";
@@ -308,6 +321,21 @@ public class MonitorConfigurationTest
 	[TestMethod]
 	public void TestMonitorCapability_A1_02()
 	{
+		// ASUS PB278
+		var source = @"(prot(monitor)type(lcd)model(PB278Q)cmds(01 02 03 07 0C 4E F3 E3)vcp(02 04 05 08 0B 0C 10 12 14(05 06 08 0B) 16 18 1A 6C 6E 70 AC AE B6 C0 C6 C8 C9 CC(00 01 02 03 04 05 06 07 08 09 0A 0C 0D 11 12 14 1A 1E 1F 72 23 73) D6(01 04) DF 60(01 03 11 0F) 62 8D )mswhql(1)mccs_ver(2.1)asset_eep(32)mpu_ver(01))";
+		var (success, vcpCodes) = TestExtractVcpCodes(source);
+		Assert.IsTrue(success);
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Luminance));
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Contrast));
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.SpeakerVolume));
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.ColorPreset, 5, 6, 8, 11));
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.ColorIncrement));
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.ColorRequest));
+	}
+
+	[TestMethod]
+	public void TestMonitorCapability_A1_03()
+	{
 		// ASUS VG279Q
 		var source = @"(prot(monitor) type(LCD)model(VG279Q) cmds(01 02 03 07 0C F3) vcp(02 04 05 08 10 12 14(05 06 08 0B) 16 18 1A 52 60(03 0F 11) 62 86(02 0B) 87(00 0A 14 1E 28 32 3C 46 50 5A 64) 8A 8D(01 02) AC AE B6 C6 C8 CC(01 02 03 04 05 06 07 08 09 0A 0C 0D 11 12 14 1A 1E 1F 23 30 31) D6(01 05) DF DC(03 0B 0D 0E 11 12 13 14) E0(01 02 03) E1(00 01) E2(00 14 28 3C 50 64) E3(00 19 32 4B 64) E4(00 01) E6(00 01 02 03 04) E7(00 01) E9(00 01) EA(00 01) EB(00 01))mccs_ver(2.2)asset_eep(32)mpu(01)mswhql(1))";
 		var (success, vcpCodes) = TestExtractVcpCodes(source);
@@ -316,6 +344,34 @@ public class MonitorConfigurationTest
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Contrast));
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.SpeakerVolume));
 		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.ColorPreset, 5, 6, 8, 11));
+	}
+
+	[TestMethod]
+	public void TestMonitorCapability_A1_04()
+	{
+		// ASUS VP27A
+		var source = @"(prot(monitor)type(lcd)model(VG27AQ)cmds(01 02 03 07 0C 4E F3 E3)vcp(02 04 05 08 10 12 14(05 06 08 0B) 16 18 1A 52 60( 11 12 0F) 62 87 8A 8D(01 02) AC AE B6 C0 C6 C8 C9 CC( 01 02 03 04 05 06 07 08 09 0A 0C 0D 11 12 14 1A 1E 1F 30 23 31) D6(01 04 05) DF E2(00 01 02 03 04 05) E4(00 01) E6(00 01) E7(00 01) E9(00 01) EA(00 01) EB(00 01) EF(00 01 02 03) F0(00 01 02 03 04) ) mswhql(1)mccs_ver(2.2)asset_eep(32)mpu_ver(01))";
+		var (success, vcpCodes) = TestExtractVcpCodes(source);
+		Assert.IsTrue(success);
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Luminance));
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Contrast));
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.SpeakerVolume));
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.ColorPreset, 5, 6, 8, 11));
+	}
+
+	[TestMethod]
+	public void TestMonitorCapability_A1_05()
+	{
+		// ASUS VP249
+		var source = @"(prot(monitor)type(LCD)model(LCDVP249)cmds(01 02 03 07 0C F3)vcp(02 04 05 06 08 0B 0C 10 12 14(05 06 08 0B) 16 18 1A 60(01 11) EE(01 02 03) 6C 6E 70 A8 AC AE B6 C6 C8 C9 D6(01 05) DF FE)mccs_ver(2.1)asset_eep(32)mpu(01)mswhql(1))";
+		var (success, vcpCodes) = TestExtractVcpCodes(source);
+		Assert.IsTrue(success);
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Luminance));
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.Contrast));
+		Assert.IsFalse(AreIncluded(vcpCodes, VcpCode.SpeakerVolume));
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.ColorPreset, 5, 6, 8, 11));
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.ColorIncrement));
+		Assert.IsTrue(AreIncluded(vcpCodes, VcpCode.ColorRequest));
 	}
 
 	[TestMethod]

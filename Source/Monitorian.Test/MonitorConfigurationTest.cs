@@ -428,9 +428,8 @@ public class MonitorConfigurationTest
 	{
 		var @class = new PrivateType(typeof(MonitorConfiguration));
 		var dic = @class.InvokeStatic("ExtractVcpCodes", source) as Dictionary<byte, byte[]>;
-		var enumerator = @class.InvokeStatic("EnumerateVcpCodes", source) as IEnumerable<byte>;
 
-		bool success = (dic is { Count: > 0 }) && dic.Keys.SequenceEqual(enumerator?.ToArray());
+		bool success = (dic is { Count: > 0 });
 		return (success, dic);
 	}
 

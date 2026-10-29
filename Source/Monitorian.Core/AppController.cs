@@ -344,58 +344,55 @@ public abstract class AppController
 
 				OperationRecorder.StartGroupRecord($"{nameof(ScanAsync)} [{DateTime.Now}]");
 
-				await Task.Run(async () =>
+				var oldMonitorIndices = Enumerable.Range(0, Monitors.Count).ToList();
+				var newMonitorItems = new List<IMonitor>();
+
+				foreach (var item in await MonitorManager.GetMonitorsAsync(TimeSpan.FromSeconds(12)))
 				{
-					var oldMonitorIndices = Enumerable.Range(0, Monitors.Count).ToList();
-					var newMonitorItems = new List<IMonitor>();
+					OperationRecorder.AddGroupRecordItem("Items", item.ToString());
 
-					foreach (var item in await MonitorManager.EnumerateMonitorsAsync(TimeSpan.FromSeconds(12)))
+					var oldMonitorExists = false;
+
+					foreach (int index in oldMonitorIndices)
 					{
-						OperationRecorder.AddGroupRecordItem("Items", item.ToString());
-
-						var oldMonitorExists = false;
-
-						foreach (int index in oldMonitorIndices)
+						var oldMonitor = Monitors[index];
+						if (string.Equals(oldMonitor.DeviceInstanceId, item.DeviceInstanceId, StringComparison.OrdinalIgnoreCase))
 						{
-							var oldMonitor = Monitors[index];
-							if (string.Equals(oldMonitor.DeviceInstanceId, item.DeviceInstanceId, StringComparison.OrdinalIgnoreCase))
-							{
-								oldMonitorExists = true;
-								oldMonitorIndices.Remove(index);
-								oldMonitor.Replace(item);
-								break;
-							}
-						}
-
-						if (!oldMonitorExists)
-							newMonitorItems.Add(item);
-					}
-
-					if (oldMonitorIndices.Count > 0)
-					{
-						oldMonitorIndices.Reverse(); // Reverse indices to start removing from the tail.
-						foreach (int index in oldMonitorIndices)
-						{
-							DisposeMonitor(Monitors[index]);
-							lock (_monitorsLock)
-							{
-								Monitors.RemoveAt(index);
-							}
+							oldMonitorExists = true;
+							oldMonitorIndices.Remove(index);
+							oldMonitor.Replace(item);
+							break;
 						}
 					}
 
-					if (newMonitorItems.Count > 0)
+					if (!oldMonitorExists)
+						newMonitorItems.Add(item);
+				}
+
+				if (oldMonitorIndices.Count > 0)
+				{
+					oldMonitorIndices.Reverse(); // Reverse indices to start removing from the tail.
+					foreach (int index in oldMonitorIndices)
 					{
-						foreach (var item in newMonitorItems)
+						DisposeMonitor(Monitors[index]);
+						lock (_monitorsLock)
 						{
-							var newMonitor = GetMonitor(item);
-							lock (_monitorsLock)
-							{
-								Monitors.Add(newMonitor);
-							}
+							Monitors.RemoveAt(index);
 						}
 					}
-				});
+				}
+
+				if (newMonitorItems.Count > 0)
+				{
+					foreach (var item in newMonitorItems)
+					{
+						var newMonitor = GetMonitor(item);
+						lock (_monitorsLock)
+						{
+							Monitors.Add(newMonitor);
+						}
+					}
+				}
 
 				var maxMonitorsCount = await GetMaxMonitorsCountAsync();
 

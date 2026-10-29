@@ -157,7 +157,7 @@ internal class MonitorManager
 		}
 	}
 
-	public static async Task<IEnumerable<IMonitor>> EnumerateMonitorsAsync(TimeSpan timeout, CancellationToken cancellationToken = default)
+	public static async Task<IReadOnlyCollection<IMonitor>> GetMonitorsAsync(TimeSpan timeout, CancellationToken cancellationToken = default)
 	{
 		var deviceItems = DeviceContext.EnumerateMonitorDevices().ToArray();
 		_foundIds = new HashSet<string>(deviceItems.Select(x => x.DeviceInstanceId));
@@ -166,12 +166,12 @@ internal class MonitorManager
 
 		var basicItems = EnumerateBasicItems(deviceItems, displayItems).ToList();
 		if (basicItems.Count == 0)
-			return Enumerable.Empty<IMonitor>();
+			return Array.Empty<IMonitor>();
 
 		var handleItems = DeviceContext.GetMonitorHandles();
 
 		var physicalItemsTasks = handleItems
-			.Select(x => Task.Run(() => (x, physicalItems: MonitorConfiguration.EnumeratePhysicalMonitors(x.MonitorHandle))))
+			.Select(x => Task.Run(() => (x, physicalItems: MonitorConfiguration.EnumeratePhysicalMonitors(x.MonitorHandle).ToArray())))
 			.ToArray();
 
 		await Task.WhenAny(Task.WhenAll(physicalItemsTasks), Task.Delay(timeout, cancellationToken));
@@ -179,7 +179,7 @@ internal class MonitorManager
 
 		var physicalItemsPairs = physicalItemsTasks.Where(x => x.Status is TaskStatus.RanToCompletion).Select(x => x.Result);
 
-		IEnumerable<IMonitor> EnumerateMonitorItems()
+		IEnumerable<IMonitor> EnumerateMonitors()
 		{
 			// Controlled under HDR
 			if (DisplayInformationWatcher.IsEnabled)
@@ -312,7 +312,7 @@ internal class MonitorManager
 			}
 		}
 
-		return EnumerateMonitorItems();
+		return EnumerateMonitors().ToArray();
 	}
 
 	public static bool CheckMonitorsChanged()

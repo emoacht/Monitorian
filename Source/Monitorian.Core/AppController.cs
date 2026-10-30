@@ -342,7 +342,7 @@ public abstract class AppController
 
 				var intervalTask = (interval > TimeSpan.Zero) ? Task.Delay(interval) : Task.CompletedTask;
 
-				OperationRecorder.StartGroupRecord($"{nameof(ScanAsync)} [{DateTime.Now}]");
+				OperationRecorder.StartGroupRecord($"{nameof(ScanAsync)}", true);
 
 				var oldMonitorIndices = Enumerable.Range(0, Monitors.Count).ToList();
 				var newMonitorItems = new List<IMonitor>();

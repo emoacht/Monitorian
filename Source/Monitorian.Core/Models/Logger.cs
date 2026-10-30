@@ -17,7 +17,8 @@ namespace Monitorian.Core.Models;
 public class Logger
 {
 	private const string HeaderStart = "[Date:";
-	private static string ComposeHeader() => $"{HeaderStart} {DateTime.Now} Ver: {ProductInfo.Version}]";
+	private static string ComposeHeader() => ComposeHeader(DateTime.Now);
+	private static string ComposeHeader(DateTime time) => $"{HeaderStart} {time} Ver: {ProductInfo.Version}]";
 
 	#region Probe
 
@@ -125,9 +126,9 @@ public class Logger
 	/// Saves operation log to AppData.
 	/// </summary>
 	/// <param name="content">Content</param>
-	public static async Task SaveOperationAsync(string content)
+	public static async Task SaveOperationAsync(string content, DateTime time = default)
 	{
-		content = ComposeHeader() + Environment.NewLine
+		content = ((time != default) ? ComposeHeader(time) : ComposeHeader()) + Environment.NewLine
 			+ content + Environment.NewLine + Environment.NewLine;
 
 		var fileName = GetOperationDateFileName(DateTimeOffset.Now);

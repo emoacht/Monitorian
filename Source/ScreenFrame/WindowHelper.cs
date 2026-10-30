@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Interop;
+using Microsoft.Win32;
 
 namespace ScreenFrame;
 
@@ -330,6 +331,24 @@ public static class WindowHelper
 		RECT buffer = rect;
 		var monitorHandle = MonitorFromRect(
 			ref buffer,
+			MONITOR_DEFAULTTO.MONITOR_DEFAULTTONULL);
+
+		return TryGetMonitorRect(monitorHandle, out monitorRect, out workRect);
+	}
+
+	/// <summary>
+	/// Attempts to get monitor rectangle which includes a specified window or primary monitor.
+	/// </summary>
+	/// <param name="window">Window to be checked</param>
+	/// <param name="monitorRect">Monitor rectangle</param>
+	/// <param name="workRect">Working area rectangle</param>
+	/// <returns>True if successfully gets</returns>
+	public static bool TryGetMonitorRect(Window window, out Rect monitorRect, out Rect workRect)
+	{
+		var windowHandle = new WindowInteropHelper(window).Handle;
+
+		var monitorHandle = MonitorFromWindow(
+			windowHandle,
 			MONITOR_DEFAULTTO.MONITOR_DEFAULTTONULL);
 
 		return TryGetMonitorRect(monitorHandle, out monitorRect, out workRect);
@@ -929,6 +948,27 @@ public static class WindowHelper
 				width * dpi.DpiScaleX,
 				height * dpi.DpiScaleY);
 		}
+	}
+
+	/// <summary>
+	/// Gets taskbar alignment of Windows 11 10.0.26300.xxx.
+	/// </summary>
+	/// <returns>Taskbar alignment</returns>
+	internal static TaskbarAlignment GetAdvancedTaskbarAlignment()
+	{
+		const string keyName = @"Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced";
+		const string valueName = "TaskbarLocation";
+
+		using var key = Registry.CurrentUser.OpenSubKey(keyName);
+
+		return key?.GetValue(valueName) switch
+		{
+			0 => TaskbarAlignment.Left,
+			1 => TaskbarAlignment.Top,
+			2 => TaskbarAlignment.Right,
+			3 => TaskbarAlignment.Bottom,
+			_ => TaskbarAlignment.None
+		};
 	}
 
 	#endregion

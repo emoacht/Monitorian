@@ -72,9 +72,7 @@ public class PopupWindowMover : BasicWindowMover
 		}
 		else
 		{
-			var isLeftToRight = !CultureInfoAddition.UserDefaultUICulture.TextInfo.IsRightToLeft;
-
-			PivotAlignment = isLeftToRight
+			PivotAlignment = CultureInfoAddition.IsLeftToRight
 				? PivotAlignment.TopLeft
 				: PivotAlignment.TopRight;
 

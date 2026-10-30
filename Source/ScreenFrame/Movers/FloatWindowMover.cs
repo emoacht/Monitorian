@@ -74,16 +74,14 @@ public class FloatWindowMover : BasicWindowMover
 			return false;
 		}
 
-		var isLeftToRight = !CultureInfoAddition.UserDefaultUICulture.TextInfo.IsRightToLeft;
-
-		PivotAlignment = (taskbarAlignment, isLeftToRight) switch
+		PivotAlignment = (taskbarAlignment, CultureInfoAddition.IsLeftToRight) switch
 		{
-			(TaskbarAlignment.Top, true) => PivotAlignment.TopRight,
 			(TaskbarAlignment.Top, false) => PivotAlignment.TopLeft,
+			(TaskbarAlignment.Top, true) => PivotAlignment.TopRight,
+			(TaskbarAlignment.Right, _) or
 			(TaskbarAlignment.Bottom, true) => PivotAlignment.BottomRight,
+			(TaskbarAlignment.Left, _) or
 			(TaskbarAlignment.Bottom, false) => PivotAlignment.BottomLeft,
-			(TaskbarAlignment.Left, { }) => PivotAlignment.BottomLeft,
-			(TaskbarAlignment.Right, { }) => PivotAlignment.BottomRight,
 			_ => default
 		};
 

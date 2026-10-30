@@ -127,7 +127,7 @@ public class StickWindowMover : BasicWindowMover
 		if (!WindowHelper.TryGetDwmWindowMargin(_window, out Thickness windowMargin))
 			windowMargin = new Thickness(0); // Fallback
 
-		var isLeftToRight = !CultureInfoAddition.UserDefaultUICulture.TextInfo.IsRightToLeft;
+		var isLeftToRight = CultureInfoAddition.IsLeftToRight;
 
 		var distance = new Vector(0, 0);
 		if (OsVersion.Is11OrGreater && KeepsDistance)

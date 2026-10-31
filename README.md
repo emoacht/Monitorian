@@ -40,8 +40,8 @@ Additional languages:
  - Turkish (tr-TR) by [@webbudesign](https://github.com/webbudesign)
  - Ukrainian (uk-UA) by [@kaplun07](https://github.com/kaplun07)
  - Vietnamese (vi-VN) by [@dongsinhho](https://github.com/dongsinhho)
- - Simplified Chinese (zh-Hans) by [@ComMouse](https://github.com/ComMouse), [@zhujunsan](https://github.com/zhujunsan), [@XMuli](https://github.com/XMuli), [@FISHandCHEAP](https://github.com/Fishandcheap) and [@FrzMtrsprt](https://github.com/FrzMtrsprt)
- - Traditional Chinese (zh-Hant) by [@toto6038](https://github.com/toto6038) and [@XMuli](https://github.com/XMuli)
+ - Simplified Chinese (zh-Hans) by [@ComMouse](https://github.com/ComMouse), [@zhujunsan](https://github.com/zhujunsan), [@XMuli](https://github.com/XMuli), [@FISHandCHEAP](https://github.com/Fishandcheap), [@FrzMtrsprt](https://github.com/FrzMtrsprt) and [@380086154](https://github.com/380086154)
+ - Traditional Chinese (zh-Hant) by [@toto6038](https://github.com/toto6038), [@XMuli](https://github.com/XMuli) and [@380086154](https://github.com/380086154)
 
 ## Requirements
 
@@ -62,7 +62,7 @@ Additional languages:
    ```
 
  * Other:<br>
-:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/4.16.2-Installer/MonitorianInstaller4162.zip)
+:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/4.16.8-Installer/MonitorianInstaller4168.zip)
 
 ## Install/Uninstall
 

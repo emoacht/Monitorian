@@ -483,7 +483,7 @@ Here are a few remarks:
 
 ### Load/Unload Commands
 
-To enable conditional/time/key commands, create a command file, which is a JSON file containing all the commands in a single array. The command types (conditional, time, key) and their order do not matter.
+To enable conditional/time/key commands, create a command file, which is a JSON file containing all the commands in a single array. The types and order of the commands do not matter.
 Then load the JSON file using the `/load` option.
 
 ```
@@ -496,7 +496,7 @@ After loading, you can browse the commands in Command Settings, accessible from 
 ![Screenshot](../Images/Screenshot_commands.png)<br>
 (Device Instance IDs are dummy)
 
-To access Command Settings without loading a specific JSON file, use `/load` with `any` sub-option.
+To access Command Settings without loading a specific command file, use `/load` with `any` sub-option.
 
 ```
 monitorian /load any
@@ -506,7 +506,7 @@ The rules for command file path are:
 
 - The most recently specified path is used, whether it was specified with `/load` option or in Command Settings.
 - The path specified in Command Settings is valid only until this app is closed.
-- If `any` sub-option is used, the path of last loaded command file (if any) is used.
+- If `any` sub-option is used, the path of last loaded command file (if any) will be used.
 
 To disable all loaded commands, use `/unload` option.
 

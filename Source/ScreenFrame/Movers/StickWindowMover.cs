@@ -36,7 +36,8 @@ public class StickWindowMover : BasicWindowMover
 	/// <param name="location">Location of window</param>
 	/// <returns>True if successfully gets</returns>
 	protected override bool TryGetAdjacentLocation(double windowWidth, double windowHeight, out Rect location) =>
-		TryGetAdjacentLocationToTaskbar(windowWidth, windowHeight, out location);
+		TryGetAdjacentLocationToNotifyIcon(windowWidth, windowHeight, out location)
+		|| TryGetAdjacentLocationToTaskbarCenter(windowWidth, windowHeight, out location);
 
 	private enum IconPlacement
 	{
@@ -81,7 +82,7 @@ public class StickWindowMover : BasicWindowMover
 	/// <param name="windowHeight">Window height</param>
 	/// <param name="location">Location of window</param>
 	/// <returns>True if successfully gets</returns>
-	protected bool TryGetAdjacentLocationToTaskbar(double windowWidth, double windowHeight, out Rect location)
+	protected bool TryGetAdjacentLocationToNotifyIcon(double windowWidth, double windowHeight, out Rect location)
 	{
 		if (!WindowHelper.TryGetTaskbar(CursorLocation,
 			out Rect taskbarRect, out TaskbarAlignment taskbarAlignment, out Rect notificationAreaRect,
@@ -127,7 +128,7 @@ public class StickWindowMover : BasicWindowMover
 		if (!WindowHelper.TryGetDwmWindowMargin(_window, out Thickness windowMargin))
 			windowMargin = new Thickness(0); // Fallback
 
-		var isLeftToRight = !CultureInfoAddition.UserDefaultUICulture.TextInfo.IsRightToLeft;
+		var isLeftToRight = CultureInfoAddition.IsLeftToRight;
 
 		var distance = new Vector(0, 0);
 		if (OsVersion.Is11OrGreater && KeepsDistance)
@@ -140,7 +141,7 @@ public class StickWindowMover : BasicWindowMover
 				(true, TaskbarAlignment.Right) => new Vector(Distance, 0),
 				_ => new Vector(Distance, Distance)
 			};
-			distance *= VisualTreeHelperAddition.GetDpi(_window).ToMatrix();
+			distance *= GetDpi().ToMatrix();
 		}
 
 		double x = 0, y = 0;
@@ -202,6 +203,44 @@ public class StickWindowMover : BasicWindowMover
 				y -= (windowHeight - windowMargin.Bottom);
 				break;
 		}
+		location = new Rect(x, y, windowWidth, windowHeight);
+		return true;
+	}
+
+	/// <summary>
+	/// Attempts to get the adjacent location to the center of taskbar as fallback using specified
+	/// window width and height.
+	/// </summary>
+	/// <param name="windowWidth">Window width</param>
+	/// <param name="windowHeight">Window height</param>
+	/// <param name="location">Location of window</param>
+	/// <returns>True if successfully gets</returns>
+	protected bool TryGetAdjacentLocationToTaskbarCenter(double windowWidth, double windowHeight, out Rect location)
+	{
+		if (!WindowHelper.TryGetMonitorRect(_window, out _, out Rect workRect))
+		{
+			location = default;
+			return false;
+		}
+
+		var taskbarAlignment = TaskbarAlignment.Bottom;
+		if (OsVersion.Is11Build26300orGreater)
+			taskbarAlignment = WindowHelper.GetAdvancedTaskbarAlignment();
+
+		var distancedRect = workRect;
+		if (OsVersion.Is11OrGreater && KeepsDistance)
+		{
+			var distance = new Vector(Distance, Distance) * GetDpi().ToMatrix();
+			distancedRect.Inflate(-distance.X, -distance.Y);
+		}
+
+		var (x, y) = taskbarAlignment switch
+		{
+			TaskbarAlignment.Top => ((distancedRect.Width - windowWidth) / 2D, distancedRect.Top),
+			TaskbarAlignment.Left => (distancedRect.Left, (distancedRect.Height - windowHeight) / 2D),
+			TaskbarAlignment.Right => (distancedRect.Right - windowWidth, (distancedRect.Height - windowHeight) / 2D),
+			_ => ((distancedRect.Width - windowWidth) / 2D, distancedRect.Bottom - windowHeight)
+		};
 		location = new Rect(x, y, windowWidth, windowHeight);
 		return true;
 	}

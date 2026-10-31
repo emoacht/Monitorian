@@ -342,60 +342,59 @@ public abstract class AppController
 
 				var intervalTask = (interval > TimeSpan.Zero) ? Task.Delay(interval) : Task.CompletedTask;
 
-				OperationRecorder.StartGroupRecord($"{nameof(ScanAsync)} [{DateTime.Now}]");
+				OperationRecorder.StartGroupRecord($"{nameof(ScanAsync)}", true);
 
-				await Task.Run(async () =>
+				var oldMonitorIndices = Enumerable.Range(0, Monitors.Count).ToList();
+				var newMonitorItems = new List<IMonitor>();
+
+				var (items, runningTasks) = await MonitorManager.GetMonitorsAsync(TimeSpan.FromSeconds(12));
+				foreach (var item in items)
 				{
-					var oldMonitorIndices = Enumerable.Range(0, Monitors.Count).ToList();
-					var newMonitorItems = new List<IMonitor>();
+					OperationRecorder.AddGroupRecordItem("Items", item.ToString());
 
-					foreach (var item in await MonitorManager.EnumerateMonitorsAsync(TimeSpan.FromSeconds(12)))
+					var oldMonitorExists = false;
+
+					foreach (int index in oldMonitorIndices)
 					{
-						OperationRecorder.AddGroupRecordItem("Items", item.ToString());
-
-						var oldMonitorExists = false;
-
-						foreach (int index in oldMonitorIndices)
+						var oldMonitor = Monitors[index];
+						if (string.Equals(oldMonitor.DeviceInstanceId, item.DeviceInstanceId, StringComparison.OrdinalIgnoreCase))
 						{
-							var oldMonitor = Monitors[index];
-							if (string.Equals(oldMonitor.DeviceInstanceId, item.DeviceInstanceId, StringComparison.OrdinalIgnoreCase))
-							{
-								oldMonitorExists = true;
-								oldMonitorIndices.Remove(index);
-								oldMonitor.Replace(item);
-								break;
-							}
-						}
-
-						if (!oldMonitorExists)
-							newMonitorItems.Add(item);
-					}
-
-					if (oldMonitorIndices.Count > 0)
-					{
-						oldMonitorIndices.Reverse(); // Reverse indices to start removing from the tail.
-						foreach (int index in oldMonitorIndices)
-						{
-							DisposeMonitor(Monitors[index]);
-							lock (_monitorsLock)
-							{
-								Monitors.RemoveAt(index);
-							}
+							oldMonitorExists = true;
+							oldMonitorIndices.Remove(index);
+							oldMonitor.Replace(item);
+							break;
 						}
 					}
 
-					if (newMonitorItems.Count > 0)
+					if (!oldMonitorExists)
+						newMonitorItems.Add(item);
+				}
+
+				if (oldMonitorIndices.Count > 0)
+				{
+					// Reverse indices to start removing from the tail.
+					oldMonitorIndices.Reverse();
+					foreach (int index in oldMonitorIndices)
 					{
-						foreach (var item in newMonitorItems)
+						DisposeMonitor(Monitors[index]);
+						lock (_monitorsLock)
 						{
-							var newMonitor = GetMonitor(item);
-							lock (_monitorsLock)
-							{
-								Monitors.Add(newMonitor);
-							}
+							Monitors.RemoveAt(index);
 						}
 					}
-				});
+				}
+
+				if (newMonitorItems.Count > 0)
+				{
+					foreach (var item in newMonitorItems)
+					{
+						var newMonitor = GetMonitor(item);
+						lock (_monitorsLock)
+						{
+							Monitors.Add(newMonitor);
+						}
+					}
+				}
 
 				var maxMonitorsCount = await GetMaxMonitorsCountAsync();
 
@@ -424,9 +423,14 @@ public abstract class AppController
 					m.IsTarget = !controllableMonitorExists;
 
 				OperationRecorder.AddGroupRecordItems(nameof(Monitors), Monitors.Select(x => x.ToString()));
-				await OperationRecorder.EndGroupRecordAsync();
 
-				await intervalTask;
+				// Wait for the interval to elapse and for any running task to end to avoid duplicate execution.
+				await Task.WhenAll([intervalTask, .. runningTasks]);
+
+				foreach (var runningTask in runningTasks)
+					runningTask.Result.Dispose();
+
+				await OperationRecorder.EndGroupRecordAsync();
 			}
 		}
 		finally

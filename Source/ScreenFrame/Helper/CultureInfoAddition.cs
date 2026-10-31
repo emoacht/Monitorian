@@ -16,6 +16,7 @@ internal static class CultureInfoAddition
 
 	#endregion
 
+	public static bool IsLeftToRight => !UserDefaultUICulture.TextInfo.IsRightToLeft;
 	public static CultureInfo UserDefaultUICulture => _userDefaultUICulture.Value;
 	private static readonly Lazy<CultureInfo> _userDefaultUICulture = new(() => new(GetUserDefaultUILanguage()));
 }

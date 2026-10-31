@@ -163,19 +163,14 @@ internal class MonitorConfiguration
 
 		public SafePhysicalMonitorHandle Handle { get; }
 
-		[DataMember(Order = 2)]
-		public MonitorCapability Capability { get; }
-
 		public PhysicalItem(
 			string description,
 			int monitorIndex,
-			SafePhysicalMonitorHandle handle,
-			MonitorCapability capability)
+			SafePhysicalMonitorHandle handle)
 		{
 			this.Description = description;
 			this.MonitorIndex = monitorIndex;
 			this.Handle = handle;
-			this.Capability = capability;
 		}
 	}
 
@@ -192,7 +187,7 @@ internal class MonitorConfiguration
 		PowerMode = 0xD6,
 	}
 
-	public static IEnumerable<PhysicalItem> EnumeratePhysicalMonitors(IntPtr monitorHandle, bool verbose = false)
+	public static IEnumerable<PhysicalItem> EnumeratePhysicalMonitors(IntPtr monitorHandle)
 	{
 		if (!GetNumberOfPhysicalMonitorsFromHMONITOR(
 			monitorHandle,
@@ -231,8 +226,7 @@ internal class MonitorConfiguration
 				yield return new PhysicalItem(
 					description: physicalMonitor.szPhysicalMonitorDescription,
 					monitorIndex: monitorIndex,
-					handle: handle,
-					capability: GetMonitorCapability(handle, verbose));
+					handle: handle);
 
 				monitorIndex++;
 			}
@@ -243,7 +237,7 @@ internal class MonitorConfiguration
 		}
 	}
 
-	private static MonitorCapability GetMonitorCapability(SafePhysicalMonitorHandle physicalMonitorHandle, bool verbose)
+	public static MonitorCapability GetMonitorCapability(SafePhysicalMonitorHandle physicalMonitorHandle, bool verbose)
 	{
 		bool isHighLevelBrightnessSupported = false;
 		if (GetMonitorCapabilities(

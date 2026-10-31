@@ -79,16 +79,22 @@ public static class OperationRecorder
 	#region Group
 
 	private static string _actionName;
+	private static DateTime _actionTime;
 	private static readonly Lazy<List<(string groupName, StringWrapper item)>> _actionGroups = new(() => new());
 
 	/// <summary>
 	/// Starts a record consisting of groups of lines (non-concurrent).
 	/// </summary>
 	/// <param name="actionName">Action name</param>
-	public static void StartGroupRecord(string actionName)
+	public static void StartGroupRecord(string actionName, bool measureTime = false)
 	{
 		if (IsEnabled)
+		{
 			_actionName = actionName;
+
+			if (measureTime)
+				_actionTime = DateTime.Now;
+		}
 	}
 
 	public static void AddGroupRecordItem(string groupName, string itemString)
@@ -107,9 +113,13 @@ public static class OperationRecorder
 	{
 		if (IsEnabled)
 		{
+			string timeString = null;
+			if (_actionTime > default(DateTime))
+				timeString = $" ({(DateTime.Now - _actionTime).TotalSeconds:F2} sec)";
+
 			var groupsStrings = _actionGroups.Value.GroupBy(x => x.groupName).Select(x => (x.Key, (object)x.Select(y => y.item))).ToArray();
 
-			await Logger.SaveOperationAsync($"{_actionName}{Environment.NewLine}{SimpleSerialization.Serialize(groupsStrings)}");
+			await Logger.SaveOperationAsync($"{_actionName}{timeString}{Environment.NewLine}{SimpleSerialization.Serialize(groupsStrings)}", _actionTime);
 			FinishGroupRecord();
 		}
 	}
@@ -117,6 +127,7 @@ public static class OperationRecorder
 	private static void FinishGroupRecord()
 	{
 		_actionName = null;
+		_actionTime = default;
 		_actionGroups.Value.Clear();
 	}
 

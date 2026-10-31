@@ -347,7 +347,8 @@ public abstract class AppController
 				var oldMonitorIndices = Enumerable.Range(0, Monitors.Count).ToList();
 				var newMonitorItems = new List<IMonitor>();
 
-				foreach (var item in await MonitorManager.GetMonitorsAsync(TimeSpan.FromSeconds(12)))
+				var (items, runningTasks) = await MonitorManager.GetMonitorsAsync(TimeSpan.FromSeconds(12));
+				foreach (var item in items)
 				{
 					OperationRecorder.AddGroupRecordItem("Items", item.ToString());
 
@@ -371,7 +372,8 @@ public abstract class AppController
 
 				if (oldMonitorIndices.Count > 0)
 				{
-					oldMonitorIndices.Reverse(); // Reverse indices to start removing from the tail.
+					// Reverse indices to start removing from the tail.
+					oldMonitorIndices.Reverse();
 					foreach (int index in oldMonitorIndices)
 					{
 						DisposeMonitor(Monitors[index]);
@@ -421,9 +423,14 @@ public abstract class AppController
 					m.IsTarget = !controllableMonitorExists;
 
 				OperationRecorder.AddGroupRecordItems(nameof(Monitors), Monitors.Select(x => x.ToString()));
-				await OperationRecorder.EndGroupRecordAsync();
 
-				await intervalTask;
+				// Wait for the interval to elapse and for any running task to end to avoid duplicate execution.
+				await Task.WhenAll([intervalTask, .. runningTasks]);
+
+				foreach (var runningTask in runningTasks)
+					runningTask.Result.Dispose();
+
+				await OperationRecorder.EndGroupRecordAsync();
 			}
 		}
 		finally

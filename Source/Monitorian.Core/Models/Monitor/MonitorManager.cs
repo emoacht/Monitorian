@@ -7,7 +7,6 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -73,53 +72,122 @@ internal class MonitorManager
 		}
 	}
 
-	private class DdcMonitorItemFactory : IDisposable
+	public class MonitorItemSource : IMonitorSource
 	{
-		public BasicItem BasicItem { get; }
+		private readonly IMonitor _monitor;
 
+		public string DeviceInstanceId => _monitor.DeviceInstanceId;
+
+		public MonitorItemSource(IMonitor monitor) => this._monitor = monitor ?? throw new ArgumentNullException(nameof(monitor));
+
+		public Task<IMonitor> GetMonitorAsync(TimeSpan timeout) => Task.FromResult(_monitor);
+
+		public override string ToString()
+		{
+			return SimpleSerialization.Serialize(
+				(nameof(Type), $"{_monitor.GetType().Name}Source"),
+				(nameof(DeviceInstanceId), DeviceInstanceId),
+				(nameof(IMonitor.Description), _monitor.Description),
+				(nameof(IMonitor.DisplayIndex), _monitor.DisplayIndex),
+				(nameof(IMonitor.MonitorIndex), _monitor.MonitorIndex),
+				(nameof(IMonitor.MonitorRect), _monitor.MonitorRect),
+				(nameof(IMonitor.Connection), _monitor.Connection));
+		}
+
+		public void Dispose() { }
+	}
+
+	public class DdcMonitorItemSource : IMonitorSource
+	{
+		public string DeviceInstanceId { get; }
+		private readonly string _description;
+		private readonly byte _displayIndex;
+		private readonly byte _monitorIndex;
 		private readonly Rect _monitorRect;
-		private readonly SafePhysicalMonitorHandle _handle;
+		private readonly ConnectionType _connection;
+		private SafePhysicalMonitorHandle _handle;
 		private MonitorCapability _capability;
 
-		public DdcMonitorItemFactory(
-			BasicItem basicItem,
+		public DdcMonitorItemSource(
+			string deviceInstanceId,
+			string description,
+			byte displayIndex,
+			byte monitorIndex,
 			Rect monitorRect,
+			ConnectionType connection,
 			SafePhysicalMonitorHandle handle,
 			MonitorCapability capability)
 		{
-			this.BasicItem = basicItem ?? throw new ArgumentNullException(nameof(basicItem));
+			this.DeviceInstanceId = deviceInstanceId;
+			this._description = description;
+			this._displayIndex = displayIndex;
+			this._monitorIndex = monitorIndex;
 			this._monitorRect = monitorRect;
+			this._connection = connection;
 			this._handle = handle ?? throw new ArgumentNullException(nameof(handle));
 			this._capability = capability;
 		}
 
-		public Task<IDisposable> EnsureCapabilityAsync(Func<SafePhysicalMonitorHandle, MonitorCapability> getCapability)
+		private bool? _success = null;
+
+		public async Task<IMonitor> GetMonitorAsync(TimeSpan timeout)
 		{
+			if (_success is not null)
+				throw new InvalidOperationException($"{nameof(GetMonitorAsync)} can only be called once.");
+
 			if (_capability is null)
 			{
-				return Task.Run<IDisposable>(() =>
-				{
-					_capability = getCapability.Invoke(_handle);
-					return this;
-				});
+				var getTask = Task.Factory.StartNew(() => MonitorConfiguration.GetMonitorCapability(_handle, false),
+					default, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+
+				if (getTask == await Task.WhenAny(getTask, Task.Delay(timeout)))
+					_capability = getTask.Result;
 			}
-			return Task.FromResult<IDisposable>(this);
+			if (_capability is { IsBrightnessSupported: true })
+			{
+				try
+				{
+					_success = true;
+					return new DdcMonitorItem(
+						deviceInstanceId: DeviceInstanceId,
+						description: _description,
+						displayIndex: _displayIndex,
+						monitorIndex: _monitorIndex,
+						monitorRect: _monitorRect,
+						connection: _connection,
+						handle: _handle,
+						capability: _capability);
+				}
+				finally
+				{
+					_handle = null; // Ownership transferred
+				}
+			}
+			_success = false;
+			return new UnreachableMonitorItem(
+				deviceInstanceId: DeviceInstanceId,
+				description: _description,
+				displayIndex: _displayIndex,
+				monitorIndex: _monitorIndex,
+				connection: _connection,
+				isInternal: false);
 		}
 
-		public DdcMonitorItem GetItem()
+		public override string ToString()
 		{
-			return new DdcMonitorItem(
-				deviceInstanceId: BasicItem.DeviceInstanceId,
-				description: BasicItem.AlternativeDescription,
-				displayIndex: BasicItem.DisplayIndex,
-				monitorIndex: BasicItem.MonitorIndex,
-				monitorRect: _monitorRect,
-				connection: BasicItem.Connection,
-				handle: _handle,
-				capability: _capability);
+			return SimpleSerialization.Serialize(
+				(nameof(Type), this.GetType().Name),
+				(nameof(DeviceInstanceId), DeviceInstanceId),
+				(nameof(IMonitor.Description), _description),
+				(nameof(IMonitor.DisplayIndex), _displayIndex),
+				(nameof(IMonitor.MonitorIndex), _monitorIndex),
+				(nameof(IMonitor.MonitorRect), _monitorRect),
+				(nameof(IMonitor.Connection), _connection),
+				("Success", _success),
+				(nameof(MonitorCapability.Elapsed), _capability?.Elapsed));
 		}
 
-		public void Dispose() => _handle.Dispose();
+		public void Dispose() => _handle?.Dispose();
 	}
 
 	#endregion
@@ -207,7 +275,7 @@ internal class MonitorManager
 		}
 	}
 
-	public static async Task<(IReadOnlyCollection<IMonitor>, IReadOnlyCollection<Task<IDisposable>> runningTasks)> GetMonitorsAsync(TimeSpan timeout, CancellationToken cancellationToken = default)
+	public static async Task<IReadOnlyCollection<IMonitorSource>> GetMonitorsAsync()
 	{
 		var deviceItems = DeviceContext.EnumerateMonitorDevices().ToArray();
 		_foundIds = new HashSet<string>(deviceItems.Select(x => x.DeviceInstanceId));
@@ -216,11 +284,11 @@ internal class MonitorManager
 
 		var basicItems = EnumerateBasicItems(deviceItems, displayItems).ToList();
 		if (basicItems.Count == 0)
-			return (Array.Empty<IMonitor>(), Array.Empty<Task<IDisposable>>());
+			return Array.Empty<IMonitorSource>();
 
 		var handleItems = DeviceContext.GetMonitorHandles();
 
-		var itemList = new List<IMonitor>(basicItems.Count);
+		var sources = new List<IMonitorSource>(basicItems.Count);
 
 		// Controlled under HDR
 		if (DisplayInformationWatcher.IsEnabled)
@@ -237,7 +305,7 @@ internal class MonitorManager
 					continue;
 
 				var basicItem = basicItems[index];
-				itemList.Add(new HdrMonitorItem(
+				sources.Add(new MonitorItemSource(new HdrMonitorItem(
 					deviceInstanceId: basicItem.DeviceInstanceId,
 					description: basicItem.AlternativeDescription,
 					displayIndex: basicItem.DisplayIndex,
@@ -247,11 +315,11 @@ internal class MonitorManager
 					isInternal: basicItem.IsInternal,
 					monitorHandle: handleItem.MonitorHandle,
 					displayIdSet: basicItem.DisplayIdSet,
-					sdrWhiteLevel: (int)sdrWhiteLevel));
+					sdrWhiteLevel: (int)sdrWhiteLevel)));
 
 				basicItems.RemoveAt(index);
 				if (basicItems.Count == 0)
-					return (itemList.ToArray(), Array.Empty<Task<IDisposable>>());
+					return sources.ToArray();
 			}
 		}
 
@@ -264,69 +332,44 @@ internal class MonitorManager
 
 		await Task.WhenAll(physicalItemsTasks);
 
-		var factoryList = new List<DdcMonitorItemFactory>(basicItems.Count);
-
 		foreach ((var handleItem, var physicalItems) in physicalItemsTasks.Select(x => x.Result))
 		{
 			foreach (var physicalItem in physicalItems)
 			{
-				var basicItem = basicItems.FirstOrDefault(x =>
+				int index = basicItems.FindIndex(x =>
 					!x.IsInternal &&
 					(x.DisplayIndex == handleItem.DisplayIndex) &&
 					(x.MonitorIndex == physicalItem.MonitorIndex) &&
 					string.Equals(x.Description, physicalItem.Description, StringComparison.OrdinalIgnoreCase));
-				if (basicItem is null)
+				if (index < 0)
 				{
 					physicalItem.Handle.Dispose();
 					continue;
 				}
 
+				var basicItem = basicItems[index];
+
 				MonitorCapability capability = null;
 				if (_preclearedIds.Value.Contains(basicItem.DeviceInstanceId))
 					capability = MonitorCapability.PreclearedCapability;
 
-				factoryList.Add(new DdcMonitorItemFactory(
-					basicItem: basicItem,
+				sources.Add(new DdcMonitorItemSource(
+					deviceInstanceId: basicItem.DeviceInstanceId,
+					description: basicItem.AlternativeDescription,
+					displayIndex: basicItem.DisplayIndex,
+					monitorIndex: basicItem.MonitorIndex,
 					monitorRect: handleItem.MonitorRect,
+					connection: basicItem.Connection,
 					handle: physicalItem.Handle,
 					capability: capability));
 
+				basicItems.RemoveAt(index);
 				// Continue the loop so that all physical monitor handles are disposed unless taken over.
 			}
 		}
 
-		var factoryTasks = factoryList
-			.Select(x => x.EnsureCapabilityAsync(handle => MonitorConfiguration.GetMonitorCapability(handle, false)))
-			.ToList();
-
-		await Task.WhenAny(Task.WhenAll(factoryTasks), Task.Delay(timeout, cancellationToken));
-		cancellationToken.ThrowIfCancellationRequested();
-
-		factoryTasks.RemoveAll(x =>
-		{
-			switch (x.Status)
-			{
-				case TaskStatus.RanToCompletion:
-					var factory = (DdcMonitorItemFactory)x.Result;
-					var item = factory.GetItem();
-					if (item.IsBrightnessSupported)
-					{
-						itemList.Add(item);
-						basicItems.Remove(factory.BasicItem);
-						return true;
-					}
-					goto default;
-				case TaskStatus.Running:
-					// Leave as is.
-					return false;
-				default:
-					x.Result.Dispose();
-					return true;
-			}
-		});
-
 		if (basicItems.Count == 0)
-			return (itemList.ToArray(), factoryTasks.ToArray());
+			return sources.ToArray();
 
 		// Obtained by WMI
 		foreach (var desktopItem in MSMonitor.EnumerateDesktopMonitors())
@@ -343,7 +386,7 @@ internal class MonitorManager
 					continue;
 
 				var basicItem = basicItems[index];
-				itemList.Add(new WmiMonitorItem(
+				sources.Add(new MonitorItemSource(new WmiMonitorItem(
 					deviceInstanceId: basicItem.DeviceInstanceId,
 					description: basicItem.AlternativeDescription,
 					displayIndex: basicItem.DisplayIndex,
@@ -351,27 +394,27 @@ internal class MonitorManager
 					monitorRect: handleItem.MonitorRect,
 					connection: basicItem.Connection,
 					isInternal: basicItem.IsInternal,
-					brightnessLevels: desktopItem.BrightnessLevels));
+					brightnessLevels: desktopItem.BrightnessLevels)));
 
 				basicItems.RemoveAt(index);
 				if (basicItems.Count == 0)
-					return (itemList.ToArray(), factoryTasks.ToArray());
+					return sources.ToArray();
 			}
 		}
 
-		// Unreachable by HDR, DDC/CI (including factory task is still running), or WMI
+		// Unreachable by HDR, DDC/CI, or WMI
 		foreach (var basicItem in basicItems)
 		{
-			itemList.Add(new UnreachableMonitorItem(
+			sources.Add(new MonitorItemSource(new UnreachableMonitorItem(
 				deviceInstanceId: basicItem.DeviceInstanceId,
 				description: basicItem.AlternativeDescription,
 				displayIndex: basicItem.DisplayIndex,
 				monitorIndex: basicItem.MonitorIndex,
 				connection: basicItem.Connection,
-				isInternal: basicItem.IsInternal));
+				isInternal: basicItem.IsInternal)));
 		}
 
-		return (itemList.ToArray(), factoryTasks.ToArray());
+		return sources.ToArray();
 	}
 
 	public static bool CheckMonitorsChanged()
@@ -425,8 +468,7 @@ internal class MonitorManager
 	private class InstalledItemPlus : DeviceInformation.InstalledItem
 	{
 		[DataMember(Order = 3)]
-		public string Manufacture
-		{ get; private set; }
+		public string Manufacture { get; private set; }
 
 		[DataMember(Order = 4)]
 		public string Date { get; private set; }

@@ -329,8 +329,9 @@ public abstract class AppController
 	private int _updateCount = 0;
 
 	internal Task ScanAsync() => ScanAsync(TimeSpan.Zero);
+	internal Task ScanAsync(TimeSpan interval) => ScanAsync(interval, TimeSpan.FromMinutes(5));
 
-	protected virtual async Task ScanAsync(TimeSpan interval)
+	protected virtual async Task ScanAsync(TimeSpan interval, TimeSpan timeout)
 	{
 		var isEntered = false;
 		try
@@ -344,30 +345,56 @@ public abstract class AppController
 
 				OperationRecorder.BeginGroupRecord($"{nameof(ScanAsync)}", true);
 
-				var oldMonitorIndices = Enumerable.Range(0, Monitors.Count).ToList();
-				var newMonitorItems = new List<IMonitor>();
+				int maxMonitorsCount = await GetMaxMonitorsCountAsync();
+				int monitorsCount = 0;
+				var controllableMonitorExists = false;
 
-				var (items, runningTasks) = await MonitorManager.GetMonitorsAsync(TimeSpan.FromSeconds(12));
-				foreach (var item in items)
+				async Task CheckUpdateAsync(MonitorViewModel m)
 				{
-					OperationRecorder.AddGroupRecordItem("Items", item.ToString());
+					if (m.IsReachable &&
+						Interlocked.Increment(ref monitorsCount) <= maxMonitorsCount)
+					{
+						if (await Task.Run(() => m.UpdateBrightness()))
+							m.IsTarget = true;
 
+						if (m.IsControllable)
+							controllableMonitorExists = true;
+					}
+					else
+					{
+						m.IsTarget = false;
+					}
+				}
+
+				var sources = await MonitorManager.GetMonitorsAsync();
+
+				var oldMonitorIndices = Enumerable.Range(0, Monitors.Count).ToList();
+				var newMonitorSources = new List<IMonitorSource>(sources.Count);
+				var sourceTasks = new List<Task>(sources.Count);
+
+				foreach (var source in sources)
+				{
 					var oldMonitorExists = false;
 
 					foreach (int index in oldMonitorIndices)
 					{
 						var oldMonitor = Monitors[index];
-						if (string.Equals(oldMonitor.DeviceInstanceId, item.DeviceInstanceId, StringComparison.OrdinalIgnoreCase))
+						if (string.Equals(oldMonitor.DeviceInstanceId, source.DeviceInstanceId, StringComparison.OrdinalIgnoreCase))
 						{
 							oldMonitorExists = true;
 							oldMonitorIndices.Remove(index);
-							oldMonitor.Replace(item);
+
+							sourceTasks.Add(source.GetMonitorAsync(timeout).ContinueWith(x =>
+							{
+								oldMonitor.Replace(x.Result);
+								return CheckUpdateAsync(oldMonitor);
+							}).Unwrap());
 							break;
 						}
 					}
 
 					if (!oldMonitorExists)
-						newMonitorItems.Add(item);
+						newMonitorSources.Add(source);
 				}
 
 				if (oldMonitorIndices.Count > 0)
@@ -384,52 +411,35 @@ public abstract class AppController
 					}
 				}
 
-				if (newMonitorItems.Count > 0)
+				if (newMonitorSources.Count > 0)
 				{
-					foreach (var item in newMonitorItems)
+					foreach (var source in newMonitorSources)
 					{
-						var newMonitor = GetMonitor(item);
-						lock (_monitorsLock)
+						sourceTasks.Add(source.GetMonitorAsync(timeout).ContinueWith(async x =>
 						{
-							Monitors.Add(newMonitor);
-						}
+							var newMonitor = GetMonitor(x.Result);
+							lock (_monitorsLock)
+							{
+								Monitors.Add(newMonitor);
+							}
+							await CheckUpdateAsync(newMonitor);
+						}).Unwrap());
 					}
 				}
 
-				var maxMonitorsCount = await GetMaxMonitorsCountAsync();
+				// Wait for the interval to elapse and for source tasks to complete.
+				await Task.WhenAll([intervalTask, .. sourceTasks]);
 
-				var updateResults = await Task.WhenAll(Monitors
-					.Where(x => x.IsReachable)
-					.Select((x, index) =>
-					{
-						if (index < maxMonitorsCount)
-						{
-							return Task.Run(() =>
-							{
-								if (x.UpdateBrightness())
-								{
-									x.IsTarget = true;
-								}
-								return x.IsControllable;
-							});
-						}
-						x.IsTarget = false;
-						return Task.FromResult(false);
-					}));
-
-				var controllableMonitorExists = updateResults.Any(x => x);
+				foreach (var source in sources)
+				{
+					OperationRecorder.AddGroupRecordItem("Sources", source.ToString());
+					source.Dispose();
+				}
 
 				foreach (var m in Monitors.Where(x => !x.IsControllable))
 					m.IsTarget = !controllableMonitorExists;
 
 				OperationRecorder.AddGroupRecordItems(nameof(Monitors), Monitors.Select(x => x.ToString()));
-
-				// Wait for the interval to elapse and for any running task to end to avoid duplicate execution.
-				await Task.WhenAll([intervalTask, .. runningTasks]);
-
-				foreach (var runningTask in runningTasks)
-					runningTask.Result.Dispose();
-
 				await OperationRecorder.EndGroupRecordAsync();
 			}
 		}

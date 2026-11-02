@@ -573,7 +573,7 @@ internal class MonitorManager
 		{
 			System = $"Manufacturer: {SystemInfo.Manufacturer}, Model: {SystemInfo.Model}, OS: {Environment.OSVersion.Version}";
 
-			var sw = new Stopwatch();
+			var startingTimeStamp = Stopwatch.GetTimestamp();
 
 			var tasks = new[]
 			{
@@ -613,18 +613,14 @@ internal class MonitorManager
 					DesktopItems = MSMonitor.EnumerateDesktopMonitors(true).ToArray())
 			};
 
-			sw.Start();
-
 			ElapsedTime = await Task.WhenAll(tasks);
-
-			sw.Stop();
 
 			Task<string> GetTask(string name, Action action) =>
 				Task.Run(() =>
 				{
 					action.Invoke();
-					var elapsed = sw.Elapsed;
-					return $@"{name,-14} -> {elapsed.ToString($@"{(elapsed.Minutes > 0 ? @"m\:" : string.Empty)}s\.fff")}";
+					var elapsed = StopWatchAddition.GetElapsedTotalSeconds(startingTimeStamp);
+					return $@"{name,-23} -> {elapsed:F3}";
 				});
 		}
 	}

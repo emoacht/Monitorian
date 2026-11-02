@@ -60,6 +60,7 @@
     <Compile Include="Helper\KeyValuePairExtension.cs" />
     <Compile Include="Helper\OsVersion.cs" />
     <Compile Include="Helper\SimpleSerialization.cs" />
+    <Compile Include="Helper\StopWatchAddition.cs" />
     <Compile Include="Helper\StringExtension.cs" />
     <Compile Include="Helper\Throttle.cs" />
     <Compile Include="Models\Monitor\ConnectionType.cs" />

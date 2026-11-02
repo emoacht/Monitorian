@@ -107,8 +107,11 @@ internal class PowerWatcher : IDisposable
 
 	public bool IsDisplayOff { get; private set; }
 
-	private async void OnDisplayStateChanged(DisplayStates state)
+	private void OnDisplayStateChanged(DisplayStates state)
 	{
+		if (state is DisplayStates.None)
+			return;
+
 		await OperationRecorder.RecordAsync($"Display {state}");
 
 		switch (state)

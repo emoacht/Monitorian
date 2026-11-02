@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Monitorian.Core.Helper;
@@ -17,6 +19,8 @@ public static class OperationRecorder
 		await Logger.PrepareOperationAsync();
 		await Logger.SaveOperationAsync(message);
 
+		StartQueueRecord();
+
 		IsEnabled = true;
 	}
 
@@ -24,16 +28,80 @@ public static class OperationRecorder
 	{
 		IsEnabled = false;
 
-		FinishLineRecord();
-		FinishGroupRecord();
+		StopQueueRecord();
+		StopLineRecord();
+		StopGroupRecord();
 	}
 
-	public static Task RecordAsync(string content)
+	#region Queue
+
+	private class QueueRecorder
 	{
-		return IsEnabled
-			? Logger.SaveOperationAsync(content)
-			: Task.CompletedTask;
+		private readonly ConcurrentQueue<string> _queue = new();
+		private readonly SemaphoreSlim _semaphore = new(0);
+		private readonly CancellationTokenSource _cts = new();
+
+		public QueueRecorder()
+		{
+			Task.Run(() => WriterLoopAsync(_cts.Token)); // fire-and-forget
+		}
+
+		public void Record(string content)
+		{
+			if (_cts.IsCancellationRequested ||
+				(_semaphore.CurrentCount >= 100))
+				return;
+
+			_queue.Enqueue(content);
+			_semaphore.Release();
+		}
+
+		private async Task WriterLoopAsync(CancellationToken token)
+		{
+			try
+			{
+				while (true)
+				{
+					await _semaphore.WaitAsync(token).ConfigureAwait(false);
+
+					if (_queue.TryDequeue(out string content))
+						await Logger.SaveOperationAsync(content).ConfigureAwait(false);
+				}
+			}
+			catch (OperationCanceledException)
+			{
+				Debug.WriteLine($"Stopped queue recorder.");
+			}
+			catch (Exception ex)
+			{
+				Debug.WriteLine($"Failed to loop queue recorder." + Environment.NewLine
+					+ ex);
+			}
+		}
+
+		public void End() => _cts.Cancel();
 	}
+
+	private static QueueRecorder _queueRecorder;
+
+	private static void StartQueueRecord()
+	{
+		_queueRecorder = new QueueRecorder();
+	}
+
+	public static void Record(string content)
+	{
+		if (IsEnabled)
+			_queueRecorder?.Record(content);
+	}
+
+	private static void StopQueueRecord()
+	{
+		_queueRecorder?.End();
+		_queueRecorder = null;
+	}
+
+	#endregion
 
 	#region Line
 
@@ -48,7 +116,7 @@ public static class OperationRecorder
 	/// </summary>
 	/// <param name="key">Unique key</param>
 	/// <param name="actionName">Action name</param>
-	public static void StartLineRecord(string key, string actionName)
+	public static void BeginLineRecord(string key, string actionName)
 	{
 		if (IsEnabled)
 			_actionLines.Value[key] = new List<string>([actionName]);
@@ -69,7 +137,7 @@ public static class OperationRecorder
 		}
 	}
 
-	private static void FinishLineRecord()
+	private static void StopLineRecord()
 	{
 		_actionLines.Value.Clear();
 	}
@@ -86,7 +154,7 @@ public static class OperationRecorder
 	/// Starts a record consisting of groups of lines (non-concurrent).
 	/// </summary>
 	/// <param name="actionName">Action name</param>
-	public static void StartGroupRecord(string actionName, bool measureTime = false)
+	public static void BeginGroupRecord(string actionName, bool measureTime = false)
 	{
 		if (IsEnabled)
 		{
@@ -120,11 +188,11 @@ public static class OperationRecorder
 			var groupsStrings = _actionGroups.Value.GroupBy(x => x.groupName).Select(x => (x.Key, (object)x.Select(y => y.item))).ToArray();
 
 			await Logger.SaveOperationAsync($"{_actionName}{timeString}{Environment.NewLine}{SimpleSerialization.Serialize(groupsStrings)}", _actionTime);
-			FinishGroupRecord();
+			StopGroupRecord();
 		}
 	}
 
-	private static void FinishGroupRecord()
+	private static void StopGroupRecord()
 	{
 		_actionName = null;
 		_actionTime = default;

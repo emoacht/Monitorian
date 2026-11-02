@@ -8,6 +8,8 @@ using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text;
 
+using Monitorian.Core.Helper;
+
 namespace Monitorian.Core.Models.Monitor;
 
 /// <summary>
@@ -239,6 +241,8 @@ internal class MonitorConfiguration
 
 	public static MonitorCapability GetMonitorCapability(SafePhysicalMonitorHandle physicalMonitorHandle, bool verbose)
 	{
+		var startingTimeStamp = Stopwatch.GetTimestamp();
+
 		bool isHighLevelBrightnessSupported = false;
 		if (GetMonitorCapabilities(
 			physicalMonitorHandle,
@@ -269,11 +273,12 @@ internal class MonitorConfiguration
 				return new MonitorCapability(
 					isHighLevelBrightnessSupported: isHighLevelBrightnessSupported,
 					isLowLevelBrightnessSupported: vcpCodes.ContainsKey((byte)VcpCode.Luminance),
-					isContrastSupported: vcpCodes.ContainsKey((byte)VcpCode.Contrast),
+					isContrastSupported: vcpCodes.ContainsKey((byte)VcpCode.Contrast),					
 					capabilitiesCodes: vcpCodes,
 					capabilitiesString: (verbose ? capabilitiesString : null),
 					capabilitiesReport: (verbose ? MakeCapabilitiesReport(caps, vcpCodes) : null),
-					capabilitiesData: (verbose && !vcpCodes.Any() ? GetCapabilitiesData(physicalMonitorHandle, capabilitiesStringLength) : null));
+					capabilitiesData: (verbose && !vcpCodes.Any() ? GetCapabilitiesData(physicalMonitorHandle, capabilitiesStringLength) : null),
+					elapsed: (float)StopWatchAddition.GetElapsedTotalSeconds(startingTimeStamp));
 			}
 		}
 		return new MonitorCapability(
@@ -626,6 +631,9 @@ internal class MonitorCapability
 	[DataMember(Order = 6)]
 	public string CapabilitiesData { get; }
 
+	[DataMember(Order = 7)]
+	public float Elapsed { get; }
+
 	public MonitorCapability(
 		bool isHighLevelBrightnessSupported,
 		bool isLowLevelBrightnessSupported,
@@ -633,7 +641,8 @@ internal class MonitorCapability
 		IReadOnlyDictionary<byte, byte[]> capabilitiesCodes = null,
 		string capabilitiesString = null,
 		string capabilitiesReport = null,
-		byte[] capabilitiesData = null) : this(
+		byte[] capabilitiesData = null,
+		float elapsed = 0) : this(
 			isHighLevelBrightnessSupported: isHighLevelBrightnessSupported,
 			isLowLevelBrightnessSupported: isLowLevelBrightnessSupported,
 			isContrastSupported: isContrastSupported,
@@ -641,7 +650,8 @@ internal class MonitorCapability
 			capabilitiesCodes: capabilitiesCodes,
 			capabilitiesString: capabilitiesString,
 			capabilitiesReport: capabilitiesReport,
-			capabilitiesData: capabilitiesData)
+			capabilitiesData: capabilitiesData,
+			elapsed: elapsed)
 	{ }
 
 	private MonitorCapability(
@@ -652,7 +662,8 @@ internal class MonitorCapability
 		IReadOnlyDictionary<byte, byte[]> capabilitiesCodes,
 		string capabilitiesString,
 		string capabilitiesReport,
-		byte[] capabilitiesData)
+		byte[] capabilitiesData,
+		float elapsed)
 	{
 		this.IsHighLevelBrightnessSupported = isHighLevelBrightnessSupported;
 		this.IsLowLevelBrightnessSupported = isLowLevelBrightnessSupported;
@@ -662,6 +673,7 @@ internal class MonitorCapability
 		this.CapabilitiesString = capabilitiesString;
 		this.CapabilitiesReport = capabilitiesReport;
 		this.CapabilitiesData = (capabilitiesData is not null) ? Convert.ToBase64String(capabilitiesData) : null;
+		this.Elapsed = elapsed;
 	}
 
 	public static MonitorCapability PreclearedCapability => _preclearedCapability.Value;
@@ -673,5 +685,6 @@ internal class MonitorCapability
 			capabilitiesCodes: null,
 			capabilitiesString: null,
 			capabilitiesReport: null,
-			capabilitiesData: null));
+			capabilitiesData: null,
+			elapsed: 0));
 }

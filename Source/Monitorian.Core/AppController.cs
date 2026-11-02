@@ -69,7 +69,7 @@ public abstract class AppController
 		Settings.PropertyChanged += OnSettingsChanged;
 
 		OnSettingsInitiated();
-		await OperationRecorder.RecordAsync($"Connectable by named pipes: {StartupAgent.IsConnectable}");
+		OperationRecorder.Record($"Connectable by named pipes: {StartupAgent.IsConnectable}");
 
 		WindowPainter.ApplyInitialTheme();
 		NotifyIconContainer.ShowIcon(WindowPainter.GetIconPath(), ProductInfo.Title);
@@ -120,7 +120,7 @@ public abstract class AppController
 				if (!_sessionWatcher.IsLocked)
 					Update(instanceName, brightness);
 			},
-			async (message) => await OperationRecorder.RecordAsync(message));
+			(message) => OperationRecorder.Record(message));
 
 			if (_brightnessConnector.IsEnabled)
 			{
@@ -129,7 +129,7 @@ public abstract class AppController
 					if (!_sessionWatcher.IsLocked)
 						Update(null, brightness);
 				},
-				async (message) => await OperationRecorder.RecordAsync(message),
+				(message) => OperationRecorder.Record(message),
 				() => _current.Dispatcher.Invoke(() => _current.MainWindow.Visibility is Visibility.Visible));
 			}
 		}
@@ -287,7 +287,7 @@ public abstract class AppController
 
 	protected virtual async void OnMonitorsChangeInferred(object sender, ICountEventArgs e = null)
 	{
-		await OperationRecorder.RecordAsync($"{nameof(OnMonitorsChangeInferred)} ({sender}{e?.Description})");
+		OperationRecorder.Record($"{nameof(OnMonitorsChangeInferred)} ({sender}{e?.Description})");
 
 		await ProceedScanAsync(e);
 	}
@@ -300,18 +300,18 @@ public abstract class AppController
 		await ScanAsync(TimeSpan.FromSeconds(3));
 	}
 
-	protected internal virtual async void OnMonitorAccessFailed(AccessResult result)
+	protected internal virtual void OnMonitorAccessFailed(AccessResult result)
 	{
-		await OperationRecorder.RecordAsync($"{nameof(OnMonitorAccessFailed)}" + Environment.NewLine
+		OperationRecorder.Record($"{nameof(OnMonitorAccessFailed)}" + Environment.NewLine
 			+ $"Status: {result.Status}" + Environment.NewLine
 			+ $"Message: {result.Message}");
 	}
 
-	protected internal virtual async void OnMonitorsChangeFound()
+	protected internal virtual void OnMonitorsChangeFound()
 	{
 		if (Monitors.Any())
 		{
-			await OperationRecorder.RecordAsync($"{nameof(OnMonitorsChangeFound)}");
+			OperationRecorder.Record($"{nameof(OnMonitorsChangeFound)}");
 
 			_displaySettingsWatcher.RaiseDisplaySettingsChanged();
 		}
@@ -342,7 +342,7 @@ public abstract class AppController
 
 				var intervalTask = (interval > TimeSpan.Zero) ? Task.Delay(interval) : Task.CompletedTask;
 
-				OperationRecorder.StartGroupRecord($"{nameof(ScanAsync)}", true);
+				OperationRecorder.BeginGroupRecord($"{nameof(ScanAsync)}", true);
 
 				var oldMonitorIndices = Enumerable.Range(0, Monitors.Count).ToList();
 				var newMonitorItems = new List<IMonitor>();

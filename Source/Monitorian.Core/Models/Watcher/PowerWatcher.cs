@@ -112,7 +112,7 @@ internal class PowerWatcher : IDisposable
 		if (state is DisplayStates.None)
 			return;
 
-		await OperationRecorder.RecordAsync($"Display {state}");
+		OperationRecorder.Record($"Display state: {state}");
 
 		switch (state)
 		{

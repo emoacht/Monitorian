@@ -114,7 +114,7 @@ public class TouchpadTracker
 
 	private TouchpadContact _contact;
 
-	private async void Check(TouchpadContact contact)
+	private void Check(TouchpadContact contact)
 	{
 		if ((_contact == default) ||
 			(_contact.ContactId != contact.ContactId))
@@ -136,7 +136,7 @@ public class TouchpadTracker
 		_contact = contact;
 		ManipulationDelta?.Invoke(_window, delta);
 
-		await _complete.PushAsync();
+		_complete.Push();
 	}
 
 	private void Complete()

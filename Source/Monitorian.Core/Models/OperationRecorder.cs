@@ -128,11 +128,11 @@ public static class OperationRecorder
 			lines.Add(lineString);
 	}
 
-	public static async Task EndLineRecordAsync(string key)
+	public static void EndLineRecord(string key)
 	{
 		if (IsEnabled && _actionLines.Value.TryGetValue(key, out var lines))
 		{
-			await _record.Value.PushAsync(string.Join(Environment.NewLine, lines));
+			_record.Value.Push(string.Join(Environment.NewLine, lines));
 			_actionLines.Value.TryRemove(key, out _);
 		}
 	}

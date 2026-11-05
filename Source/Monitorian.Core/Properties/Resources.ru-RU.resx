@@ -120,6 +120,9 @@
   <data name="AdjustSdrContent" xml:space="preserve">
     <value>Настроить яркость контента SDR</value>
   </data>
+  <data name="Arguments" xml:space="preserve">
+    <value>Аргументы командной строки</value>
+  </data>
   <data name="ChangeContrast" xml:space="preserve">
     <value>Изменить контрастность</value>
   </data>
@@ -137,6 +140,9 @@
   </data>
   <data name="EnableContrast" xml:space="preserve">
     <value>Включить настройку контрастности</value>
+  </data>
+  <data name="EnableIdentity" xml:space="preserve">
+    <value>Включить показ сведений о мониторе</value>
   </data>
   <data name="EnableRange" xml:space="preserve">
     <value>Включить ограничение диапазона регулировки</value>
@@ -161,6 +167,9 @@
   </data>
   <data name="ShowAdjusted" xml:space="preserve">
     <value>Показывать подстроенную яркость</value>
+  </data>
+  <data name="ShowIdentity" xml:space="preserve">
+    <value>Показать сведения о мониторе</value>
   </data>
   <data name="ShowNumber" xml:space="preserve">
     <value>Показывать текущую яркость</value>

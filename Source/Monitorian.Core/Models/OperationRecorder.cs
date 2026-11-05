@@ -148,7 +148,7 @@ public static class OperationRecorder
 
 	private static string _actionName;
 	private static DateTime _actionTime;
-	private static readonly Lazy<List<(string groupName, StringWrapper item)>> _actionGroups = new(() => new());
+	private static readonly Lazy<List<(string groupName, UnquotedValue item)>> _actionGroups = new(() => new());
 
 	/// <summary>
 	/// Starts a record consisting of groups of lines (non-concurrent).
@@ -168,13 +168,13 @@ public static class OperationRecorder
 	public static void AddGroupRecordItem(string groupName, string itemString)
 	{
 		if (IsEnabled)
-			_actionGroups.Value.Add((groupName, new StringWrapper(itemString)));
+			_actionGroups.Value.Add((groupName, new UnquotedValue(itemString)));
 	}
 
 	public static void AddGroupRecordItems(string groupName, IEnumerable<string> itemStrings)
 	{
 		if (IsEnabled)
-			_actionGroups.Value.AddRange(itemStrings.Select(x => (groupName, new StringWrapper(x))));
+			_actionGroups.Value.AddRange(itemStrings.Select(x => (groupName, new UnquotedValue(x))));
 	}
 
 	public static async Task EndGroupRecordAsync()

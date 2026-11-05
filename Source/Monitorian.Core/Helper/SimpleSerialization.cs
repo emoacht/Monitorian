@@ -5,7 +5,7 @@ using System.Linq;
 namespace Monitorian.Core.Helper;
 
 /// <summary>
-/// A simple JSON-like serialization
+/// Simple JSON-like serialization
 /// </summary>
 public class SimpleSerialization
 {
@@ -16,13 +16,14 @@ public class SimpleSerialization
 	private static (string indent, string lineBreak) GetIndentLineBreak() => IsPrettified ? (Indent, LineBreak) : (string.Empty, " ");
 
 	/// <summary>
-	/// Serializes an object whose members are provided by an array of name/value pairs.
+	/// Serializes object whose members are provided by array of name/value pairs.
 	/// </summary>
-	/// <param name="members">Array of name/value pairs which provides the members</param>
+	/// <param name="members">Array of name/value pairs</param>
 	/// <returns>Serialized string</returns>
 	/// <remarks>
-	/// If an Object of value is a String which represents a serialized object, use StringWrapper
-	/// class to wrap the String so that it will not be handled as a simple String.
+	/// If value is string representing non-string object (e.g. pre-serialized object, pre-formatted
+	/// number), use <see cref="UnquotedValue"/> to wrap the value so that it is emitted as-is
+	/// without quoting unlike ordinary string.
 	/// </remarks>
 	public static string Serialize(params (string name, object value)[] members)
 	{
@@ -66,7 +67,15 @@ public class SimpleSerialization
 		IsPrettified ? Indent + ConvertValue(value) : value;
 }
 
-public class StringWrapper(string value)
+/// <summary>
+/// Container of string which is to be emitted without quoting
+/// </summary>
+/// <param name="value">String representing non-string object</param>
+/// <remarks>
+/// This container is intended to wrap string representing non-string object and emit as-is without
+/// quoting unlike ordinary string.
+/// </remarks>
+public class UnquotedValue(string value)
 {
 	private readonly string _value = value;
 

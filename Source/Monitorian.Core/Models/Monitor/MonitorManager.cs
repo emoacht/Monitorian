@@ -7,6 +7,7 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -135,14 +136,7 @@ internal class MonitorManager
 			if (_success is not null)
 				throw new InvalidOperationException($"{nameof(GetMonitorAsync)} can only be called once.");
 
-			if (_capability is null)
-			{
-				var getTask = Task.Factory.StartNew(() => MonitorConfiguration.GetMonitorCapability(_handle, false),
-					default, TaskCreationOptions.LongRunning, TaskScheduler.Default);
-
-				if (getTask == await Task.WhenAny(getTask, Task.Delay(timeout)))
-					_capability = getTask.Result;
-			}
+			_capability ??= await WaitAndGetMonitorCapabilityAsync(_handle, timeout);
 			if (_capability is { IsBrightnessSupported: true })
 			{
 				try
@@ -173,6 +167,53 @@ internal class MonitorManager
 				isInternal: false);
 		}
 
+		private static readonly SemaphoreSlim _semaphore = new(1, 1);
+
+		/// <summary>
+		/// Asynchronously waits until execution is available, and then gets MonitorCapability.
+		/// </summary>
+		/// <param name="handle">Physical monitor handle</param>
+		/// <param name="timeout">Timeout duration</param>
+		/// <returns>MonitorCapability if successfully gets. Null otherwise.</returns>
+		/// <remarks>
+		/// Executing GetMonitorCapability method concurrently from multiple threads seems to slow
+		/// down all concurrent executions, as if they are waiting together until all executions
+		/// complete. Accordingly, this method ensures calling GetMonitorCapability sequentially
+		/// so that each execution ends one by one.
+		/// </remarks>
+		private static async Task<MonitorCapability> WaitAndGetMonitorCapabilityAsync(SafePhysicalMonitorHandle handle, TimeSpan timeout)
+		{
+			using var cts = new CancellationTokenSource();
+			cts.CancelAfter(timeout);
+
+			try
+			{
+				await _semaphore.WaitAsync(cts.Token);
+			}
+			catch (OperationCanceledException)
+			{
+				return null;
+			}
+			try
+			{
+				var getTask = Task.Factory.StartNew(() => MonitorConfiguration.GetMonitorCapability(handle, false),
+					default, TaskCreationOptions.LongRunning, TaskScheduler.Default);
+
+				var tcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+				using var registration = cts.Token.Register(static state => ((TaskCompletionSource<bool>)state).TrySetResult(false), tcs);
+
+				if (getTask == (await Task.WhenAny(getTask, tcs.Task)))
+					return await getTask;
+
+				// On timeout, this LongRunning thread is abandoned and remains alive until the execution ends.
+				return null;
+			}
+			finally
+			{
+				_semaphore.Release();
+			}
+		}
+
 		public override string ToString()
 		{
 			return SimpleSerialization.Serialize(
@@ -184,7 +225,7 @@ internal class MonitorManager
 				(nameof(IMonitor.MonitorRect), _monitorRect),
 				(nameof(IMonitor.Connection), _connection),
 				("Success", _success),
-				(nameof(MonitorCapability.Elapsed), _capability?.Elapsed));
+				(nameof(MonitorCapability.Elapsed), new UnquotedValue(_capability?.Elapsed.ToString("F3"))));
 		}
 
 		public void Dispose() => _handle?.Dispose();

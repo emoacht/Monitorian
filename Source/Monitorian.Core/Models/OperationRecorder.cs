@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -17,42 +18,44 @@ public static class OperationRecorder
 	public static async Task EnableAsync(string message)
 	{
 		await Logger.PrepareOperationAsync();
-		await Logger.SaveOperationAsync(message);
+		await Logger.SaveOperationAsync(message, DateTime.Now);
 
-		StartQueueRecord();
-
+		StartQueue();
 		IsEnabled = true;
 	}
 
 	public static void Disable()
 	{
 		IsEnabled = false;
+		StopQueue();
 
-		StopQueueRecord();
-		StopLineRecord();
+		StopFlowRecord();
 		StopGroupRecord();
 	}
 
+	public static void Record(string content) => Record(content, DateTime.Now);
+	private static void Record(string content, DateTime time) => PushQueue(content, time);
+
 	#region Queue
 
-	private class QueueRecorder
+	private class QueueWorker
 	{
-		private readonly ConcurrentQueue<string> _queue = new();
+		private readonly ConcurrentQueue<(string content, DateTime time)> _queue = new();
 		private readonly SemaphoreSlim _semaphore = new(0);
 		private readonly CancellationTokenSource _cts = new();
 
-		public QueueRecorder()
+		public QueueWorker()
 		{
 			Task.Run(() => WriterLoopAsync(_cts.Token)); // fire-and-forget
 		}
 
-		public void Record(string content)
+		public void Push(string content, DateTime time)
 		{
 			if (_cts.IsCancellationRequested ||
 				(_semaphore.CurrentCount >= 100))
 				return;
 
-			_queue.Enqueue(content);
+			_queue.Enqueue((content, time));
 			_semaphore.Release();
 		}
 
@@ -64,17 +67,17 @@ public static class OperationRecorder
 				{
 					await _semaphore.WaitAsync(token).ConfigureAwait(false);
 
-					if (_queue.TryDequeue(out string content))
-						await Logger.SaveOperationAsync(content).ConfigureAwait(false);
+					if (_queue.TryDequeue(out var item))
+						await Logger.SaveOperationAsync(item.content, item.time).ConfigureAwait(false);
 				}
 			}
 			catch (OperationCanceledException)
 			{
-				Debug.WriteLine($"Stopped queue recorder.");
+				Debug.WriteLine($"Stopped queue worker.");
 			}
 			catch (Exception ex)
 			{
-				Debug.WriteLine($"Failed to loop queue recorder." + Environment.NewLine
+				Debug.WriteLine($"Failed to loop queue worker." + Environment.NewLine
 					+ ex);
 			}
 		}
@@ -82,121 +85,131 @@ public static class OperationRecorder
 		public void End() => _cts.Cancel();
 	}
 
-	private static QueueRecorder _queueRecorder;
+	private static QueueWorker _queueWorker;
 
-	private static void StartQueueRecord()
+	private static void StartQueue()
 	{
-		_queueRecorder = new QueueRecorder();
+		_queueWorker = new QueueWorker();
 	}
 
-	public static void Record(string content)
+	private static void PushQueue(string content, DateTime time)
 	{
-		if (IsEnabled)
-			_queueRecorder?.Record(content);
+		_queueWorker?.Push(content, time);
 	}
 
-	private static void StopQueueRecord()
+	private static void StopQueue()
 	{
-		_queueRecorder?.End();
-		_queueRecorder = null;
+		_queueWorker?.End();
+		_queueWorker = null;
 	}
 
 	#endregion
 
-	#region Line
+	#region Flow
 
-	private static readonly Lazy<Throttle<string>> _record = new(() => new(
+	private static DateTime? _flowRecordsStartTime;
+	private static readonly Lazy<ConcurrentDictionary<string, List<string>>> _flowRecords = new(() => new());
+
+	private static readonly Lazy<Throttle<string>> _flowRecordsRecord = new(() => new(
 		TimeSpan.FromSeconds(1),
-		async queue => await Logger.SaveOperationAsync(string.Join(Environment.NewLine, queue))));
-
-	private static readonly Lazy<ConcurrentDictionary<string, List<string>>> _actionLines = new(() => new());
+		(queue) =>
+		{
+			var buffer = _flowRecordsStartTime.GetValueOrDefault();
+			_flowRecordsStartTime = null;
+			Record(string.Join(Environment.NewLine, queue), buffer);
+		}));
 
 	/// <summary>
-	/// Starts a record consisting of lines (concurrent).
+	/// Starts a record consisting of flows of items (concurrent).
 	/// </summary>
 	/// <param name="key">Unique key</param>
 	/// <param name="actionName">Action name</param>
-	public static void BeginLineRecord(string key, string actionName)
+	public static void StartFlowRecord(string key, string actionName)
 	{
 		if (IsEnabled)
-			_actionLines.Value[key] = new List<string>([actionName]);
-	}
-
-	public static void AddLineRecord(string key, string lineString)
-	{
-		if (IsEnabled && _actionLines.Value.TryGetValue(key, out var lines))
-			lines.Add(lineString);
-	}
-
-	public static async Task EndLineRecordAsync(string key)
-	{
-		if (IsEnabled && _actionLines.Value.TryGetValue(key, out var lines))
 		{
-			await _record.Value.PushAsync(string.Join(Environment.NewLine, lines));
-			_actionLines.Value.TryRemove(key, out _);
+			_flowRecordsStartTime ??= DateTime.Now;
+			_flowRecords.Value[key] = new List<string>([actionName]);
 		}
 	}
 
-	private static void StopLineRecord()
+	public static void AddFlowRecord(string key, string item)
 	{
-		_actionLines.Value.Clear();
+		if (IsEnabled && _flowRecords.Value.TryGetValue(key, out var items))
+			items.Add(item);
+	}
+
+	public static void FlushFlowRecord(string key)
+	{
+		if (IsEnabled && _flowRecords.Value.TryGetValue(key, out var items))
+		{
+			_flowRecordsRecord.Value.Push(string.Join(Environment.NewLine, items));
+			_flowRecords.Value.TryRemove(key, out _); // Cleanup
+		}
+	}
+
+	private static void StopFlowRecord()
+	{
+		_flowRecords.Value.Clear();
 	}
 
 	#endregion
 
 	#region Group
 
-	private static string _actionName;
-	private static DateTime _actionTime;
-	private static readonly Lazy<List<(string groupName, StringWrapper item)>> _actionGroups = new(() => new());
+	private static string _groupActionName;
+	private static DateTime _groupRecordsStartTime;
+	private static List<(string groupName, object item)> _groupRecords;
 
 	/// <summary>
-	/// Starts a record consisting of groups of lines (non-concurrent).
+	/// Starts a record consisting of groups of items (non-concurrent).
 	/// </summary>
 	/// <param name="actionName">Action name</param>
-	public static void BeginGroupRecord(string actionName, bool measureTime = false)
+	public static void StartGroupRecord(string actionName)
 	{
 		if (IsEnabled)
 		{
-			_actionName = actionName;
-
-			if (measureTime)
-				_actionTime = DateTime.Now;
+			_groupActionName = actionName;
+			_groupRecordsStartTime = DateTime.Now;
+			_groupRecords = new List<(string, object)>();
 		}
 	}
 
-	public static void AddGroupRecordItem(string groupName, string itemString)
+	public static void AddGroupRecordItem(string groupName, object item)
 	{
 		if (IsEnabled)
-			_actionGroups.Value.Add((groupName, new StringWrapper(itemString)));
+			_groupRecords?.Add((groupName, item));
 	}
 
-	public static void AddGroupRecordItems(string groupName, IEnumerable<string> itemStrings)
+	public static void AddGroupRecordItems(string groupName, IEnumerable<object> items)
 	{
 		if (IsEnabled)
-			_actionGroups.Value.AddRange(itemStrings.Select(x => (groupName, new StringWrapper(x))));
+			_groupRecords?.AddRange(items.Select(x => (groupName, x)));
 	}
 
-	public static async Task EndGroupRecordAsync()
+	public static void FlushGroupRecord()
 	{
-		if (IsEnabled)
+		if (IsEnabled && (_groupRecords is { Count: > 0 }))
 		{
-			string timeString = null;
-			if (_actionTime > default(DateTime))
-				timeString = $" ({(DateTime.Now - _actionTime).TotalSeconds:F2} sec)";
+			var buffer = new StringBuilder(_groupActionName);
+			buffer.AppendLine($" ({(DateTime.Now - _groupRecordsStartTime).TotalSeconds:F3})");
 
-			var groupsStrings = _actionGroups.Value.GroupBy(x => x.groupName).Select(x => (x.Key, (object)x.Select(y => y.item))).ToArray();
+			var groupObjects = _groupRecords
+				.GroupBy(x => x.groupName)
+				.Select(x => (x.Key, (object)x.Select(y => y.item)))
+				.ToArray();
+			buffer.Append(SimpleSerialization.Serialize(groupObjects));
 
-			await Logger.SaveOperationAsync($"{_actionName}{timeString}{Environment.NewLine}{SimpleSerialization.Serialize(groupsStrings)}", _actionTime);
-			StopGroupRecord();
+			Record(buffer.ToString(), _groupRecordsStartTime);
+			StopGroupRecord(); // Cleanup
 		}
 	}
 
 	private static void StopGroupRecord()
 	{
-		_actionName = null;
-		_actionTime = default;
-		_actionGroups.Value.Clear();
+		_groupActionName = null;
+		_groupRecordsStartTime = default;
+		_groupRecords = null;
 	}
 
 	#endregion

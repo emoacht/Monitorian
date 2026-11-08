@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 
@@ -12,55 +10,45 @@ namespace Monitorian.Core.Helper;
 /// </summary>
 public class Throttle
 {
-	protected readonly SemaphoreSlim _semaphore = new(1, 1);
 	protected readonly DispatcherTimer _timer;
 	protected readonly Action _action;
 
-	public Throttle(TimeSpan dueTime, Action action)
+	public Throttle(TimeSpan dueTime, Action action) : this(dueTime, action, Application.Current.Dispatcher)
+	{ }
+
+	public Throttle(TimeSpan dueTime, Action action, Dispatcher dispatcher)
 	{
 		if (dueTime <= TimeSpan.Zero)
 			throw new ArgumentOutOfRangeException(nameof(dueTime), dueTime, "The time must be positive.");
 
-		_timer = new(
-			interval: dueTime,
-			priority: DispatcherPriority.Background,
-			callback: OnTick,
-			dispatcher: Application.Current.Dispatcher);
+		this._action = action ?? throw new ArgumentNullException(nameof(action));
 
-		this._action = action;
+		_timer = new(DispatcherPriority.Background, dispatcher: dispatcher) { Interval = dueTime };
+		_timer.Tick += OnTick;
 	}
 
-	private async void OnTick(object sender, EventArgs e)
+	public void Push()
 	{
-		try
+		if (_timer.Dispatcher.CheckAccess())
 		{
-			await _semaphore.WaitAsync();
-
-			if (!_timer.IsEnabled)
-				return;
-
-			_timer.Stop();
-			_action?.Invoke();
+			Restart();
 		}
-		finally
+		else
 		{
-			_semaphore.Release();
+			_timer.Dispatcher.Invoke(Restart);
 		}
 	}
 
-	public virtual async Task PushAsync()
+	protected virtual void Restart()
 	{
-		try
-		{
-			await _semaphore.WaitAsync();
+		_timer.Stop();
+		_timer.Start();
+	}
 
-			_timer.Stop();
-			_timer.Start();
-		}
-		finally
-		{
-			_semaphore.Release();
-		}
+	private void OnTick(object sender, EventArgs e)
+	{
+		_timer.Stop();
+		_action.Invoke();
 	}
 }
 
@@ -69,59 +57,49 @@ public class Throttle
 /// </summary>
 public class Throttle<T>
 {
-	protected readonly SemaphoreSlim _semaphore = new(1, 1);
 	protected readonly DispatcherTimer _timer;
-	protected readonly Queue<T> _queue = [];
 	protected readonly Action<T[]> _action;
+	protected readonly Queue<T> _queue = [];
 
-	public Throttle(TimeSpan dueTime, Action<T[]> action)
+	public Throttle(TimeSpan dueTime, Action<T[]> action) : this(dueTime, action, Application.Current.Dispatcher)
+	{ }
+
+	public Throttle(TimeSpan dueTime, Action<T[]> action, Dispatcher dispatcher)
 	{
 		if (dueTime <= TimeSpan.Zero)
 			throw new ArgumentOutOfRangeException(nameof(dueTime), dueTime, "The time must be positive.");
 
-		_timer = new(
-			interval: dueTime,
-			priority: DispatcherPriority.Background,
-			callback: OnTick,
-			dispatcher: Application.Current.Dispatcher);
+		this._action = action ?? throw new ArgumentNullException(nameof(action));
 
-		this._action = action;
+		_timer = new(DispatcherPriority.Background, dispatcher: dispatcher) { Interval = dueTime };
+		_timer.Tick += OnTick;
 	}
 
-	private async void OnTick(object sender, EventArgs e)
+	public void Push(T item)
 	{
-		try
+		if (_timer.Dispatcher.CheckAccess())
 		{
-			await _semaphore.WaitAsync();
-
-			if (!_timer.IsEnabled)
-				return;
-
-			_timer.Stop();
-			_action?.Invoke(_queue.ToArray());
-			_queue.Clear();
-
+			Restart(item);
 		}
-		finally
+		else
 		{
-			_semaphore.Release();
+			_timer.Dispatcher.Invoke(() => Restart(item));
 		}
 	}
 
-	public virtual async Task PushAsync(T item)
+	protected virtual void Restart(T item)
 	{
-		try
-		{
-			await _semaphore.WaitAsync();
+		_timer.Stop();
+		_queue.Enqueue(item);
+		_timer.Start();
+	}
 
-			_timer.Stop();
-			_queue.Enqueue(item);
-			_timer.Start();
-		}
-		finally
-		{
-			_semaphore.Release();
-		}
+	private void OnTick(object sender, EventArgs e)
+	{
+		_timer.Stop();
+		var buffer = _queue.ToArray();
+		_queue.Clear();
+		_action.Invoke(buffer);
 	}
 }
 
@@ -133,18 +111,12 @@ public class Sample : Throttle
 	public Sample(TimeSpan dueTime, Action action) : base(dueTime, action)
 	{ }
 
-	public override async Task PushAsync()
-	{
-		try
-		{
-			await _semaphore.WaitAsync();
+	public Sample(TimeSpan dueTime, Action action, Dispatcher dispatcher) : base(dueTime, action, dispatcher)
+	{ }
 
-			if (!_timer.IsEnabled)
-				_timer.Start();
-		}
-		finally
-		{
-			_semaphore.Release();
-		}
+	protected override void Restart()
+	{
+		if (!_timer.IsEnabled)
+			_timer.Start();
 	}
 }

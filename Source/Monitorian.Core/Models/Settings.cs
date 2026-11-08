@@ -206,7 +206,7 @@ public class Settings : BindableBase
 			() => Save(this));
 
 		MonitorCustomizations.CollectionChanged += (_, _) => OnPropertyChanged(nameof(MonitorCustomizations));
-		PropertyChanged += async (_, _) => await _save.PushAsync();
+		PropertyChanged += (_, _) => _save.Push();
 	}
 
 	#region Load/Save

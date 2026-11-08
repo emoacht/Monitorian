@@ -126,9 +126,10 @@ public class Logger
 	/// Saves operation log to AppData.
 	/// </summary>
 	/// <param name="content">Content</param>
-	public static async Task SaveOperationAsync(string content, DateTime time = default)
+	/// <param name="time">Operation time</param>
+	public static async Task SaveOperationAsync(string content, DateTime time)
 	{
-		content = ((time != default) ? ComposeHeader(time) : ComposeHeader()) + Environment.NewLine
+		content = ComposeHeader(time) + Environment.NewLine
 			+ content + Environment.NewLine + Environment.NewLine;
 
 		var fileName = GetOperationDateFileName(DateTimeOffset.Now);

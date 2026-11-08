@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 
+using Monitorian.Core.Helper;
 using Monitorian.Core.Models;
 using Monitorian.Core.Models.Monitor;
 using Monitorian.Core.Models.Watcher;
@@ -343,7 +344,7 @@ public abstract class AppController
 
 				var intervalTask = (interval > TimeSpan.Zero) ? Task.Delay(interval) : Task.CompletedTask;
 
-				OperationRecorder.BeginGroupRecord($"{nameof(ScanAsync)}", true);
+				OperationRecorder.StartGroupRecord($"{nameof(ScanAsync)}");
 
 				int maxMonitorsCount = await GetMaxMonitorsCountAsync();
 				int monitorsCount = 0;
@@ -432,15 +433,15 @@ public abstract class AppController
 
 				foreach (var source in sources)
 				{
-					OperationRecorder.AddGroupRecordItem("Sources", source.ToString());
+					OperationRecorder.AddGroupRecordItem("Sources", new UnquotedValue(source.ToString()));
 					source.Dispose();
 				}
 
 				foreach (var m in Monitors.Where(x => !x.IsControllable))
 					m.IsTarget = !controllableMonitorExists;
 
-				OperationRecorder.AddGroupRecordItems(nameof(Monitors), Monitors.Select(x => x.ToString()));
-				await OperationRecorder.EndGroupRecordAsync();
+				OperationRecorder.AddGroupRecordItems(nameof(Monitors), Monitors.Select(x => new UnquotedValue(x.ToString())));
+				OperationRecorder.FlushGroupRecord();
 			}
 		}
 		finally

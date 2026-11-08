@@ -141,6 +141,9 @@
   <data name="EnableContrast" xml:space="preserve">
     <value>Увімкнути налаштування контрастності</value>
   </data>
+  <data name="EnableIdentity" xml:space="preserve">
+    <value>Увімкнути показ відомостей про монітор</value>
+  </data>
   <data name="EnableRange" xml:space="preserve">
     <value>Увімкнути обмеження діапазону регулювання</value>
   </data>
@@ -164,6 +167,9 @@
   </data>
   <data name="ShowAdjusted" xml:space="preserve">
     <value>Показувати підлаштовану яскравість</value>
+  </data>
+  <data name="ShowIdentity" xml:space="preserve">
+    <value>Показати відомості про монітор</value>
   </data>
   <data name="ShowNumber" xml:space="preserve">
     <value>Показувати поточну яскравість</value>

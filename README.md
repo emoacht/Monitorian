@@ -33,12 +33,12 @@ Additional languages:
  - Polish (pl-PL) by [@Daxxxis](https://github.com/Daxxxis), [@FakeMichau](https://github.com/FakeMichau) and [@Blizzeq](https://github.com/Blizzeq)
  - Portuguese (pt-BR) by [@guilhermgonzaga](https://github.com/guilhermgonzaga)
  - Romanian (ro) by [@calini](https://github.com/calini)
- - Russian (ru-RU) by [@SigmaTel71](https://github.com/SigmaTel71) and [@San4es](https://github.com/San4es)
+ - Russian (ru-RU) by [@SigmaTel71](https://github.com/SigmaTel71), [@San4es](https://github.com/San4es) and [@pasharm](https://github.com/pasharm)
  - Slovenian (sl) by [@anderlli0053](https://github.com/anderlli0053)
  - Albanian (sq) by @RDN000
  - Swedish (sv-SE) by [@Sopor](https://github.com/Sopor)
  - Turkish (tr-TR) by [@webbudesign](https://github.com/webbudesign)
- - Ukrainian (uk-UA) by [@kaplun07](https://github.com/kaplun07)
+ - Ukrainian (uk-UA) by [@kaplun07](https://github.com/kaplun07) and [@pasharm](https://github.com/pasharm)
  - Vietnamese (vi-VN) by [@dongsinhho](https://github.com/dongsinhho)
  - Simplified Chinese (zh-Hans) by [@ComMouse](https://github.com/ComMouse), [@zhujunsan](https://github.com/zhujunsan), [@XMuli](https://github.com/XMuli), [@FISHandCHEAP](https://github.com/Fishandcheap), [@FrzMtrsprt](https://github.com/FrzMtrsprt) and [@380086154](https://github.com/380086154)
  - Traditional Chinese (zh-Hant) by [@toto6038](https://github.com/toto6038), [@XMuli](https://github.com/XMuli) and [@380086154](https://github.com/380086154)
@@ -62,7 +62,7 @@ Additional languages:
    ```
 
  * Other:<br>
-:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/4.16.9-Installer/MonitorianInstaller4169.zip)
+:floppy_disk: [Installer](https://github.com/emoacht/Monitorian/releases/download/4.16.11-Installer/MonitorianInstaller41611.zip)
 
 ## Install/Uninstall
 

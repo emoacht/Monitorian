@@ -225,7 +225,7 @@ internal class MonitorManager
 				(nameof(IMonitor.MonitorRect), _monitorRect),
 				(nameof(IMonitor.Connection), _connection),
 				("Success", _success),
-				(nameof(MonitorCapability.Elapsed), new UnquotedValue(_capability?.Elapsed.ToString("F3"))));
+				(nameof(MonitorCapability.Elapsed), new UnquotedValue(_capability?.Elapsed.ToString("F3") ?? "0")));
 		}
 
 		public void Dispose() => _handle?.Dispose();

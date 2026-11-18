@@ -75,9 +75,10 @@ public class SimpleSerialization
 /// This container is intended to wrap string representing non-string object and emit as-is without
 /// quoting unlike ordinary string.
 /// </remarks>
+/// <exception cref="ArgumentNullException">Value is null.</exception>
 public class UnquotedValue(string value)
 {
-	private readonly string _value = value;
+	private readonly string _value = value ?? throw new ArgumentNullException(nameof(value));
 
 	public override string ToString() => _value;
 }

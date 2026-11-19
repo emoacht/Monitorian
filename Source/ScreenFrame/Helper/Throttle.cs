@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ScreenFrame.Helper;
@@ -17,19 +18,19 @@ internal class Throttle
 			throw new ArgumentOutOfRangeException(nameof(dueTime), dueTime, "The time must be positive.");
 
 		this._dueTime = dueTime;
-		this._action = action;
+		this._action = action ?? throw new ArgumentNullException(nameof(action));
 	}
 
-	protected Task _lastWaitTask;
+	private Task _lastWaitTask;
 
 	public virtual async Task PushAsync()
 	{
 		var currentWaitTask = Task.Delay(_dueTime);
-		_lastWaitTask = currentWaitTask;
+		Volatile.Write(ref _lastWaitTask, currentWaitTask);
 		await currentWaitTask;
-		if (_lastWaitTask == currentWaitTask)
+		if (Volatile.Read(ref _lastWaitTask) == currentWaitTask)
 		{
-			_action?.Invoke();
+			_action.Invoke();
 		}
 	}
 }
@@ -45,39 +46,19 @@ internal class Throttle<T>
 			throw new ArgumentOutOfRangeException(nameof(dueTime), dueTime, "The time must be positive.");
 
 		this._dueTime = dueTime;
-		this._action = action;
+		this._action = action ?? throw new ArgumentNullException(nameof(action));
 	}
 
-	protected Task _lastWaitTask;
+	private Task _lastWaitTask;
 
 	public virtual async Task PushAsync(T value)
 	{
 		var currentWaitTask = Task.Delay(_dueTime);
-		_lastWaitTask = currentWaitTask;
+		Volatile.Write(ref _lastWaitTask, currentWaitTask);
 		await currentWaitTask;
-		if (_lastWaitTask == currentWaitTask)
+		if (Volatile.Read(ref _lastWaitTask) == currentWaitTask)
 		{
-			_action?.Invoke(value);
+			_action.Invoke(value);
 		}
-	}
-}
-
-/// <summary>
-/// Rx Sample like operator
-/// </summary>
-internal class Sample : Throttle
-{
-	public Sample(TimeSpan dueTime, Action action) : base(dueTime, action)
-	{ }
-
-	public override async Task PushAsync()
-	{
-		if (_lastWaitTask is not null)
-			return;
-
-		_lastWaitTask = Task.Delay(_dueTime);
-		await _lastWaitTask;
-		_action?.Invoke();
-		_lastWaitTask = null;
 	}
 }

@@ -55,10 +55,10 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="MSTest.TestAdapter">
-      <Version>4.4.1</Version>
+      <Version>4.5.3</Version>
     </PackageReference>
     <PackageReference Include="MSTest.TestFramework">
-      <Version>4.4.1</Version>
+      <Version>4.5.3</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />

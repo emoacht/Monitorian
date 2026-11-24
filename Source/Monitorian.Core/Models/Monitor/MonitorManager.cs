@@ -379,6 +379,7 @@ internal class MonitorManager
 			{
 				int index = basicItems.FindIndex(x =>
 					!x.IsInternal &&
+					(x.Connection is not ConnectionType.Internal) &&
 					(x.DisplayIndex == handleItem.DisplayIndex) &&
 					(x.MonitorIndex == physicalItem.MonitorIndex) &&
 					string.Equals(x.Description, physicalItem.Description, StringComparison.OrdinalIgnoreCase));
